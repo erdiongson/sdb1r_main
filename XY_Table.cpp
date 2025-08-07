@@ -160,12 +160,12 @@ bool Homing()
 	Dprint("Debugging Start...");
 #endif
  
-  stepper_x.moveTo(40000);
+  stepper_x.moveTo(-40000);
 #if !DEBUG
-  while (digitalRead(Limit_S_x_MIN) != 0)
+  while (digitalRead(Limit_S_x_MAX) != 0)
     stepper_x.run();
   delay(20);
-  if(digitalRead(Limit_S_x_MIN)==0 && digitalRead(Limit_S_x_MAX)!=0) successx=TRUE;
+  if(digitalRead(Limit_S_x_MAX)==0 && digitalRead(Limit_S_x_MIN)!=0) successx=TRUE;
 #endif
   Serial.println(" limit x hit");
   stepper_x.stop();
