@@ -4,8 +4,8 @@
 #define Motor_Dow 45
 #define Vibrate 47
 
-#define Limit_S_x_Homing 22 // 32
-#define Limit_S_y_Homing 32 // 33
+#define Limit_S_x_MIN 22 // 32
+#define Limit_S_y_MIN 32 // 33
 
 //#define Limit_S_x_MAX 18
 //#define Limit_S_y_MAX 19
