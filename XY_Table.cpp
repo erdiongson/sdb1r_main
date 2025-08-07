@@ -1079,6 +1079,7 @@ void loop()
             err_flag = 0;
             Home_Menu(&host, RUNMENU);
             WaitKeyRelease();
+            Zeroing();
             startProcess();
             Dprint("Cycle end","\n");
             Homing();
