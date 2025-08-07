@@ -191,6 +191,47 @@ bool Homing()
   //bool complete = true; //----johari---20092024---------------------------------------------------------------------------------------------------------------
 }
 
+bool Zeroing()
+{
+	bool successx=FALSE;
+	bool successy=FALSE;
+#if !DEBUG
+  Serial.println("Homing Start...");
+#else
+	Dprint("Debugging Start...");
+#endif
+ 
+  stepper_x.moveTo(40000);
+#if !DEBUG
+  while (digitalRead(Limit_S_x_MIN) != 0)
+    stepper_x.run();
+  delay(20);
+  if(digitalRead(Limit_S_x_MIN)==0 && digitalRead(Limit_S_x_MAX)!=0) successx=TRUE;
+#endif
+  Serial.println(" limit x hit");
+  stepper_x.stop();
+  stepper_x.setCurrentPosition(0);
+  stepper_x.setMaxSpeed(motor_y_speed);
+  stepper_x.setAcceleration(motor_y_Acceleration);
+
+  stepper_y.moveTo(-40000);
+#if !DEBUG
+  while (digitalRead(Limit_S_y_MIN) != 0)
+    stepper_y.run();
+  delay(20);
+    if(digitalRead(Limit_S_y_MIN)==0 && digitalRead(Limit_S_y_MAX)!=0) successy=TRUE;
+#endif
+  Serial.println(" limit y hit");
+  PLC_SERIAL.write(responseMessage, messageLength);//-------23092024--PLC----------------------------------------------johari------------------------------------------------  
+  stepper_y.stop();
+  stepper_y.setCurrentPosition(0);
+  stepper_y.setMaxSpeed(motor_y_speed);
+  stepper_y.setAcceleration(motor_y_Acceleration);
+
+	return successx && successy;
+  //bool complete = true; //----johari---20092024---------------------------------------------------------------------------------------------------------------
+}
+
 uint8_t runStepper_normal(AccelStepper &stepper, long distance, uint8_t limitPin)
 {
 	uint8_t ret=0;
