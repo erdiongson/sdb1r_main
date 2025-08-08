@@ -358,6 +358,18 @@ uint8_t vibrateAndCheckPause()
   return ret;
 }
 
+bool primeDispenserHead() {
+  bool cont;
+  for (int i = 0; i < PRIME_DISPENSE_NUM; i++) {
+    cont = performVibrateAndDispenseOperations();
+    if (cont == false) {
+      return false;
+    }
+  }
+  return true;
+  // returns whether to continue
+}
+
 uint8_t dispenseAndCheckPause()
 {
 	uint8_t i;
@@ -1080,6 +1092,7 @@ void loop()
             Home_Menu(&host, RUNMENU);
             WaitKeyRelease();
             Zeroing();
+            primeDispenserHead();
             startProcess();
             Dprint("Cycle end","\n");
             Homing();
@@ -1163,6 +1176,8 @@ void loop()
       TotalTubeLeft=(CurProf.Tube_No_x)*(CurProf.Tube_No_y);
       Home_Menu(&host, RUNMENU);
       WaitKeyRelease();
+      Zeroing();
+      primeDispenserHead();
       startProcess();
       Dprint("Cycle end","\n");
       Homing();   

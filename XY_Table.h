@@ -66,6 +66,7 @@ void xy_init(void);
 void xy_main(void);
 
 bool performVibrateAndDispenseOperations();
+bool primeDispenserHead();
 void startProcess();
 void resumeProcess();
 
