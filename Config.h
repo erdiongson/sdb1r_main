@@ -29,3 +29,5 @@
 
 #define motor_x_Acceleration 100000//8000 // 4800, 3200
 #define motor_y_Acceleration 100000//4000 // 2400 1600 // 3200
+
+#define PRIME_DISPENSE_NUM 2
