@@ -131,8 +131,8 @@ void GPIO_Setup()
   pinMode(Motor_UP, OUTPUT);
   pinMode(Motor_Dow, OUTPUT);
   pinMode(Vibrate, OUTPUT);
-  pinMode(Limit_S_x_MIN, INPUT_PULLUP);
-  pinMode(Limit_S_y_MIN, INPUT_PULLUP);
+  pinMode(Limit_S_x_Homing, INPUT_PULLUP);
+  pinMode(Limit_S_y_Homing, INPUT_PULLUP);
   pinMode(Limit_S_x_MAX, INPUT_PULLUP);
   pinMode(Limit_S_y_MAX, INPUT_PULLUP);
 }
@@ -160,12 +160,12 @@ bool Homing()
 	Dprint("Debugging Start...");
 #endif
  
-  stepper_x.moveTo(-320000);
+  stepper_x.moveTo(40000);
 #if !DEBUG
-  while (digitalRead(Limit_S_x_MAX) != 0)
+  while (digitalRead(Limit_S_x_Homing) != 0)
     stepper_x.run();
   delay(20);
-  if(digitalRead(Limit_S_x_MAX)==0 && digitalRead(Limit_S_x_MIN)!=0) successx=TRUE;
+  if(digitalRead(Limit_S_x_Homing)==0 && digitalRead(Limit_S_x_MAX)!=0) successx=TRUE;
 #endif
   Serial.println(" limit x hit");
   stepper_x.stop();
@@ -173,53 +173,12 @@ bool Homing()
   stepper_x.setMaxSpeed(motor_y_speed);
   stepper_x.setAcceleration(motor_y_Acceleration);
 
-  stepper_y.moveTo(-320000);
+  stepper_y.moveTo(-40000);
 #if !DEBUG
-  while (digitalRead(Limit_S_y_MIN) != 0)
+  while (digitalRead(Limit_S_y_Homing) != 0)
     stepper_y.run();
   delay(20);
-    if(digitalRead(Limit_S_y_MIN)==0 && digitalRead(Limit_S_y_MAX)!=0) successy=TRUE;
-#endif
-  Serial.println(" limit y hit");
-  PLC_SERIAL.write(responseMessage, messageLength);//-------23092024--PLC----------------------------------------------johari------------------------------------------------  
-  stepper_y.stop();
-  stepper_y.setCurrentPosition(0);
-  stepper_y.setMaxSpeed(motor_y_speed);
-  stepper_y.setAcceleration(motor_y_Acceleration);
-
-	return successx && successy;
-  //bool complete = true; //----johari---20092024---------------------------------------------------------------------------------------------------------------
-}
-
-bool Zeroing()
-{
-	bool successx=FALSE;
-	bool successy=FALSE;
-#if !DEBUG
-  Serial.println("Homing Start...");
-#else
-	Dprint("Debugging Start...");
-#endif
- 
-  stepper_x.moveTo(320000);
-#if !DEBUG
-  while (digitalRead(Limit_S_x_MIN) != 0)
-    stepper_x.run();
-  delay(20);
-  if(digitalRead(Limit_S_x_MIN)==0 && digitalRead(Limit_S_x_MAX)!=0) successx=TRUE;
-#endif
-  Serial.println(" limit x hit");
-  stepper_x.stop();
-  stepper_x.setCurrentPosition(0);
-  stepper_x.setMaxSpeed(motor_y_speed);
-  stepper_x.setAcceleration(motor_y_Acceleration);
-
-  stepper_y.moveTo(-320000);
-#if !DEBUG
-  while (digitalRead(Limit_S_y_MIN) != 0)
-    stepper_y.run();
-  delay(20);
-    if(digitalRead(Limit_S_y_MIN)==0 && digitalRead(Limit_S_y_MAX)!=0) successy=TRUE;
+    if(digitalRead(Limit_S_y_Homing)==0 && digitalRead(Limit_S_y_MAX)!=0) successy=TRUE;
 #endif
   Serial.println(" limit y hit");
   PLC_SERIAL.write(responseMessage, messageLength);//-------23092024--PLC----------------------------------------------johari------------------------------------------------  
@@ -356,18 +315,6 @@ uint8_t vibrateAndCheckPause()
 	//sendCommand(Vibrate_Mode_OFF);
 
   return ret;
-}
-
-bool primeDispenserHead() {
-  bool cont;
-  for (int i = 0; i < PRIME_DISPENSE_NUM; i++) {
-    cont = performVibrateAndDispenseOperations();
-    if (cont == false) {
-      return false;
-    }
-  }
-  return true;
-  // returns whether to continue
 }
 
 uint8_t dispenseAndCheckPause()
@@ -988,20 +935,20 @@ void setup()
 	
 #if !DEBUG
 
-    if( digitalRead(Limit_S_x_MIN) == 0)
+    if( digitalRead(Limit_S_x_Homing) == 0)
     {
       Dprint("motor x out","\n");
       stepper_x.moveTo(-2000);
-      //while (digitalRead(Limit_S_x_MIN) == 0)
+      //while (digitalRead(Limit_S_x_Homing) == 0)
       while (stepper_x.distanceToGo() != 0)
         stepper_x.run();
         delay(1000);
     }
-    if( digitalRead(Limit_S_y_MIN) == 0)
+    if( digitalRead(Limit_S_y_Homing) == 0)
     {
       Dprint("motor y out","\n");
       stepper_y.moveTo(2000);
-      //while (digitalRead(Limit_S_x_MIN) == 0)
+      //while (digitalRead(Limit_S_x_Homing) == 0)
       while (stepper_y.distanceToGo() != 0)
         stepper_y.run();
         delay(1000);
@@ -1091,8 +1038,6 @@ void loop()
             err_flag = 0;
             Home_Menu(&host, RUNMENU);
             WaitKeyRelease();
-            Zeroing();
-            primeDispenserHead();
             startProcess();
             Dprint("Cycle end","\n");
             Homing();
@@ -1176,8 +1121,6 @@ void loop()
       TotalTubeLeft=(CurProf.Tube_No_x)*(CurProf.Tube_No_y);
       Home_Menu(&host, RUNMENU);
       WaitKeyRelease();
-      Zeroing();
-      primeDispenserHead();
       startProcess();
       Dprint("Cycle end","\n");
       Homing();   

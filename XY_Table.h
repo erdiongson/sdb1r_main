@@ -48,7 +48,6 @@ void activateDispenser(void);
 void GPIO_Setup(void);
 void init_Motors(void);
 bool Homing(void);
-bool Zeroing(void);
 
 void runStepper(AccelStepper &stepper, int distance, uint8_t limitPin, const char *limitMsg, ActionState actionState);
 
@@ -66,7 +65,6 @@ void xy_init(void);
 void xy_main(void);
 
 bool performVibrateAndDispenseOperations();
-bool primeDispenserHead();
 void startProcess();
 void resumeProcess();
 
