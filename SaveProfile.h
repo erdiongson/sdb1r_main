@@ -24,6 +24,9 @@ Date created - 2022.12.14 - XentiQ version
 #define MAXORGX 999//v204 99.9
 #define MAXORGY 999//v204 99.9
 
+#define MINZDIP 1
+#define MAXZDIP 999
+
 #define MINNUMX 1
 #define MINNUMY 1
 //Change MAXNUMX and MAXNUMY depending on the use;
@@ -61,6 +64,7 @@ typedef struct
     int16_t passwordEnabled = 0;
     int16_t vibrationDuration = 2;
     int16_t sizeFlag = 1; //small = 0; large = 1;
+    float ZDip = 0.0;
     // bool **buttonStates; // Declare as a double pointer
     bool buttonStates[MAX_BUTTONS_X][MAX_BUTTONS_Y]; // Declare as a static 2D array
 } Profile;
@@ -78,6 +82,7 @@ typedef struct
     float trayOriginY = 0.0;
     int16_t Cycles = 1;
     int16_t CurrentCycle = 0; // New field for storing the current cycle
+    float ZDip = 0.0;
     int16_t vibrationEnabled = 0;
     bool dispenseEnabled = false;
     int16_t passwordEnabled = 0;
