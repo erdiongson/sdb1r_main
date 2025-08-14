@@ -160,7 +160,7 @@ bool Homing()
 	Dprint("Debugging Start...");
 #endif
  
-  stepper_x.moveTo(-40000);
+  stepper_x.moveTo(-320000);
 #if !DEBUG
   while (digitalRead(Limit_S_x_MAX) != 0)
     stepper_x.run();
@@ -173,7 +173,7 @@ bool Homing()
   stepper_x.setMaxSpeed(motor_y_speed);
   stepper_x.setAcceleration(motor_y_Acceleration);
 
-  stepper_y.moveTo(-40000);
+  stepper_y.moveTo(-320000);
 #if !DEBUG
   while (digitalRead(Limit_S_y_MIN) != 0)
     stepper_y.run();
@@ -201,7 +201,7 @@ bool Zeroing()
 	Dprint("Debugging Start...");
 #endif
  
-  stepper_x.moveTo(40000);
+  stepper_x.moveTo(320000);
 #if !DEBUG
   while (digitalRead(Limit_S_x_MIN) != 0)
     stepper_x.run();
@@ -214,7 +214,7 @@ bool Zeroing()
   stepper_x.setMaxSpeed(motor_y_speed);
   stepper_x.setAcceleration(motor_y_Acceleration);
 
-  stepper_y.moveTo(-40000);
+  stepper_y.moveTo(-320000);
 #if !DEBUG
   while (digitalRead(Limit_S_y_MIN) != 0)
     stepper_y.run();
