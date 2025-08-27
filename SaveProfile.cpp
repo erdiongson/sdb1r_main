@@ -83,6 +83,7 @@ void PreLoadEEPROM(void)
       CurProf.passwordEnabled=TRUE;
       CurProf.vibrationDuration=2;
       CurProf.sizeFlag = 1;
+      CurProf.ZDip = 0.0;
       for(x=0;x<MAX_BUTTONS_X;x++)
         for(y=0;y<MAX_BUTTONS_Y;y++) CurProf.buttonStates[x][y]=TRUE;
     //try054 E }
@@ -108,6 +109,8 @@ void CheckProfile(void)
 	if(CurProf.Tube_No_x<0) CurProf.Tube_No_x=0;
 	if(CurProf.Tube_No_y>MAX_TUBES_Y) CurProf.Tube_No_y=MAX_TUBES_Y;
 	if(CurProf.Tube_No_y<0) CurProf.Tube_No_y=0;
+	if(CurProf.ZDip<0) CurProf.ZDip=0;
+	if(CurProf.ZDip>MAX_ZDIP) CurProf.ZDip=MAX_ZDIP;
 }
 uint8_t LoadProfile(void)
 {
@@ -124,6 +127,8 @@ uint8_t LoadProfile(void)
 	if(CurProf.trayOriginY>MAXORGY) CurProf.trayOriginY=MAXORGY;
 	if(CurProf.Tube_No_x>MAX_TUBES_X) CurProf.Tube_No_x=MAX_TUBES_X;
 	if(CurProf.Tube_No_y>MAX_TUBES_Y) CurProf.Tube_No_y=MAX_TUBES_Y;
+	if(CurProf.ZDip<0) CurProf.ZDip=0;
+	if(CurProf.ZDip>MAX_ZDIP) CurProf.ZDip=MAX_ZDIP;
 	return ret;
 }
 
@@ -213,6 +218,8 @@ void WriteProfileEEPROM(int address)//try054 , Profile &profile)
 	  address += sizeof(CurProf.dispenseEnabled);
     EEPROM.put(address, CurProf.sizeFlag);
     address += sizeof(CurProf.sizeFlag);
+    EEPROM.put(address, CurProf.ZDip);
+    address += sizeof(CurProf.ZDip);
 	//Dsprintln("size");
 	//Dprintln(sizeof(profile));
 
@@ -275,6 +282,8 @@ void ReadProfileEEPROM(int address)
     address += sizeof(CurProf.dispenseEnabled);
     EEPROM.get(address, CurProf.sizeFlag);
     address += sizeof(CurProf.sizeFlag);
+    EEPROM.get(address, CurProf.ZDip);
+    address += sizeof(CurProf.ZDip);
 
 	Dprint("add=",(float)address );
 
@@ -338,6 +347,8 @@ void ReadProfileMinEEPROM(int address)
     address += sizeof(SelectProf.dispenseEnabled);
     EEPROM.get(address, SelectProf.sizeFlag);
     address += sizeof(SelectProf.sizeFlag);
+    EEPROM.get(address, SelectProf.ZDip);
+    address += sizeof(SelectProf.ZDip);
 
 	Dprint("add=",(float)address );
 
