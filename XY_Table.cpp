@@ -17,6 +17,7 @@
 #include "SaveProfile.h"
 #include "XY_Table.h"
 #include "UART.h"
+#include "PLC.h"
 
 Gpu_Hal_Context_t host, *phost;
 Profile CurProf; //current profile
@@ -63,12 +64,7 @@ volatile char OpMode = MANUAL_MODE;
 //-----------------------------------------------johari-23092024 PLC-----------------------------------------------------------------------------------------------------------------------//
 #define PLC_SERIAL Serial3
 
-// Define the input and output byte sequences
- const byte expectedMessageStart[] = {0xEF, 0x30, 0x00, 0x30, 0xFE};
- const byte expectedMessageStop[] = {0xEF, 0x31, 0x00, 0x31, 0xFE};
- const byte expectedMessagePause[] = {0xEF, 0x32, 0x00, 0x32, 0xFE};
- const byte responseMessage[] = {0xEF, 0x17, 0x00, 0x17, 0xFE};
- const int messageLength = 5;
+// Message definitions now in PLCMessages.h/cpp
 //---------------------------------------------------------------------------------------------------------------------johari-23092024 PLC------------------------------------------------// 
 
 //20240906: erdiongson - for UART 3 ISR Protocol
@@ -1117,8 +1113,8 @@ void loop()
             startProcess();
             Dprint("Cycle end","\n");
             Homing();
-            //CurX=0;
-            //CurY=0;
+            CurX=0;
+            CurY=0;
             Home_Menu(&host, MAINMENU);
             keypressed=0;
             break;
@@ -1176,22 +1172,23 @@ void loop()
    {
     Serial.println("------------PLC Serial Message Available - START------------");    
     byte receivedMessage[messageLength];
-    bool validMessage = true;
     bool complete = false; 
-       //uint8_t ret= 0; //johari---------17092024-------------------------------------
+    //uint8_t ret= 0; //johari---------17092024-------------------------------------
+    
     // Read the incoming bytes
     for (int i = 0; i < messageLength; i++)
      {
       receivedMessage[i] = PLC_SERIAL.read();
-      if (receivedMessage[i] != expectedMessageStart[i])
-      {
-        validMessage = false; // If any byte doesn't match, it's not the expected message
-      }
      }
+    
+    // Parse the received message using new PLC logic
+    PLCMessage parsedMsg = parseReceivedMessage(receivedMessage, messageLength);
+    
+    Serial.print("Received message type: ");
+    Serial.println(getMessageTypeName(parsedMsg.type));
  
-    if (validMessage)
+    if (parsedMsg.type == MSG_START)
      {
-      
       CurX=0;
       CurY=0;
       TotalTubeLeft=(CurProf.Tube_No_x)*(CurProf.Tube_No_y);
@@ -1206,13 +1203,14 @@ void loop()
       keypressed=0;
       Serial.println("------------------------------------------------------------");
       Serial.print("DATA START START START"); 
-//      if (complete=true)
-//       {
-//        PLC_SERIAL.write(responseMessage, messageLength);//-------23092024--PLC----------------------------------------------johari-------------------------------------------------
-//        //complete = false; 
-//        Serial.print("DATA KIRIM KIRIM KIRIM"); 
-//        Serial.print(complete);
-//       }
+
+      //  if (complete=true)
+      //   {
+      //    PLC_SERIAL.write(responseMessage, messageLength);//-------23092024--PLC----------------------------------------------johari-------------------------------------------------
+      //    //complete = false; 
+      //    Serial.print("DATA KIRIM KIRIM KIRIM"); 
+      //    Serial.print(complete);
+      //   }
      }   
    }
 //--------------------------------------johari-23092024---------------------------------------------------------------------------------------------------------------------------------
