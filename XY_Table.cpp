@@ -1211,7 +1211,16 @@ void loop()
       //    Serial.print("DATA KIRIM KIRIM KIRIM"); 
       //    Serial.print(complete);
       //   }
-     }   
-   }
+     }
+    else if (parsedMsg.type == MSG_LOWER_Z)
+    {
+      headLowerZ(parsedMsg.dataValue);
+    }
+    else if (parsedMsg.type == MSG_RAISE_Z)
+    {
+      headRaiseZ(parsedMsg.dataValue);
+    }
+   } 
+   
 //--------------------------------------johari-23092024---------------------------------------------------------------------------------------------------------------------------------
 }
