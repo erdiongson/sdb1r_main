@@ -152,19 +152,23 @@ void init_Motors()
 }
 
 void headLowerZ(int distance_mm) {
-  stepper_z.setCurrentPosition(0);
-  stepper_z.moveTo(-STEPS_PER_UNIT_Z * distance_mm);
-  while (stepper_z.isRunning() && digitalRead(Limit_S_z_MIN) == HIGH) {
-    stepper_z.run();
-  }
+  #if !DEBUG
+    stepper_z.setCurrentPosition(0);
+    stepper_z.moveTo(-STEPS_PER_UNIT_Z * distance_mm);
+    while (stepper_z.isRunning() && digitalRead(Limit_S_z_MIN) == HIGH) {
+      stepper_z.run();
+    }
+  #endif
 }
 
 void headRaiseZ(int distance_mm) {
-  stepper_z.setCurrentPosition(0);
-  stepper_z.moveTo(STEPS_PER_UNIT_Z * distance_mm);
-  while (stepper_z.isRunning() && digitalRead(Limit_S_z_MAX) == HIGH) {
-    stepper_z.run();
-  }
+  #if !DEBUG
+    stepper_z.setCurrentPosition(0);
+    stepper_z.moveTo(STEPS_PER_UNIT_Z * distance_mm);
+    while (stepper_z.isRunning() && digitalRead(Limit_S_z_MAX) == HIGH) {
+      stepper_z.run();
+    }
+  #endif
 }
 
 bool Homing()
