@@ -29,6 +29,7 @@ uint8_t CurProfNum;//current profile id
 
 AccelStepper stepper_x(1, Motor_x_CLK, Motor_x_CW);
 AccelStepper stepper_y(1, Motor_y_CLK, Motor_y_CW);
+AccelStepper stepper_z(1, Motor_z_CLK, Motor_z_CW);
 
 //Profile profile; // Create a profile object
 ActionState action;
@@ -133,8 +134,10 @@ void GPIO_Setup()
   pinMode(Vibrate, OUTPUT);
   pinMode(Limit_S_x_MIN, INPUT_PULLUP);
   pinMode(Limit_S_y_MIN, INPUT_PULLUP);
+  pinMode(Limit_S_z_MIN, INPUT_PULLUP);
   pinMode(Limit_S_x_MAX, INPUT_PULLUP);
   pinMode(Limit_S_y_MAX, INPUT_PULLUP);
+  pinMode(Limit_S_z_MAX, INPUT_PULLUP);
 }
 
 void init_Motors()
@@ -143,11 +146,29 @@ void init_Motors()
   stepper_x.setMaxSpeed(motor_x_speed);
   stepper_x.setAcceleration(motor_x_Acceleration);
 
-   stepper_y.setSpeed(motor_y_speed);
+  stepper_y.setSpeed(motor_y_speed);
   stepper_y.setMaxSpeed(motor_y_speed);
   stepper_y.setAcceleration(motor_y_Acceleration);
-  //stepper_x.setSpeed(10000);
-  //stepper_y.setSpeed(10000);
+
+  stepper_z.setSpeed(motor_z_speed);
+  stepper_z.setMaxSpeed(motor_z_speed);
+  stepper_z.setAcceleration(motor_z_Acceleration);
+}
+
+void headLowerZ(int distance_mm) {
+  stepper_z.setCurrentPosition(0);
+  stepper_z.moveTo(-STEPS_PER_UNIT_Z * distance_mm);
+  while (stepper_z.isRunning() && digitalRead(Limit_S_z_MIN) == HIGH) {
+    stepper_z.run();
+  }
+}
+
+void headRaiseZ(int distance_mm) {
+  stepper_z.setCurrentPosition(0);
+  stepper_z.moveTo(STEPS_PER_UNIT_Z * distance_mm);
+  while (stepper_z.isRunning() && digitalRead(Limit_S_z_MAX) == HIGH) {
+    stepper_z.run();
+  }
 }
 
 bool Homing()

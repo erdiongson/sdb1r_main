@@ -70,5 +70,7 @@ bool primeDispenserHead();
 void startProcess();
 void resumeProcess();
 
+void headLowerZ(int distance_mm);
+void headRaiseZ(int distance_mm);
 
 #endif /*_XY_TABLE_H_*/
