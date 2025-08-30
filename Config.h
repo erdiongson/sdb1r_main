@@ -39,3 +39,4 @@
 #define motor_z_Acceleration 100000//4000 // 2400 1600 // 3200
 
 #define PRIME_DISPENSE_NUM 2
+#define EXPERIMENTAL_Z_AXIS_MOVEMENT_API true

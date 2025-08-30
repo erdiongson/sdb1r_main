@@ -1223,11 +1223,15 @@ void loop()
      }
     else if (parsedMsg.type == MSG_LOWER_Z)
     {
-      headLowerZ(parsedMsg.dataValue);
+      #if EXPERIMENTAL_Z_AXIS_MOVEMENT_API
+        headLowerZ(parsedMsg.dataValue);
+      #endif
     }
     else if (parsedMsg.type == MSG_RAISE_Z)
     {
-      headRaiseZ(parsedMsg.dataValue);
+      #if EXPERIMENTAL_Z_AXIS_MOVEMENT_API
+        headRaiseZ(parsedMsg.dataValue);
+      #endif
     }
    } 
    
