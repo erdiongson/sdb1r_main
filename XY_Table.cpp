@@ -1014,10 +1014,10 @@ void setup()
 	
 #if !DEBUG
 
-    if( digitalRead(Limit_S_x_MIN) == 0)
+    if( digitalRead(Limit_S_x_MAX) == 0)
     {
       Dprint("motor x out","\n");
-      stepper_x.moveTo(-2000);
+      stepper_x.moveTo(2000);
       //while (digitalRead(Limit_S_x_MIN) == 0)
       while (stepper_x.distanceToGo() != 0)
         stepper_x.run();
