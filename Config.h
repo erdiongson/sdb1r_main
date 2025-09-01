@@ -38,6 +38,7 @@
 #define motor_y_Acceleration 100000//4000 // 2400 1600 // 3200
 #define motor_z_Acceleration 100000//4000 // 2400 1600 // 3200
 
+// Defines the number of "dispenses" performed during priming
 #define PRIME_DISPENSE_NUM 2
 
 // Defines if the dispenser should home the Z-axis during homing
