@@ -155,7 +155,7 @@ void headLowerZ(int distance_mm) {
   #if !DEBUG
     stepper_z.setCurrentPosition(0);
     stepper_z.moveTo(-STEPS_PER_UNIT_Z * distance_mm);
-    while (stepper_z.isRunning() && digitalRead(Limit_S_z_MIN) == HIGH) {
+    while (stepper_z.isRunning() && digitalRead(Limit_S_z_MAX) == HIGH) {
       stepper_z.run();
     }
   #endif
@@ -165,7 +165,7 @@ void headRaiseZ(int distance_mm) {
   #if !DEBUG
     stepper_z.setCurrentPosition(0);
     stepper_z.moveTo(STEPS_PER_UNIT_Z * distance_mm);
-    while (stepper_z.isRunning() && digitalRead(Limit_S_z_MAX) == HIGH) {
+    while (stepper_z.isRunning() && digitalRead(Limit_S_z_MIN) == HIGH) {
       stepper_z.run();
     }
   #endif
@@ -212,7 +212,7 @@ bool Homing()
   #if EXPERIMENTAL_Z_HOMING
     headRaiseZ(200); // Move Z-axis up by 200mm, or until the limit switch is hit
     delay(20);
-    if (digitalRead(Limit_S_z_MIN) == 1 && digitalRead(Limit_S_z_MAX) == 0)
+    if (digitalRead(Limit_S_z_MAX) == 1 && digitalRead(Limit_S_z_MIN) == 0)
       successz = TRUE;
   #else
     successz = TRUE;
@@ -1044,7 +1044,7 @@ void setup()
     }
 
     #if EXPERIMENTAL_Z_HOMING
-      if(digitalRead(Limit_S_z_MAX) == 0)
+      if(digitalRead(Limit_S_z_MIN) == 0)
       {
         Dprint("motor z out","\n");
         headLowerZ(100);
