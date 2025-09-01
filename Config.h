@@ -40,3 +40,5 @@
 
 #define PRIME_DISPENSE_NUM 2
 #define EXPERIMENTAL_Z_AXIS_MOVEMENT_API true
+// Defines if the dispenser should home the Z-axis during homing
+#define EXPERIMENTAL_Z_HOMING true 

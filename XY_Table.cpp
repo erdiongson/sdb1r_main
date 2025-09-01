@@ -175,12 +175,13 @@ bool Homing()
 {
 	bool successx=FALSE;
 	bool successy=FALSE;
+	bool successz=FALSE;
 #if !DEBUG
   Serial.println("Homing Start...");
 #else
 	Dprint("Debugging Start...");
 #endif
- 
+
   stepper_x.moveTo(-320000);
 #if !DEBUG
   while (digitalRead(Limit_S_x_MAX) != 0)
@@ -208,7 +209,16 @@ bool Homing()
   stepper_y.setMaxSpeed(motor_y_speed);
   stepper_y.setAcceleration(motor_y_Acceleration);
 
-	return successx && successy;
+  #if EXPERIMENTAL_Z_HOMING
+    headRaiseZ(200); // Move Z-axis up by 200mm, or until the limit switch is hit
+    delay(20);
+    if (digitalRead(Limit_S_z_MIN) == 1 && digitalRead(Limit_S_z_MAX) == 0)
+      successz = TRUE;
+  #else
+    successz = TRUE;
+  #endif
+
+  return successx && successy && successz;
   //bool complete = true; //----johari---20092024---------------------------------------------------------------------------------------------------------------
 }
 
@@ -1032,6 +1042,14 @@ void setup()
         stepper_y.run();
         delay(1000);
     }
+
+    #if EXPERIMENTAL_Z_HOMING
+      if(digitalRead(Limit_S_z_MAX) == 0)
+      {
+        Dprint("motor z out","\n");
+        headLowerZ(100);
+      }
+    #endif
      
 #endif
 
