@@ -39,6 +39,9 @@
 #define motor_z_Acceleration 100000//4000 // 2400 1600 // 3200
 
 #define PRIME_DISPENSE_NUM 2
-#define EXPERIMENTAL_Z_AXIS_MOVEMENT_API true
+
 // Defines if the dispenser should home the Z-axis during homing
 #define EXPERIMENTAL_Z_HOMING true 
+
+// Defines if the dispenser should respond to Z-movement requests via PLC commands
+#define EXPERIMENTAL_Z_AXIS_MOVEMENT_API true 
