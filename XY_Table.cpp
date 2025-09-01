@@ -682,11 +682,11 @@ bool performVibrateAndDispenseOperations()
 	if(pausestop==PAUSE) if(!PauseOperation()) pausestop=STOP;
 	if(pausestop!=STOP)
 	{	
-    if (CurProf.ZDip > 0) headLowerZ(CurProf.ZDip);
+    if (EXPERIMENTAL_Z_DIP && CurProf.ZDip > 0) headLowerZ(CurProf.ZDip);
 
 		pausestop=dispenseAndCheckPause();
 
-    if (CurProf.ZDip > 0) headRaiseZ(CurProf.ZDip);
+    if (EXPERIMENTAL_Z_DIP && CurProf.ZDip > 0) headRaiseZ(CurProf.ZDip);
 
 		if(pausestop==STOP) Home_Menu(&host,  MAINMENU);
  		if(pausestop==PAUSE) if(!PauseOperation()) pausestop=STOP;

@@ -43,5 +43,8 @@
 // Defines if the dispenser should home the Z-axis during homing
 #define EXPERIMENTAL_Z_HOMING true 
 
+// Defines if the dispenser should perform a Z-Dip during a dispense action
+#define EXPERIMENTAL_Z_DIP true 
+
 // Defines if the dispenser should respond to Z-movement requests via PLC commands
 #define EXPERIMENTAL_Z_AXIS_MOVEMENT_API true 
