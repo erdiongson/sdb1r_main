@@ -392,7 +392,7 @@ uint8_t vibrateAndCheckPause()
 bool primeDispenserHead() {
   bool cont;
   for (int i = 0; i < PRIME_DISPENSE_NUM; i++) {
-    cont = performVibrateAndDispenseOperations();
+    cont = performVibrateAndDispenseOperations(true);
     if (cont == false) {
       return false;
     }
@@ -629,7 +629,7 @@ void startProcess()
 }
 
 
-bool performVibrateAndDispenseOperations()
+bool performVibrateAndDispenseOperations(bool skipZDip) // default false
 {
 	bool_t ret=true; // return true if continue. return false if hardstop
 	uint8_t pausestop=0;
@@ -682,11 +682,11 @@ bool performVibrateAndDispenseOperations()
 	if(pausestop==PAUSE) if(!PauseOperation()) pausestop=STOP;
 	if(pausestop!=STOP)
 	{	
-    if (EXPERIMENTAL_Z_DIP && CurProf.ZDip > 0) headLowerZ(CurProf.ZDip);
+    if (EXPERIMENTAL_Z_DIP && !skipZDip && CurProf.ZDip > 0) headLowerZ(CurProf.ZDip);
 
 		pausestop=dispenseAndCheckPause();
 
-    if (EXPERIMENTAL_Z_DIP && CurProf.ZDip > 0) headRaiseZ(CurProf.ZDip);
+    if (EXPERIMENTAL_Z_DIP && !skipZDip && CurProf.ZDip > 0) headRaiseZ(CurProf.ZDip);
 
 		if(pausestop==STOP) Home_Menu(&host,  MAINMENU);
  		if(pausestop==PAUSE) if(!PauseOperation()) pausestop=STOP;

@@ -66,7 +66,7 @@ void Run_profile();
 void xy_init(void);
 void xy_main(void);
 
-bool performVibrateAndDispenseOperations();
+bool performVibrateAndDispenseOperations(bool skipZDip = false);
 bool primeDispenserHead();
 void startProcess();
 void resumeProcess();
