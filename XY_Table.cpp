@@ -17,6 +17,7 @@
 #include "SaveProfile.h"
 #include "XY_Table.h"
 #include "UART.h"
+#include "PLC.h"
 
 Gpu_Hal_Context_t host, *phost;
 Profile CurProf; //current profile
@@ -29,6 +30,7 @@ uint8_t CurProfNum;//current profile id
 
 AccelStepper stepper_x(1, Motor_x_CLK, Motor_x_CW);
 AccelStepper stepper_y(1, Motor_y_CLK, Motor_y_CW);
+AccelStepper stepper_z(1, Motor_z_CLK, Motor_z_CW);
 
 //Profile profile; // Create a profile object
 ActionState action;
@@ -62,12 +64,7 @@ volatile char OpMode = MANUAL_MODE;
 //-----------------------------------------------johari-23092024 PLC-----------------------------------------------------------------------------------------------------------------------//
 #define PLC_SERIAL Serial3
 
-// Define the input and output byte sequences
- const byte expectedMessageStart[] = {0xEF, 0x30, 0x00, 0x30, 0xFE};
- const byte expectedMessageStop[] = {0xEF, 0x31, 0x00, 0x31, 0xFE};
- const byte expectedMessagePause[] = {0xEF, 0x32, 0x00, 0x32, 0xFE};
- const byte responseMessage[] = {0xEF, 0x17, 0x00, 0x17, 0xFE};
- const int messageLength = 5;
+// Message definitions now in PLCMessages.h/cpp
 //---------------------------------------------------------------------------------------------------------------------johari-23092024 PLC------------------------------------------------// 
 
 //20240906: erdiongson - for UART 3 ISR Protocol
@@ -133,8 +130,10 @@ void GPIO_Setup()
   pinMode(Vibrate, OUTPUT);
   pinMode(Limit_S_x_MIN, INPUT_PULLUP);
   pinMode(Limit_S_y_MIN, INPUT_PULLUP);
+  pinMode(Limit_S_z_MIN, INPUT_PULLUP);
   pinMode(Limit_S_x_MAX, INPUT_PULLUP);
   pinMode(Limit_S_y_MAX, INPUT_PULLUP);
+  pinMode(Limit_S_z_MAX, INPUT_PULLUP);
 }
 
 void init_Motors()
@@ -143,23 +142,46 @@ void init_Motors()
   stepper_x.setMaxSpeed(motor_x_speed);
   stepper_x.setAcceleration(motor_x_Acceleration);
 
-   stepper_y.setSpeed(motor_y_speed);
+  stepper_y.setSpeed(motor_y_speed);
   stepper_y.setMaxSpeed(motor_y_speed);
   stepper_y.setAcceleration(motor_y_Acceleration);
-  //stepper_x.setSpeed(10000);
-  //stepper_y.setSpeed(10000);
+
+  stepper_z.setSpeed(motor_z_speed);
+  stepper_z.setMaxSpeed(motor_z_speed);
+  stepper_z.setAcceleration(motor_z_Acceleration);
+}
+
+void headLowerZ(int distance_mm) {
+  #if !DEBUG
+    stepper_z.setCurrentPosition(0);
+    stepper_z.moveTo(-STEPS_PER_UNIT_Z * distance_mm);
+    while (stepper_z.isRunning() && digitalRead(Limit_S_z_MAX) == HIGH) {
+      stepper_z.run();
+    }
+  #endif
+}
+
+void headRaiseZ(int distance_mm) {
+  #if !DEBUG
+    stepper_z.setCurrentPosition(0);
+    stepper_z.moveTo(STEPS_PER_UNIT_Z * distance_mm);
+    while (stepper_z.isRunning() && digitalRead(Limit_S_z_MIN) == HIGH) {
+      stepper_z.run();
+    }
+  #endif
 }
 
 bool Homing()
 {
 	bool successx=FALSE;
 	bool successy=FALSE;
+	bool successz=FALSE;
 #if !DEBUG
   Serial.println("Homing Start...");
 #else
 	Dprint("Debugging Start...");
 #endif
- 
+
   stepper_x.moveTo(-320000);
 #if !DEBUG
   while (digitalRead(Limit_S_x_MAX) != 0)
@@ -187,7 +209,16 @@ bool Homing()
   stepper_y.setMaxSpeed(motor_y_speed);
   stepper_y.setAcceleration(motor_y_Acceleration);
 
-	return successx && successy;
+  #if EXPERIMENTAL_Z_HOMING
+    headRaiseZ(200); // Move Z-axis up by 200mm, or until the limit switch is hit
+    delay(20);
+    if (digitalRead(Limit_S_z_MAX) == 1 && digitalRead(Limit_S_z_MIN) == 0)
+      successz = TRUE;
+  #else
+    successz = TRUE;
+  #endif
+
+  return successx && successy && successz;
   //bool complete = true; //----johari---20092024---------------------------------------------------------------------------------------------------------------
 }
 
@@ -361,7 +392,7 @@ uint8_t vibrateAndCheckPause()
 bool primeDispenserHead() {
   bool cont;
   for (int i = 0; i < PRIME_DISPENSE_NUM; i++) {
-    cont = performVibrateAndDispenseOperations();
+    cont = performVibrateAndDispenseOperations(true);
     if (cont == false) {
       return false;
     }
@@ -598,7 +629,7 @@ void startProcess()
 }
 
 
-bool performVibrateAndDispenseOperations()
+bool performVibrateAndDispenseOperations(bool skipZDip) // default false
 {
 	bool_t ret=true; // return true if continue. return false if hardstop
 	uint8_t pausestop=0;
@@ -651,7 +682,12 @@ bool performVibrateAndDispenseOperations()
 	if(pausestop==PAUSE) if(!PauseOperation()) pausestop=STOP;
 	if(pausestop!=STOP)
 	{	
+    if (EXPERIMENTAL_Z_DIP && !skipZDip && CurProf.ZDip > 0) headLowerZ(CurProf.ZDip);
+
 		pausestop=dispenseAndCheckPause();
+
+    if (EXPERIMENTAL_Z_DIP && !skipZDip && CurProf.ZDip > 0) headRaiseZ(CurProf.ZDip);
+
 		if(pausestop==STOP) Home_Menu(&host,  MAINMENU);
  		if(pausestop==PAUSE) if(!PauseOperation()) pausestop=STOP;
 	}
@@ -988,10 +1024,10 @@ void setup()
 	
 #if !DEBUG
 
-    if( digitalRead(Limit_S_x_MIN) == 0)
+    if( digitalRead(Limit_S_x_MAX) == 0)
     {
       Dprint("motor x out","\n");
-      stepper_x.moveTo(-2000);
+      stepper_x.moveTo(2000);
       //while (digitalRead(Limit_S_x_MIN) == 0)
       while (stepper_x.distanceToGo() != 0)
         stepper_x.run();
@@ -1006,6 +1042,14 @@ void setup()
         stepper_y.run();
         delay(1000);
     }
+
+    #if EXPERIMENTAL_Z_HOMING
+      if(digitalRead(Limit_S_z_MIN) == 0)
+      {
+        Dprint("motor z out","\n");
+        headLowerZ(100);
+      }
+    #endif
      
 #endif
 
@@ -1096,8 +1140,8 @@ void loop()
             startProcess();
             Dprint("Cycle end","\n");
             Homing();
-            //CurX=0;
-            //CurY=0;
+            CurX=0;
+            CurY=0;
             Home_Menu(&host, MAINMENU);
             keypressed=0;
             break;
@@ -1155,22 +1199,23 @@ void loop()
    {
     Serial.println("------------PLC Serial Message Available - START------------");    
     byte receivedMessage[messageLength];
-    bool validMessage = true;
     bool complete = false; 
-       //uint8_t ret= 0; //johari---------17092024-------------------------------------
+    //uint8_t ret= 0; //johari---------17092024-------------------------------------
+    
     // Read the incoming bytes
     for (int i = 0; i < messageLength; i++)
      {
       receivedMessage[i] = PLC_SERIAL.read();
-      if (receivedMessage[i] != expectedMessageStart[i])
-      {
-        validMessage = false; // If any byte doesn't match, it's not the expected message
-      }
      }
+    
+    // Parse the received message using new PLC logic
+    PLCMessage parsedMsg = parseReceivedMessage(receivedMessage, messageLength);
+    
+    Serial.print("Received message type: ");
+    Serial.println(getMessageTypeName(parsedMsg.type));
  
-    if (validMessage)
+    if (parsedMsg.type == MSG_START)
      {
-      
       CurX=0;
       CurY=0;
       TotalTubeLeft=(CurProf.Tube_No_x)*(CurProf.Tube_No_y);
@@ -1185,14 +1230,28 @@ void loop()
       keypressed=0;
       Serial.println("------------------------------------------------------------");
       Serial.print("DATA START START START"); 
-//      if (complete=true)
-//       {
-//        PLC_SERIAL.write(responseMessage, messageLength);//-------23092024--PLC----------------------------------------------johari-------------------------------------------------
-//        //complete = false; 
-//        Serial.print("DATA KIRIM KIRIM KIRIM"); 
-//        Serial.print(complete);
-//       }
-     }   
-   }
+
+      //  if (complete=true)
+      //   {
+      //    PLC_SERIAL.write(responseMessage, messageLength);//-------23092024--PLC----------------------------------------------johari-------------------------------------------------
+      //    //complete = false; 
+      //    Serial.print("DATA KIRIM KIRIM KIRIM"); 
+      //    Serial.print(complete);
+      //   }
+     }
+    else if (parsedMsg.type == MSG_LOWER_Z)
+    {
+      #if EXPERIMENTAL_Z_AXIS_MOVEMENT_API
+        headLowerZ(parsedMsg.dataValue);
+      #endif
+    }
+    else if (parsedMsg.type == MSG_RAISE_Z)
+    {
+      #if EXPERIMENTAL_Z_AXIS_MOVEMENT_API
+        headRaiseZ(parsedMsg.dataValue);
+      #endif
+    }
+   } 
+   
 //--------------------------------------johari-23092024---------------------------------------------------------------------------------------------------------------------------------
 }

@@ -1024,6 +1024,7 @@ void DisplayConfig(Gpu_Hal_Context_t *phost)
     Gpu_CoCmd_Text(phost, 179, 78, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, "Column");
     Gpu_CoCmd_Text(phost, 121, 78, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, "Row");
     Gpu_CoCmd_Text(phost, 255, 78, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, "Cycles:");
+    Gpu_CoCmd_Text(phost, 255, 115, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, "Z Dip:");
     Gpu_CoCmd_Text(phost, 51, 96, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, "No. of Tube:");
     Gpu_CoCmd_Text(phost, 51, 123, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, "Pitch(mm):");
     Gpu_CoCmd_Text(phost, 46, 179, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, "Vibration:");
@@ -1091,6 +1092,13 @@ void DisplayConfig(Gpu_Hal_Context_t *phost)
 	App_WrCoCmd_Buffer(phost, VERTEX2F(3744, 1632));
 	App_WrCoCmd_Buffer(phost, VERTEX2F(4480, 1392));
 	App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+
+	// Z Dip
+	App_WrCoCmd_Buffer(phost, TAG_MASK(1));
+	App_WrCoCmd_Buffer(phost, TAG(21));
+	App_WrCoCmd_Buffer(phost, VERTEX2F(3744, 2248));
+	App_WrCoCmd_Buffer(phost, VERTEX2F(4480, 2008));
+	App_WrCoCmd_Buffer(phost, TAG_MASK(0));  
 
 	App_WrCoCmd_Buffer(phost, END());
 
@@ -1203,6 +1211,13 @@ void DisplayConfig(Gpu_Hal_Context_t *phost)
   //Text - Cycles
 	sprintf(buf,"%d",CurProf.Cycles);
     Gpu_CoCmd_Text(phost, 255, 95, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
+
+  //Text - Z Dip
+  
+	  sprintf(buf,"%f",CurProf.ZDip);
+    Dprint("ZDip =",CurProf.ZDip);
+    dtostrf(CurProf.ZDip,4,1,buf);
+    Gpu_CoCmd_Text(phost, 255, 133, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
     App_WrCoCmd_Buffer(phost, TAG_MASK(1));
@@ -1488,6 +1503,11 @@ void Config_Settings(Gpu_Hal_Context_t *phost)
               CurProf.Cycles=Keypad(&host, CurProf.Cycles, MINCYCLE,MAXCYCLE,FALSE);
               DisplayConfig(phost);
               break;
+		        case 21: //Z Dip
+              keypressed=0;
+              CurProf.ZDip=Keypad(&host, CurProf.ZDip, MINZDIP,MAXZDIP,FALSE);
+              DisplayConfig(phost);
+              break;              
 		        
 		        case 28: //Vibration Level
               keypressed=0;

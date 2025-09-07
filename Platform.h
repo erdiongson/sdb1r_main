@@ -213,6 +213,8 @@ typedef PROGMEM const int32_t prog_int32_t;
 //20240917: erdiongson - Use the STEPS_PER_UNIT_Y 160L if we are using the new motor. use this moving forward
 //#define STEPS_PER_UNIT_Y 160L // (Y step motor specs: lead screw is 20mm, 1600 pulse/rev(8 microsteps driver), 20mm/3200 = 0.00625mm, 1mm/0.00625 = 160 steps/unit)
 
+#define STEPS_PER_UNIT_Z 30L
+
 extern Gpu_Hal_Context_t host, *phost;
 
 extern int tag;
