@@ -4,7 +4,7 @@
  * Copyright (c) Skalski Embedded Technologies <contact@lukasz-skalski.com>
  */
 #define FWVER "3.2"
-#define DEBUG 0
+#define DEBUG 1
 
 
 
@@ -144,37 +144,42 @@ typedef PROGMEM const int32_t prog_int32_t;
 #else
 #define MAX_LINES 4
 #endif
-#define SPECIAL_FUN 250
-#define BACK_SPACE 251 // Back space
-#define CAPS_LOCK 252  // Caps Lock
+#define SPECIAL_FUN          250
+#define BACK_SPACE           251 // Back space
+#define CAPS_LOCK            252  // Caps Lock
 
-#define NUMBER_LOCK 253 // Number Lock
-#define SAVE_KEY 249    // Number sAVE FROM kEYPAD
-#define CLEAR_KEY 254        // Exit
-#define BACK 254
-#define KBBACK 248    // Exit Keyboard
-#define NUM_ENTER 247   // Enter Numeric Number
-#define STOP 5
-#define START 3
-#define PAUSE 4
-#define ERROR 6
-#define SETTING 2
-#define LOGO 0
-#define MAINMENU 0
-#define RUNMENU 1
-#define PAUSEMENU 2
-#define TXRXERROR 3
-#define HOMEERROR 4
+#define NUMBER_LOCK          253 // Number Lock
+#define SAVE_KEY             249    // Number sAVE FROM kEYPAD
+#define CLEAR_KEY            254        // Exit
+#define BACK                 254
+#define KBBACK               248    // Exit Keyboard
+#define NUM_ENTER            247   // Enter Numeric Number
+#define STOP                 5
+#define START                3
+#define PAUSE                4
+#define ERROR                6
+#define SETTING              2
+#define LOGO                 0
+#define MAINMENU             0
+#define RUNMENU              1
+#define PAUSEMENU            2
+#define TXRXERROR            3
+#define HOMEERROR            4
 
-#define PROFILEBACK 6
-#define PROFILELOAD 7
-#define CONFIGADVANCE 8
-#define PROFILEUP 9
-#define PROFILEDOWN 10
-#define PROFILEPASS 11
-#define VIBLVL 28
-#define PASSEN 29
-#define VIBDURATION 30
+#define PROFILEBACK          6
+#define PROFILELOAD          7
+#define CONFIGADVANCE        8
+#define PROFILEUP            9
+#define PROFILEDOWN          10
+#define PROFILEPASS          11
+#define VIBLVL               28
+#define PASSEN               29
+#define VIBDURATION          30
+#define SKIP_COLUMNS         31
+#define SKIP_ROWS            32
+#define SKIP_SINGLE_POS      33
+#define ADVPROF_BACK         34
+#define ADVPROF_SAVE         35
 
 #define MAXXMM 400 //190 (S) //max x/col dimension in mm
 #define MAXYMM 330 //250 (S) //max y/row dimension in mm

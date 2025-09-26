@@ -15,6 +15,7 @@ Date created - 2022.12.14 - XentiQ version
 
 #define PROFILE_NAME_MAX_LEN 30
 #define KEYPAD_MAX_LEN 6
+#define ROW_COL_MAX_LEN 45
 
 //Change MAX_BUTTONS_X and MAX_BUTTONS_Y depending on the use;
 //for (L) 300x300 - MAX_BUTTONS_X 33; MAX_BUTTONS_Y 33
@@ -50,6 +51,9 @@ extern char Password[4][PROFILE_NAME_MAX_LEN];
 typedef struct
 {
     char profileName[PROFILE_NAME_MAX_LEN];
+    char skipCol[ROW_COL_MAX_LEN];
+    char skipRow[ROW_COL_MAX_LEN];
+    char skipSinglePos[ROW_COL_MAX_LEN];
     int8_t profileId = 0;
     int8_t Tube_No_x = 0; // represent the number of columns
     int8_t Tube_No_y = 0; // represent the number of rows

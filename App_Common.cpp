@@ -1413,7 +1413,12 @@ void Config_Settings(Gpu_Hal_Context_t *phost)
 		          		  Serial.println("Button Pressed: ADVANCED");
 						  keypressed=0;
 		            		//            confirmAdvanceSetting(phost);
- 		            	  Tray_Screen(phost);
+                    DisplaySkipMenu(phost);
+                    WaitKeyRelease();
+                    delay(100);
+                    Skip_Settings(phost);
+
+ 		            	  //Tray_Screen(phost);
 						  //Dprint("returntray","\n");
 						  DisplayConfig(phost);
 						  //wait4key=FALSE;
@@ -2055,3 +2060,152 @@ void Tray_Screen(Gpu_Hal_Context_t *phost)
     }
 }
 
+void DisplaySkipMenu(Gpu_Hal_Context_t *phost)//try054
+{
+	char rowBuf[ROW_COL_MAX_LEN];         // a buffer for skip row entry
+  char colBuf[ROW_COL_MAX_LEN];         // a buffer for skip column entry
+  char singlePosBuf[ROW_COL_MAX_LEN];   // a buffer for skip single position entry
+  uint8_t keypressed;
+
+	Gpu_CoCmd_FlashFast(phost, 0);
+	Gpu_CoCmd_Dlstart(phost);
+	
+	App_WrCoCmd_Buffer(phost, CLEAR_TAG(255));
+	App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(0, 0, 0));
+	App_WrCoCmd_Buffer(phost, CLEAR(1, 1, 1));
+	
+	App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
+	App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(0, 0, 0));
+	Gpu_CoCmd_Text(phost, 10, 20, 21, 0, "Skipped Columns:");
+  Gpu_CoCmd_Text(phost, 10, 74, 21, 0, "Skipped Rows:");
+  Gpu_CoCmd_Text(phost, 10, 128, 21, 0, "Skipped Single Position:");
+	
+	App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
+	App_WrCoCmd_Buffer(phost, BEGIN(RECTS));
+
+	// Skipped Columns (edit name)
+	App_WrCoCmd_Buffer(phost, TAG_MASK(1));
+	App_WrCoCmd_Buffer(phost, TAG(SKIP_COLUMNS));
+	App_WrCoCmd_Buffer(phost, VERTEX2F(160, 1008));
+	App_WrCoCmd_Buffer(phost, VERTEX2F(4944, 624));
+	App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+
+	// Skipped Rows (edit name)
+	App_WrCoCmd_Buffer(phost, TAG_MASK(1));
+	App_WrCoCmd_Buffer(phost, TAG(SKIP_ROWS));
+	App_WrCoCmd_Buffer(phost, VERTEX2F(160, 1888));
+	App_WrCoCmd_Buffer(phost, VERTEX2F(4944, 1504));
+	App_WrCoCmd_Buffer(phost, TAG_MASK(0));  
+
+	// Skipped Single Position (edit name)
+	App_WrCoCmd_Buffer(phost, TAG_MASK(1));
+	App_WrCoCmd_Buffer(phost, TAG(SKIP_SINGLE_POS));
+	App_WrCoCmd_Buffer(phost, VERTEX2F(160, 2768));
+	App_WrCoCmd_Buffer(phost, VERTEX2F(4944, 2384));
+	App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+
+  App_WrCoCmd_Buffer(phost, END());
+  
+  // Text - Skip Columns
+	App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));
+	Gpu_CoCmd_Text(phost, 15, 44, 21, 0, (const char *)CurProf.skipCol);
+
+  // Text - Skip Rowa
+	App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));
+	Gpu_CoCmd_Text(phost, 15, 99, 21, 0, (const char *)CurProf.skipRow);
+
+  // Text - Skip Columns
+	App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));
+	Gpu_CoCmd_Text(phost, 15, 154, 21, 0, (const char *)CurProf.skipSinglePos);
+
+    App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
+    App_WrCoCmd_Buffer(phost, TAG_MASK(1));
+    Gpu_CoCmd_FgColor(phost, 0x00A2E8);
+
+    // Back Button
+    //App_WrCoCmd_Buffer(phost, TAG_MASK(disableButtons ? 0 : 1)); // Enable or disable based on the flag
+    App_WrCoCmd_Buffer(phost, TAG(ADVPROF_BACK));
+    Gpu_CoCmd_Button(phost, 247, 196, 62, 26, 21, 0, "Back");
+
+    // Save Button
+    //App_WrCoCmd_Buffer(phost, TAG_MASK(disableButtons ? 0 : 1)); // Enable or disable based on the flag
+    App_WrCoCmd_Buffer(phost, TAG(ADVPROF_SAVE));
+    Gpu_CoCmd_Button(phost, 10, 196, 62, 26, 21, 0, "Save");
+
+	Gpu_CoCmd_FgColor(phost, 0x00A2E8);
+	App_WrCoCmd_Buffer(phost, TAG(ADVPROF_BACK));
+	App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(255, 255, 255));
+	Gpu_CoCmd_Button(phost, 247, 196, 62, 26, 21, (keypressed==ADVPROF_BACK)? OPT_FLAT :0 , "Back");
+	
+	Gpu_CoCmd_FgColor(phost, 0x00A2E8);
+	App_WrCoCmd_Buffer(phost, TAG(ADVPROF_SAVE));
+	App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(255, 255, 255));
+	Gpu_CoCmd_Button(phost,10, 196, 62, 26, 21, (keypressed==ADVPROF_SAVE)? OPT_FLAT :0 , "Save");
+	
+	Disp_End(phost);
+
+}
+
+void Skip_Settings(Gpu_Hal_Context_t *phost)
+{
+  bool wait4key = TRUE;
+	uint8_t keypressed;
+	char buf[ROW_COL_MAX_LEN];
+	int i;
+  bool error=FALSE;
+	
+	do{
+		keypressed = GetKeyPressed();
+
+		if(keypressed>0)
+		{
+			WaitKeyRelease();
+			switch(keypressed)
+			{
+        case SKIP_COLUMNS:
+          Serial.println("Button Pressed: SKIP COLUMNS");
+          keypressed=0;
+          Keyboard(phost,CurProf.skipCol,"Enter columns to skip",FALSE);
+          DisplaySkipMenu(phost);
+          break;
+
+        case SKIP_ROWS:
+          Serial.println("Button Pressed: SKIP ROWS");
+          keypressed=0;
+          Keyboard(phost,CurProf.skipRow,"Enter rows to skip",FALSE);
+          DisplaySkipMenu(phost);
+          break;
+
+        case SKIP_SINGLE_POS:
+          Serial.println("Button Pressed: SKIP SINGLE POSITION");
+          keypressed=0;
+          Keyboard(phost,CurProf.skipSinglePos,"Enter positions to skip",FALSE);
+          DisplaySkipMenu(phost);
+          break;
+
+	    	case ADVPROF_BACK: // Back button
+				  Serial.println("Button Pressed: BACK");
+				  keypressed=0;          
+          wait4key=FALSE;
+					break;
+
+        case ADVPROF_SAVE:
+          Serial.println("Button Pressed: SAVE");
+					keypressed=0;
+					Dprint("curprofnum=",CurProfNum);
+					WriteCurIDEEPROM(CurProfNum);
+					WriteProfileEEPROM(CurProfNum);//try054 ,CurProf);
+					strcpy(buf,CurProf.profileName); 
+					strcpy(CurProf.profileName,"Profile saved");
+					DisplayConfig(phost);
+					delay(3000);
+					strcpy(CurProf.profileName,buf); 
+					wait4key=FALSE;
+					break;
+				default: 	
+          keypressed=0;
+					break;
+			}
+		}	
+	}while(wait4key);
+}
