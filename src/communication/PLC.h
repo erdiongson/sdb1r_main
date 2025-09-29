@@ -44,5 +44,7 @@ static const int messageLength = 5;
 // Function declarations
 PLCMessage parseReceivedMessage(const byte* receivedData, int length);
 const char* getMessageTypeName(PLCMessageType type);
+bool checkAndReceiveData(byte* buffer, int bufferSize, int* bytesReceived);
+PLCMessage getNewMessage();
 
 #endif

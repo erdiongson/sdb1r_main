@@ -2,7 +2,6 @@
 Date created - 2022.12.14 - XentiQ version
 */
 
-#include "UART.h"
 #include <AccelStepper.h>
 
 #ifndef _XY_TABLE_H_
@@ -19,59 +18,9 @@ Date created - 2022.12.14 - XentiQ version
 #define MANUAL_MODE 1
 #define AUTO_MODE 2
 
-enum class ActionState
-{
-    VibrateOn,
-    VibrateOff,
-    DispenseStart,
-    DispenseStop,
-    MoveX,
-    MoveY,
-};
-
-struct PauseState
-{
-    int32_t x;
-    int32_t y;
-    int32_t cycle;
-    float currentX;
-    float currentY;
-    long lastX;
-    long lastY;
-    ActionState lastAction;
-    // ActionState currentAction;
-    int32_t currentCycle;
-};
-
-
 void activateDispenser(void);
 
 void GPIO_Setup(void);
-void init_Motors(void);
 bool Homing(void);
-bool Zeroing(void);
-
-void runStepper(AccelStepper &stepper, int distance, uint8_t limitPin, const char *limitMsg, ActionState actionState);
-
-uint8_t runStepper_normal(AccelStepper &stepper, long distance, uint8_t limitPin); 
-void returnToStart();
-// void checkAndMoveStepper(AccelStepper &stepper, int steps, int limit, const char *message, ActionState action);
-
-void checkAndMoveStepper_normal(AccelStepper &stepper, int steps, int limit, const char *message);
-uint8_t vibrateAndCheckPause();
-uint8_t dispenseAndCheckPause();
-void Run_profile();
-
-
-void xy_init(void);
-void xy_main(void);
-
-bool performVibrateAndDispenseOperations(bool skipZDip = false);
-bool primeDispenserHead();
-void startProcess();
-void resumeProcess();
-
-void headLowerZ(int distance_mm);
-void headRaiseZ(int distance_mm);
 
 #endif /*_XY_TABLE_H_*/

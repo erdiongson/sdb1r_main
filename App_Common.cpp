@@ -497,10 +497,12 @@ void Home_Menu(Gpu_Hal_Context_t *phost, uint8_t whichmenu )
 	sprintf(buf,"Filling tube: %d", filling_tube);
     Gpu_CoCmd_Text(phost, 25, 220, 20,  OPT_FORMAT, buf);
 
-	sprintf(buf,"Current Tube : R%2d C%2d",CurY+1,CurX+1);
+  // TODO: Fix
+	sprintf(buf,"Current Tube : R%2d C%2d",0+1,0+1);
 	Gpu_CoCmd_Text(phost, 292, 208, 20,   OPT_RIGHTX | OPT_FORMAT, buf);
 
-	sprintf(buf,"Tube left : %3d",TotalTubeLeft);
+  // TODO: Fix
+	sprintf(buf,"Tube left : %3d",0);
 	Gpu_CoCmd_Text(phost, 294, 220, 20,   OPT_RIGHTX | OPT_FORMAT, buf);
   
   //INSERT ERROR MESSAGE
