@@ -1107,7 +1107,9 @@ void setup()
     {
       CurProf.vibrationDuration = CurProf.vibrationDuration - 1;
     }
+#if !DEBUG    
     vibration_time();
+#endif    
   	Home_Menu(&host, MAINMENU);
 }
 
