@@ -1,6 +1,6 @@
 #include "Actions.h"
 #include "DispenserHead.h"
-#include "DispenserHeadSerial.h"
+#include "../communication/DispenserHeadSerial.h"
 #include "TrayPositionHandler.h"
 #include "Axis.h"
 

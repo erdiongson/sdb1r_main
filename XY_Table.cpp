@@ -10,15 +10,15 @@
 * Version 2.03: ii. Revised the saved password logic
 */
 
-#include "Platform.h"
-#include "App_Common.h"
+#include "src/ui/Platform.h"
+#include "src/ui/App_Common.h"
 #include <EEPROM.h>
 #include "Config.h"
 #include "SaveProfile.h"
 #include "XY_Table.h"
 #include "src/communication/PLC.h"
 #include "src/logic/DispenserHead.h"
-#include "src/logic/DispenserHeadSerial.h"
+#include "src/communication/DispenserHeadSerial.h"
 #include "src/logic/StateController.h"
 
 Gpu_Hal_Context_t host, *phost;

@@ -9,8 +9,8 @@ Date created - 2022.12.14 - XentiQ version
 
 #include "SaveProfile.h"
 #include <EEPROM.h>
-#include "Platform.h"
-#include "app_common.h"
+#include "src/ui/Platform.h"
+#include "src/ui/app_common.h"
 
 #define SINGLE_PROFILE
 
