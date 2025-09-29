@@ -4,13 +4,13 @@
 #define Motor_Dow 45
 #define Vibrate 47
 
-#define Limit_S_x_MIN 22 // 32
+#define Limit_S_x_MIN 46 // 32
 #define Limit_S_y_MIN 32 // 33
 #define Limit_S_z_MIN 36
 
 //#define Limit_S_x_MAX 18
 //#define Limit_S_y_MAX 19
-#define Limit_S_x_MAX 46 //johari 20240610
+#define Limit_S_x_MAX 22 //johari 20240610
 #define Limit_S_y_MAX 44 //johari 20240610
 #define Limit_S_z_MAX 38
 
