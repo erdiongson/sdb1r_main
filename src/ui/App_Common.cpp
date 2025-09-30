@@ -1518,7 +1518,9 @@ void Config_Settings(Gpu_Hal_Context_t *phost)
 		        
 		        case 28: //Vibration Level
               keypressed=0;
-              vibration_on();
+              // TODO: Re-add
+
+              // vibration_on();
             /*if (CurProf.vibrationEnabled == 0){
               CurProf.vibrationEnabled = 1;
               
@@ -1542,7 +1544,8 @@ void Config_Settings(Gpu_Hal_Context_t *phost)
               break;
             case VIBDURATION: //Vibration Duration
               keypressed=0;
-              vibration_time();
+              // vibration_time();
+
               DisplayConfig(phost);
               break;          
 		    	//case 246: // No button for Advanced Setting

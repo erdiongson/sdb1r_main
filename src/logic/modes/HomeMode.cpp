@@ -14,7 +14,7 @@ void HomeMode::on_start(Profile& profile) {
   dispenserHead.z().moveToMin();
 }
 
-void HomeMode::on_button_pressed(int button) {}
+void HomeMode::on_interaction(const Interaction& interaction) {}
 
 int HomeMode::on_step() {
   if (dispenserHead.x().isComplete() && dispenserHead.y().isComplete() && dispenserHead.z().isComplete()) {

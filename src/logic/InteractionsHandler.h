@@ -19,11 +19,6 @@ public:
     ~InteractionsHandler();
 
     /**
-     * @brief Process all pending interactions
-     */
-    void handleInteractions();
-    
-    /**
      * @brief Get the latest interaction from inputs
      * @return Interaction struct containing key press and PLC message information
      */

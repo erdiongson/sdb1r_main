@@ -25,26 +25,6 @@ InteractionsHandler::~InteractionsHandler() {
 }
 
 /**********************************************************************************************************
-* @brief InteractionsHandler::handleInteractions()
-* @details Process all pending interactions from various input sources
-**********************************************************************************************************/
-void InteractionsHandler::handleInteractions() {
-    // Get the latest interaction
-    Interaction interaction = getInteraction();
-    
-    // Process the interaction based on its type
-    if (interaction.key_pressed != 0) {
-        // Handle key press
-        // Example: Serial.println("Key pressed: " + String(interaction.key_pressed));
-    }
-    
-    if (interaction.plc_message_type != MSG_UNKNOWN) {
-        // Handle PLC message
-        // Example: Serial.println("PLC message: " + String(PlcSerial::getMessageTypeName(interaction.plc_message_type)));
-    }
-}
-
-/**********************************************************************************************************
 * @brief InteractionsHandler::getInteraction()
 * @details Get the latest interaction from inputs (keyboard, PLC, etc.)
 * @return Interaction struct containing key press and PLC message information

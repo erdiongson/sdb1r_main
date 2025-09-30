@@ -4,12 +4,14 @@
 #include "DispenserHead.h"
 #include "../../SaveProfile.h"
 #include "../ui/App_Common.h"
+#include "InteractionsHandler.h"
 
 #include "modes/BaseMode.h"
 #include "modes/HomeMode.h"
 #include "modes/DispenseMode.h"
 #include "modes/MoveTestMode.h"
 #include "modes/DispenseTestMode.h"
+#include "modes/SettingsMode.h"
 
 class ModeController {
 private:
@@ -36,9 +38,9 @@ public:
     return MODE_CONTINUE;  // No mode active
   }
 
-  void on_button_pressed(int button) {
+  void on_interaction(const Interaction& interaction) {
     if (mode != nullptr) {
-      mode->on_button_pressed(button);
+      mode->on_interaction(interaction);
     }
   }
 
@@ -59,6 +61,9 @@ public:
         break;
       case MODE_TYPE_DISPENSE_TEST:
         mode = new DispenseTestMode(dispenserHead, phost);
+        break;
+      case MODE_TYPE_SETTINGS:
+        mode = new SettingsMode(dispenserHead, phost);
         break;
     }
     mode->on_start(profile);

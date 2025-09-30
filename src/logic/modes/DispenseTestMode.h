@@ -33,11 +33,11 @@ public:
   void on_start(Profile& profile) override;
 
   /**
-   * Called when a button is pressed
+   * Called when an interaction occurs
    * 
-   * @param button The button that was pressed
+   * @param interaction The interaction that occurred
    */
-  void on_button_pressed(int button) override;
+  void on_interaction(const Interaction& interaction) override;
 
   /**
    * Called on each step of the mode

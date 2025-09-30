@@ -14,7 +14,9 @@ void MoveTestMode::on_start(Profile& profile) {
   dispenserHead.z().moveToMin();
 }
 
-void MoveTestMode::on_button_pressed(int button) {
+void MoveTestMode::on_interaction(const Interaction& interaction) {
+  int button = interaction.key_pressed;
+  
   if (button == BACK) {
     back = true;
   }

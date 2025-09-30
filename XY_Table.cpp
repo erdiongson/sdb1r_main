@@ -10,6 +10,7 @@
 * Version 2.03: ii. Revised the saved password logic
 */
 
+#include "src/logic/modes/ModesCommon.h"
 #include "src/ui/Platform.h"
 #include "src/ui/App_Common.h"
 #include <EEPROM.h>
@@ -46,7 +47,7 @@ AxisParams zAxis(
 DispenserHeadParams params = { xAxis, yAxis, zAxis, Serial2 };
 DispenserHead dispenserHead(params);
 ModeController modeController(dispenserHead);
-InteractionsHandler interactionsHandler();
+InteractionsHandler interactionsHandler;
 
 uint16_t err_flag = 0;  //E1 = 1, E2 = 2;
 
@@ -114,69 +115,7 @@ void GPIO_Setup() {
   pinMode(Limit_S_z_MAX, INPUT_PULLUP);
 }
 
-/**********************************************************************************************************
-* @brief vibration_on()
-* @details Command for changing the vibration levels from U0-U4.
-* @param void
-* @return void
-**********************************************************************************************************/
-void vibration_on() {
-  bool success = false;
 
-  // Cycle through vibration levels
-  if (CurProf.vibrationEnabled == 0) {
-    CurProf.vibrationEnabled = 1;
-    success = dispenserHead.set_vibration_level(1);  // VIBMODE_U1
-    if (!success) Serial.println("U1 Error");
-  } else if (CurProf.vibrationEnabled == 1) {
-    CurProf.vibrationEnabled = 2;
-    success = dispenserHead.set_vibration_level(2);  // VIBMODE_U2
-    if (!success) Serial.println("U2 Error");
-  } else if (CurProf.vibrationEnabled == 2) {
-    CurProf.vibrationEnabled = 3;
-    success = dispenserHead.set_vibration_level(3);  // VIBMODE_U3
-    if (!success) Serial.println("U3 Error");
-  } else if (CurProf.vibrationEnabled == 3) {
-    CurProf.vibrationEnabled = 4;
-    success = dispenserHead.set_vibration_level(4);  // VIBMODE_U4
-    if (!success) Serial.println("U4 Error");
-  } else {
-    CurProf.vibrationEnabled = 0;
-    success = dispenserHead.set_vibration_level(0);  // VIBMODE_U0
-    if (!success) Serial.println("U0 Error");
-  }
-}
-/**********************************************************************************************************
-* @brief vibration_time()
-* @details Command for changing the vibration duration/time from 1 to 5 seconds.
-* @param void
-* @return void
-**********************************************************************************************************/
-void vibration_time() {
-  bool success = false;
-
-  // Cycle through vibration durations
-  if (CurProf.vibrationDuration == 2) {
-    CurProf.vibrationDuration = 3;
-    success = dispenserHead.set_vibration_time(3);  // VIBDUR_3
-  } else if (CurProf.vibrationDuration == 3) {
-    CurProf.vibrationDuration = 4;
-    success = dispenserHead.set_vibration_time(4);  // VIBDUR_4
-  } else if (CurProf.vibrationDuration == 4) {
-    CurProf.vibrationDuration = 5;
-    success = dispenserHead.set_vibration_time(5);  // VIBDUR_5
-  } else if (CurProf.vibrationDuration == 5) {
-    CurProf.vibrationDuration = 1;
-    success = dispenserHead.set_vibration_time(1);  // VIBDUR_1
-  } else {
-    CurProf.vibrationDuration = 2;
-    success = dispenserHead.set_vibration_time(2);  // VIBDUR_2
-  }
-
-  if (!success) {
-    Serial.println("Vib Time Error");
-  }
-}
 
 bool Homing() {}
 
@@ -204,11 +143,8 @@ void setup() {
   Serial.print("Enable Global Interrupt");
   // Enable global interrupts
   sei();
-  //END
 
   //Gpu_Hal_Wr8(phost, REG_PWM_DUTY, 10);//brightness control
-
-  // handle_uart_command(Handshake);
 
   Logo_XQ_trans(&host);
   Dprint("Firmware version :", FWVER);
@@ -235,9 +171,10 @@ void setup() {
   Serial.print("New Password[1]: ");
   Serial.print(Password[1]);
   Serial.println();
+
   CurProfNum = LoadProfile();
 
-  modeController.start_mode(MODE_TYPE_HOME, CurProf, phost);
+  modeController.start_mode(MODE_TYPE_SETTINGS, CurProf, phost);
 
   dispenserHead.z().setDisabled(true);
   dispenserHead.set_vibration_level(1);
@@ -249,43 +186,17 @@ void loop() {
   dispenserHead.y().onStep();
   dispenserHead.z().onStep();
 
-  Interaction interaction = interactionsHandler.getInteraction();
   int result = modeController.on_step();
-
-  if (modeController.hasActiveMode()) {
-    modeController.on_button_pressed(touchButtonPressed);
-    return;
+  if (result != 0) {
+    Serial.println("Result: " + String(result));
   }
 
-    // case SETTING:
-    //   Dprint("Enter Setting");
-    //   if (digitalRead(Limit_S_y_MAX) == 0) SpecialMode = TRUE;
-    //   else SpecialMode = FALSE;
-    //   Password[2][0] = 0;
-    //   WaitKeyRelease();
-    //   if (CurProf.passwordEnabled) {
-    //     Keyboard(phost, Password[2], "Enter Password", FALSE);
-    //     if (strcmp(Password[1], Password[2]) == 0 || strcmp(Password[0], Password[2]) == 0) {
-    //       if (SpecialMode) {
-    //         if (digitalRead(Limit_S_y_MAX) != 0) {
-    //           BlankEEPROM();
-    //         } else SpecialMode = FALSE;
-    //       }
-    //       DisplayConfig(phost);
-    //       WaitKeyRelease();
-    //       delay(100);
-    //       Config_Settings(phost);
-    //     } else {
-    //       DisplayKeyboard(phost, 0, "Wrong Password", " ", FALSE, FALSE, FALSE);
-    //       delay(2000);
-    //     }
-    //   } else {
-    //     DisplayConfig(phost);
-    //     WaitKeyRelease();
-    //     delay(100);
-    //     Config_Settings(phost);
-    //   }
-    //   Home_Menu(&host, MAINMENU);
-    //   delay(100);
-    //   break;
+  Interaction interaction = interactionsHandler.getInteraction();
+  if (result == MODE_COMPLETE) {
+    modeController.start_mode(MODE_TYPE_HOME, CurProf, phost);
+  }
+
+  if (modeController.hasActiveMode()) {
+    modeController.on_interaction(interaction);
+  }
 }

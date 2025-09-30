@@ -20,7 +20,9 @@ void DispenseMode::on_start(Profile& profile) {
   start_stage(ZERO_STAGE);
 }
 
-void DispenseMode::on_button_pressed(int button) {
+void DispenseMode::on_interaction(const Interaction& interaction) {
+  int button = interaction.key_pressed;
+  
   if (button == PAUSE) {
     Serial.println("MODE: Paused");
     paused = true;

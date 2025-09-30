@@ -17,7 +17,9 @@ void DispenseTestMode::on_start(Profile& profile) {
   dispenserHead.z().moveToMin();
 }
 
-void DispenseTestMode::on_button_pressed(int button) {
+void DispenseTestMode::on_interaction(const Interaction& interaction) {
+  int button = interaction.key_pressed;
+  
   if (button == TAG_DISPENSE_BACK) {
     back = true;
   }

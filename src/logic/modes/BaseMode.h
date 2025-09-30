@@ -4,6 +4,7 @@
 #include "../../../SaveProfile.h"
 #include "ModesCommon.h"
 #include "../../ui/App_Common.h"
+#include "../InteractionsHandler.h"
 
 class BaseMode {
 public:
@@ -20,7 +21,7 @@ public:
 
   // Pure virtual methods that must be implemented by derived classes
   virtual void on_start(Profile& profile) = 0;
-  virtual void on_button_pressed(int button) = 0;
+  virtual void on_interaction(const Interaction& interaction) = 0;
   virtual int on_step() = 0;  // Returns error code or MODE_COMPLETE
   
   // Virtual method to get mode type
