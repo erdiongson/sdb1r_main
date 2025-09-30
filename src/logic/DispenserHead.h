@@ -2,7 +2,7 @@
 #define DISPENSER_HEAD_H
 
 #include "Axis.h"
-#include "../communication/DispenserHeadSerial.h"
+#include "../communication/DispenserSerial.h"
 
 /**
  * Struct for all dispenser head parameters
@@ -149,7 +149,7 @@ private:
   Axis xAxis;
   Axis yAxis;
   Axis zAxis;
-  DispenserHeadSerial serialHandler;
+  DispenserSerial serialHandler;
   DISPENSING_STATE dispensing_state = COMPLETED;
 };
 

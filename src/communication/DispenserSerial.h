@@ -1,12 +1,12 @@
-#ifndef DISPENSER_HEAD_SERIAL_H
-#define DISPENSER_HEAD_SERIAL_H
+#ifndef DISPENSER_SERIAL_H
+#define DISPENSER_SERIAL_H
 
 #include "UART.h"
 
-class DispenserHeadSerial {
+class DispenserSerial {
 public:
 
-  DispenserHeadSerial(HardwareSerial& serial)
+  DispenserSerial(HardwareSerial& serial)
     : _serial(serial) {}
 
   bool send_message(byte command, byte data) {
@@ -77,7 +77,7 @@ public:
         case MARKER_NOT_DETECTED: command_name = "MARKER_NOT_DETECTED"; break;
         default: command_name = "UNKNOWN(0x" + String(response[MSG_COMMAND], HEX) + ")"; break;
       }
-      Serial.println("DispenserHeadSerial::process() - " + command_name + 
+      Serial.println("DispenserSerial::process() - " + command_name + 
                      " <0x" + String(response[MSG_SOT], HEX) + 
                      "><0x" + String(response[MSG_COMMAND], HEX) + 
                      "><0x" + String(response[MSG_DATA1], HEX) + 
@@ -129,4 +129,4 @@ private:
   HardwareSerial& _serial;
 };
 
-#endif  // DISPENSER_HEAD_SERIAL_H
+#endif  // DISPENSER_SERIAL_H
