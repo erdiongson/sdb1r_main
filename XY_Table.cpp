@@ -16,8 +16,11 @@
 #include "Config.h"
 #include "SaveProfile.h"
 #include "XY_Table.h"
+
+#include "src/logic/Axis.h"
 #include "src/logic/DispenserHead.h"
 #include "src/logic/ModeController.h"
+
 
 Gpu_Hal_Context_t host, *phost;
 Profile CurProf;        //current profile
@@ -253,8 +256,8 @@ void setup() {
   // Home_Menu(&host, MAINMENU);
   // modeController.start_mode<MoveTestMode>(CurProf);
   // Move_Test_Screen(&host, {});
-  modeController.start_mode<DispenseTestMode>(CurProf);
-  Dispense_Test_Screen(&host, {});
+  // modeController.start_mode<DispenseTestMode>(CurProf);
+  // Dispense_Test_Screen(&host, {});
 
   dispenserHead.z().setDisabled(true);
   dispenserHead.set_vibration_level(1);
@@ -269,32 +272,32 @@ void loop() {
   int result = modeController.on_step();
   
   // Only check limit switches and refresh screen if in MoveTestMode
-  if (result == MODE_CONTINUE && modeController.getCurrentMode() != nullptr) {
-    // Check if current mode is MoveTestMode
-    if (modeController.getCurrentMode()->get_mode_type() == MODE_TYPE_MOVE_TEST) {
-      // Check all limit switch states
-      LimitSwitchStates limitStates = {
-        dispenserHead.x().isAtMax(),    // x_max_limit
-        dispenserHead.x().isAtMin(),    // x_min_limit
-        dispenserHead.y().isAtMax(),    // y_max_limit
-        dispenserHead.y().isAtMin(),    // y_min_limit
-        dispenserHead.z().isAtMax(),    // z_max_limit
-        dispenserHead.z().isAtMin()     // z_min_limit
-      };
+  // if (result == MODE_CONTINUE && modeController.getCurrentMode() != nullptr) {
+  //   // Check if current mode is MoveTestMode
+  //   if (modeController.getCurrentMode()->get_mode_type() == MODE_TYPE_MOVE_TEST) {
+  //     // Check all limit switch states
+  //     LimitSwitchStates limitStates = {
+  //       dispenserHead.x().isAtMax(),    // x_max_limit
+  //       dispenserHead.x().isAtMin(),    // x_min_limit
+  //       dispenserHead.y().isAtMax(),    // y_max_limit
+  //       dispenserHead.y().isAtMin(),    // y_min_limit
+  //       dispenserHead.z().isAtMax(),    // z_max_limit
+  //       dispenserHead.z().isAtMin()     // z_min_limit
+  //     };
       
-      // Refresh Move Test Screen with updated limit switch states
-      Move_Test_Screen(&host, limitStates);
-    }
-  }
+  //     // Refresh Move Test Screen with updated limit switch states
+  //     Move_Test_Screen(&host, limitStates);
+  //   }
+  // }
 
-  if (result == MODE_COMPLETE) {
-    Serial.println("MODE COMPLETE");
-    Home_Menu(&host, MAINMENU);
-  } else if (result != MODE_CONTINUE) {
-    // Error
-    Serial.println("MODE ERROR: " + String(result));
-    Home_Menu(&host, MAINMENU);
-  }
+  // if (result == MODE_COMPLETE) {
+  //   Serial.println("MODE COMPLETE");
+  //   Home_Menu(&host, MAINMENU);
+  // } else if (result != MODE_CONTINUE) {
+  //   // Error
+  //   Serial.println("MODE ERROR: " + String(result));
+  //   Home_Menu(&host, MAINMENU);
+  // }
 
   // Handle PLC commands
   // PLCMessage message = getNewMessage();
@@ -329,20 +332,20 @@ void loop() {
       WaitKeyRelease();
 
       switch (touchButtonPressed) {
-        case START:
-          modeController.start_mode<DispenseMode>(CurProf);
-          Home_Menu(&host, RUNMENU);
-          break;
+        // case START:
+        //   modeController.start_mode<DispenseMode>(CurProf);
+        //   Home_Menu(&host, RUNMENU);
+        //   break;
 
-        case STOP:
-          modeController.on_button_pressed(STOP);
-          Home_Menu(&host, MAINMENU);
-          break;
+        // case STOP:
+        //   modeController.on_button_pressed(STOP);
+        //   Home_Menu(&host, MAINMENU);
+        //   break;
 
-        case PAUSE:
-          modeController.on_button_pressed(PAUSE);
-          Home_Menu(&host, PAUSEMENU);
-          break;
+        // case PAUSE:
+        //   modeController.on_button_pressed(PAUSE);
+        //   Home_Menu(&host, PAUSEMENU);
+        //   break;
 
         case SETTING:
           Dprint("Enter Setting");

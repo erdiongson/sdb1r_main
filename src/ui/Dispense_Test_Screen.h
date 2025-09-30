@@ -13,20 +13,7 @@
 
 #include "App_Common.h"
 #include "Platform.h"
-
-// Dispense test control tags
-#define TAG_DISPENSE            60
-#define TAG_VIB_U0              61
-#define TAG_VIB_U1              62
-#define TAG_VIB_U2              63
-#define TAG_VIB_U3              64
-#define TAG_VIB_U4              65
-#define TAG_VIB_TIME_1          66
-#define TAG_VIB_TIME_2          67
-#define TAG_VIB_TIME_3          68
-#define TAG_VIB_TIME_4          69
-#define TAG_VIB_TIME_5          70
-#define TAG_DISPENSE_BACK       71
+#include "Tags.h"
 
 // Dispense test settings structure
 struct DispenseTestSettings {

@@ -13,15 +13,7 @@
 
 #include "App_Common.h"
 #include "Platform.h"
-
-// Movement control tags
-#define TAG_MOVE_UP         50
-#define TAG_MOVE_DOWN       51
-#define TAG_MOVE_LEFT       52
-#define TAG_MOVE_RIGHT      53
-#define TAG_Z_UP            54
-#define TAG_Z_DOWN          55
-#define TAG_MOVE_BACK       56
+#include "Tags.h"
 
 // Limit switch states structure
 struct LimitSwitchStates {

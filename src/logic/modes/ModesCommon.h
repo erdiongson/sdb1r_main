@@ -1,0 +1,9 @@
+#pragma once
+
+#define MODE_COMPLETE 999
+#define MODE_CONTINUE 0
+
+#define MODE_TYPE_HOME 1
+#define MODE_TYPE_DISPENSE 2
+#define MODE_TYPE_MOVE_TEST 3
+#define MODE_TYPE_DISPENSE_TEST 4

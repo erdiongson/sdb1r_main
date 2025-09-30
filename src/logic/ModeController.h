@@ -2,12 +2,12 @@
 #define MODE_CONTROLLER_H
 
 #include "DispenserHead.h"
-#include "Modes.h"
 #include "../../SaveProfile.h"
+#include "modes/HomeMode.h"
 
 class ModeController {
 private:
-  Mode* mode;
+  BaseMode* mode;
   DispenserHead& dispenserHead;
 
 public:
@@ -37,17 +37,26 @@ public:
   }
 
   // Set a new mode (deletes previous mode to save memory)
-  template<typename ModeType>
-  void start_mode(Profile& profile) {
+  void start_mode(int modeType, Profile& profile) {
     if (mode != nullptr) {
       delete mode;
     }
-    mode = new ModeType(dispenserHead);
+    switch(modeType) {
+      case MODE_TYPE_HOME:
+        mode = new HomeMode(dispenserHead);
+        break;
+      // case MODE_TYPE_DISPENSE:
+      //   mode = new DispenseMode(dispenserHead);
+      //   break;
+      // case MODE_TYPE_MOVE_TEST:
+      //   mode = new MoveTestMode(dispenserHead);
+      //   break;
+    }
     mode->on_start(profile);
   }
 
   // Get current mode (can be nullptr)
-  Mode* getCurrentMode() {
+  BaseMode* getCurrentMode() {
     return mode;
   }
 
