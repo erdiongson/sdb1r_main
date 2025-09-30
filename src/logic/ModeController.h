@@ -3,8 +3,13 @@
 
 #include "DispenserHead.h"
 #include "../../SaveProfile.h"
-#include "modes/HomeMode.h"
 #include "../ui/App_Common.h"
+
+#include "modes/BaseMode.h"
+#include "modes/HomeMode.h"
+#include "modes/DispenseMode.h"
+#include "modes/MoveTestMode.h"
+#include "modes/DispenseTestMode.h"
 
 class ModeController {
 private:
@@ -46,12 +51,15 @@ public:
       case MODE_TYPE_HOME:
         mode = new HomeMode(dispenserHead, phost);
         break;
-      // case MODE_TYPE_DISPENSE:
-      //   mode = new DispenseMode(dispenserHead);
-      //   break;
-      // case MODE_TYPE_MOVE_TEST:
-      //   mode = new MoveTestMode(dispenserHead);
-      //   break;
+      case MODE_TYPE_DISPENSE:
+        mode = new DispenseMode(dispenserHead, phost);
+        break;
+      case MODE_TYPE_MOVE_TEST:
+        mode = new MoveTestMode(dispenserHead, phost);
+        break;
+      case MODE_TYPE_DISPENSE_TEST:
+        mode = new DispenseTestMode(dispenserHead, phost);
+        break;
     }
     mode->on_start(profile);
   }

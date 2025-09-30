@@ -46,6 +46,7 @@ AxisParams zAxis(
 DispenserHeadParams params = { xAxis, yAxis, zAxis, Serial2 };
 DispenserHead dispenserHead(params);
 ModeController modeController(dispenserHead);
+InteractionsHandler interactionsHandler();
 
 uint16_t err_flag = 0;  //E1 = 1, E2 = 2;
 
@@ -63,7 +64,6 @@ char Password[4][PROFILE_NAME_MAX_LEN] = { "superXQ",   //super password
                                            "" };        //user enter 2nd time password to be check
 #endif
 bool SpecialMode;
-volatile char OpMode = MANUAL_MODE;
 
 #if DEBUG
 void Dprint(char x) {
@@ -237,27 +237,7 @@ void setup() {
   Serial.println();
   CurProfNum = LoadProfile();
 
-  //Vibration Level Initialization
-  // if (CurProf.vibrationEnabled == 0) {
-  //   CurProf.vibrationEnabled = 4;
-  // } else {
-  //   CurProf.vibrationEnabled = CurProf.vibrationEnabled - 1;
-  // }
-  // vibration_on();
-
-  //Vibration Duration Initialization
-  // if (CurProf.vibrationDuration == 1) {
-  //   CurProf.vibrationDuration = 5;
-  // } else {
-  //   CurProf.vibrationDuration = CurProf.vibrationDuration - 1;
-  // }
-  // vibration_time();
-
-  // Home_Menu(&host, MAINMENU);
-  // modeController.start_mode<MoveTestMode>(CurProf);
-  // Move_Test_Screen(&host, {});
-  // modeController.start_mode<DispenseTestMode>(CurProf);
-  // Dispense_Test_Screen(&host, {});
+  modeController.start_mode(MODE_TYPE_HOME, CurProf, phost);
 
   dispenserHead.z().setDisabled(true);
   dispenserHead.set_vibration_level(1);
@@ -269,119 +249,43 @@ void loop() {
   dispenserHead.y().onStep();
   dispenserHead.z().onStep();
 
+  Interaction interaction = interactionsHandler.getInteraction();
   int result = modeController.on_step();
-  
-  // Only check limit switches and refresh screen if in MoveTestMode
-  // if (result == MODE_CONTINUE && modeController.getCurrentMode() != nullptr) {
-  //   // Check if current mode is MoveTestMode
-  //   if (modeController.getCurrentMode()->get_mode_type() == MODE_TYPE_MOVE_TEST) {
-  //     // Check all limit switch states
-  //     LimitSwitchStates limitStates = {
-  //       dispenserHead.x().isAtMax(),    // x_max_limit
-  //       dispenserHead.x().isAtMin(),    // x_min_limit
-  //       dispenserHead.y().isAtMax(),    // y_max_limit
-  //       dispenserHead.y().isAtMin(),    // y_min_limit
-  //       dispenserHead.z().isAtMax(),    // z_max_limit
-  //       dispenserHead.z().isAtMin()     // z_min_limit
-  //     };
-      
-  //     // Refresh Move Test Screen with updated limit switch states
-  //     Move_Test_Screen(&host, limitStates);
-  //   }
-  // }
 
-  // if (result == MODE_COMPLETE) {
-  //   Serial.println("MODE COMPLETE");
-  //   Home_Menu(&host, MAINMENU);
-  // } else if (result != MODE_CONTINUE) {
-  //   // Error
-  //   Serial.println("MODE ERROR: " + String(result));
-  //   Home_Menu(&host, MAINMENU);
-  // }
-
-  // Handle PLC commands
-  // PLCMessage message = getNewMessage();
-  // if (message.type == MSG_START) {
-  //   if (stateController.is_paused()) {
-  //     stateController.resume();
-  //   } else {
-  //     stateController.start_dispensing(CurProf);
-  //   }
-  //   Home_Menu(&host, RUNMENU);
-  // } else if (message.type == MSG_STOP) {
-  //   stateController.stop();
-  //   Home_Menu(&host, MAINMENU);
-  // } else if (message.type == MSG_PAUSE) {
-  //   stateController.pause();
-  //   Home_Menu(&host, PAUSEMENU);
-  // } else if (message.type == MSG_RAISE_Z) {
-  //   stateController.get_dispenser_head()->z().moveBy(-STEPS_PER_UNIT_Z * 10);
-  //   stateController.get_dispenser_head()->z().runUntilCompleteBlocking();
-  // } else if (message.type == MSG_LOWER_Z) {
-  //   stateController.get_dispenser_head()->z().moveBy(STEPS_PER_UNIT_Z * 10);
-  //   stateController.get_dispenser_head()->z().runUntilCompleteBlocking();
-  // }
-
-  // Handle touch screen interactions
-  switch (OpMode) {
-    case (MANUAL_MODE):
-
-      int touchButtonPressed = GetKeyPressed();
-      if (touchButtonPressed == 0) return;  // Skip iteration if no interaction
-      Serial.println("KeyPressed: " + String(touchButtonPressed));
-      WaitKeyRelease();
-
-      switch (touchButtonPressed) {
-        // case START:
-        //   modeController.start_mode<DispenseMode>(CurProf);
-        //   Home_Menu(&host, RUNMENU);
-        //   break;
-
-        // case STOP:
-        //   modeController.on_button_pressed(STOP);
-        //   Home_Menu(&host, MAINMENU);
-        //   break;
-
-        // case PAUSE:
-        //   modeController.on_button_pressed(PAUSE);
-        //   Home_Menu(&host, PAUSEMENU);
-        //   break;
-
-        case SETTING:
-          Dprint("Enter Setting");
-          if (digitalRead(Limit_S_y_MAX) == 0) SpecialMode = TRUE;
-          else SpecialMode = FALSE;
-          Password[2][0] = 0;
-          WaitKeyRelease();
-          if (CurProf.passwordEnabled) {
-            Keyboard(phost, Password[2], "Enter Password", FALSE);
-            if (strcmp(Password[1], Password[2]) == 0 || strcmp(Password[0], Password[2]) == 0) {
-              if (SpecialMode) {
-                if (digitalRead(Limit_S_y_MAX) != 0) {
-                  BlankEEPROM();
-                } else SpecialMode = FALSE;
-              }
-              DisplayConfig(phost);
-              WaitKeyRelease();
-              delay(100);
-              Config_Settings(phost);
-            } else {
-              DisplayKeyboard(phost, 0, "Wrong Password", " ", FALSE, FALSE, FALSE);
-              delay(2000);
-            }
-          } else {
-            DisplayConfig(phost);
-            WaitKeyRelease();
-            delay(100);
-            Config_Settings(phost);
-          }
-          Home_Menu(&host, MAINMENU);
-          delay(100);
-          break;
-      }
-      break;
-
-    case (AUTO_MODE):
-      break;
+  if (modeController.hasActiveMode()) {
+    modeController.on_button_pressed(touchButtonPressed);
+    return;
   }
+
+    // case SETTING:
+    //   Dprint("Enter Setting");
+    //   if (digitalRead(Limit_S_y_MAX) == 0) SpecialMode = TRUE;
+    //   else SpecialMode = FALSE;
+    //   Password[2][0] = 0;
+    //   WaitKeyRelease();
+    //   if (CurProf.passwordEnabled) {
+    //     Keyboard(phost, Password[2], "Enter Password", FALSE);
+    //     if (strcmp(Password[1], Password[2]) == 0 || strcmp(Password[0], Password[2]) == 0) {
+    //       if (SpecialMode) {
+    //         if (digitalRead(Limit_S_y_MAX) != 0) {
+    //           BlankEEPROM();
+    //         } else SpecialMode = FALSE;
+    //       }
+    //       DisplayConfig(phost);
+    //       WaitKeyRelease();
+    //       delay(100);
+    //       Config_Settings(phost);
+    //     } else {
+    //       DisplayKeyboard(phost, 0, "Wrong Password", " ", FALSE, FALSE, FALSE);
+    //       delay(2000);
+    //     }
+    //   } else {
+    //     DisplayConfig(phost);
+    //     WaitKeyRelease();
+    //     delay(100);
+    //     Config_Settings(phost);
+    //   }
+    //   Home_Menu(&host, MAINMENU);
+    //   delay(100);
+    //   break;
 }

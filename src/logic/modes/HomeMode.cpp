@@ -1,10 +1,14 @@
 #include "HomeMode.h"
+#include "../../ui/App_Common.h"
 
 HomeMode::HomeMode(DispenserHead& head, Gpu_Hal_Context_t *host)
   : BaseMode(head, host) {}
 
 void HomeMode::on_start(Profile& profile) {
   Serial.println("MODE: Home mode");
+
+  Home_Menu(&host, MAINMENU);
+
   dispenserHead.x().moveToMax();
   dispenserHead.y().moveToMin();
   dispenserHead.z().moveToMin();
