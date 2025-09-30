@@ -42,8 +42,9 @@ public:
    * Constructor
    * 
    * @param head Reference to the dispenser head to control
+   * @param host Pointer to GPU HAL context
    */
-  DispenseMode(DispenserHead& head);
+  DispenseMode(DispenserHead& head, Gpu_Hal_Context_t *host);
 
   /**
    * Called when the mode is started

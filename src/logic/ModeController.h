@@ -4,6 +4,7 @@
 #include "DispenserHead.h"
 #include "../../SaveProfile.h"
 #include "modes/HomeMode.h"
+#include "../ui/App_Common.h"
 
 class ModeController {
 private:
@@ -37,13 +38,13 @@ public:
   }
 
   // Set a new mode (deletes previous mode to save memory)
-  void start_mode(int modeType, Profile& profile) {
+  void start_mode(int modeType, Profile& profile, Gpu_Hal_Context_t *phost) {
     if (mode != nullptr) {
       delete mode;
     }
     switch(modeType) {
       case MODE_TYPE_HOME:
-        mode = new HomeMode(dispenserHead);
+        mode = new HomeMode(dispenserHead, phost);
         break;
       // case MODE_TYPE_DISPENSE:
       //   mode = new DispenseMode(dispenserHead);

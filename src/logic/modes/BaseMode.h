@@ -3,15 +3,17 @@
 #include "../DispenserHead.h"
 #include "../../../SaveProfile.h"
 #include "ModesCommon.h"
+#include "../../ui/App_Common.h"
 
 class BaseMode {
 public:
   DispenserHead& dispenserHead;
+  Gpu_Hal_Context_t *phost;
 
 public:
-  // Constructor that accepts a dispenser head reference
-  BaseMode(DispenserHead& head)
-    : dispenserHead(head) {}
+  // Constructor that accepts a dispenser head reference and GPU HAL context
+  BaseMode(DispenserHead& head, Gpu_Hal_Context_t *host)
+    : dispenserHead(head), phost(host) {}
 
   // Virtual destructor for proper cleanup in derived classes
   virtual ~BaseMode() = default;

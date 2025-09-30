@@ -1,11 +1,14 @@
 #include "MoveTestMode.h"
 #include "../../ui/Move_Test_Screen.h"
 
-MoveTestMode::MoveTestMode(DispenserHead& head)
-  : BaseMode(head) {}
+MoveTestMode::MoveTestMode(DispenserHead& head, Gpu_Hal_Context_t *host)
+  : BaseMode(head, host) {}
 
 void MoveTestMode::on_start(Profile& profile) {
   Serial.println("MODE: Move test mode");
+
+  Move_Test_Screen(phost, {});  
+
   dispenserHead.x().moveToMax();
   dispenserHead.y().moveToMin();
   dispenserHead.z().moveToMin();
@@ -42,6 +45,15 @@ void MoveTestMode::on_button_pressed(int button) {
 }
 
 int MoveTestMode::on_step() {
+  LimitSwitchStates limitStates;
+  limitStates.x_max_limit = dispenserHead.x().isAtMax();
+  limitStates.x_min_limit = dispenserHead.x().isAtMin();
+  limitStates.y_max_limit = dispenserHead.y().isAtMax();
+  limitStates.y_min_limit = dispenserHead.y().isAtMin();
+  limitStates.z_max_limit = dispenserHead.z().isAtMax();
+  limitStates.z_min_limit = dispenserHead.z().isAtMin();
+  Move_Test_Screen(phost, limitStates);
+
   if (back) {
     return MODE_COMPLETE;
   }

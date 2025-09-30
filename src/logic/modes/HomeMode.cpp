@@ -1,7 +1,7 @@
 #include "HomeMode.h"
 
-HomeMode::HomeMode(DispenserHead& head)
-  : BaseMode(head) {}
+HomeMode::HomeMode(DispenserHead& head, Gpu_Hal_Context_t *host)
+  : BaseMode(head, host) {}
 
 void HomeMode::on_start(Profile& profile) {
   Serial.println("MODE: Home mode");

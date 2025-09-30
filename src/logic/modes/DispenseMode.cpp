@@ -1,8 +1,9 @@
 #include "DispenseMode.h"
 #include "../../ui/Platform.h"
+#include "../../ui/App_Common.h"
 
-DispenseMode::DispenseMode(DispenserHead& head)
-  : BaseMode(head) {}
+DispenseMode::DispenseMode(DispenserHead& head, Gpu_Hal_Context_t *host)
+  : BaseMode(head, host) {}
 
 void DispenseMode::on_start(Profile& profile) {
   Serial.println("MODE: Setting profile on trayhandler");
@@ -14,6 +15,8 @@ void DispenseMode::on_start(Profile& profile) {
 
   paused = false;
 
+  Home_Menu(phost, RUNMENU);
+
   start_stage(ZERO_STAGE);
 }
 
@@ -24,9 +27,12 @@ void DispenseMode::on_button_pressed(int button) {
     dispenserHead.x().stop();
     dispenserHead.y().stop();
     dispenserHead.z().stop();
+
+    Home_Menu(phost, PAUSEMENU);
   } else if (button == START) {
     Serial.println("MODE: Resumed");
     paused = false;
+    Home_Menu(phost, RUNMENU);
     start_stage(stage);
   }
 }

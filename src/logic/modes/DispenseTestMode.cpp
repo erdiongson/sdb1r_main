@@ -1,11 +1,16 @@
 #include "DispenseTestMode.h"
 #include "../../ui/Dispense_Test_Screen.h"
 
-DispenseTestMode::DispenseTestMode(DispenserHead& head)
-  : BaseMode(head) {}
+DispenseTestMode::DispenseTestMode(DispenserHead& head, Gpu_Hal_Context_t *host)
+  : BaseMode(head, host) {}
 
 void DispenseTestMode::on_start(Profile& profile) {
   Serial.println("MODE: Dispense test mode");
+  
+  // Initialize UI
+  DispenseTestSettings settings = {0, 0};
+  Dispense_Test_Screen(phost, settings);
+  
   // Initialize to home position
   dispenserHead.x().moveToMax();
   dispenserHead.y().moveToMin();
