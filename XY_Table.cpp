@@ -16,10 +16,8 @@
 #include "Config.h"
 #include "SaveProfile.h"
 #include "XY_Table.h"
-#include "src/communication/PLC.h"
 #include "src/logic/DispenserHead.h"
-#include "src/communication/DispenserHeadSerial.h"
-#include "src/logic/StateController.h"
+#include "src/logic/ModeController.h"
 
 Gpu_Hal_Context_t host, *phost;
 Profile CurProf;        //current profile
@@ -43,8 +41,8 @@ AxisParams zAxis(
   motor_y_speed, motor_y_Acceleration);
 
 DispenserHeadParams params = { xAxis, yAxis, zAxis, Serial2 };
-StateController stateController(params);
-DispenserHead* dispenserHead = stateController.get_dispenser_head();
+DispenserHead dispenserHead(params);
+ModeController modeController(dispenserHead);
 
 uint16_t err_flag = 0;  //E1 = 1, E2 = 2;
 
@@ -121,27 +119,27 @@ void GPIO_Setup() {
 **********************************************************************************************************/
 void vibration_on() {
   bool success = false;
-  
+
   // Cycle through vibration levels
   if (CurProf.vibrationEnabled == 0) {
     CurProf.vibrationEnabled = 1;
-    success = dispenserHead->set_vibration_level(1); // VIBMODE_U1
+    success = dispenserHead.set_vibration_level(1);  // VIBMODE_U1
     if (!success) Serial.println("U1 Error");
   } else if (CurProf.vibrationEnabled == 1) {
     CurProf.vibrationEnabled = 2;
-    success = dispenserHead->set_vibration_level(2); // VIBMODE_U2
+    success = dispenserHead.set_vibration_level(2);  // VIBMODE_U2
     if (!success) Serial.println("U2 Error");
   } else if (CurProf.vibrationEnabled == 2) {
     CurProf.vibrationEnabled = 3;
-    success = dispenserHead->set_vibration_level(3); // VIBMODE_U3
+    success = dispenserHead.set_vibration_level(3);  // VIBMODE_U3
     if (!success) Serial.println("U3 Error");
   } else if (CurProf.vibrationEnabled == 3) {
     CurProf.vibrationEnabled = 4;
-    success = dispenserHead->set_vibration_level(4); // VIBMODE_U4
+    success = dispenserHead.set_vibration_level(4);  // VIBMODE_U4
     if (!success) Serial.println("U4 Error");
   } else {
     CurProf.vibrationEnabled = 0;
-    success = dispenserHead->set_vibration_level(0); // VIBMODE_U0
+    success = dispenserHead.set_vibration_level(0);  // VIBMODE_U0
     if (!success) Serial.println("U0 Error");
   }
 }
@@ -153,25 +151,25 @@ void vibration_on() {
 **********************************************************************************************************/
 void vibration_time() {
   bool success = false;
-  
+
   // Cycle through vibration durations
   if (CurProf.vibrationDuration == 2) {
     CurProf.vibrationDuration = 3;
-    success = dispenserHead->set_vibration_time(3); // VIBDUR_3
+    success = dispenserHead.set_vibration_time(3);  // VIBDUR_3
   } else if (CurProf.vibrationDuration == 3) {
     CurProf.vibrationDuration = 4;
-    success = dispenserHead->set_vibration_time(4); // VIBDUR_4
+    success = dispenserHead.set_vibration_time(4);  // VIBDUR_4
   } else if (CurProf.vibrationDuration == 4) {
     CurProf.vibrationDuration = 5;
-    success = dispenserHead->set_vibration_time(5); // VIBDUR_5
+    success = dispenserHead.set_vibration_time(5);  // VIBDUR_5
   } else if (CurProf.vibrationDuration == 5) {
     CurProf.vibrationDuration = 1;
-    success = dispenserHead->set_vibration_time(1); // VIBDUR_1
+    success = dispenserHead.set_vibration_time(1);  // VIBDUR_1
   } else {
     CurProf.vibrationDuration = 2;
-    success = dispenserHead->set_vibration_time(2); // VIBDUR_2
+    success = dispenserHead.set_vibration_time(2);  // VIBDUR_2
   }
-  
+
   if (!success) {
     Serial.println("Vib Time Error");
   }
@@ -251,24 +249,27 @@ void setup() {
   //   CurProf.vibrationDuration = CurProf.vibrationDuration - 1;
   // }
   // vibration_time();
-  
+
   Home_Menu(&host, MAINMENU);
 
-  dispenserHead->z().setDisabled(true);
-  dispenserHead->set_vibration_level(1);
-  dispenserHead->set_vibration_time(1);
+  dispenserHead.z().setDisabled(true);
+  dispenserHead.set_vibration_level(1);
+  dispenserHead.set_vibration_time(1);
 }
 
 void loop() {
-  StateControllerStepResult result = stateController.on_step();
-  if (result.error_code) {
-    Serial.println("Display err");
-    Serial.println("SCSR ERR: " + String(result.error_code));
-    err_flag = result.error_code;
+  dispenserHead.x().onStep();
+  dispenserHead.y().onStep();
+  dispenserHead.z().onStep();
+
+  int result = modeController.on_step();
+
+  if (result == MODE_COMPLETE) {
+    Serial.println("MODE COMPLETE");
     Home_Menu(&host, MAINMENU);
-  } else if (result.completed) {
-    Serial.println("Display complete");
-    Serial.println("SCSR COMPLETED: " + String(result.completed));
+  } else if (result != MODE_CONTINUE) {
+    // Error
+    Serial.println("MODE ERROR: " + String(result));
     Home_Menu(&host, MAINMENU);
   }
 
@@ -306,20 +307,19 @@ void loop() {
 
       switch (touchButtonPressed) {
         case START:
-          stateController.start_dispensing(CurProf);
+          modeController.start_mode<DispenseMode>(CurProf);
           Home_Menu(&host, RUNMENU);
           break;
 
         case STOP:
-          stateController.stop();
+          modeController.on_button_pressed(STOP);
           Home_Menu(&host, MAINMENU);
           break;
 
         case PAUSE:
-          stateController.pause();
+          modeController.on_button_pressed(PAUSE);
           Home_Menu(&host, PAUSEMENU);
           break;
-
 
         case SETTING:
           Dprint("Enter Setting");

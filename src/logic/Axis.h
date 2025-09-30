@@ -36,7 +36,7 @@ private:
   int minLimitPin;
   int maxLimitPin;
   bool movingPositive;  // true if moving in positive direction, false if negative
-  bool enabled;  // true if axis is enabled, false if disabled
+  bool enabled;         // true if axis is enabled, false if disabled
 
 public:
   /**
@@ -69,7 +69,7 @@ public:
   void setDisabled(bool disabled) {
     enabled = !disabled;
   }
-  
+
   void moveToMax() {
     stepper.move(999999999);
     movingPositive = true;
@@ -83,6 +83,15 @@ public:
   void moveBy(long position) {
     stepper.move(position);
     movingPositive = (position > 0);
+  }
+
+  void moveTo(long position) {
+    stepper.moveTo(position);
+    movingPositive = (position > stepper.currentPosition());
+  }
+
+  void stop() {
+    stepper.stop();
   }
 
   bool isAtMin() {
@@ -105,7 +114,7 @@ public:
     // Check limit switches and prevent movement in that direction if triggered
     if (isComplete())
       return true;
-    
+
     stepper.run();
     return false;
   }
@@ -115,9 +124,7 @@ public:
     if (!enabled)
       return true;
 
-    return ((movingPositive && digitalRead(maxLimitPin) == LOW) ||
-            (!movingPositive && digitalRead(minLimitPin) == LOW) ||
-            stepper.distanceToGo() == 0);
+    return ((movingPositive && digitalRead(maxLimitPin) == LOW) || (!movingPositive && digitalRead(minLimitPin) == LOW) || stepper.distanceToGo() == 0);
   }
 
   void runUntilCompleteBlocking() {
