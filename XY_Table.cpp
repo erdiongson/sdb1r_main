@@ -102,7 +102,6 @@ void Dprint(String x, float y) {}
 #endif
 
 void GPIO_Setup() {
-  Serial.begin(19200);
   pinMode(Motor_ON, OUTPUT);
   pinMode(Motor_UP, OUTPUT);
   pinMode(Motor_Dow, OUTPUT);
@@ -115,42 +114,11 @@ void GPIO_Setup() {
   pinMode(Limit_S_z_MAX, INPUT_PULLUP);
 }
 
-
-
-bool Homing() {}
-
-/*********************END OF FUNCTION DECLARATIONS*********************/
-
-void setup() {
-  int i;
-  phost = &host;
-
-
-  SpecialMode = FALSE;
-  App_Common_Init(&host);  //* Init HW Hal */
-  // App_Calibrate_Screen(&host); ///*Screen Calibration*//
-
-  GPIO_Setup();
-
-  Serial.begin(19200);   // Serial printing
-  Serial2.begin(19200);  // UART for Arduino-PIC18 communications
-  Serial3.begin(19200);  // UART for Arduino-PIC18 communications
-
-  Serial.print("Setup Serial 3 as interrupt");
-  //20240906: erdiongson - Enable interrupt for UART 3 receive complete
-  UCSR3B |= (1 << RXCIE3);
-
-  Serial.print("Enable Global Interrupt");
-  // Enable global interrupts
-  sei();
-
-  //Gpu_Hal_Wr8(phost, REG_PWM_DUTY, 10);//brightness control
-
-  Logo_XQ_trans(&host);
-  Dprint("Firmware version :", FWVER);
-
-  Gpu_Hal_Wr8(phost, REG_TOUCH_SETTLE, 3);
-
+/**
+ * Sets up and handles the password validation and initialization
+ * Checks if the password in EEPROM matches the default, and handles accordingly
+ */
+void setupPasswordHandling() {
   Serial.print("Setup Password[1]: ");
   Serial.println(Password[1]);
   Serial.print("Setup Password[2]: ");
@@ -171,6 +139,42 @@ void setup() {
   Serial.print("New Password[1]: ");
   Serial.print(Password[1]);
   Serial.println();
+}
+
+bool Homing() {}
+
+/*********************END OF FUNCTION DECLARATIONS*********************/
+
+
+void setup() {
+  phost = &host;
+
+  SpecialMode = FALSE;
+  App_Common_Init(&host);  //* Init HW Hal */
+  // App_Calibrate_Screen(&host); ///*Screen Calibration*//
+
+  GPIO_Setup();
+
+  Serial.begin(19200);   // Serial printing
+  Serial2.begin(19200);  // UART for Arduino-PIC18 communications
+  Serial3.begin(19200);  // UART for Arduino-PIC18 communications
+
+  //20240906: erdiongson - Enable interrupt for UART 3 receive complete
+  Serial.print("Setup Serial 3 as interrupt");
+  UCSR3B |= (1 << RXCIE3);
+
+  // Enable global interrupts
+  Serial.print("Enable Global Interrupt");
+  sei();
+
+  // Gpu_Hal_Wr8(phost, REG_PWM_DUTY, 10);//brightness control
+
+  Logo_XQ_trans(&host);
+  Dprint("Firmware version :", FWVER);
+
+  Gpu_Hal_Wr8(phost, REG_TOUCH_SETTLE, 3);
+
+  setupPasswordHandling();
 
   CurProfNum = LoadProfile();
 
@@ -190,12 +194,11 @@ void loop() {
   if (result != 0) {
     Serial.println("Result: " + String(result));
   }
-
-  Interaction interaction = interactionsHandler.getInteraction();
   if (result == MODE_COMPLETE) {
     modeController.start_mode(MODE_TYPE_HOME, CurProf, phost);
   }
 
+  Interaction interaction = interactionsHandler.getInteraction();
   if (modeController.hasActiveMode()) {
     modeController.on_interaction(interaction);
   }

@@ -21,6 +21,7 @@ Date created - 2022.12.14 - XentiQ version
 void activateDispenser(void);
 
 void GPIO_Setup(void);
+void setupPasswordHandling(void);
 bool Homing(void);
 
 #endif /*_XY_TABLE_H_*/
