@@ -186,7 +186,7 @@ void setup() {
 
   SpecialMode = FALSE;
   App_Common_Init(&host);  //* Init HW Hal */
-  //  App_Calibrate_Screen(&host); ///*Screen Calibration*//
+  // App_Calibrate_Screen(&host); ///*Screen Calibration*//
 
   GPIO_Setup();
 
@@ -250,7 +250,11 @@ void setup() {
   // }
   // vibration_time();
 
-  Home_Menu(&host, MAINMENU);
+  // Home_Menu(&host, MAINMENU);
+  // modeController.start_mode<MoveTestMode>(CurProf);
+  // Move_Test_Screen(&host, {});
+  modeController.start_mode<DispenseTestMode>(CurProf);
+  Dispense_Test_Screen(&host, {});
 
   dispenserHead.z().setDisabled(true);
   dispenserHead.set_vibration_level(1);
@@ -263,6 +267,25 @@ void loop() {
   dispenserHead.z().onStep();
 
   int result = modeController.on_step();
+  
+  // Only check limit switches and refresh screen if in MoveTestMode
+  if (result == MODE_CONTINUE && modeController.getCurrentMode() != nullptr) {
+    // Check if current mode is MoveTestMode
+    if (modeController.getCurrentMode()->get_mode_type() == MODE_TYPE_MOVE_TEST) {
+      // Check all limit switch states
+      LimitSwitchStates limitStates = {
+        dispenserHead.x().isAtMax(),    // x_max_limit
+        dispenserHead.x().isAtMin(),    // x_min_limit
+        dispenserHead.y().isAtMax(),    // y_max_limit
+        dispenserHead.y().isAtMin(),    // y_min_limit
+        dispenserHead.z().isAtMax(),    // z_max_limit
+        dispenserHead.z().isAtMin()     // z_min_limit
+      };
+      
+      // Refresh Move Test Screen with updated limit switch states
+      Move_Test_Screen(&host, limitStates);
+    }
+  }
 
   if (result == MODE_COMPLETE) {
     Serial.println("MODE COMPLETE");

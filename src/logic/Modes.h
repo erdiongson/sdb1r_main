@@ -2,9 +2,17 @@
 #include "TrayPositionHandler.h"
 #include "../../SaveProfile.h"
 #include "../ui/Platform.h"
+#include "../ui/Move_Test_Screen.h"
+#include "../ui/Dispense_Test_Screen.h"
 
 #define MODE_COMPLETE 999
 #define MODE_CONTINUE 0
+
+// Mode type constants
+#define MODE_TYPE_HOME 1
+#define MODE_TYPE_DISPENSE 2
+#define MODE_TYPE_MOVE_TEST 3
+#define MODE_TYPE_DISPENSE_TEST 4
 
 class Mode {
 public:
@@ -22,6 +30,9 @@ public:
   virtual void on_start(Profile& profile) = 0;
   virtual void on_button_pressed(int button) = 0;
   virtual int on_step() = 0;  // Returns error code or MODE_COMPLETE
+  
+  // Virtual method to get mode type
+  virtual int get_mode_type() const = 0;
 };
 
 
@@ -46,6 +57,8 @@ public:
     }
     return MODE_CONTINUE;
   }
+  
+  int get_mode_type() const override { return MODE_TYPE_HOME; }
 };
 
 
@@ -211,4 +224,158 @@ public:
         break;
     }
   }
+  
+  int get_mode_type() const override { return MODE_TYPE_DISPENSE; }
+};
+
+
+class MoveTestMode : public Mode {
+private:
+  bool back = false;
+
+public:
+  MoveTestMode(DispenserHead& head)
+    : Mode(head) {}
+
+  void on_start(Profile& profile) override {
+    Serial.println("MODE: Move test mode");
+    dispenserHead.x().moveToMax();
+    dispenserHead.y().moveToMin();
+    dispenserHead.z().moveToMin();
+  }
+
+  void on_button_pressed(int button) override {
+    if (button == BACK) {
+      back = true;
+    }
+    if (button == TAG_MOVE_UP) {
+      Serial.println("MODE: Move up");
+      dispenserHead.y().moveBy(STEPS_PER_UNIT_Y * 5 * 100);
+    }
+    if (button == TAG_MOVE_DOWN) {
+      Serial.println("MODE: Move down");
+      dispenserHead.y().moveBy(-STEPS_PER_UNIT_Y * 5 * 100);
+    }
+    if (button == TAG_MOVE_LEFT) {
+      Serial.println("MODE: Move left");
+      dispenserHead.x().moveBy(STEPS_PER_UNIT_X * 5 * 100);
+    }
+    if (button == TAG_MOVE_RIGHT) {
+      Serial.println("MODE: Move right");
+      dispenserHead.x().moveBy(-STEPS_PER_UNIT_X * 5 * 100);
+    }
+    if (button == TAG_Z_UP) {
+      Serial.println("MODE: Move z up");
+      dispenserHead.z().moveBy(-STEPS_PER_UNIT_Z * 1 * 100);
+    }
+    if (button == TAG_Z_DOWN) {
+      Serial.println("MODE: Move z down");
+      dispenserHead.z().moveBy(STEPS_PER_UNIT_Z * 1 * 100);
+    }
+  }
+
+  int on_step() override {
+    if (back) {
+      return MODE_COMPLETE;
+    }
+    return MODE_CONTINUE;
+  }
+  
+  int get_mode_type() const override { return MODE_TYPE_MOVE_TEST; }
+};
+
+
+class DispenseTestMode : public Mode {
+private:
+  bool back = false;
+  uint8_t current_vibration_level = 2;  // Default to U2 (medium)
+  uint8_t current_vibration_time = 2;   // Default to 2 seconds
+
+public:
+  DispenseTestMode(DispenserHead& head)
+    : Mode(head) {}
+
+  void on_start(Profile& profile) override {
+    Serial.println("MODE: Dispense test mode");
+    // Initialize to home position
+    dispenserHead.x().moveToMax();
+    dispenserHead.y().moveToMin();
+    dispenserHead.z().moveToMin();
+  }
+
+  void on_button_pressed(int button) override {
+    if (button == TAG_DISPENSE_BACK) {
+      back = true;
+    }
+    
+    // Dispense button
+    if (button == TAG_DISPENSE) {
+      Serial.println("MODE: Dispense test - setting vibration and dispensing");
+      // Set vibration level and time, then dispense
+      if (dispenserHead.set_vibration_level(current_vibration_level)) {
+        Serial.println("MODE: Vibration level set to " + String(current_vibration_level));
+        if (dispenserHead.set_vibration_time(current_vibration_time)) {
+          Serial.println("MODE: Vibration time set to " + String(current_vibration_time) + "s");
+          dispenserHead.send_dispense(1);
+        }
+      }
+    }
+    
+    // Vibration level buttons (U0-U4)
+    if (button == TAG_VIB_U0) {
+      current_vibration_level = 0;
+      Serial.println("MODE: Vibration level set to U0");
+    }
+    if (button == TAG_VIB_U1) {
+      current_vibration_level = 1;
+      Serial.println("MODE: Vibration level set to U1");
+    }
+    if (button == TAG_VIB_U2) {
+      current_vibration_level = 2;
+      Serial.println("MODE: Vibration level set to U2");
+    }
+    if (button == TAG_VIB_U3) {
+      current_vibration_level = 3;
+      Serial.println("MODE: Vibration level set to U3");
+    }
+    if (button == TAG_VIB_U4) {
+      current_vibration_level = 4;
+      Serial.println("MODE: Vibration level set to U4");
+    }
+    
+    // Vibration time buttons (1-5s)
+    if (button == TAG_VIB_TIME_1) {
+      current_vibration_time = 1;
+      Serial.println("MODE: Vibration time set to 1s");
+    }
+    if (button == TAG_VIB_TIME_2) {
+      current_vibration_time = 2;
+      Serial.println("MODE: Vibration time set to 2s");
+    }
+    if (button == TAG_VIB_TIME_3) {
+      current_vibration_time = 3;
+      Serial.println("MODE: Vibration time set to 3s");
+    }
+    if (button == TAG_VIB_TIME_4) {
+      current_vibration_time = 4;
+      Serial.println("MODE: Vibration time set to 4s");
+    }
+    if (button == TAG_VIB_TIME_5) {
+      current_vibration_time = 5;
+      Serial.println("MODE: Vibration time set to 5s");
+    }
+  }
+
+  int on_step() override {
+    if (back) {
+      return MODE_COMPLETE;
+    }
+    return MODE_CONTINUE;
+  }
+  
+  int get_mode_type() const override { return MODE_TYPE_DISPENSE_TEST; }
+  
+  // Getter methods for current settings (used by UI)
+  uint8_t get_current_vibration_level() const { return current_vibration_level; }
+  uint8_t get_current_vibration_time() const { return current_vibration_time; }
 };
