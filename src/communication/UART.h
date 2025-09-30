@@ -46,22 +46,12 @@ Date created - 2022.12.14 - XentiQ version
 
 #define SERIAL_2_DEFAULT  //Comment this out for Serial 3 usage
 
-// Response structure
-typedef struct {
-  uint8_t sot;      // Start of Transmission
-  uint8_t command;  // Command/status byte
-  uint8_t data1;    // Data byte 1
-  uint8_t data2;    // Data byte 2
-  uint8_t eot;      // End of Transmission
-} Response;
-
-// Command structure
-typedef struct {
-  uint8_t sot;      // Start of Transmission
-  uint8_t command;  // Command byte
-  uint8_t data1;    // Data byte 1
-  uint8_t data2;    // Data byte 2
-  uint8_t eot;      // End of Transmission
-} Send;
+// Message format position constants
+#define MSG_SOT     0  // Start of Transmission position
+#define MSG_COMMAND 1  // Command/status byte position
+#define MSG_DATA1   2  // Data byte 1 position
+#define MSG_DATA2   3  // Data byte 2 (checksum) position
+#define MSG_EOT     4  // End of Transmission position
+#define MSG_LENGTH  5  // Total message length
 
 #endif /*_UART_H_*/

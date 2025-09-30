@@ -32,7 +32,7 @@ void DispenseTestMode::on_interaction(const Interaction& interaction) {
       Serial.println("MODE: Vibration level set to " + String(current_vibration_level));
       if (dispenserHead.set_vibration_time(current_vibration_time)) {
         Serial.println("MODE: Vibration time set to " + String(current_vibration_time) + "s");
-        dispenserHead.send_dispense(1);
+        dispenserHead.send_dispense();
       }
     }
   }

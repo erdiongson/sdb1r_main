@@ -56,12 +56,12 @@ public:
     return zAxis;
   }
 
-  void send_dispense(int amount) {
+  void send_dispense() {
     // Don't send a new command if we're still processing the previous one
     if (dispensing_state != COMPLETED) return;
 
     // Use the serial handler to send the dispense command
-    if (serialHandler.send_dispense(amount)) {
+    if (serialHandler.send_dispense()) {
       dispensing_state = SENT;
     }
   }

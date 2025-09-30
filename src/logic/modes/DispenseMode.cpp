@@ -63,7 +63,7 @@ int DispenseMode::on_step() {
       break;
     case START_DISPENSE_STAGE:
       if (dispenserHead.get_state() == DispenserHead::COMPLETED) {
-        dispenserHead.send_dispense(1);
+        dispenserHead.send_dispense();
         start_stage(WAIT_DISPENSE_STAGE);
       }
       break;
@@ -121,7 +121,7 @@ void DispenseMode::start_stage(int newStage) {
       break;
     case START_DISPENSE_STAGE:
       this->stage = START_DISPENSE_STAGE;
-      dispenserHead.send_dispense(1);
+      dispenserHead.send_dispense();
       break;
     case WAIT_DISPENSE_STAGE:
       this->stage = WAIT_DISPENSE_STAGE;

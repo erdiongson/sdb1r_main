@@ -6,182 +6,68 @@
 class DispenserHeadSerial {
 public:
 
-  /**
-     * Constructor for DispenserHeadSerial
-     * 
-     * @param serial Reference to a HardwareSerial for communication
-     */
   DispenserHeadSerial(HardwareSerial& serial)
     : _serial(serial) {}
 
-  /**
-     * Send a dispense command to the hardware
-     * 
-     * @param amount Amount to dispense
-     * @return true if command was sent, false if busy
-     */
-  bool send_dispense(int amount) {
-    Send cmd;
-    cmd.sot = Serial_SOT;
-    cmd.command = SDB_Dispense_START;
-    cmd.data1 = 0x01;                     // Default value for most commands
-    cmd.data2 = cmd.command + cmd.data1;  // Checksum
-    cmd.eot = Serial_EOT;
-
-    // Send the command bytes with small delays
-    _serial.write(cmd.sot);
-    delay(2);
-    _serial.write(cmd.command);
-    delay(2);
-    _serial.write(cmd.data1);
-    delay(2);
-    _serial.write(cmd.data2);
-    delay(2);
-    _serial.write(cmd.eot);
+  bool send_message(byte command, byte data) {
+    uint8_t checksum = command + data;
+    _serial.write(Serial_SOT);
+    _serial.write(command);
+    _serial.write(data);
+    _serial.write(checksum);
+    _serial.write(Serial_EOT);
 
     return true;
+  }
+
+  bool send_dispense() {
+    return send_message(SDB_Dispense_START, 0x01);
   }
 
   bool send_handshake() {
-    Send cmd;
-    cmd.sot = Serial_SOT;
-    cmd.command = SDB_Handshake;
-    cmd.data1 = 0x01;                     // Default value for most commands
-    cmd.data2 = cmd.command + cmd.data1;  // Checksum
-    cmd.eot = Serial_EOT;
-
-    // Send the command bytes with small delays
-    _serial.write(cmd.sot);
-    delay(2);
-    _serial.write(cmd.command);
-    delay(2);
-    _serial.write(cmd.data1);
-    delay(2);
-    _serial.write(cmd.data2);
-    delay(2);
-    _serial.write(cmd.eot);
-
-    return true;
+    return send_message(SDB_Handshake, 0x01);
   }
 
-  /**
-     * Send a vibration level command to the hardware
-     * 
-     * @param level Vibration level (0-4)
-     * @return true if command was sent
-     */
   bool send_vibration_level(uint8_t level) {
-    Send cmd;
-    cmd.sot = Serial_SOT;
-    cmd.command = Vibrate_Mode_ON;
-    
-    // Set the data1 based on vibration level
+    byte data;
     switch(level) {
-      case 0:
-        cmd.data1 = 0x71;  // VIBMODE_U0
-        break;
-      case 1:
-        cmd.data1 = 0x72;  // VIBMODE_U1
-        break;
-      case 2:
-        cmd.data1 = 0x73;  // VIBMODE_U2
-        break;
-      case 3:
-        cmd.data1 = 0x74;  // VIBMODE_U3
-        break;
-      case 4:
-        cmd.data1 = 0x75;  // VIBMODE_U4
-        break;
-      default:
-        cmd.data1 = 0x73;  // Default to medium level (U2)
-        break;
+      case 0: data = VIBMODE_U0; break;
+      case 1: data = VIBMODE_U1; break;
+      case 2: data = VIBMODE_U2; break;
+      case 3: data = VIBMODE_U3; break;
+      case 4: data = VIBMODE_U4; break;
+      default: data = VIBMODE_U2; break; // Default
     }
     
-    cmd.data2 = cmd.command + cmd.data1;  // Checksum
-    cmd.eot = Serial_EOT;
-
-    // Send the command bytes with small delays
-    _serial.write(cmd.sot);
-    delay(2);
-    _serial.write(cmd.command);
-    delay(2);
-    _serial.write(cmd.data1);
-    delay(2);
-    _serial.write(cmd.data2);
-    delay(2);
-    _serial.write(cmd.eot);
-
-    return true;
+    return send_message(Vibrate_Mode_ON, data);
   }
 
-  /**
-     * Send a vibration time command to the hardware
-     * 
-     * @param seconds Vibration duration in seconds (1-5)
-     * @return true if command was sent
-     */
   bool send_vibration_time(uint8_t seconds) {
-    Send cmd;
-    cmd.sot = Serial_SOT;
-    cmd.command = Set_Vibration_Time;
-    
-    // Set the data1 based on vibration time
+    byte data;
     switch(seconds) {
-      case 1:
-        cmd.data1 = 0x81;  // VIBDUR_1
-        break;
-      case 2:
-        cmd.data1 = 0x82;  // VIBDUR_2
-        break;
-      case 3:
-        cmd.data1 = 0x83;  // VIBDUR_3
-        break;
-      case 4:
-        cmd.data1 = 0x84;  // VIBDUR_4
-        break;
-      case 5:
-        cmd.data1 = 0x85;  // VIBDUR_5
-        break;
-      default:
-        cmd.data1 = 0x82;  // Default to 2 seconds
-        break;
+      case 1: data = VIBDUR_1; break;
+      case 2: data = VIBDUR_2; break;
+      case 3: data = VIBDUR_3; break;
+      case 4: data = VIBDUR_4; break;
+      case 5: data = VIBDUR_5; break;
+      default: data = VIBDUR_2; break; // Default
     }
     
-    cmd.data2 = cmd.command + cmd.data1;  // Checksum
-    cmd.eot = Serial_EOT;
-
-    // Send the command bytes with small delays
-    _serial.write(cmd.sot);
-    delay(2);
-    _serial.write(cmd.command);
-    delay(2);
-    _serial.write(cmd.data1);
-    delay(2);
-    _serial.write(cmd.data2);
-    delay(2);
-    _serial.write(cmd.eot);
-
-    return true;
+    return send_message(Set_Vibration_Time, data);
   }
 
-  /**
-     * Process incoming serial data
-     * Should be called regularly to handle responses
-     */
   int process() {
-    // Check if data is available
     if (_serial.available() >= BUFFER_SIZE) {
-      Response resp;
+      uint8_t response[MSG_LENGTH];
 
-      // Read the response
-      resp.sot = _serial.read();
-      resp.command = _serial.read();
-      resp.data1 = _serial.read();
-      resp.data2 = _serial.read();
-      resp.eot = _serial.read();
+      response[MSG_SOT] = _serial.read();
+      response[MSG_COMMAND] = _serial.read();
+      response[MSG_DATA1] = _serial.read();
+      response[MSG_DATA2] = _serial.read();
+      response[MSG_EOT] = _serial.read();
 
       String command_name;
-      switch(resp.command) {
+      switch(response[MSG_COMMAND]) {
         case SDB_Handshake: command_name = "SDB_Handshake"; break;
         case ACKNOWLEDGE: command_name = "ACKNOWLEDGE"; break;
         case VIBRATION_ON: command_name = "VIBRATION_ON"; break;
@@ -189,31 +75,36 @@ public:
         case DISPENSE_DONE: command_name = "DISPENSE_DONE"; break;
         case IR_SENSOR_FAILURE: command_name = "IR_SENSOR_FAILURE"; break;
         case MARKER_NOT_DETECTED: command_name = "MARKER_NOT_DETECTED"; break;
-        default: command_name = "UNKNOWN(0x" + String(resp.command, HEX) + ")"; break;
+        default: command_name = "UNKNOWN(0x" + String(response[MSG_COMMAND], HEX) + ")"; break;
       }
-      Serial.println("DispenserHeadSerial::process() - " + command_name + " <0x" + String(resp.sot, HEX) + "><0x" + String(resp.command, HEX) + "><0x" + String(resp.data1, HEX) + "><0x" + String(resp.data2, HEX) + "><0x" + String(resp.eot, HEX) + ">");
+      Serial.println("DispenserHeadSerial::process() - " + command_name + 
+                     " <0x" + String(response[MSG_SOT], HEX) + 
+                     "><0x" + String(response[MSG_COMMAND], HEX) + 
+                     "><0x" + String(response[MSG_DATA1], HEX) + 
+                     "><0x" + String(response[MSG_DATA2], HEX) + 
+                     "><0x" + String(response[MSG_EOT], HEX) + ">");
 
       // Validate the response format
-      if (resp.sot == Serial_SOT && resp.eot == Serial_EOT) {
+      if (response[MSG_SOT] == Serial_SOT && response[MSG_EOT] == Serial_EOT) {
         // Process the response based on the command
-        if (resp.command == SDB_Handshake) {
+        if (response[MSG_COMMAND] == SDB_Handshake) {
           return SDB_Handshake;
-        } else if (resp.command == ACKNOWLEDGE) {
+        } else if (response[MSG_COMMAND] == ACKNOWLEDGE) {
           // Received acknowledgment
           return ACKNOWLEDGE;
-        } else if (resp.command == VIBRATION_ON) {
+        } else if (response[MSG_COMMAND] == VIBRATION_ON) {
           // Vibration mode turned on
           return VIBRATION_ON;
-        } else if (resp.command == VIBRATION_OFF) {
+        } else if (response[MSG_COMMAND] == VIBRATION_OFF) {
           // Vibration mode turned off
           return VIBRATION_OFF;
-        } else if (resp.command == DISPENSE_DONE) {
+        } else if (response[MSG_COMMAND] == DISPENSE_DONE) {
           // Dispense completed successfully
           return DISPENSE_DONE;
-        } else if (resp.command == IR_SENSOR_FAILURE) {
+        } else if (response[MSG_COMMAND] == IR_SENSOR_FAILURE) {
           // IR sensor failure
           return IR_SENSOR_FAILURE;
-        } else if (resp.command == MARKER_NOT_DETECTED) {
+        } else if (response[MSG_COMMAND] == MARKER_NOT_DETECTED) {
           // Marker not detected
           return MARKER_NOT_DETECTED;
         } else {
