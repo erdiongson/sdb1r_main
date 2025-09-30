@@ -15,7 +15,7 @@
 #include "src/ui/App_Common.h"
 #include <EEPROM.h>
 #include "Config.h"
-#include "SaveProfile.h"
+#include "Profile.h"
 #include "XY_Table.h"
 
 #include "src/logic/Axis.h"

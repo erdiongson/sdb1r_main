@@ -2,8 +2,10 @@
 Date created - 2022.12.14 - XentiQ version
 */
 
-#ifndef _SAVEPROFILE_H_
-#define _SAVEPROFILE_H_
+#pragma once
+
+#ifndef _PROFILE_H_
+#define _PROFILE_H_
 
 #include <Arduino.h>
 #include "XY_Table.h"
@@ -117,7 +119,7 @@ void WriteProfileEEPROM(int address);//try054 , Profile &profile);
 void ReadProfileEEPROM(int address);
 void ReadProfileMinEEPROM(int address);
 
-#endif /*_SAVEPROFILE_H_*/
+#endif /*_PROFILE_H_*/
 extern Profile CurProf;
 extern ProfileMin SelectProf;//try055
 

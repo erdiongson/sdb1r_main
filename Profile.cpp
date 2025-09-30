@@ -7,7 +7,7 @@ Date created - 2022.12.14 - XentiQ version
 *                  to read and write the characters of the password;
 */
 
-#include "SaveProfile.h"
+#include "Profile.h"
 #include <EEPROM.h>
 #include "src/ui/Platform.h"
 #include "src/ui/app_common.h"

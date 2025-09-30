@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../DispenserHead.h"
-#include "../../../SaveProfile.h"
+#include "../../../Profile.h"
 #include "ModesCommon.h"
 #include "../../ui/App_Common.h"
 #include "../InteractionsHandler.h"

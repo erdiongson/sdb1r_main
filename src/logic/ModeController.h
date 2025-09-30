@@ -2,7 +2,7 @@
 #define MODE_CONTROLLER_H
 
 #include "DispenserHead.h"
-#include "../../SaveProfile.h"
+#include "../../Profile.h"
 #include "../ui/App_Common.h"
 #include "InteractionsHandler.h"
 
