@@ -58,7 +58,6 @@ public:
     // Configure stepper motor parameters
     stepper.setMaxSpeed(params.maxSpeed);
     stepper.setAcceleration(params.acceleration);
-    stepper.setSpeed(params.maxSpeed);
   }
 
 
