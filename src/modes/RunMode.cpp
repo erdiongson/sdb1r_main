@@ -1,10 +1,10 @@
-#include "DispenseMode.h"
+#include "RunMode.h"
 #include "ModesCommon.h"
 
-DispenseMode::DispenseMode(DispenserHead& head, Gpu_Hal_Context_t* host, ModeController* controller, ModeCompletionCallback callback)
+RunMode::RunMode(DispenserHead& head, Gpu_Hal_Context_t* host, ModeController* controller, ModeCompletionCallback callback)
   : BaseMode(head, host, controller, callback) {}
 
-void DispenseMode::on_start(Profile& profile) {
+void RunMode::on_start(Profile& profile) {
   Serial.println("MODE: Setting profile on trayhandler");
   trayHandler.load_profile(profile);
   trayHandler.reset();
@@ -19,7 +19,7 @@ void DispenseMode::on_start(Profile& profile) {
   start_stage(ZERO_STAGE);
 }
 
-void DispenseMode::on_interaction(const Interaction& interaction) {
+void RunMode::on_interaction(const Interaction& interaction) {
   int button = interaction.key_pressed;
   
   if (button == PAUSE) {
@@ -41,7 +41,7 @@ void DispenseMode::on_interaction(const Interaction& interaction) {
   }
 }
 
-int DispenseMode::on_step() {
+int RunMode::on_step() {
   if (paused) return MODE_CONTINUE;
 
   switch (stage) {
@@ -125,7 +125,7 @@ int DispenseMode::on_step() {
   return MODE_CONTINUE;
 }
 
-void DispenseMode::start_stage(int newStage) {
+void RunMode::start_stage(int newStage) {
   switch (newStage) {
     case ZERO_STAGE:
       Serial.println("MODE: Setting stage: ZERO");
@@ -195,6 +195,6 @@ void DispenseMode::start_stage(int newStage) {
   }
 }
 
-int DispenseMode::get_mode_type() const {
-  return MODE_TYPE_DISPENSE;
+int RunMode::get_mode_type() const {
+  return MODE_TYPE_RUN;
 }

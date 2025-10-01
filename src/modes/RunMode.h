@@ -4,7 +4,7 @@
 #include "../logic/TrayPositionHandler.h"
 
 /**
- * DispenseMode - Responsible for automated dispensing operation
+ * RunMode - Responsible for automated dispensing operation
  * 
  * This mode handles the full dispensing cycle:
  * - Moving to home position
@@ -13,7 +13,7 @@
  * - Triggering dispensing
  * - Moving through all valid tray positions
  */
-class DispenseMode : public BaseMode {
+class RunMode : public BaseMode {
 private:
   bool paused = false;
 
@@ -46,7 +46,7 @@ public:
    * @param controller Pointer to the mode controller for callbacks
    * @param callback Callback function for mode completion
    */
-  DispenseMode(DispenserHead& head, Gpu_Hal_Context_t *host, ModeController* controller, ModeCompletionCallback callback);
+  RunMode(DispenserHead& head, Gpu_Hal_Context_t *host, ModeController* controller, ModeCompletionCallback callback);
 
   /**
    * Called when the mode is started
@@ -72,7 +72,7 @@ public:
   /**
    * Returns the type of this mode
    * 
-   * @return MODE_TYPE_DISPENSE
+   * @return MODE_TYPE_RUN
    */
   int get_mode_type() const override;
 

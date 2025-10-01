@@ -18,10 +18,10 @@ void HomeMode::on_start(Profile& profile) {
 void HomeMode::on_interaction(const Interaction& interaction) {
   if (interaction.key_pressed == SETTING) {
     Serial.println("MODE: Home mode transitioning to settings");
-    complete_with_next_mode(MODE_TYPE_SETTINGS);
+    complete_with_next_mode(MODE_TYPE_CONFIG);
   } else if (interaction.key_pressed == START) {
     Serial.println("MODE: Home mode transitioning to start");
-    complete_with_next_mode(MODE_TYPE_DISPENSE);
+    complete_with_next_mode(MODE_TYPE_RUN);
   }
 }
 

@@ -8,7 +8,7 @@
 
 #include "../modes/BaseMode.h"
 #include "../modes/HomeMode.h"
-#include "../modes/DispenseMode.h"
+#include "../modes/RunMode.h"
 #include "../modes/MoveTestMode.h"
 #include "../modes/DispenseTestMode.h"
 #include "../modes/ConfigMode.h"
@@ -57,8 +57,8 @@ public:
       case MODE_TYPE_HOME:
         mode = new HomeMode(dispenserHead, phost, this, &ModeController::complete_mode_with_next);
         break;
-      case MODE_TYPE_DISPENSE:
-        mode = new DispenseMode(dispenserHead, phost, this, &ModeController::complete_mode_with_next);
+      case MODE_TYPE_RUN:
+        mode = new RunMode(dispenserHead, phost, this, &ModeController::complete_mode_with_next);
         break;
       case MODE_TYPE_MOVE_TEST:
         mode = new MoveTestMode(dispenserHead, phost, this, &ModeController::complete_mode_with_next);
