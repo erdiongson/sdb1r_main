@@ -14,16 +14,15 @@ public:
     InteractionsHandler() {}
     ~InteractionsHandler() {}
 
-    Interaction getInteraction() {
-        Interaction interaction;
+    static inline int lastTouchButton = 0; // Inline static member (C++17)
+
+    // Optimized version: pass by reference to avoid struct copy
+    void getInteraction(Interaction& interaction) {
+        // Initialize with default values using member initialization
+        interaction = {0, MSG_UNKNOWN};
         
-        // Initialize with default values
-        interaction.key_pressed = 0;
-        interaction.plc_message_type = MSG_UNKNOWN;
-        
-        // Check for key presses - only register a key when it's pressed and then released
-        static int lastTouchButton = 0; // Remember the last button state
-        int touchButtonPressed = GetKeyPressed();
+        // Read hardware register only once
+        int touchButtonPressed = Gpu_Hal_Rd8(phost, REG_TOUCH_TAG);
         
         // Button press cycle: non-zero (pressed) followed by zero (released)
         if (lastTouchButton != 0 && touchButtonPressed == 0) {
@@ -35,9 +34,28 @@ public:
         lastTouchButton = touchButtonPressed;
         
         // Check for PLC messages
-        PLCMessage plcMessage = PlcSerial::getNewMessage();
-        interaction.plc_message_type = plcMessage.type;
+        // PLCMessage plcMessage = PlcSerial::getNewMessage();
+        // interaction.plc_message_type = plcMessage.type;
+    }
+    
+    // Alternative: even faster version that returns early when no interaction
+    bool getInteractionFast(Interaction& interaction) {
+        // Read hardware register only once
+        int touchButtonPressed = Gpu_Hal_Rd8(phost, REG_TOUCH_TAG);
         
-        return interaction;
+        // Check for button release (the only case we care about)
+        if (lastTouchButton != 0 && touchButtonPressed == 0) {
+            // Button was pressed and now released - register the press
+            interaction.key_pressed = lastTouchButton;
+            interaction.plc_message_type = MSG_UNKNOWN;
+            lastTouchButton = touchButtonPressed;
+            return true; // Interaction detected
+        }
+        
+        // Update last button state
+        lastTouchButton = touchButtonPressed;
+        
+        // No interaction detected - early exit without initializing struct
+        return false;
     }
 };

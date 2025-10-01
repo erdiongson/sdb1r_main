@@ -32,7 +32,7 @@ uint8_t CurProfNum;  //current profile id
 AxisParams xAxis(
   Motor_x_CLK, Motor_x_CW,
   Limit_S_x_MIN, Limit_S_x_MAX,
-  motor_y_speed, motor_y_Acceleration);
+  motor_x_speed, motor_x_Acceleration);
 
 AxisParams yAxis(
   Motor_y_CLK, Motor_y_CW,
@@ -50,6 +50,19 @@ ModeController modeController(dispenserHead);
 InteractionsHandler interactionsHandler;
 
 uint16_t err_flag = 0;  //E1 = 1, E2 = 2;
+static uint32_t loopIndex = 0;
+
+// Frequency tracking variables
+unsigned long xAxisStepCount = 0;
+unsigned long modeControllerStepCount = 0;
+unsigned long lastFrequencyReport = 0;
+const unsigned long FREQUENCY_REPORT_INTERVAL = 10000; // Report every 10 seconds (in milliseconds)
+
+// Timing variables for loop operations
+unsigned long lastInteractionCheck = 0;
+unsigned long lastModeStep = 0;
+const unsigned long INTERACTION_CHECK_INTERVAL = 100; // Check interactions every 1000ms
+const unsigned long MODE_STEP_INTERVAL = 3000; // Run mode step every 5000ms (5s)
 
 #if DEBUG
 char Password[4][PROFILE_NAME_MAX_LEN] = { "su",  //super password
@@ -178,28 +191,74 @@ void setup() {
 
   CurProfNum = LoadProfile();
 
-  modeController.start_mode(MODE_TYPE_SETTINGS, CurProf, phost);
+  modeController.start_mode(MODE_TYPE_MOVE_TEST, CurProf, phost);
 
   dispenserHead.z().setDisabled(true);
-  dispenserHead.set_vibration_level(1);
-  dispenserHead.set_vibration_time(1);
+  // dispenserHead.set_vibration_level(1);
+  // dispenserHead.set_vibration_time(1);
+  
+  // Initialize frequency tracking
+  lastFrequencyReport = millis();
 }
 
+void reportFrequencies() {
+  unsigned long currentTime = millis();
+  unsigned long timeDiff = currentTime - lastFrequencyReport;
+  
+  if (timeDiff >= FREQUENCY_REPORT_INTERVAL) {
+    float timeInSeconds = timeDiff / 1000.0;
+    
+    Serial.println("=== Frequency Report ===");
+    Serial.println("X-Axis onStep frequency: " + String(xAxisStepCount / timeInSeconds, 2) + " Hz");
+    Serial.println("ModeController on_step frequency: " + String(modeControllerStepCount / timeInSeconds, 2) + " Hz");
+    Serial.println("Time period: " + String(timeInSeconds, 2) + " seconds");
+    Serial.println("========================");
+    
+    // Reset counters and timestamp
+    xAxisStepCount = 0;
+    modeControllerStepCount = 0;
+    lastFrequencyReport = currentTime;
+  }
+}
+
+Interaction interaction;
+
+
 void loop() {
+  // Track dispenser head onStep calls - run as frequently as possible
   dispenserHead.x().onStep();
   dispenserHead.y().onStep();
-  dispenserHead.z().onStep();
+  // dispenserHead.z().onStep();
+  xAxisStepCount++;
+  
+  
+  unsigned long currentTime = millis();
+  
+  // Check for interactions every 1000ms
+  if (currentTime - lastInteractionCheck >= INTERACTION_CHECK_INTERVAL) {
+    if (interactionsHandler.getInteractionFast(interaction)) {
+      modeController.on_interaction(interaction);
+    }
+    lastInteractionCheck = currentTime;
+  }
 
-  int result = modeController.on_step();
-  if (result != 0) {
-    Serial.println("Result: " + String(result));
-  }
-  if (result == MODE_COMPLETE) {
-    modeController.start_mode(MODE_TYPE_HOME, CurProf, phost);
+  // // Run mode step every 5s
+  if (currentTime - lastModeStep >= MODE_STEP_INTERVAL) {
+    // Serial.println("MODE: on_step");
+    
+    // Track modeController on_step calls
+    int result = modeController.on_step();
+    
+    if (result != 0) {
+      Serial.println("Result: " + String(result));
+    }
+    if (result == MODE_COMPLETE) {
+      modeController.start_mode(MODE_TYPE_HOME, CurProf, phost);
+    }
+    lastModeStep = currentTime;
   }
 
-  Interaction interaction = interactionsHandler.getInteraction();
-  if (modeController.hasActiveMode()) {
-    modeController.on_interaction(interaction);
-  }
+  
+  // Report frequencies periodically
+  // reportFrequencies();
 }

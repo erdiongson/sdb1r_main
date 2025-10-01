@@ -30,12 +30,12 @@
 //#define motor_x_Acceleration 8000 // 4800, 3200
 //#define motor_y_Acceleration 4000 // 2400 1600 // 3200
 
-#define motor_x_speed 8000 // 8000, 2000
-#define motor_y_speed 80000  // 4800, 1000
+#define motor_x_speed 80000 // 8000, 2000
+#define motor_y_speed 800  // 4800, 1000
 #define motor_z_speed 80000  // 4800, 1000
 
 #define motor_x_Acceleration 100000//8000 // 4800, 3200
-#define motor_y_Acceleration 100000//4000 // 2400 1600 // 3200
+#define motor_y_Acceleration 1000 //4000 // 2400 1600 // 3200
 #define motor_z_Acceleration 100000//4000 // 2400 1600 // 3200
 
 // Defines the number of "dispenses" performed during priming
