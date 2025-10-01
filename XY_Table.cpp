@@ -11,8 +11,8 @@
 */
 
 #include "src/logic/modes/ModesCommon.h"
-#include "src/ui/Platform.h"
-#include "src/ui/App_Common.h"
+#include "src/gpu/Platform.h"
+#include "src/gpu/App_Common.h"
 #include <EEPROM.h>
 #include "Config.h"
 #include "Profile.h"

@@ -1,6 +1,6 @@
 #include "DispenseMode.h"
-#include "../../ui/Platform.h"
-#include "../../ui/App_Common.h"
+#include "../../gpu/Platform.h"
+#include "../../gpu/App_Common.h"
 
 DispenseMode::DispenseMode(DispenserHead& head, Gpu_Hal_Context_t *host)
   : BaseMode(head, host) {}

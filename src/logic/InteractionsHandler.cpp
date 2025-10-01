@@ -5,8 +5,8 @@
 
 #include "InteractionsHandler.h"
 #include "../communication/PlcSerial.h"
-#include "../ui/Platform.h"
-#include "../ui/App_Common.h"
+#include "../gpu/Platform.h"
+#include "../gpu/App_Common.h"
 
 /**********************************************************************************************************
 * @brief InteractionsHandler::InteractionsHandler()

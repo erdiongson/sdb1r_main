@@ -11,8 +11,8 @@
 #ifndef _MOVE_TEST_SCREEN_H_
 #define _MOVE_TEST_SCREEN_H_
 
-#include "App_Common.h"
-#include "Platform.h"
+#include "../gpu/App_Common.h"
+#include "../gpu/Platform.h"
 #include "Tags.h"
 
 // Limit switch states structure

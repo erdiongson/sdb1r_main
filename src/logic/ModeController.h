@@ -3,7 +3,7 @@
 
 #include "DispenserHead.h"
 #include "../../Profile.h"
-#include "../ui/App_Common.h"
+#include "../gpu/App_Common.h"
 #include "InteractionsHandler.h"
 
 #include "modes/BaseMode.h"
