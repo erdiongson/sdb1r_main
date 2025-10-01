@@ -1,12 +1,12 @@
-#include "SettingsMode.h"
+#include "ConfigMode.h"
 #include "../views/Config_Screen.h"
 #include "../../Config.h"
 #include "ModesCommon.h"
 
-SettingsMode::SettingsMode(DispenserHead& head, Gpu_Hal_Context_t* host, ModeController* controller, ModeCompletionCallback callback)
+ConfigMode::ConfigMode(DispenserHead& head, Gpu_Hal_Context_t* host, ModeController* controller, ModeCompletionCallback callback)
   : BaseMode(head, host, controller, callback), currentProfile(nullptr), specialMode(false) {}
 
-void SettingsMode::on_start(Profile& profile) {
+void ConfigMode::on_start(Profile& profile) {
   Serial.println("MODE: Settings mode");
 
   // Store reference to the current profile
@@ -42,7 +42,7 @@ void SettingsMode::on_start(Profile& profile) {
   }
 }
 
-void SettingsMode::on_interaction(const Interaction& interaction) {
+void ConfigMode::on_interaction(const Interaction& interaction) {
   if (interaction.key_pressed == 0) return;
 
   switch (interaction.key_pressed) {
@@ -299,15 +299,15 @@ void SettingsMode::on_interaction(const Interaction& interaction) {
   }
 }
 
-int SettingsMode::on_step() {
+int ConfigMode::on_step() {
   return MODE_CONTINUE;
 }
 
-int SettingsMode::get_mode_type() const {
-  return MODE_TYPE_SETTINGS;
+int ConfigMode::get_mode_type() const {
+  return MODE_TYPE_CONFIG;
 }
 
-void SettingsMode::increment_vibration_level() {
+void ConfigMode::increment_vibration_level() {
   int next_level = currentProfile->vibrationEnabled + 1;
   if (next_level > 4) next_level = 0;
 
@@ -315,7 +315,7 @@ void SettingsMode::increment_vibration_level() {
   dispenserHead.set_vibration_level(next_level);
 }
 
-void SettingsMode::increment_vibration_time() {
+void ConfigMode::increment_vibration_time() {
   int next_duration = currentProfile->vibrationDuration + 1;
   if (next_duration > 5) next_duration = 1;
 

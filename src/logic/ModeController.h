@@ -11,7 +11,7 @@
 #include "../modes/DispenseMode.h"
 #include "../modes/MoveTestMode.h"
 #include "../modes/DispenseTestMode.h"
-#include "../modes/SettingsMode.h"
+#include "../modes/ConfigMode.h"
 
 class ModeController {
 private:
@@ -66,8 +66,8 @@ public:
       case MODE_TYPE_DISPENSE_TEST:
         mode = new DispenseTestMode(dispenserHead, phost, this, &ModeController::complete_mode_with_next);
         break;
-      case MODE_TYPE_SETTINGS:
-        mode = new SettingsMode(dispenserHead, phost, this, &ModeController::complete_mode_with_next);
+      case MODE_TYPE_CONFIG:
+        mode = new ConfigMode(dispenserHead, phost, this, &ModeController::complete_mode_with_next);
         break;
     }
     mode->on_start(profile);

@@ -4,14 +4,14 @@
 #include "../gpu/Platform.h"
 
 /**
- * SettingsMode - Responsible for managing system settings
+ * ConfigMode - Responsible for managing system settings
  * 
  * This mode allows users to:
  * - View and modify system configuration
  * - Adjust calibration parameters
  * - Configure communication settings
  */
-class SettingsMode : public BaseMode {
+class ConfigMode : public BaseMode {
 public:
   /**
    * Constructor
@@ -21,7 +21,7 @@ public:
    * @param controller Pointer to the mode controller for callbacks
    * @param callback Callback function for mode completion
    */
-  SettingsMode(DispenserHead& head, Gpu_Hal_Context_t *host, ModeController* controller, ModeCompletionCallback callback);
+  ConfigMode(DispenserHead& head, Gpu_Hal_Context_t *host, ModeController* controller, ModeCompletionCallback callback);
 
   /**
    * Called when the mode is started
@@ -47,7 +47,7 @@ public:
   /**
    * Returns the type of this mode
    * 
-   * @return MODE_TYPE_SETTINGS
+   * @return MODE_TYPE_CONFIG
    */
   int get_mode_type() const override;
 
