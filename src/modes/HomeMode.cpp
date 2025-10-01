@@ -1,5 +1,4 @@
 #include "HomeMode.h"
-#include "../../gpu/App_Common.h"
 
 HomeMode::HomeMode(DispenserHead& head, Gpu_Hal_Context_t *host)
   : BaseMode(head, host) {}

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BaseMode.h"
-#include "../../gpu/Platform.h"
+#include "../gpu/Platform.h"
 
 /**
  * SettingsMode - Responsible for managing system settings

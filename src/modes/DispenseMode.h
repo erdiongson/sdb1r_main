@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BaseMode.h"
-#include "../TrayPositionHandler.h"
+#include "../logic/TrayPositionHandler.h"
 
 /**
  * DispenseMode - Responsible for automated dispensing operation

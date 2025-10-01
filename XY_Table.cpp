@@ -10,7 +10,7 @@
 * Version 2.03: ii. Revised the saved password logic
 */
 
-#include "src/logic/modes/ModesCommon.h"
+#include "src/modes/ModesCommon.h"
 #include "src/gpu/Platform.h"
 #include "src/gpu/App_Common.h"
 #include <EEPROM.h>
@@ -18,8 +18,8 @@
 #include "Profile.h"
 #include "XY_Table.h"
 
-#include "src/logic/Axis.h"
-#include "src/logic/DispenserHead.h"
+#include "src/hardware/Axis.h"
+#include "src/hardware/DispenserHead.h"
 #include "src/logic/ModeController.h"
 
 

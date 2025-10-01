@@ -1,17 +1,17 @@
 #ifndef MODE_CONTROLLER_H
 #define MODE_CONTROLLER_H
 
-#include "DispenserHead.h"
+#include "../hardware/DispenserHead.h"
 #include "../../Profile.h"
 #include "../gpu/App_Common.h"
 #include "InteractionsHandler.h"
 
-#include "modes/BaseMode.h"
-#include "modes/HomeMode.h"
-#include "modes/DispenseMode.h"
-#include "modes/MoveTestMode.h"
-#include "modes/DispenseTestMode.h"
-#include "modes/SettingsMode.h"
+#include "../modes/BaseMode.h"
+#include "../modes/HomeMode.h"
+#include "../modes/DispenseMode.h"
+#include "../modes/MoveTestMode.h"
+#include "../modes/DispenseTestMode.h"
+#include "../modes/SettingsMode.h"
 
 class ModeController {
 private:

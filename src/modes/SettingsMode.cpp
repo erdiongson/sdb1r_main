@@ -1,6 +1,6 @@
 #include "SettingsMode.h"
-#include "../../gpu/App_Common.h"
-#include "../../../Config.h"
+#include "../gpu/App_Common.h"
+#include "../../Config.h"
 
 SettingsMode::SettingsMode(DispenserHead& head, Gpu_Hal_Context_t *host)
   : BaseMode(head, host), selectedSetting(0), settingsModified(false), currentProfile(nullptr), specialMode(false) {}

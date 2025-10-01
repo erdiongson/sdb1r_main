@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../DispenserHead.h"
-#include "../../../Profile.h"
+#include "../hardware/DispenserHead.h"
+#include "../../Profile.h"
 #include "ModesCommon.h"
-#include "../../gpu/App_Common.h"
-#include "../InteractionsHandler.h"
+#include "../gpu/App_Common.h"
+#include "../logic/InteractionsHandler.h"
 
 class BaseMode {
 public:
