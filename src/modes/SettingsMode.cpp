@@ -1,5 +1,5 @@
 #include "SettingsMode.h"
-#include "../gpu/App_Common.h"
+#include "../views/Config_Screen.h"
 #include "../../Config.h"
 
 SettingsMode::SettingsMode(DispenserHead& head, Gpu_Hal_Context_t *host)
