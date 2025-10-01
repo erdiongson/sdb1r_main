@@ -44,7 +44,7 @@ AxisParams zAxis(
   Limit_S_z_MIN, Limit_S_z_MAX,
   motor_y_speed, motor_y_Acceleration);
 
-DispenserHeadParams params = { xAxis, yAxis, zAxis, Serial2 };
+DispenserHeadParams params = { xAxis, yAxis, zAxis };
 DispenserHead dispenserHead(params);
 ModeController modeController(dispenserHead);
 InteractionsHandler interactionsHandler;

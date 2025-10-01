@@ -1,27 +1,48 @@
 #include "DispenserSerial.h"
+#include "UART.h"
 
-DispenserSerial::DispenserSerial(HardwareSerial& serial)
-  : _serial(serial) {}
-
+/**********************************************************************************************************
+* @brief DispenserSerial::send_message()
+* @details Send a message to the dispenser with command and data bytes
+* @param command - command byte to send
+* @param data - data byte to send
+* @return bool - true if message was sent successfully
+**********************************************************************************************************/
 bool DispenserSerial::send_message(byte command, byte data) {
   uint8_t checksum = command + data;
-  _serial.write(Serial_SOT);
-  _serial.write(command);
-  _serial.write(data);
-  _serial.write(checksum);
-  _serial.write(Serial_EOT);
+  Serial2.write(Serial_SOT);
+  Serial2.write(command);
+  Serial2.write(data);
+  Serial2.write(checksum);
+  Serial2.write(Serial_EOT);
 
   return true;
 }
 
+/**********************************************************************************************************
+* @brief DispenserSerial::send_dispense()
+* @details Send a dispense command to the dispenser
+* @return bool - true if the message was sent successfully
+**********************************************************************************************************/
 bool DispenserSerial::send_dispense() {
   return send_message(SDB_Dispense_START, 0x01);
 }
 
+/**********************************************************************************************************
+* @brief DispenserSerial::send_handshake()
+* @details Send a handshake command to the dispenser
+* @return bool - true if the message was sent successfully
+**********************************************************************************************************/
 bool DispenserSerial::send_handshake() {
   return send_message(SDB_Handshake, 0x01);
 }
 
+/**********************************************************************************************************
+* @brief DispenserSerial::send_vibration_level()
+* @details Set the vibration level for the dispenser
+* @param level - vibration level (0-4)
+* @return bool - true if the message was sent successfully
+**********************************************************************************************************/
 bool DispenserSerial::send_vibration_level(uint8_t level) {
   byte data;
   switch(level) {
@@ -36,6 +57,12 @@ bool DispenserSerial::send_vibration_level(uint8_t level) {
   return send_message(Vibrate_Mode_ON, data);
 }
 
+/**********************************************************************************************************
+* @brief DispenserSerial::send_vibration_time()
+* @details Set the vibration time for the dispenser
+* @param seconds - vibration time in seconds (1-5)
+* @return bool - true if the message was sent successfully
+**********************************************************************************************************/
 bool DispenserSerial::send_vibration_time(uint8_t seconds) {
   byte data;
   switch(seconds) {
@@ -50,15 +77,20 @@ bool DispenserSerial::send_vibration_time(uint8_t seconds) {
   return send_message(Set_Vibration_Time, data);
 }
 
+/**********************************************************************************************************
+* @brief DispenserSerial::process()
+* @details Process incoming data from the dispenser
+* @return int - command code if valid message received, 0 if no message, -1 if error
+**********************************************************************************************************/
 int DispenserSerial::process() {
-  if (_serial.available() >= BUFFER_SIZE) {
+  if (Serial2.available() >= BUFFER_SIZE) {
     uint8_t response[MSG_LENGTH];
 
-    response[MSG_SOT] = _serial.read();
-    response[MSG_COMMAND] = _serial.read();
-    response[MSG_DATA1] = _serial.read();
-    response[MSG_DATA2] = _serial.read();
-    response[MSG_EOT] = _serial.read();
+    response[MSG_SOT] = Serial2.read();
+    response[MSG_COMMAND] = Serial2.read();
+    response[MSG_DATA1] = Serial2.read();
+    response[MSG_DATA2] = Serial2.read();
+    response[MSG_EOT] = Serial2.read();
 
     String command_name;
     switch(response[MSG_COMMAND]) {
@@ -112,6 +144,11 @@ int DispenserSerial::process() {
   return 0;
 }
 
+/**********************************************************************************************************
+* @brief DispenserSerial::blockUntilResponse()
+* @details Block until a response is received from the dispenser
+* @return bool - true when a response is received
+**********************************************************************************************************/
 bool DispenserSerial::blockUntilResponse() {
   while (process() == 0) {
     delay(10);

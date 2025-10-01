@@ -11,17 +11,14 @@ struct DispenserHeadParams {
   AxisParams xAxis;
   AxisParams yAxis;
   AxisParams zAxis;
-  HardwareSerial& serial;
 
   DispenserHeadParams(
     const AxisParams& xAxis,
     const AxisParams& yAxis,
-    const AxisParams& zAxis,
-    HardwareSerial& serial)
+    const AxisParams& zAxis)
     : xAxis(xAxis),
       yAxis(yAxis),
-      zAxis(zAxis),
-      serial(serial) {}
+      zAxis(zAxis) {}
 };
 
 class DispenserHead {
@@ -41,8 +38,7 @@ public:
   DispenserHead(const DispenserHeadParams& params)
     : xAxis(params.xAxis),
       yAxis(params.yAxis),
-      zAxis(params.zAxis),
-      serialHandler(params.serial){};
+      zAxis(params.zAxis) {}
 
   Axis& x() {
     return xAxis;
@@ -61,13 +57,13 @@ public:
     if (dispensing_state != COMPLETED) return;
 
     // Use the serial handler to send the dispense command
-    if (serialHandler.send_dispense()) {
+    if (DispenserSerial::send_dispense()) {
       dispensing_state = SENT;
     }
   }
 
   int on_step() {
-    int response = serialHandler.process();
+    int response = DispenserSerial::process();
 
     // Handle the response based on the returned code
     switch (response) {
@@ -101,13 +97,13 @@ public:
      * @return true if connected, false if timeout occurred
      */
   bool get_connected() {
-    serialHandler.send_handshake();
+    DispenserSerial::send_handshake();
 
     // Add timeout of 2 seconds (2000ms)
     unsigned long startTime = millis();
     const unsigned long timeout = 2000;  // 2 seconds timeout
 
-    while (serialHandler.process() != SDB_Handshake) {
+    while (DispenserSerial::process() != SDB_Handshake) {
       delay(10);
 
       // Check if timeout has occurred
@@ -126,8 +122,8 @@ public:
    * @return true if command was sent and response received
    */
   bool set_vibration_level(uint8_t level) {
-    if (serialHandler.send_vibration_level(level)) {
-      return serialHandler.blockUntilResponse();
+    if (DispenserSerial::send_vibration_level(level)) {
+      return DispenserSerial::blockUntilResponse();
     }
     return false;
   }
@@ -139,8 +135,8 @@ public:
    * @return true if command was sent and response received
    */
   bool set_vibration_time(uint8_t seconds) {
-    if (serialHandler.send_vibration_time(seconds)) {
-      return serialHandler.blockUntilResponse();
+    if (DispenserSerial::send_vibration_time(seconds)) {
+      return DispenserSerial::blockUntilResponse();
     }
     return false;
   }
@@ -149,7 +145,6 @@ private:
   Axis xAxis;
   Axis yAxis;
   Axis zAxis;
-  DispenserSerial serialHandler;
   DISPENSING_STATE dispensing_state = COMPLETED;
 };
 
