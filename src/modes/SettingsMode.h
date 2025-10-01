@@ -72,11 +72,11 @@ private:
    * @brief Change vibration level
    * @details Cycles through vibration levels from U0-U4
    */
-  void vibration_on();
+  void increment_vibration_level();
   
   /**
    * @brief Change vibration duration
    * @details Cycles through vibration durations from 1-5 seconds
    */
-  void vibration_time();
+  void increment_vibration_time();
 };

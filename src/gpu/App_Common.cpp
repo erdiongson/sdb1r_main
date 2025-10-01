@@ -1516,23 +1516,10 @@ void Config_Settings(Gpu_Hal_Context_t *phost)
               break;              
 		        
 		        case 28: //Vibration Level
-              keypressed=0;
-              // TODO: Re-add
+              // keypressed=0;
+              // Logic handled in SettingsMode
+              // TODO: Ensure this is working
 
-              // vibration_on();
-            /*if (CurProf.vibrationEnabled == 0){
-              CurProf.vibrationEnabled = 1;
-              
-            } else if (CurProf.vibrationEnabled == 1) {
-              CurProf.vibrationEnabled = 2;
-            } else if (CurProf.vibrationEnabled == 2) {
-              CurProf.vibrationEnabled = 3;
-            } else if (CurProf.vibrationEnabled == 3) {
-              CurProf.vibrationEnabled = 4;
-            } else if (CurProf.vibrationEnabled == 4) {
-              CurProf.vibrationEnabled = 0;
-            }*/
-           //CurProf.vibrationEnabled = !CurProf.vibrationEnabled; // Toggle the state
 						  DisplayConfig(phost);
 		          break;
             case PASSEN: //Password Enable
@@ -1542,8 +1529,9 @@ void Config_Settings(Gpu_Hal_Context_t *phost)
               DisplayConfig(phost);
               break;
             case VIBDURATION: //Vibration Duration
-              keypressed=0;
-              // vibration_time();
+              // keypressed=0;
+              // Logic handled in SettingsMode
+              // TODO: Ensure this is working
 
               DisplayConfig(phost);
               break;          
