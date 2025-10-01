@@ -1,6 +1,6 @@
 #include "../gpu/App_Common.h"
 
-void DisplayConfig(Gpu_Hal_Context_t *phost) {
+void Config_Screen(Gpu_Hal_Context_t *phost) {
 
   int16_t vibstatus;
   int16_t passwordStatus;
@@ -283,264 +283,7 @@ void DisplayConfig(Gpu_Hal_Context_t *phost) {
   Disp_End(phost);
 }
 
-void Config_Settings(Gpu_Hal_Context_t *phost) {
-  bool wait4key = TRUE;
-  uint8_t keypressed;
-  char buf[PROFILE_NAME_MAX_LEN];
-  float maxval = 0;
-  int i;
-  bool error = FALSE;
-
-  do {
-    keypressed = GetKeyPressed();
-
-    if (keypressed > 0) {
-      WaitKeyRelease();
-      switch (keypressed) {
-        case 6:  // Home button
-          Serial.println("Button Pressed: HOME");
-          //delay(500);
-          //while( Gpu_Hal_Rd32(phost, REG_TOUCH_SCREEN_XY) != 0x80008000);
-          keypressed = 0;
-          //v204
-          error = FALSE;
-          if (CurProf.Tube_No_x == 0) maxval = MAXXMM - CurProf.trayOriginX;
-          else maxval = (MAXXMM - CurProf.trayOriginX) / (CurProf.Tube_No_x - 1);
-          Round1Dec(&maxval);
-          if (CurProf.pitch_x > maxval) error = TRUE;
-          else {
-            if (CurProf.Tube_No_y == 0) maxval = MAXYMM - CurProf.trayOriginY;
-            else maxval = (MAXYMM - CurProf.trayOriginY) / (CurProf.Tube_No_y - 1);
-            Round1Dec(&maxval);
-            if (CurProf.pitch_y > maxval) error = TRUE;
-          }
-          //v204
-
-          if (error) {
-            strcpy(buf, CurProf.profileName);
-            sprintf(CurProf.profileName, "Error in entry");
-            DisplayConfig(phost);
-            delay(3000);
-            strcpy(CurProf.profileName, buf);
-            DisplayConfig(phost);
-            delay(3000);
-          } else
-            wait4key = FALSE;
-          //v204
-          break;
-        case 11:  // Load (Config Screen)
-          Serial.println("Button Pressed: LOAD");
-          keypressed = 0;
-
-          if (strcmp(CurProf.profileName, "xqreset") == 0) {  //special mode to preload eeprom
-            Dprint("write preset data to eeprom");
-            if (CurProfNum == 0) {
-              for (i = 1; i < MAX_PROFILES; i++) {
-                sprintf(CurProf.profileName, "%s %d", "Profile", i + 1);
-                WriteProfileEEPROM(i);  //try054 ,CurProf);
-              }
-            } else PreLoadEEPROM();
-            sprintf(CurProf.profileName, "EEprom reseted");
-            DisplayConfig(phost);
-            delay(3000);
-            sprintf(CurProf.profileName, "Profile 1 ");
-            DisplayConfig(phost);
-          }
-          if (strcmp(CurProf.profileName, "xqver") == 0) {  //special mode to preload eeprom
-            Dprint("show version");
-            sprintf(CurProf.profileName, "version : %s", FWVER);
-            DisplayConfig(phost);
-            delay(3000);
-            sprintf(CurProf.profileName, "xqver ");
-            DisplayConfig(phost);
-          }
-          if (strcmp(CurProf.profileName, "xqhome") == 0) {  //special mode to preload eeprom
-            Dprint("home");
-            Homing();
-            DisplayConfig(phost);
-          }
-          if (strcmp(CurProf.profileName, "xqblank") == 0) {  //special mode to preload eeprom
-            Dprint("blankeeprom");
-            BlankEEPROM();
-            sprintf(CurProf.profileName, "EEprom blank");
-            DisplayConfig(phost);
-            delay(3000);
-            sprintf(CurProf.profileName, "xqblank ");
-            DisplayConfig(phost);
-            delay(3000);
-          }
-          if (strcmp(CurProf.profileName, "xqsize-s") == 0) {  //special mode to use Version S (small) of the XY Table
-            Dprint("Change the size to small.");
-            sprintf(CurProf.profileName, "Size Change : SMALL");
-            CurProf.sizeFlag = 0;
-            DisplayConfig(phost);
-            delay(3000);
-            sprintf(CurProf.profileName, "xqsize-s ");
-            DisplayConfig(phost);
-          }
-          Profile_Menu(&host);
-          DisplayConfig(phost);
-          //wait4key=FALSE;
-          break;
-        case CONFIGADVANCE:  // Advavanced button
-          Serial.println("Button Pressed: ADVANCED");
-          keypressed = 0;
-          //            confirmAdvanceSetting(phost);
-          DisplaySkipMenu(phost);
-          WaitKeyRelease();
-          delay(100);
-          Skip_Settings(phost);
-
-          //Tray_Screen(phost);
-          //Dprint("returntray","\n");
-          DisplayConfig(phost);
-          //wait4key=FALSE;
-          break;
-        case 12:
-          Serial.println("Button Pressed: SAVE");
-          keypressed = 0;
-          Dprint("curprofnum=", CurProfNum);
-          WriteCurIDEEPROM(CurProfNum);
-          WriteProfileEEPROM(CurProfNum);  //try054 ,CurProf);
-          strcpy(buf, CurProf.profileName);
-          strcpy(CurProf.profileName, "Profile saved");
-          DisplayConfig(phost);
-          delay(3000);
-          strcpy(CurProf.profileName, buf);
-          wait4key = FALSE;
-          break;
-        case 13:
-          Serial.println("Button Pressed: PROFILE");
-          keypressed = 0;
-          Keyboard(phost, CurProf.profileName, "Enter Profile Name", FALSE);
-          DisplayConfig(phost);
-          break;
-
-        case 14:  //no. of Tubes row
-          keypressed = 0;
-          maxval = (int)((MAXXMM - CurProf.trayOriginX) / CurProf.pitch_x) + 1;
-          if (maxval > MAXNUMX) maxval = MAXNUMX;
-
-          Dprint("max val=", maxval);
-          CurProf.Tube_No_x = Keypad(&host, CurProf.Tube_No_x, MINNUMX, MAXNUMX, FALSE);  //v204 maxval,FALSE);
-          DisplayConfig(phost);
-          break;
-        case 15:  //no. of Tubes col
-          keypressed = 0;
-          maxval = (int)((MAXYMM - CurProf.trayOriginY) / CurProf.pitch_y) + 1;
-
-          if (maxval > MAXNUMY) maxval = MAXNUMY;
-          Dprint("max val=", maxval);
-          CurProf.Tube_No_y = Keypad(&host, CurProf.Tube_No_y, MINNUMY, MAXNUMY, FALSE);  //v204 maxval,FALSE);
-          DisplayConfig(phost);
-          break;
-        case 16:  //pitch row
-          keypressed = 0;
-          if (CurProf.Tube_No_x == 0) maxval = MAXXMM - CurProf.trayOriginX;
-          else maxval = (MAXXMM - CurProf.trayOriginX) / (CurProf.Tube_No_x - 1);
-          Round1Dec(&maxval);
-          Dprint("max val=", maxval);
-          if (maxval > MAXPITCHX) maxval = MAXPITCHX;
-          CurProf.pitch_x = Keypad(&host, CurProf.pitch_x, MINPITCHX, MAXPITCHX, FALSE);  //v204 maxval,TRUE);
-          DisplayConfig(phost);
-          break;
-        case 17:  //pitch col
-          keypressed = 0;
-          if (CurProf.Tube_No_y == 0) maxval = MAXYMM - CurProf.trayOriginY;
-          else maxval = (MAXYMM - CurProf.trayOriginY) / (CurProf.Tube_No_y - 1);
-          Round1Dec(&maxval);
-          if (maxval > MAXPITCHY) maxval = MAXPITCHY;
-          Dprint("max val=", maxval);
-          CurProf.pitch_y = Keypad(&host, CurProf.pitch_y, MINPITCHY, MAXPITCHY, FALSE);  //v204 maxval,TRUE);
-          DisplayConfig(phost);
-          break;
-        case 18:  //origin row
-          keypressed = 0;
-          if (CurProf.Tube_No_x == 0) maxval = MAXXMM;
-          else maxval = MAXXMM - (CurProf.pitch_x * (CurProf.Tube_No_x - 1));
-          Round1Dec(&maxval);
-          if (maxval > MAXORGX) maxval = MAXORGX;
-          Dprint("max val=", maxval);
-
-          CurProf.trayOriginX = Keypad(&host, CurProf.trayOriginX, 0, MAXORGX, FALSE);  //v204 maxval,TRUE);
-          DisplayConfig(phost);
-          break;
-        case 19:  //origin col
-          keypressed = 0;
-          if (CurProf.Tube_No_y == 0) maxval = MAXYMM;
-          else maxval = MAXYMM - (CurProf.pitch_y * (CurProf.Tube_No_y - 1));
-          Round1Dec(&maxval);
-          if (maxval > MAXORGY) maxval = MAXORGY;
-          Dprint("max val=", maxval);
-          CurProf.trayOriginY = Keypad(&host, CurProf.trayOriginY, 0, MAXORGY, FALSE);  //v204 maxval,TRUE);
-          DisplayConfig(phost);
-          break;
-
-        case 20:  //Number of Cycles
-          keypressed = 0;
-          CurProf.Cycles = Keypad(&host, CurProf.Cycles, MINCYCLE, MAXCYCLE, FALSE);
-          DisplayConfig(phost);
-          break;
-        case 21:  //Z Dip
-          keypressed = 0;
-          CurProf.ZDip = Keypad(&host, CurProf.ZDip, MINZDIP, MAXZDIP, FALSE);
-          DisplayConfig(phost);
-          break;
-
-        case 28:  //Vibration Level
-                  // keypressed=0;
-                  // Logic handled in SettingsMode
-                  // TODO: Ensure this is working
-
-          DisplayConfig(phost);
-          break;
-        case PASSEN:  //Password Enable
-          keypressed = 0;
-          //passwordEnable_on();
-          CurProf.passwordEnabled = !CurProf.passwordEnabled;  // Toggle the state
-          DisplayConfig(phost);
-          break;
-        case VIBDURATION:  //Vibration Duration
-          // keypressed=0;
-          // Logic handled in SettingsMode
-          // TODO: Ensure this is working
-
-          DisplayConfig(phost);
-          break;
-          //case 246: // No button for Advanced Setting
-          //	  			keypressed=0;
-          //		  		DisplayConfig(phost);
-          //    			break;
-
-          //case 247: // Yes button for Advanced Setting
-        //		        keypressed=0;
-        //   		    Tray_Screen(phost, CurProf);
-        //	    		break;
-        default:
-          keypressed = 0;
-          break;
-      }
-      //if(wait4key) while( GetKeyPressed()>0);
-    }
-
-  } while (wait4key);
-}
-
-void confirmAdvanceSetting(Gpu_Hal_Context_t *phost) {
-  Gpu_CoCmd_FlashFast(phost, 0);
-  Gpu_CoCmd_Dlstart(phost);
-  App_WrCoCmd_Buffer(phost, CLEAR(1, 1, 1));
-
-  Gpu_CoCmd_Text(phost, 156, 35, 28, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, "Proceed Advanced Setting?");
-  App_WrCoCmd_Buffer(phost, TAG(246));
-  Gpu_CoCmd_Button(phost, 179, 120, 60, 30, 28, 0, "No");
-  App_WrCoCmd_Buffer(phost, TAG(247));
-  Gpu_CoCmd_Button(phost, 68, 120, 60, 30, 28, 0, "Yes");
-
-  Disp_End(phost);
-}
-void DisplaySkipMenu(Gpu_Hal_Context_t *phost)  //try054
-{
+void Skip_Screen(Gpu_Hal_Context_t *phost) {
   char rowBuf[ROW_COL_MAX_LEN];        // a buffer for skip row entry
   char colBuf[ROW_COL_MAX_LEN];        // a buffer for skip column entry
   char singlePosBuf[ROW_COL_MAX_LEN];  // a buffer for skip single position entry
@@ -624,63 +367,269 @@ void DisplaySkipMenu(Gpu_Hal_Context_t *phost)  //try054
   Disp_End(phost);
 }
 
-void Skip_Settings(Gpu_Hal_Context_t *phost) {
-  bool wait4key = TRUE;
-  uint8_t keypressed;
+
+void config_screen_key_handler(Gpu_Hal_Context_t *phost, uint8_t keypressed) {
+  char buf[PROFILE_NAME_MAX_LEN];
+  float maxval = 0;
+  int i;
+  bool error = FALSE;
+
+  switch (keypressed) {
+    case 6:  // Home button
+      Serial.println("Button Pressed: HOME");
+      //delay(500);
+      //while( Gpu_Hal_Rd32(phost, REG_TOUCH_SCREEN_XY) != 0x80008000);
+      //v204
+      error = FALSE;
+      if (CurProf.Tube_No_x == 0) maxval = MAXXMM - CurProf.trayOriginX;
+      else maxval = (MAXXMM - CurProf.trayOriginX) / (CurProf.Tube_No_x - 1);
+      Round1Dec(&maxval);
+      if (CurProf.pitch_x > maxval) error = TRUE;
+      else {
+        if (CurProf.Tube_No_y == 0) maxval = MAXYMM - CurProf.trayOriginY;
+        else maxval = (MAXYMM - CurProf.trayOriginY) / (CurProf.Tube_No_y - 1);
+        Round1Dec(&maxval);
+        if (CurProf.pitch_y > maxval) error = TRUE;
+      }
+      //v204
+
+      if (error) {
+        strcpy(buf, CurProf.profileName);
+        sprintf(CurProf.profileName, "Error in entry");
+        Config_Screen(phost);
+        delay(3000);
+        strcpy(CurProf.profileName, buf);
+        Config_Screen(phost);
+        delay(3000);
+      }
+      break;
+    case 11:  // Load (Config Screen)
+      Serial.println("Button Pressed: LOAD");
+
+      if (strcmp(CurProf.profileName, "xqreset") == 0) {  //special mode to preload eeprom
+        Dprint("write preset data to eeprom");
+        if (CurProfNum == 0) {
+          for (i = 1; i < MAX_PROFILES; i++) {
+            sprintf(CurProf.profileName, "%s %d", "Profile", i + 1);
+            WriteProfileEEPROM(i);  //try054 ,CurProf);
+          }
+        } else PreLoadEEPROM();
+        sprintf(CurProf.profileName, "EEprom reseted");
+        Config_Screen(phost);
+        delay(3000);
+        sprintf(CurProf.profileName, "Profile 1 ");
+        Config_Screen(phost);
+      }
+      if (strcmp(CurProf.profileName, "xqver") == 0) {  //special mode to preload eeprom
+        Dprint("show version");
+        sprintf(CurProf.profileName, "version : %s", FWVER);
+        Config_Screen(phost);
+        delay(3000);
+        sprintf(CurProf.profileName, "xqver ");
+        Config_Screen(phost);
+      }
+      if (strcmp(CurProf.profileName, "xqhome") == 0) {  //special mode to preload eeprom
+        Dprint("home");
+        Homing();
+        Config_Screen(phost);
+      }
+      if (strcmp(CurProf.profileName, "xqblank") == 0) {  //special mode to preload eeprom
+        Dprint("blankeeprom");
+        BlankEEPROM();
+        sprintf(CurProf.profileName, "EEprom blank");
+        Config_Screen(phost);
+        delay(3000);
+        sprintf(CurProf.profileName, "xqblank ");
+        Config_Screen(phost);
+        delay(3000);
+      }
+      if (strcmp(CurProf.profileName, "xqsize-s") == 0) {  //special mode to use Version S (small) of the XY Table
+        Dprint("Change the size to small.");
+        sprintf(CurProf.profileName, "Size Change : SMALL");
+        CurProf.sizeFlag = 0;
+        Config_Screen(phost);
+        delay(3000);
+        sprintf(CurProf.profileName, "xqsize-s ");
+        Config_Screen(phost);
+      }
+      Profile_Menu(&host);
+      Config_Screen(phost);
+      break;
+    case CONFIGADVANCE:  // Advanced button
+      Serial.println("Button Pressed: ADVANCED");
+      Skip_Screen(phost);
+      WaitKeyRelease();
+      delay(100);
+      // TODO: Tell the mode to go to the "skip screen"
+      // Skip_Settings(phost);
+
+      //Tray_Screen(phost);
+      //Dprint("returntray","\n");
+      // Config_Screen(phost);
+      break;
+    case 12:
+      Serial.println("Button Pressed: SAVE");
+      Dprint("curprofnum=", CurProfNum);
+      WriteCurIDEEPROM(CurProfNum);
+      WriteProfileEEPROM(CurProfNum);  //try054 ,CurProf);
+      strcpy(buf, CurProf.profileName);
+      strcpy(CurProf.profileName, "Profile saved");
+      Config_Screen(phost);
+      delay(3000);
+      strcpy(CurProf.profileName, buf);
+      break;
+    case 13:
+      Serial.println("Button Pressed: PROFILE");
+      Keyboard(phost, CurProf.profileName, "Enter Profile Name", FALSE);
+      Config_Screen(phost);
+      break;
+
+    case 14:  //no. of Tubes row
+      maxval = (int)((MAXXMM - CurProf.trayOriginX) / CurProf.pitch_x) + 1;
+      if (maxval > MAXNUMX) maxval = MAXNUMX;
+
+      Dprint("max val=", maxval);
+      CurProf.Tube_No_x = Keypad(&host, CurProf.Tube_No_x, MINNUMX, MAXNUMX, FALSE);  //v204 maxval,FALSE);
+      Config_Screen(phost);
+      break;
+    case 15:  //no. of Tubes col
+      maxval = (int)((MAXYMM - CurProf.trayOriginY) / CurProf.pitch_y) + 1;
+
+      if (maxval > MAXNUMY) maxval = MAXNUMY;
+      Dprint("max val=", maxval);
+      CurProf.Tube_No_y = Keypad(&host, CurProf.Tube_No_y, MINNUMY, MAXNUMY, FALSE);  //v204 maxval,FALSE);
+      Config_Screen(phost);
+      break;
+    case 16:  //pitch row
+      if (CurProf.Tube_No_x == 0) maxval = MAXXMM - CurProf.trayOriginX;
+      else maxval = (MAXXMM - CurProf.trayOriginX) / (CurProf.Tube_No_x - 1);
+      Round1Dec(&maxval);
+      Dprint("max val=", maxval);
+      if (maxval > MAXPITCHX) maxval = MAXPITCHX;
+      CurProf.pitch_x = Keypad(&host, CurProf.pitch_x, MINPITCHX, MAXPITCHX, FALSE);  //v204 maxval,TRUE);
+      Config_Screen(phost);
+      break;
+    case 17:  //pitch col
+      if (CurProf.Tube_No_y == 0) maxval = MAXYMM - CurProf.trayOriginY;
+      else maxval = (MAXYMM - CurProf.trayOriginY) / (CurProf.Tube_No_y - 1);
+      Round1Dec(&maxval);
+      if (maxval > MAXPITCHY) maxval = MAXPITCHY;
+      Dprint("max val=", maxval);
+      CurProf.pitch_y = Keypad(&host, CurProf.pitch_y, MINPITCHY, MAXPITCHY, FALSE);  //v204 maxval,TRUE);
+      Config_Screen(phost);
+      break;
+    case 18:  //origin row
+      if (CurProf.Tube_No_x == 0) maxval = MAXXMM;
+      else maxval = MAXXMM - (CurProf.pitch_x * (CurProf.Tube_No_x - 1));
+      Round1Dec(&maxval);
+      if (maxval > MAXORGX) maxval = MAXORGX;
+      Dprint("max val=", maxval);
+
+      CurProf.trayOriginX = Keypad(&host, CurProf.trayOriginX, 0, MAXORGX, FALSE);  //v204 maxval,TRUE);
+      Config_Screen(phost);
+      break;
+    case 19:  //origin col
+      if (CurProf.Tube_No_y == 0) maxval = MAXYMM;
+      else maxval = MAXYMM - (CurProf.pitch_y * (CurProf.Tube_No_y - 1));
+      Round1Dec(&maxval);
+      if (maxval > MAXORGY) maxval = MAXORGY;
+      Dprint("max val=", maxval);
+      CurProf.trayOriginY = Keypad(&host, CurProf.trayOriginY, 0, MAXORGY, FALSE);  //v204 maxval,TRUE);
+      Config_Screen(phost);
+      break;
+
+    case 20:  //Number of Cycles
+      CurProf.Cycles = Keypad(&host, CurProf.Cycles, MINCYCLE, MAXCYCLE, FALSE);
+      Config_Screen(phost);
+      break;
+    case 21:  //Z Dip
+      CurProf.ZDip = Keypad(&host, CurProf.ZDip, MINZDIP, MAXZDIP, FALSE);
+      Config_Screen(phost);
+      break;
+
+    case 28:  //Vibration Level
+      // Logic handled in SettingsMode
+      // TODO: Ensure this is working
+
+      Config_Screen(phost);
+      break;
+    case PASSEN:  //Password Enable
+      //passwordEnable_on();
+      CurProf.passwordEnabled = !CurProf.passwordEnabled;  // Toggle the state
+      Config_Screen(phost);
+      break;
+    case VIBDURATION:  //Vibration Duration
+      // Logic handled in SettingsMode
+      // TODO: Ensure this is working
+
+      Config_Screen(phost);
+      break;
+      //case 246: // No button for Advanced Setting
+      // Config_Screen(phost);
+      // break;
+
+      //case 247: // Yes button for Advanced Setting
+      // Tray_Screen(phost, CurProf);
+      // break;
+    default:
+      break;
+  }
+}
+
+void confirmAdvanceSetting(Gpu_Hal_Context_t *phost) {
+  Gpu_CoCmd_FlashFast(phost, 0);
+  Gpu_CoCmd_Dlstart(phost);
+  App_WrCoCmd_Buffer(phost, CLEAR(1, 1, 1));
+
+  Gpu_CoCmd_Text(phost, 156, 35, 28, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, "Proceed Advanced Setting?");
+  App_WrCoCmd_Buffer(phost, TAG(246));
+  Gpu_CoCmd_Button(phost, 179, 120, 60, 30, 28, 0, "No");
+  App_WrCoCmd_Buffer(phost, TAG(247));
+  Gpu_CoCmd_Button(phost, 68, 120, 60, 30, 28, 0, "Yes");
+
+  Disp_End(phost);
+}
+
+void skip_screen_key_handler(Gpu_Hal_Context_t *phost, uint8_t keypressed) {
   char buf[ROW_COL_MAX_LEN];
   int i;
   bool error = FALSE;
 
-  do {
-    keypressed = GetKeyPressed();
+  switch (keypressed) {
+    case SKIP_COLUMNS:
+      Serial.println("Button Pressed: SKIP COLUMNS");
+      Keyboard(phost, CurProf.skipCol, "Enter columns to skip", FALSE);
+      Skip_Screen(phost);
+      break;
 
-    if (keypressed > 0) {
-      WaitKeyRelease();
-      switch (keypressed) {
-        case SKIP_COLUMNS:
-          Serial.println("Button Pressed: SKIP COLUMNS");
-          keypressed = 0;
-          Keyboard(phost, CurProf.skipCol, "Enter columns to skip", FALSE);
-          DisplaySkipMenu(phost);
-          break;
+    case SKIP_ROWS:
+      Serial.println("Button Pressed: SKIP ROWS");
+      Keyboard(phost, CurProf.skipRow, "Enter rows to skip", FALSE);
+      Skip_Screen(phost);
+      break;
 
-        case SKIP_ROWS:
-          Serial.println("Button Pressed: SKIP ROWS");
-          keypressed = 0;
-          Keyboard(phost, CurProf.skipRow, "Enter rows to skip", FALSE);
-          DisplaySkipMenu(phost);
-          break;
+    case SKIP_SINGLE_POS:
+      Serial.println("Button Pressed: SKIP SINGLE POSITION");
+      Keyboard(phost, CurProf.skipSinglePos, "Enter positions to skip", FALSE);
+      Skip_Screen(phost);
+      break;
 
-        case SKIP_SINGLE_POS:
-          Serial.println("Button Pressed: SKIP SINGLE POSITION");
-          keypressed = 0;
-          Keyboard(phost, CurProf.skipSinglePos, "Enter positions to skip", FALSE);
-          DisplaySkipMenu(phost);
-          break;
+    case ADVPROF_BACK:  // Back button
+      Serial.println("Button Pressed: BACK");
+      break;
 
-        case ADVPROF_BACK:  // Back button
-          Serial.println("Button Pressed: BACK");
-          keypressed = 0;
-          wait4key = FALSE;
-          break;
-
-        case ADVPROF_SAVE:
-          Serial.println("Button Pressed: SAVE");
-          keypressed = 0;
-          Dprint("curprofnum=", CurProfNum);
-          WriteCurIDEEPROM(CurProfNum);
-          WriteProfileEEPROM(CurProfNum);  //try054 ,CurProf);
-          strcpy(buf, CurProf.profileName);
-          strcpy(CurProf.profileName, "Profile saved");
-          DisplayConfig(phost);
-          delay(3000);
-          strcpy(CurProf.profileName, buf);
-          wait4key = FALSE;
-          break;
-        default:
-          keypressed = 0;
-          break;
-      }
-    }
-  } while (wait4key);
+    case ADVPROF_SAVE:
+      Serial.println("Button Pressed: SAVE");
+      Dprint("curprofnum=", CurProfNum);
+      WriteCurIDEEPROM(CurProfNum);
+      WriteProfileEEPROM(CurProfNum);  //try054 ,CurProf);
+      strcpy(buf, CurProf.profileName);
+      strcpy(CurProf.profileName, "Profile saved");
+      Config_Screen(phost);
+      delay(3000);
+      strcpy(CurProf.profileName, buf);
+      break;
+    default:
+      break;
+  }
 }

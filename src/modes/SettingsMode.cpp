@@ -16,12 +16,12 @@ void SettingsMode::handleValidPassword() {
   }
   
   // Display configuration screen
-  DisplayConfig(phost);
+  Config_Screen(phost);
   WaitKeyRelease();
   delay(100);
   
   // Enter configuration settings menu
-  Config_Settings(phost);
+  // Config_Settings(phost);
   
   exitSettingsMode();
 }
@@ -66,7 +66,7 @@ void SettingsMode::on_interaction(const Interaction& interaction) {
   // Most interactions are handled within Config_Settings
   if (interaction.key_pressed > 0) {
     switch (interaction.key_pressed) {
-      // Tag 6 is used for the Home button in DisplayConfig
+      // Tag 6 is used for the Home button in Config_Screen
       case 6: // Home button tag
         settingsModified = true;
         break;

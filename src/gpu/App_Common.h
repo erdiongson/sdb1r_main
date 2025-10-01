@@ -105,12 +105,7 @@ void Keyboard(Gpu_Hal_Context_t *phost, char*,char *,bool);
 void DisplayKeyboard(Gpu_Hal_Context_t *, uint8_t,char *,char *, bool,bool, bool);
 
 void Profile_Menu(Gpu_Hal_Context_t *phost);
-void Config_Settings(Gpu_Hal_Context_t *phost);
-void DisplayConfig(Gpu_Hal_Context_t *);
-void Skip_Settings(Gpu_Hal_Context_t *phost);
-void DisplaySkipMenu(Gpu_Hal_Context_t *phost);
 
-void confirmAdvanceSetting(Gpu_Hal_Context_t *phost);
 float Keypad(Gpu_Hal_Context_t *, float, float, float, bool);
 void displayTextMatrixName();
 void toggleButton(Gpu_Hal_Context_t *phost, int tag, int x, int y, int buttonSize, int row, int col, int i, int j);
