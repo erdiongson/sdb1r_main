@@ -172,6 +172,8 @@ typedef PROGMEM const int32_t prog_int32_t;
 #define PROFILEUP            9
 #define PROFILEDOWN          10
 #define PROFILEPASS          11
+#define NUM_CYCLES           20
+#define ZDIP                 21
 #define VIBLVL               28
 #define PASSEN               29
 #define VIBDURATION          30
@@ -180,6 +182,16 @@ typedef PROGMEM const int32_t prog_int32_t;
 #define SKIP_SINGLE_POS      33
 #define ADVPROF_BACK         34
 #define ADVPROF_SAVE         35
+#define KEY_CONFIG_HOME      6
+#define KEY_CONFIG_LOAD      11
+#define KEY_CONFIG_SAVE      12
+#define KEY_CONFIG_PROFILE   13
+#define KEY_CONFIG_TUBES_X   14
+#define KEY_CONFIG_TUBES_Y   15
+#define KEY_CONFIG_PITCH_X   16
+#define KEY_CONFIG_PITCH_Y   17
+#define KEY_CONFIG_ORIGIN_X  18
+#define KEY_CONFIG_ORIGIN_Y  19
 
 #define MAXXMM 400 //190 (S) //max x/col dimension in mm
 #define MAXYMM 330 //250 (S) //max y/row dimension in mm
@@ -212,9 +224,9 @@ typedef PROGMEM const int32_t prog_int32_t;
 
 //(L)
 //20240625: erdiongson - Trying out 3200 pulse per revolution (v2.05L)
-#define STEPS_PER_UNIT_X 320L // (X step motor specs: lead screw is 10mm, 3200 pulse/rev(16 microsteps driver), 10mm/3200 = 0.003125mm, 1mm/0.003125 = 320 steps/unit)
+#define STEPS_PER_UNIT_X 300 // (X step motor specs: lead screw is 10mm, 3200 pulse/rev(16 microsteps driver), 10mm/3200 = 0.003125mm, 1mm/0.003125 = 320 steps/unit)
 //#define STEPS_PER_UNIT_X 160L // (X step motor specs: lead screw is 10mm, 3200 pulse/rev(16 microsteps driver), 10mm/3200 = 0.003125mm, 1mm/0.003125 = 320 steps/unit)
-#define STEPS_PER_UNIT_Y 320L // (Y step motor specs: lead screw is 10mm, 3200 pulse/rev(16 microsteps driver), 10mm/3200 = 0.003125mm, 1mm/0.003125 = 320 steps/unit)
+#define STEPS_PER_UNIT_Y 100L // (Y step motor specs: lead screw is 10mm, 3200 pulse/rev(16 microsteps driver), 10mm/3200 = 0.003125mm, 1mm/0.003125 = 320 steps/unit)
 //20240917: erdiongson - Use the STEPS_PER_UNIT_Y 160L if we are using the new motor. use this moving forward
 //#define STEPS_PER_UNIT_Y 160L // (Y step motor specs: lead screw is 20mm, 1600 pulse/rev(8 microsteps driver), 20mm/3200 = 0.00625mm, 1mm/0.00625 = 160 steps/unit)
 

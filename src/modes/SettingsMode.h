@@ -55,20 +55,8 @@ private:
   // Current profile reference
   Profile* currentProfile;
   
-  // Current selected setting index
-  int selectedSetting;
-  
-  // Flag to track if settings have been modified
-  bool settingsModified;
-
   // Flag to track if special mode is enabled
   bool specialMode;
-  
-  // Helper method to handle valid password entry
-  void handleValidPassword();
-  
-  // Helper method to exit settings mode
-  void exitSettingsMode();
   
   /**
    * @brief Change vibration level
