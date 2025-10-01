@@ -106,13 +106,10 @@ public:
      * This function should be called frequently in the main loop
      */
   bool onStep() {
-    // // Do nothing if axis is disabled
-    // if (!enabled)
-    //   return true;
 
-    // // Check limit switches and prevent movement in that direction if triggered
-    // if (isComplete())
-    //   return true;
+    // Check limit switches and prevent movement in that direction if triggered
+    if (isComplete())
+      return true;
 
     stepper.run();
     return false;
@@ -127,13 +124,19 @@ public:
     if (!enabled)
       return true;
 
-    return ((movingPositive && digitalRead(maxLimitPin) == LOW) || (!movingPositive && digitalRead(minLimitPin) == LOW) || stepper.distanceToGo() == 0);
+    bool result = ((movingPositive && digitalRead(maxLimitPin) == LOW) || (!movingPositive && digitalRead(minLimitPin) == LOW) || stepper.distanceToGo() == 0);
+    if (result) { stop(); }
+    return result;
   }
 
   void runUntilCompleteBlocking() {
     while (stepper.distanceToGo() != 0) {
       stepper.run();
     }
+  }
+
+  long getCurrentPosition() {
+    return stepper.currentPosition();
   }
 };
 
