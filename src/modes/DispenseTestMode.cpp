@@ -1,8 +1,8 @@
 #include "DispenseTestMode.h"
 #include "../views/Dispense_Test_Screen.h"
 
-DispenseTestMode::DispenseTestMode(DispenserHead& head, Gpu_Hal_Context_t *host)
-  : BaseMode(head, host) {}
+DispenseTestMode::DispenseTestMode(DispenserHead& head, Gpu_Hal_Context_t *host, ModeController* controller, ModeCompletionCallback callback)
+  : BaseMode(head, host, controller, callback) {}
 
 void DispenseTestMode::on_start(Profile& profile) {
   Serial.println("MODE: Dispense test mode");

@@ -1,7 +1,9 @@
 #include "HomeMode.h"
+#include "BaseMode.h"
+#include "ModesCommon.h"
 
-HomeMode::HomeMode(DispenserHead& head, Gpu_Hal_Context_t *host)
-  : BaseMode(head, host) {}
+HomeMode::HomeMode(DispenserHead& head, Gpu_Hal_Context_t *host, ModeController* controller, ModeCompletionCallback callback)
+  : BaseMode(head, host, controller, callback) {}
 
 void HomeMode::on_start(Profile& profile) {
   Serial.println("MODE: Home mode");
@@ -13,13 +15,17 @@ void HomeMode::on_start(Profile& profile) {
   dispenserHead.z().moveToMin();
 }
 
-void HomeMode::on_interaction(const Interaction& interaction) {}
+void HomeMode::on_interaction(const Interaction& interaction) {
+  if (interaction.key_pressed == SETTING) {
+    Serial.println("MODE: Home mode transitioning to settings");
+    complete_with_next_mode(MODE_TYPE_SETTINGS);
+  } else if (interaction.key_pressed == START) {
+    Serial.println("MODE: Home mode transitioning to start");
+    complete_with_next_mode(MODE_TYPE_DISPENSE);
+  }
+}
 
 int HomeMode::on_step() {
-  if (dispenserHead.x().isComplete() && dispenserHead.y().isComplete() && dispenserHead.z().isComplete()) {
-    Serial.println("MODE: Home mode complete");
-    return MODE_COMPLETE;
-  }
   return MODE_CONTINUE;
 }
 

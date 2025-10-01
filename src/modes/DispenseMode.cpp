@@ -1,7 +1,7 @@
 #include "DispenseMode.h"
 
-DispenseMode::DispenseMode(DispenserHead& head, Gpu_Hal_Context_t *host)
-  : BaseMode(head, host) {}
+DispenseMode::DispenseMode(DispenserHead& head, Gpu_Hal_Context_t* host, ModeController* controller, ModeCompletionCallback callback)
+  : BaseMode(head, host, controller, callback) {}
 
 void DispenseMode::on_start(Profile& profile) {
   Serial.println("MODE: Setting profile on trayhandler");

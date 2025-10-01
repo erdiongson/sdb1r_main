@@ -44,6 +44,10 @@ public:
     }
   }
 
+  void complete_mode_with_next(int modeType) {
+    start_mode(modeType, CurProf, phost); 
+  }
+
   // Set a new mode (deletes previous mode to save memory)
   void start_mode(int modeType, Profile& profile, Gpu_Hal_Context_t *phost) {
     if (mode != nullptr) {
@@ -51,19 +55,19 @@ public:
     }
     switch(modeType) {
       case MODE_TYPE_HOME:
-        mode = new HomeMode(dispenserHead, phost);
+        mode = new HomeMode(dispenserHead, phost, this, &ModeController::complete_mode_with_next);
         break;
       case MODE_TYPE_DISPENSE:
-        mode = new DispenseMode(dispenserHead, phost);
+        mode = new DispenseMode(dispenserHead, phost, this, &ModeController::complete_mode_with_next);
         break;
       case MODE_TYPE_MOVE_TEST:
-        mode = new MoveTestMode(dispenserHead, phost);
+        mode = new MoveTestMode(dispenserHead, phost, this, &ModeController::complete_mode_with_next);
         break;
       case MODE_TYPE_DISPENSE_TEST:
-        mode = new DispenseTestMode(dispenserHead, phost);
+        mode = new DispenseTestMode(dispenserHead, phost, this, &ModeController::complete_mode_with_next);
         break;
       case MODE_TYPE_SETTINGS:
-        mode = new SettingsMode(dispenserHead, phost);
+        mode = new SettingsMode(dispenserHead, phost, this, &ModeController::complete_mode_with_next);
         break;
     }
     mode->on_start(profile);

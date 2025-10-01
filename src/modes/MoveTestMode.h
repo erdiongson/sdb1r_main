@@ -20,8 +20,10 @@ public:
    * 
    * @param head Reference to the dispenser head to control
    * @param host Pointer to GPU HAL context
+   * @param controller Pointer to the mode controller for callbacks
+   * @param callback Callback function for mode completion
    */
-  MoveTestMode(DispenserHead& head, Gpu_Hal_Context_t *host);
+  MoveTestMode(DispenserHead& head, Gpu_Hal_Context_t *host, ModeController* controller, ModeCompletionCallback callback);
 
   /**
    * Called when the mode is started

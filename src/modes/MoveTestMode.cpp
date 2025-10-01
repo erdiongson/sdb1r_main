@@ -1,8 +1,8 @@
 #include "MoveTestMode.h"
 #include "../views/Move_Test_Screen.h"
 
-MoveTestMode::MoveTestMode(DispenserHead& head, Gpu_Hal_Context_t *host)
-  : BaseMode(head, host) {}
+MoveTestMode::MoveTestMode(DispenserHead& head, Gpu_Hal_Context_t *host, ModeController* controller, ModeCompletionCallback callback)
+  : BaseMode(head, host, controller, callback) {}
 
 void MoveTestMode::on_start(Profile& profile) {
   Serial.println("MODE: Move test mode");

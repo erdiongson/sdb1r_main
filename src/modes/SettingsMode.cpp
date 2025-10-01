@@ -2,8 +2,8 @@
 #include "../views/Config_Screen.h"
 #include "../../Config.h"
 
-SettingsMode::SettingsMode(DispenserHead& head, Gpu_Hal_Context_t *host)
-  : BaseMode(head, host), selectedSetting(0), settingsModified(false), currentProfile(nullptr), specialMode(false) {}
+SettingsMode::SettingsMode(DispenserHead& head, Gpu_Hal_Context_t *host, ModeController* controller, ModeCompletionCallback callback)
+  : BaseMode(head, host, controller, callback), selectedSetting(0), settingsModified(false), currentProfile(nullptr), specialMode(false) {}
 
 void SettingsMode::handleValidPassword() {
   // Check for special mode actions
