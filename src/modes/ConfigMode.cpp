@@ -108,7 +108,7 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
         }
         if (strcmp(currentProfile->profileName, "xqhome") == 0) {
           Dprint("home");
-          Homing();
+          // Homing();
           Config_Screen(phost);
         }
         if (strcmp(currentProfile->profileName, "xqblank") == 0) {

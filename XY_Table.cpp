@@ -141,10 +141,6 @@ void setupPasswordHandling() {
   Serial.println();
 }
 
-bool Homing() {}
-
-/*********************END OF FUNCTION DECLARATIONS*********************/
-
 
 void setup() {
   phost = &host;
