@@ -1,13 +1,15 @@
 #include "ConfigMode.h"
-#include "../views/Config_Screen.h"
 #include "../../Config.h"
 #include "ModesCommon.h"
+
+#include "../views/Config_Screen.h"
+#include "../views/Preview_Screen.h"
 
 ConfigMode::ConfigMode(DispenserHead& head, Gpu_Hal_Context_t* host, ModeController* controller, ModeCompletionCallback callback)
   : BaseMode(head, host, controller, callback), currentProfile(nullptr), specialMode(false) {}
 
 void ConfigMode::on_start(Profile& profile) {
-  Serial.println("MODE: Settings mode");
+  Serial.println("MODE: Config mode");
 
   // Store reference to the current profile
   currentProfile = &profile;
@@ -28,18 +30,18 @@ void ConfigMode::on_start(Profile& profile) {
       complete_with_next_mode(MODE_TYPE_HOME);
       return;
     }
-
-    if (specialMode) {
-      if (digitalRead(Limit_S_y_MAX) != 0) {
-        BlankEEPROM();
-      } else {
-        specialMode = false;
-      }
-    }
-
-    // Display configuration screen
-    Config_Screen(phost);
   }
+
+  if (specialMode) {
+    if (digitalRead(Limit_S_y_MAX) != 0) {
+      BlankEEPROM();
+    } else {
+      specialMode = false;
+    }
+  }
+
+  // Display configuration screen
+  Config_Screen(phost);
 }
 
 void ConfigMode::on_interaction(const Interaction& interaction) {
@@ -148,7 +150,7 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
       }
       break;
 
-    case KEY_CONFIG_PROFILE:
+    case KEY_CONFIG_PROFILE_NAME:
       Serial.println("Button Pressed: PROFILE");
       Keyboard(phost, currentProfile->profileName, "Enter Profile Name", FALSE);
       Config_Screen(phost);
@@ -232,21 +234,25 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
     case ZDIP:
       Serial.println("Incrementing Z Dip");
       currentProfile->ZDip = Keypad(phost, currentProfile->ZDip, MINZDIP, MAXZDIP, FALSE);
+      Config_Screen(phost);
       break;
 
     case VIBLVL:
       Serial.println("Incrementing vibration level");
       increment_vibration_level();
+      Config_Screen(phost);
       break;
 
     case VIBDURATION:
       Serial.println("Incrementing vibration duration");
       increment_vibration_time();
+      Config_Screen(phost);
       break;
 
     case PASSEN:
       Serial.println("Toggle password enable");
       currentProfile->passwordEnabled = !currentProfile->passwordEnabled;
+      Config_Screen(phost);
       break;
 
     case SKIP_COLUMNS:
@@ -269,6 +275,7 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
 
     case ADVPROF_BACK:  // Back button
       Serial.println("Button Pressed: BACK");
+      Config_Screen(phost);
       break;
 
     case ADVPROF_SAVE:
@@ -285,6 +292,32 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
         strcpy(currentProfile->profileName, buf);
       }
       break;
+
+    case KEY_CONFIG_PREVIEW:
+      Serial.println("Button Pressed: PREVIEW");
+      {
+        // Parse skip positions from the current profile
+        TrayHandler::TrayPositionHandler tempHandler;
+        tempHandler.load_profile(*currentProfile);
+        
+        // Get the skip positions
+        TrayHandler::Position skipPositions[MAX_POSITIONS];
+        tempHandler.getSkipPositions(skipPositions);
+       
+        // Display the preview screen
+        Preview_Screen(phost, skipPositions, currentProfile->Tube_No_x, currentProfile->Tube_No_y);
+      }
+      break;
+
+    case KEY_CONFIG_PREVIEW_BACK:
+      Serial.println("Button Pressed: PREVIEW BACK");
+      Skip_Screen(phost);
+      break;
+
+      case CONFIGADVANCE:
+        Serial.println("Button Pressed: ADVANCED");
+        Skip_Screen(phost);
+        break;
 
       //case 246: // No button for Advanced Setting
       // Config_Screen(phost);

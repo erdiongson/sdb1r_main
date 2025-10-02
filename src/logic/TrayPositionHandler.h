@@ -298,6 +298,17 @@ public:
   }
 
   /**
+   * @brief Get the skip positions array
+   * 
+   * @param outPositions Output array to copy skip positions to
+   */
+  void getSkipPositions(Position outPositions[MAX_POSITIONS]) const {
+    for (int i = 0; i < MAX_POSITIONS; i++) {
+      outPositions[i] = skipPositions[i];
+    }
+  }
+
+  /**
    * @brief Get the next valid position and update the current position
    *
    * @return PositionResult containing the change in position from previous to new position
@@ -307,7 +318,6 @@ public:
     Position previousPosition = currentPosition;
     Position previousPositionTransformed = flipped ? flipPosition(previousPosition) : previousPosition;
 
-    // Get the next position in the potentially flipped coordinate system
     PositionResult result = getNext();
 
     // If we have a valid next position, update the current position and transform if needed

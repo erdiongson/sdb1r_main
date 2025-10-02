@@ -171,7 +171,8 @@ typedef PROGMEM const int32_t prog_int32_t;
 #define CONFIGADVANCE        8
 #define PROFILEUP            9
 #define PROFILEDOWN          10
-#define PROFILEPASS          11
+#define PROFILEPASS          40
+
 #define NUM_CYCLES           20
 #define ZDIP                 21
 #define VIBLVL               28
@@ -183,15 +184,18 @@ typedef PROGMEM const int32_t prog_int32_t;
 #define ADVPROF_BACK         34
 #define ADVPROF_SAVE         35
 #define KEY_CONFIG_HOME      6
+
 #define KEY_CONFIG_LOAD      11
 #define KEY_CONFIG_SAVE      12
-#define KEY_CONFIG_PROFILE   13
+#define KEY_CONFIG_PROFILE_NAME   13
 #define KEY_CONFIG_TUBES_X   14
 #define KEY_CONFIG_TUBES_Y   15
 #define KEY_CONFIG_PITCH_X   16
 #define KEY_CONFIG_PITCH_Y   17
 #define KEY_CONFIG_ORIGIN_X  18
 #define KEY_CONFIG_ORIGIN_Y  19
+#define KEY_CONFIG_PREVIEW   36
+#define KEY_CONFIG_PREVIEW_BACK   37
 
 #define MAXXMM 400 //190 (S) //max x/col dimension in mm
 #define MAXYMM 330 //250 (S) //max y/row dimension in mm

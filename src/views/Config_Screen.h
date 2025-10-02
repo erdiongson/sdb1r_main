@@ -226,12 +226,12 @@ void Config_Screen(Gpu_Hal_Context_t *phost) {
 
   // Load Button
   //App_WrCoCmd_Buffer(phost, TAG_MASK(disableButtons ? 0 : 1)); // Enable or disable based on the flag
-  App_WrCoCmd_Buffer(phost, TAG(11));
+  App_WrCoCmd_Buffer(phost, TAG(KEY_CONFIG_LOAD));
   Gpu_CoCmd_Button(phost, 116, 205, 76, 26, 21, 0, "Load");
 
   // Save Button
   //App_WrCoCmd_Buffer(phost, TAG_MASK(disableButtons ? 0 : 1)); // Enable or disable based on the flag
-  App_WrCoCmd_Buffer(phost, TAG(12));
+  App_WrCoCmd_Buffer(phost, TAG(KEY_CONFIG_SAVE));
   Gpu_CoCmd_Button(phost, 8, 205, 76, 26, 21, 0, "Save");
 
 
@@ -354,15 +354,9 @@ void Skip_Screen(Gpu_Hal_Context_t *phost) {
   App_WrCoCmd_Buffer(phost, TAG(ADVPROF_SAVE));
   Gpu_CoCmd_Button(phost, 10, 196, 62, 26, 21, 0, "Save");
 
-  Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-  App_WrCoCmd_Buffer(phost, TAG(ADVPROF_BACK));
-  App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(255, 255, 255));
-  Gpu_CoCmd_Button(phost, 247, 196, 62, 26, 21, (keypressed == ADVPROF_BACK) ? OPT_FLAT : 0, "Back");
-
-  Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-  App_WrCoCmd_Buffer(phost, TAG(ADVPROF_SAVE));
-  App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(255, 255, 255));
-  Gpu_CoCmd_Button(phost, 10, 196, 62, 26, 21, (keypressed == ADVPROF_SAVE) ? OPT_FLAT : 0, "Save");
+  // Preview Button
+  App_WrCoCmd_Buffer(phost, TAG(KEY_CONFIG_PREVIEW));
+  Gpu_CoCmd_Button(phost, 77, 196, 62, 26, 21, 0, "Preview");
 
   Disp_End(phost);
 }
