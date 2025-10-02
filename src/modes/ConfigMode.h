@@ -41,4 +41,16 @@ private:
   
   // Cycles through vibration durations from 1-5 seconds.
   void increment_vibration_time();
+  
+  // Edits skip column string, looping until input is clean.
+  // @param phost Pointer to GPU HAL context.
+  void editSkipColumn(Gpu_Hal_Context_t* phost);
+  
+  // Edits skip row string, looping until input is clean.
+  // @param phost Pointer to GPU HAL context.
+  void editSkipRow(Gpu_Hal_Context_t* phost);
+  
+  // Edits skip individual position string, looping until input is clean.
+  // @param phost Pointer to GPU HAL context.
+  void editSkipIndividual(Gpu_Hal_Context_t* phost);
 };

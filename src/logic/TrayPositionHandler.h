@@ -30,6 +30,13 @@ struct Position {
   }
 };
 
+}  // namespace TrayHandler
+
+// Include SkipUtils after Position is defined
+#include "SkipUtils.h"
+
+namespace TrayHandler {
+
 struct PositionResult {
   bool hasNext;  // Whether all valid positions have been exhausted
 
@@ -62,11 +69,8 @@ private:
 
   Position skipPositions[MAX_POSITIONS];
 
-  /**
-   * @brief Calculate the next valid position within the current row
-   *
-   * @return PositionResult
-   */
+  // Calculate the next valid position within the current row.
+  // @return PositionResult.
   PositionResult getNextInRow(const Position &startPos, const int dir) {
     Position nextPos = startPos;
     do {
@@ -132,11 +136,8 @@ private:
     }
   }
 
-  /**
-   * @brief Calculate the next valid position in the grid
-   *
-   * @return PositionResult
-   */
+  // Calculate the next valid position in the grid.
+  // @return PositionResult.
   PositionResult getNext() {
     // Check in current row
     PositionResult result = getNextInRow(currentPosition, direction);
@@ -153,12 +154,9 @@ private:
     return PositionResult::Done();
   }
 
-  /**
-   * @brief Check if a position should be skipped
-   *
-   * @param pos Position to check
-   * @return true if position should be skipped, false otherwise
-   */
+  // Check if a position should be skipped.
+  // @param pos Position to check.
+  // @return True if position should be skipped, false otherwise.
   bool isSkipPosition(const Position &pos) {
     for (int i = 0; i < MAX_POSITIONS; i++) {
       if (pos.x == -1 || pos.y == -1) { break; }
@@ -205,70 +203,9 @@ public:
   ~TrayPositionHandler() = default;
 
   void load_profile(Profile &profile) {
-    // Create an array to hold skip positions, initialize with -1 to mark unused entries
+    // Use SkipUtils to parse skip positions from profile
     Position positions[MAX_POSITIONS];
-    for (int i = 0; i < MAX_POSITIONS; i++) {
-      positions[i] = Position(-1, -1);
-    }
-
-    int posIndex = 0;
-
-    // Parse skipCol string (format: "C1,C9,...")
-    if (profile.skipCol[0] != '\0') {
-      char *token = strtok(profile.skipCol, ",");
-      while (token != nullptr && posIndex < MAX_POSITIONS) {
-        // Extract column number (skip the 'C' prefix)
-        if (token[0] == 'C') {
-          int col = atoi(token + 1);
-          if (col > 0) {
-            // Add a position with x=col, y=0 to indicate entire column should be skipped
-            positions[posIndex++] = Position(col, 0);
-          }
-        }
-        token = strtok(nullptr, ",");
-      }
-    }
-
-    // Parse skipRow string (format: "R1,R9,...")
-    if (profile.skipRow[0] != '\0') {
-      char *token = strtok(profile.skipRow, ",");
-      while (token != nullptr && posIndex < MAX_POSITIONS) {
-        // Extract row number (skip the 'R' prefix)
-        if (token[0] == 'R') {
-          int row = atoi(token + 1);
-          if (row > 0) {
-            // Add a position with x=0, y=row to indicate entire row should be skipped
-            positions[posIndex++] = Position(0, row);
-          }
-        }
-        token = strtok(nullptr, ",");
-      }
-    }
-
-    // Parse skipSinglePos string (format: "C2R4,C3R4,...")
-    if (profile.skipSinglePos[0] != '\0') {
-      char *token = strtok(profile.skipSinglePos, ",");
-      while (token != nullptr && posIndex < MAX_POSITIONS) {
-        // Extract column and row numbers (format: CxRy)
-        int col = 0, row = 0;
-        char *colStr = strstr(token, "C");
-        char *rowStr = strstr(token, "R");
-
-        if (colStr && rowStr) {
-          // Extract column number
-          col = atoi(colStr + 1);
-
-          // Extract row number
-          row = atoi(rowStr + 1);
-
-          if (col > 0 && row > 0) {
-            // Add a position with specific x,y coordinates
-            positions[posIndex++] = Position(col, row);
-          }
-        }
-        token = strtok(nullptr, ",");
-      }
-    }
+    SkipUtils::convert(profile, positions);
 
     // Create dimensions from profile
     Dimensions dimensions(profile.Tube_No_x, profile.Tube_No_y);
@@ -277,12 +214,9 @@ public:
     load(dimensions, positions);
   }
 
-  /**
-   * @brief Load tray configuration
-   *
-   * @param dimensions Dimensions of the tray grid
-   * @param positions Array of positions to skip/ignore
-   */
+  // Load tray configuration.
+  // @param dimensions Dimensions of the tray grid.
+  // @param positions Array of positions to skip/ignore.
   void load(const Dimensions &dimensions,
             const Position positions[MAX_POSITIONS]) {
 
@@ -297,22 +231,16 @@ public:
     if (flipped) transformSkipPositions();
   }
 
-  /**
-   * @brief Get the skip positions array
-   * 
-   * @param outPositions Output array to copy skip positions to
-   */
+  // Get the skip positions array.
+  // @param outPositions Output array to copy skip positions to.
   void getSkipPositions(Position outPositions[MAX_POSITIONS]) const {
     for (int i = 0; i < MAX_POSITIONS; i++) {
       outPositions[i] = skipPositions[i];
     }
   }
 
-  /**
-   * @brief Get the next valid position and update the current position
-   *
-   * @return PositionResult containing the change in position from previous to new position
-   */
+  // Get the next valid position and update the current position.
+  // @return PositionResult containing the change in position from previous to new position.
   PositionResult goToNextValidPosition() {
     // Store the previous position before updating
     Position previousPosition = currentPosition;
@@ -342,11 +270,8 @@ public:
     return result;
   }
 
-  /**
-   * @brief Reset the current position to the bottom-left corner
-   *
-   * @return Position The reset position in the original coordinate system
-   */
+  // Reset the current position to the bottom-left corner.
+  // @return The reset position in the original coordinate system.
   Position reset() {
     currentPosition = Position(1, 1);
     direction = 1;

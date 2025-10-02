@@ -4,6 +4,7 @@
 
 #include "../views/Config_Screen.h"
 #include "../views/Preview_Screen.h"
+#include "../logic/SkipUtils.h"
 
 ConfigMode::ConfigMode(DispenserHead& head, Gpu_Hal_Context_t* host, ModeController* controller, ModeCompletionCallback callback)
   : BaseMode(head, host, controller, callback), currentProfile(nullptr), specialMode(false) {}
@@ -257,20 +258,17 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
 
     case SKIP_COLUMNS:
       Serial.println("Button Pressed: SKIP COLUMNS");
-      Keyboard(phost, currentProfile->skipCol, "Enter columns to skip", FALSE);
-      Skip_Screen(phost);
+      editSkipColumn(phost);
       break;
 
     case SKIP_ROWS:
       Serial.println("Button Pressed: SKIP ROWS");
-      Keyboard(phost, currentProfile->skipRow, "Enter rows to skip", FALSE);
-      Skip_Screen(phost);
+      editSkipRow(phost);
       break;
 
     case SKIP_SINGLE_POS:
       Serial.println("Button Pressed: SKIP SINGLE POSITION");
-      Keyboard(phost, currentProfile->skipSinglePos, "Enter positions to skip", FALSE);
-      Skip_Screen(phost);
+      editSkipIndividual(phost);
       break;
 
     case ADVPROF_BACK:  // Back button
@@ -354,4 +352,43 @@ void ConfigMode::increment_vibration_time() {
 
   currentProfile->vibrationDuration = next_duration;
   dispenserHead.set_vibration_time(next_duration);
+}
+
+void ConfigMode::editSkipColumn(Gpu_Hal_Context_t* phost) {
+  while (true) {
+    Keyboard(phost, currentProfile->skipCol, "Enter columns to skip", FALSE);
+    
+    SkipUtils::CleanResult result = SkipUtils::clean(currentProfile->skipCol, SkipUtils::COLUMN);
+    
+    if (!result.wasCleaned) break;
+    strncpy(currentProfile->skipCol, result.cleaned, ROW_COL_MAX_LEN - 1);
+    currentProfile->skipCol[ROW_COL_MAX_LEN - 1] = '\0';
+  }
+  Skip_Screen(phost);
+}
+
+void ConfigMode::editSkipRow(Gpu_Hal_Context_t* phost) {
+  while (true) {
+    Keyboard(phost, currentProfile->skipRow, "Enter rows to skip", FALSE);
+    
+    SkipUtils::CleanResult result = SkipUtils::clean(currentProfile->skipRow, SkipUtils::ROW);
+    
+    if (!result.wasCleaned) break;
+    strncpy(currentProfile->skipRow, result.cleaned, ROW_COL_MAX_LEN - 1);
+    currentProfile->skipRow[ROW_COL_MAX_LEN - 1] = '\0';
+  }
+  Skip_Screen(phost);
+}
+
+void ConfigMode::editSkipIndividual(Gpu_Hal_Context_t* phost) {
+  while (true) {
+    Keyboard(phost, currentProfile->skipSinglePos, "Enter positions to skip", FALSE);
+    
+    SkipUtils::CleanResult result = SkipUtils::clean(currentProfile->skipSinglePos, SkipUtils::INDIVIDUAL);
+    
+    if (!result.wasCleaned) break;
+    strncpy(currentProfile->skipSinglePos, result.cleaned, ROW_COL_MAX_LEN - 1);
+    currentProfile->skipSinglePos[ROW_COL_MAX_LEN - 1] = '\0';
+  }
+  Skip_Screen(phost);
 }
