@@ -97,7 +97,7 @@ public:
     unsigned long startTime = millis();
     const unsigned long timeout = 2000;  // 2 seconds timeout
 
-    while (DispenserSerial::process() != SDB_Handshake) {
+    while (DispenserSerial::process() != SDB_HANDSHAKE) {
       delay(10);
 
       // Check if timeout has occurred

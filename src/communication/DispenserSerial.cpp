@@ -1,23 +1,22 @@
 #include "DispenserSerial.h"
-#include "UART.h"
 
 // Send a message to the dispenser with command and data bytes.
 // @param command Command byte to send.
 // @param data Data byte to send.
 void DispenserSerial::send_message(byte command, byte data) {
   uint8_t checksum = command + data;
-  Serial2.write(Serial_SOT);
+  Serial2.write(MSG_SOT);
   Serial2.write(command);
   Serial2.write(data);
   Serial2.write(checksum);
-  Serial2.write(Serial_EOT);
+  Serial2.write(MSG_EOT);
 }
 
 // Send a dispense command to the dispenser.
-void DispenserSerial::send_dispense() { send_message(SDB_Dispense_START, 0x01); }
+void DispenserSerial::send_dispense() { send_message(SDB_DISPENSE_START, 0x01); }
 
 // Send a handshake command to the dispenser.
-void DispenserSerial::send_handshake() { send_message(SDB_Handshake, 0x01); }
+void DispenserSerial::send_handshake() { send_message(SDB_HANDSHAKE, 0x01); }
 
 // Set the vibration level for the dispenser.
 void DispenserSerial::send_vibration_level(uint8_t level) {
@@ -31,7 +30,7 @@ void DispenserSerial::send_vibration_level(uint8_t level) {
     default: data = VIBMODE_U2; break; // Default
   }
   
-  send_message(Vibrate_Mode_ON, data);
+  send_message(SDB_VIBRATE_LEVEL, data);
 }
 
 // Set the vibration time for the dispenser.
@@ -47,13 +46,13 @@ void DispenserSerial::send_vibration_time(uint8_t seconds) {
     default: data = VIBDUR_2; break; // Default
   }
   
-  send_message(Set_Vibration_Time, data);
+  send_message(SDB_VIBRATE_TIME, data);
 }
 
 // Process incoming data from the dispenser.
 // @return Command code if valid message received, 0 if no message, -1 if error.
 int DispenserSerial::process() {
-  if (Serial2.available() >= BUFFER_SIZE) {
+  if (Serial2.available() >= MSG_LENGTH) {
     uint8_t response[MSG_LENGTH];
 
     response[MSG_SOT] = Serial2.read();
@@ -64,7 +63,7 @@ int DispenserSerial::process() {
 
     String command_name;
     switch(response[MSG_COMMAND]) {
-      case SDB_Handshake: command_name = "SDB_Handshake"; break;
+      case SDB_HANDSHAKE: command_name = "SDB_HANDSHAKE"; break;
       case ACKNOWLEDGE: command_name = "ACKNOWLEDGE"; break;
       case VIBRATION_ON: command_name = "VIBRATION_ON"; break;
       case VIBRATION_OFF: command_name = "VIBRATION_OFF"; break;
@@ -81,10 +80,10 @@ int DispenserSerial::process() {
                    "><0x" + String(response[MSG_EOT], HEX) + ">");
 
     // Validate the response format
-    if (response[MSG_SOT] == Serial_SOT && response[MSG_EOT] == Serial_EOT) {
+    if (response[MSG_SOT] == MSG_SOT && response[MSG_EOT] == MSG_EOT) {
       // Process the response based on the command
-      if (response[MSG_COMMAND] == SDB_Handshake) {
-        return SDB_Handshake;
+      if (response[MSG_COMMAND] == SDB_HANDSHAKE) {
+        return SDB_HANDSHAKE;
       } else if (response[MSG_COMMAND] == ACKNOWLEDGE) {
         // Received acknowledgment
         return ACKNOWLEDGE;

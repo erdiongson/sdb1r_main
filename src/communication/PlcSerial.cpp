@@ -5,7 +5,6 @@
  */
 
 #include "PlcSerial.h"
-#include "UART.h"
 
 // Parse received PLC message and identify message type with data extraction.
 // @param receivedData Pointer to received message bytes.
