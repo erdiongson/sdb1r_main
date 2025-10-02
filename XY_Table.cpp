@@ -191,7 +191,7 @@ void setup() {
 
   CurProfNum = LoadProfile();
 
-  modeController.start_mode(MODE_TYPE_MOVE_TEST, CurProf, phost);
+  modeController.start_mode(MODE_TYPE_HOME, CurProf, phost);
 
   dispenserHead.z().setDisabled(true);
   // dispenserHead.set_vibration_level(1);
@@ -222,7 +222,6 @@ void reportFrequencies() {
 }
 
 Interaction interaction;
-
 
 void loop() {
   // Track dispenser head onStep calls - run as frequently as possible
