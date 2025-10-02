@@ -114,19 +114,6 @@ void Dprint(String x, float y) {}
 
 #endif
 
-void GPIO_Setup() {
-  pinMode(Motor_ON, OUTPUT);
-  pinMode(Motor_UP, OUTPUT);
-  pinMode(Motor_Dow, OUTPUT);
-  pinMode(Vibrate, OUTPUT);
-  pinMode(Limit_S_x_MIN, INPUT_PULLUP);
-  pinMode(Limit_S_y_MIN, INPUT_PULLUP);
-  pinMode(Limit_S_z_MIN, INPUT_PULLUP);
-  pinMode(Limit_S_x_MAX, INPUT_PULLUP);
-  pinMode(Limit_S_y_MAX, INPUT_PULLUP);
-  pinMode(Limit_S_z_MAX, INPUT_PULLUP);
-}
-
 /**
  * Sets up and handles the password validation and initialization
  * Checks if the password in EEPROM matches the default, and handles accordingly
@@ -165,8 +152,6 @@ void setup() {
   SpecialMode = FALSE;
   App_Common_Init(&host);  //* Init HW Hal */
   // App_Calibrate_Screen(&host); ///*Screen Calibration*//
-
-  GPIO_Setup();
 
   Serial.begin(19200);   // Serial printing
   Serial2.begin(19200);  // UART for Arduino-PIC18 communications

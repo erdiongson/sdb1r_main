@@ -1,9 +1,3 @@
-// ------- Disp(To be removed and change with UART serial command)
-#define Motor_ON 41
-#define Motor_UP 43
-#define Motor_Dow 45
-#define Vibrate 47
-
 #define Limit_S_x_MIN 46 // 32
 #define Limit_S_y_MIN 32 // 33
 #define Limit_S_z_MIN 36
