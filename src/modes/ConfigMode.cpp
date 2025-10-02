@@ -259,16 +259,19 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
     case SKIP_COLUMNS:
       Serial.println("Button Pressed: SKIP COLUMNS");
       editSkipColumn(phost);
+      Skip_Screen(phost);
       break;
 
     case SKIP_ROWS:
       Serial.println("Button Pressed: SKIP ROWS");
       editSkipRow(phost);
+      Skip_Screen(phost);
       break;
 
     case SKIP_SINGLE_POS:
       Serial.println("Button Pressed: SKIP SINGLE POSITION");
       editSkipIndividual(phost);
+      Skip_Screen(phost);
       break;
 
     case ADVPROF_BACK:  // Back button
@@ -355,40 +358,73 @@ void ConfigMode::increment_vibration_time() {
 }
 
 void ConfigMode::editSkipColumn(Gpu_Hal_Context_t* phost) {
+  // Create dimensions from profile
+  TrayHandler::Dimensions dimensions(currentProfile->Tube_No_x, currentProfile->Tube_No_y);
+  
   while (true) {
     Keyboard(phost, currentProfile->skipCol, "Enter columns to skip", FALSE);
     
-    SkipUtils::CleanResult result = SkipUtils::clean(currentProfile->skipCol, SkipUtils::COLUMN);
+    // Clean the input with bounds checking
+    SkipUtils::CleanResult result = SkipUtils::clean(currentProfile->skipCol, SkipUtils::COLUMN, dimensions);
     
-    if (!result.wasCleaned) break;
-    strncpy(currentProfile->skipCol, result.cleaned, ROW_COL_MAX_LEN - 1);
-    currentProfile->skipCol[ROW_COL_MAX_LEN - 1] = '\0';
+    // If input was cleaned, update and loop again
+    if (result.wasCleaned) {
+      strncpy(currentProfile->skipCol, result.cleaned, ROW_COL_MAX_LEN - 1);
+      currentProfile->skipCol[ROW_COL_MAX_LEN - 1] = '\0';
+      Serial.println("Input was cleaned, showing keyboard again");
+    } else {
+      // Input is clean, exit loop
+      Serial.println("Input is clean");
+      break;
+    }
   }
-  Skip_Screen(phost);
 }
 
 void ConfigMode::editSkipRow(Gpu_Hal_Context_t* phost) {
+  // Create dimensions from profile
+  TrayHandler::Dimensions dimensions(currentProfile->Tube_No_x, currentProfile->Tube_No_y);
+  
   while (true) {
     Keyboard(phost, currentProfile->skipRow, "Enter rows to skip", FALSE);
     
-    SkipUtils::CleanResult result = SkipUtils::clean(currentProfile->skipRow, SkipUtils::ROW);
+    // Clean the input with bounds checking
+    SkipUtils::CleanResult result = SkipUtils::clean(currentProfile->skipRow, SkipUtils::ROW, dimensions);
     
-    if (!result.wasCleaned) break;
-    strncpy(currentProfile->skipRow, result.cleaned, ROW_COL_MAX_LEN - 1);
-    currentProfile->skipRow[ROW_COL_MAX_LEN - 1] = '\0';
+    // If input was cleaned, update and loop again
+    if (result.wasCleaned) {
+      strncpy(currentProfile->skipRow, result.cleaned, ROW_COL_MAX_LEN - 1);
+      currentProfile->skipRow[ROW_COL_MAX_LEN - 1] = '\0';
+      Serial.println("Input was cleaned, showing keyboard again");
+    } else {
+      // Input is clean, exit loop
+      Serial.println("Input is clean");
+      break;
+    }
   }
-  Skip_Screen(phost);
 }
 
 void ConfigMode::editSkipIndividual(Gpu_Hal_Context_t* phost) {
+  // Create dimensions from profile
+  TrayHandler::Dimensions dimensions(currentProfile->Tube_No_x, currentProfile->Tube_No_y);
+  
   while (true) {
     Keyboard(phost, currentProfile->skipSinglePos, "Enter positions to skip", FALSE);
     
-    SkipUtils::CleanResult result = SkipUtils::clean(currentProfile->skipSinglePos, SkipUtils::INDIVIDUAL);
+    // Clean the input with bounds checking
+    Serial.println("Cleaning!");
+    SkipUtils::CleanResult result = SkipUtils::clean(currentProfile->skipSinglePos, SkipUtils::INDIVIDUAL, dimensions);
+    Serial.println("Cleaned!");
     
-    if (!result.wasCleaned) break;
-    strncpy(currentProfile->skipSinglePos, result.cleaned, ROW_COL_MAX_LEN - 1);
-    currentProfile->skipSinglePos[ROW_COL_MAX_LEN - 1] = '\0';
+    // If input was cleaned, update and loop again
+    if (result.wasCleaned) {
+      Serial.println("Actually cleaned!");
+      strncpy(currentProfile->skipSinglePos, result.cleaned, ROW_COL_MAX_LEN - 1);
+      currentProfile->skipSinglePos[ROW_COL_MAX_LEN - 1] = '\0';
+      Serial.println("Input was cleaned, showing keyboard again");
+    } else {
+      // Input is clean, exit loop
+      Serial.println("Nothing changed!");
+      break;
+    }
   }
-  Skip_Screen(phost);
 }
