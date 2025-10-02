@@ -163,7 +163,28 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
         if (maxval > MAXNUMX) maxval = MAXNUMX;
 
         Dprint("max val=", maxval);
+        int oldTubeNoX = currentProfile->Tube_No_x;
         currentProfile->Tube_No_x = Keypad(&host, currentProfile->Tube_No_x, MINNUMX, MAXNUMX, FALSE);
+        
+        // If rows decreased, clean skip strings to remove out-of-bounds positions
+        if (currentProfile->Tube_No_x < oldTubeNoX) {
+          TrayHandler::Dimensions dimensions(currentProfile->Tube_No_x, currentProfile->Tube_No_y);
+          
+          // Clean skip rows
+          SkipUtils::CleanResult rowResult = SkipUtils::clean(currentProfile->skipRow, SkipUtils::ROW, dimensions);
+          if (rowResult.wasCleaned) {
+            strncpy(currentProfile->skipRow, rowResult.cleaned, ROW_COL_MAX_LEN - 1);
+            currentProfile->skipRow[ROW_COL_MAX_LEN - 1] = '\0';
+          }
+          
+          // Clean skip individual positions
+          SkipUtils::CleanResult posResult = SkipUtils::clean(currentProfile->skipSinglePos, SkipUtils::INDIVIDUAL, dimensions);
+          if (posResult.wasCleaned) {
+            strncpy(currentProfile->skipSinglePos, posResult.cleaned, ROW_COL_MAX_LEN - 1);
+            currentProfile->skipSinglePos[ROW_COL_MAX_LEN - 1] = '\0';
+          }
+        }
+        
         Config_Screen(phost);
       }
       break;
@@ -174,7 +195,28 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
 
         if (maxval > MAXNUMY) maxval = MAXNUMY;
         Dprint("max val=", maxval);
+        int oldTubeNoY = currentProfile->Tube_No_y;
         currentProfile->Tube_No_y = Keypad(&host, currentProfile->Tube_No_y, MINNUMY, MAXNUMY, FALSE);
+        
+        // If columns decreased, clean skip strings to remove out-of-bounds positions
+        if (currentProfile->Tube_No_y < oldTubeNoY) {
+          TrayHandler::Dimensions dimensions(currentProfile->Tube_No_x, currentProfile->Tube_No_y);
+          
+          // Clean skip columns
+          SkipUtils::CleanResult colResult = SkipUtils::clean(currentProfile->skipCol, SkipUtils::COLUMN, dimensions);
+          if (colResult.wasCleaned) {
+            strncpy(currentProfile->skipCol, colResult.cleaned, ROW_COL_MAX_LEN - 1);
+            currentProfile->skipCol[ROW_COL_MAX_LEN - 1] = '\0';
+          }
+          
+          // Clean skip individual positions
+          SkipUtils::CleanResult posResult = SkipUtils::clean(currentProfile->skipSinglePos, SkipUtils::INDIVIDUAL, dimensions);
+          if (posResult.wasCleaned) {
+            strncpy(currentProfile->skipSinglePos, posResult.cleaned, ROW_COL_MAX_LEN - 1);
+            currentProfile->skipSinglePos[ROW_COL_MAX_LEN - 1] = '\0';
+          }
+        }
+        
         Config_Screen(phost);
       }
       break;
