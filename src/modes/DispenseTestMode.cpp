@@ -27,14 +27,7 @@ void DispenseTestMode::on_interaction(const Interaction& interaction) {
   // Dispense button
   if (button == TAG_DISPENSE) {
     Serial.println("MODE: Dispense test - setting vibration and dispensing");
-    // Set vibration level and time, then dispense
-    if (dispenserHead.set_vibration_level(current_vibration_level)) {
-      Serial.println("MODE: Vibration level set to " + String(current_vibration_level));
-      if (dispenserHead.set_vibration_time(current_vibration_time)) {
-        Serial.println("MODE: Vibration time set to " + String(current_vibration_time) + "s");
-        dispenserHead.send_dispense();
-      }
-    }
+    dispenserHead.send_dispense();
   }
   
   // Vibration level buttons (U0-U4)

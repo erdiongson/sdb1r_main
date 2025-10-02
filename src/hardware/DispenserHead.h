@@ -4,9 +4,7 @@
 #include "Axis.h"
 #include "../communication/DispenserSerial.h"
 
-/**
- * Struct for all dispenser head parameters
- */
+// Struct for all dispenser head parameters.
 struct DispenserHeadParams {
   AxisParams xAxis;
   AxisParams yAxis;
@@ -30,11 +28,8 @@ public:
     COMPLETED
   };
 
-  /**
-     * Constructor for DispenserHead using DispenserHeadParams
-     * 
-     * @param params All parameters for the dispenser head
-     */
+  // Constructor for DispenserHead using DispenserHeadParams.
+  // @param params All parameters for the dispenser head.
   DispenserHead(const DispenserHeadParams& params)
     : xAxis(params.xAxis),
       yAxis(params.yAxis),
@@ -52,16 +47,18 @@ public:
     return zAxis;
   }
 
+  // Send a dispense command to the dispenser.
   void send_dispense() {
     // Don't send a new command if we're still processing the previous one
     if (dispensing_state != COMPLETED) return;
 
     // Use the serial handler to send the dispense command
-    if (DispenserSerial::send_dispense()) {
-      dispensing_state = SENT;
-    }
+    DispenserSerial::send_dispense();
+    dispensing_state = SENT;
   }
 
+  // Process incoming data from the dispenser.
+  // @return Command code if valid message received, 0 if no message, -1 if error.
   int on_step() {
     int response = DispenserSerial::process();
 
@@ -91,11 +88,8 @@ public:
     return dispensing_state;
   }
 
-  /**
-     * Send a handshake command and wait for response with timeout
-     * 
-     * @return true if connected, false if timeout occurred
-     */
+  // Send a handshake command and wait for response with timeout.
+  // @return True if connected, false if timeout occurred.
   bool get_connected() {
     DispenserSerial::send_handshake();
 
@@ -115,30 +109,18 @@ public:
     return true;  // Handshake successful
   }
 
-  /**
-   * Set vibration level and wait for response
-   * 
-   * @param level Vibration level (0-4)
-   * @return true if command was sent and response received
-   */
-  bool set_vibration_level(uint8_t level) {
-    if (DispenserSerial::send_vibration_level(level)) {
-      return DispenserSerial::blockUntilResponse();
-    }
-    return false;
+  // Set vibration level and wait for response.
+  // @param level Vibration level (0-4).
+  void set_vibration_level(uint8_t level) {
+    DispenserSerial::send_vibration_level(level);
+    DispenserSerial::blockUntilResponse();
   }
 
-  /**
-   * Set vibration time and wait for response
-   * 
-   * @param seconds Vibration duration in seconds (1-5)
-   * @return true if command was sent and response received
-   */
-  bool set_vibration_time(uint8_t seconds) {
-    if (DispenserSerial::send_vibration_time(seconds)) {
-      return DispenserSerial::blockUntilResponse();
-    }
-    return false;
+  // Set vibration time and wait for response.
+  // @param seconds Vibration duration in seconds (1-5).
+  void set_vibration_time(uint8_t seconds) {
+    DispenserSerial::send_vibration_time(seconds);
+    DispenserSerial::blockUntilResponse();
   }
 
 private:
