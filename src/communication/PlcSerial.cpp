@@ -7,13 +7,10 @@
 #include "PlcSerial.h"
 #include "UART.h"
 
-/**********************************************************************************************************
-* @brief PlcSerial::parseReceivedMessage()
-* @details Parse received PLC message and identify message type with data extraction
-* @param receivedData - pointer to received message bytes
-* @param length - length of received message
-* @return PLCMessage struct containing message type and data
-**********************************************************************************************************/
+// Parse received PLC message and identify message type with data extraction.
+// @param receivedData Pointer to received message bytes.
+// @param length Length of received message.
+// @return PLCMessage struct containing message type and data.
 PLCMessage PlcSerial::parseReceivedMessage(const byte *receivedData, int length) {
   PLCMessage result;
   result.type = MSG_UNKNOWN;
@@ -25,7 +22,7 @@ PLCMessage PlcSerial::parseReceivedMessage(const byte *receivedData, int length)
   }
 
   // Check if message length is correct
-  if (length != messageLength) {
+  if (length != PLC_MESSAGE_LENGTH) {
     return result;
   }
 
@@ -67,12 +64,9 @@ PLCMessage PlcSerial::parseReceivedMessage(const byte *receivedData, int length)
   return result;
 }
 
-/**********************************************************************************************************
-* @brief PlcSerial::getMessageTypeName()
-* @details Get string representation of message type for debugging
-* @param type - PLCMessageType enum value
-* @return const char* - string name of message type
-**********************************************************************************************************/
+// Get string representation of message type for debugging.
+// @param type PLCMessageType enum value.
+// @return String name of message type.
 const char *PlcSerial::getMessageTypeName(PLCMessageType type) {
   switch (type) {
   case MSG_START:
@@ -91,19 +85,14 @@ const char *PlcSerial::getMessageTypeName(PLCMessageType type) {
   }
 }
 
-/**********************************************************************************************************
-* @brief PlcSerial::checkAndReceiveData()
-* @details Check if data is available from PLC and receive it into the provided buffer
-* @param buffer - pointer to buffer to store received data
-* @param bufferSize - size of the buffer
-* @param bytesReceived - pointer to variable to store number of bytes received
-* @return bool - true if data was received, false otherwise
-**********************************************************************************************************/
+// Check if data is available from PLC and receive it into the provided buffer.
+// @param buffer Pointer to buffer to store received data.
+// @param bufferSize Size of the buffer.
+// @param bytesReceived Pointer to variable to store number of bytes received.
+// @return True if data was received, false otherwise.
 bool PlcSerial::checkAndReceiveData(byte *buffer, int bufferSize, int *bytesReceived) {
   // Check if data is available
-  if (!Serial2.available()) {
-    return false;
-  }
+  if (!Serial2.available()) return false;
   
   // Read available data into buffer
   *bytesReceived = 0;
@@ -112,7 +101,7 @@ bool PlcSerial::checkAndReceiveData(byte *buffer, int bufferSize, int *bytesRece
     (*bytesReceived)++;
     
     // If we've received a complete message (indicated by END_BYTE), stop reading
-    if (buffer[*bytesReceived - 1] == END_BYTE && *bytesReceived >= messageLength) {
+    if (buffer[*bytesReceived - 1] == END_BYTE && *bytesReceived >= PLC_MESSAGE_LENGTH) {
       return true;
     }
   }
@@ -121,11 +110,8 @@ bool PlcSerial::checkAndReceiveData(byte *buffer, int bufferSize, int *bytesRece
   return (*bytesReceived > 0);
 }
 
-/**********************************************************************************************************
-* @brief PlcSerial::getNewMessage()
-* @details Check for new PLC messages, receive data if available, and parse the message
-* @return PLCMessage struct containing message type and data
-**********************************************************************************************************/
+// Check for new PLC messages, receive data if available, and parse the message.
+// @return PLCMessage struct containing message type and data.
 PLCMessage PlcSerial::getNewMessage() {
   static byte receiveBuffer[32]; // Buffer to store received data
   int bytesReceived = 0;
