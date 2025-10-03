@@ -41,11 +41,11 @@ void RunMode::on_interaction(const Interaction& interaction) {
   }
 }
 
-int RunMode::on_step() {
-  if (paused) return MODE_CONTINUE;
+ModeStepResult RunMode::on_step() {
+  if (paused) return ModeStepResult(MODE_CONTINUE, MODE_CONTINUE);
 
   DispenserProcessResult dispenserProcessResult = dispenserHead.process();
-  if (dispenserProcessResult.steppers == AXIS_STATE_RUNNING) return MODE_CONTINUE;
+  if (dispenserProcessResult.steppers == AXIS_STATE_RUNNING) return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
 
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE || dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
     Serial.println(F("MODE: Dispenser error - IR sensor failure or marker not detected"));
@@ -57,7 +57,7 @@ int RunMode::on_step() {
     };
     Home_Screen(phost, RUNMENU, &params);
     start_stage(HOME_STAGE);
-    return MODE_CONTINUE;
+    return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
   }
 
   switch (stage) {
@@ -111,12 +111,12 @@ int RunMode::on_step() {
       break;
     case HOME_STAGE:
       stage = IDLE_STAGE;
-      return MODE_COMPLETE;
+      return ModeStepResult(MODE_COMPLETE, MODE_COMPLETE);
       break;
     default:
       break;
   }
-  return MODE_CONTINUE;
+  return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
 }
 
 void RunMode::start_stage(int newStage) {

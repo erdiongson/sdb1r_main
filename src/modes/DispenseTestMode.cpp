@@ -76,9 +76,9 @@ void DispenseTestMode::on_interaction(const Interaction& interaction) {
   }
 }
 
-int DispenseTestMode::on_step() {
-  dispenserHead.process();
-  return MODE_CONTINUE;
+ModeStepResult DispenseTestMode::on_step() {
+  DispenserProcessResult result = dispenserHead.process();
+  return ModeStepResult(result.steppers, result.dispenser);
 }
 
 int DispenseTestMode::get_mode_type() const {

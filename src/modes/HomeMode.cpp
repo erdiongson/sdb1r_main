@@ -26,10 +26,9 @@ void HomeMode::on_interaction(const Interaction& interaction) {
   }
 }
 
-int HomeMode::on_step() {
-  dispenserHead.run_steppers();
-
-  return MODE_CONTINUE;
+ModeStepResult HomeMode::on_step() {
+  DispenserProcessResult result = dispenserHead.process();
+  return ModeStepResult(result.steppers, result.dispenser);
 }
 
 int HomeMode::get_mode_type() const {

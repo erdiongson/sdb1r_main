@@ -375,8 +375,9 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
   }
 }
 
-int ConfigMode::on_step() {
-  return MODE_CONTINUE;
+ModeStepResult ConfigMode::on_step() {
+  DispenserProcessResult result = dispenserHead.process();
+  return ModeStepResult(result.steppers, result.dispenser);
 }
 
 int ConfigMode::get_mode_type() const {

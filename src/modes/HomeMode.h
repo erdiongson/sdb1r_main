@@ -21,8 +21,8 @@ public:
   void on_interaction(const Interaction& interaction) override;
 
   // Called on each step of the mode.
-  // @return MODE_COMPLETE when homing is finished, MODE_CONTINUE otherwise.
-  int on_step() override;
+  // @return ModeStepResult with stepper and dispenser state.
+  ModeStepResult on_step() override;
   
   // Returns the type of this mode.
   // @return MODE_TYPE_HOME.

@@ -31,11 +31,11 @@ public:
   }
 
   // Call the current mode's on_step function
-  int on_step() {
+  ModeStepResult on_step() {
     if (mode != nullptr) {
       return mode->on_step();
     }
-    return MODE_CONTINUE;  // No mode active
+    return ModeStepResult(MODE_CONTINUE, MODE_CONTINUE);  // No mode active
   }
 
   void on_interaction(const Interaction& interaction) {

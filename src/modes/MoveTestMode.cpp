@@ -45,20 +45,21 @@ void MoveTestMode::on_interaction(const Interaction& interaction) {
   }
 }
 
-int MoveTestMode::on_step() {
-  bool steppers_idle = dispenserHead.run_steppers();
-  if (!steppers_idle) return MODE_CONTINUE;
+ModeStepResult MoveTestMode::on_step() {
+  DispenserProcessResult result = dispenserHead.process();
+  
+  if (result.steppers == AXIS_STATE_COMPLETE) {
+    LimitSwitchStates limitStates;
+    limitStates.x_max_limit = dispenserHead.x().isAtMax();
+    limitStates.x_min_limit = dispenserHead.x().isAtMin();
+    limitStates.y_max_limit = dispenserHead.y().isAtMax();
+    limitStates.y_min_limit = dispenserHead.y().isAtMin();
+    limitStates.z_max_limit = dispenserHead.z().isAtMax();
+    limitStates.z_min_limit = dispenserHead.z().isAtMin();
+    Move_Test_Screen(phost, limitStates);
+  }
 
-  LimitSwitchStates limitStates;
-  limitStates.x_max_limit = dispenserHead.x().isAtMax();
-  limitStates.x_min_limit = dispenserHead.x().isAtMin();
-  limitStates.y_max_limit = dispenserHead.y().isAtMax();
-  limitStates.y_min_limit = dispenserHead.y().isAtMin();
-  limitStates.z_max_limit = dispenserHead.z().isAtMax();
-  limitStates.z_min_limit = dispenserHead.z().isAtMin();
-  Move_Test_Screen(phost, limitStates);
-
-  return MODE_CONTINUE;
+  return ModeStepResult(result.steppers, result.dispenser);
 }
 
 int MoveTestMode::get_mode_type() const {

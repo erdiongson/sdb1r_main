@@ -12,6 +12,15 @@ class ModeController;
 // Callback function type for mode completion
 typedef void (ModeController::*ModeCompletionCallback)(int);
 
+// Struct for mode step result containing state and error information.
+struct ModeStepResult {
+  int steppers;
+  int dispenser;
+
+  ModeStepResult(int steppers, int dispenser)
+    : steppers(steppers), dispenser(dispenser) {}
+};
+
 class BaseMode {
 public:
   DispenserHead& dispenserHead;
@@ -32,7 +41,7 @@ public:
   // Pure virtual methods that must be implemented by derived classes
   virtual void on_start(Profile& profile) = 0;
   virtual void on_interaction(const Interaction& interaction) = 0;
-  virtual int on_step() = 0;  // Returns error code or MODE_COMPLETE
+  virtual ModeStepResult on_step() = 0;  // Returns ModeStepResult with stepper and dispenser state
   
   // Virtual method to get mode type
   virtual int get_mode_type() const = 0;
