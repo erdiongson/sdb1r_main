@@ -183,7 +183,7 @@ private:
     return verticalSkips > horizontalSkips;
   }
 
-  Position flipPosition(const Position &pos) {
+  Position flipPosition(const Position &pos) const {
     return Position(pos.y, pos.x);
   }
 
@@ -276,6 +276,54 @@ public:
     currentPosition = Position(1, 1);
     direction = 1;
     return currentPosition;
+  }
+
+  // Get the current row (1-indexed).
+  // @return Current row position.
+  int getCurrentRow() const {
+    Position pos = flipped ? flipPosition(currentPosition) : currentPosition;
+    return pos.y;
+  }
+
+  // Get the current column (1-indexed).
+  // @return Current column position.
+  int getCurrentColumn() const {
+    Position pos = flipped ? flipPosition(currentPosition) : currentPosition;
+    return pos.x;
+  }
+
+  // Calculate the number of tubes left to process.
+  // @return Number of remaining tubes.
+  int getTubesLeft() const {
+    int totalTubes = dimensions.rows * dimensions.columns;
+    int skipCount = 0;
+    
+    // Count skip positions
+    for (int i = 0; i < MAX_POSITIONS; i++) {
+      if (skipPositions[i].x == -1 || skipPositions[i].y == -1) break;
+      
+      // Count individual skip positions
+      if (skipPositions[i].x > 0 && skipPositions[i].y > 0) {
+        skipCount++;
+      }
+      // Count entire column skips
+      else if (skipPositions[i].y == 0 && skipPositions[i].x > 0) {
+        skipCount += dimensions.rows;
+      }
+      // Count entire row skips
+      else if (skipPositions[i].x == 0 && skipPositions[i].y > 0) {
+        skipCount += dimensions.columns;
+      }
+    }
+    
+    // Calculate processed tubes (current row * columns + current column - 1)
+    int processedTubes = (currentPosition.y - 1) * dimensions.columns + currentPosition.x;
+    
+    // Total valid tubes
+    int validTubes = totalTubes - skipCount;
+    
+    // Remaining tubes
+    return validTubes - processedTubes;
   }
 };
 

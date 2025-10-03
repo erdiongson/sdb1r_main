@@ -3,6 +3,14 @@
 
 #include "../gpu/App_Common.h"
 
+// Parameters for Home_Screen display.
+struct HomeParams {
+  uint16_t current_row;
+  uint16_t current_column;
+  uint16_t tubes_left;
+  uint8_t error_code;
+};
+
 inline void SetMainMenuButton(uint8_t whichmenu) {
   //					 	 SETTING START PAUSE STOP
   bool_t act_but[][6] = {
@@ -54,7 +62,7 @@ inline void SetMainMenuButton(uint8_t whichmenu) {
   }
 }
 
-inline void Home_Screen(Gpu_Hal_Context_t *phost, uint8_t whichmenu) {
+inline void Home_Screen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const HomeParams* params = nullptr) {
 
   int32_t filling_tube = 0;
   char buf[100];
@@ -99,31 +107,30 @@ inline void Home_Screen(Gpu_Hal_Context_t *phost, uint8_t whichmenu) {
   sprintf(buf, "Filling tube: %d", filling_tube);
   Gpu_CoCmd_Text(phost, 25, 220, 20, OPT_FORMAT, buf);
 
-  // TODO: Fix
-  sprintf(buf, "Current Tube : R%2d C%2d", 0 + 1, 0 + 1);
+  sprintf(buf, "Current Tube : R%2d C%2d", params ? params->current_row + 1 : 1, params ? params->current_column + 1 : 1);
   Gpu_CoCmd_Text(phost, 292, 208, 20, OPT_RIGHTX | OPT_FORMAT, buf);
 
-  // TODO: Fix
-  sprintf(buf, "Tube left : %3d", 0);
+  sprintf(buf, "Tube left : %3d", params ? params->tubes_left : 0);
   Gpu_CoCmd_Text(phost, 294, 220, 20, OPT_RIGHTX | OPT_FORMAT, buf);
 
   //INSERT ERROR MESSAGE
-  if (err_flag == 1) {
+  uint8_t error_code = params ? params->error_code : 0;
+  if (error_code == 1) {
     sprintf(buf, "Error 1: IR Sensor Detection Failed. Please Restart.");
     Gpu_CoCmd_Text(phost, 43, 90, 20, OPT_FORMAT, buf);
-  } else if (err_flag == 2) {
+  } else if (error_code == 2) {
     sprintf(buf, "Error 2: Dispenser Head Stucked. Check the head.");
     Gpu_CoCmd_Text(phost, 43, 90, 20, OPT_FORMAT, buf);
-  } else if (err_flag == 3) {
+  } else if (error_code == 3) {
     sprintf(buf, "Max distance reached. Machine will go back to home.");
     Gpu_CoCmd_Text(phost, 43, 90, 20, OPT_FORMAT, buf);
-  } else if (err_flag == 4) {
+  } else if (error_code == 4) {
     sprintf(buf, "No Ack Received. Please restart to estalish connection.");
     Gpu_CoCmd_Text(phost, 43, 90, 20, OPT_FORMAT, buf);
-  } else if (err_flag == 5) {
+  } else if (error_code == 5) {
     sprintf(buf, "No complete received. Please restart to establish connection.");
     Gpu_CoCmd_Text(phost, 43, 90, 20, OPT_FORMAT, buf);
-  } else if (err_flag == 0) {
+  } else if (error_code == 0) {
     sprintf(buf, " ");
     Gpu_CoCmd_Text(phost, 43, 90, 20, OPT_FORMAT, buf);
   }

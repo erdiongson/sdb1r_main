@@ -103,8 +103,8 @@ int DispenserSerial::process() {
         // Marker not detected
         return MARKER_NOT_DETECTED;
       } else {
-        // Unknown error
-        return -1;
+        // Unknown message
+        return 0;
       }
     }
   }

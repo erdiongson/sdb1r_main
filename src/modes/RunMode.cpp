@@ -92,6 +92,17 @@ int RunMode::on_step() {
       }
       break;
     case WAIT_DISPENSE_STAGE:
+      ProcessResult result = dispenserHead.process();
+      if (result.error) {
+        HomeParams params = {
+          (uint16_t)trayHandler.getCurrentRow(),
+          (uint16_t)trayHandler.getCurrentColumn(),
+          (uint16_t)trayHandler.getTubesLeft(),
+          (uint8_t)result.error
+        };
+        Home_Screen(phost, RUNMENU, &params);
+        start_stage(HOME_STAGE);
+      }
       if (dispenserHead.get_state() == DispenserHead::COMPLETED) {
         start_stage(RAISE_HEAD_STAGE);
       }
@@ -102,6 +113,16 @@ int RunMode::on_step() {
         if (result.hasNext) {
           target_x = (profile.trayOriginX + (result.position.x * profile.pitch_x)) * -STEPS_PER_UNIT_X;
           target_y = (profile.trayOriginY + (result.position.y * profile.pitch_y)) * STEPS_PER_UNIT_Y;
+
+          // Update Home_Screen
+          HomeParams params = {
+            (uint16_t)trayHandler.getCurrentRow(),
+            (uint16_t)trayHandler.getCurrentColumn(),
+            (uint16_t)trayHandler.getTubesLeft(),
+            0
+          };
+          Home_Screen(phost, RUNMENU, &params);
+
           start_stage(MOVE_STAGE);
         } else {
           start_stage(HOME_STAGE);

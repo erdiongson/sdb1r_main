@@ -4,6 +4,15 @@
 #include "Axis.h"
 #include "../communication/DispenserSerial.h"
 
+// Struct for process result containing state and error information.
+struct ProcessResult {
+  int state;
+  int error;
+
+  ProcessResult(int state, int error)
+    : state(state), error(error) {}
+};
+
 // Struct for all dispenser head parameters.
 struct DispenserHeadParams {
   AxisParams xAxis;
@@ -70,29 +79,26 @@ public:
   }
 
   // Process incoming data from the dispenser.
-  // @return Command code if valid message received, 0 if no message, -1 if error.
-  int on_step() {
+  // @return ProcessResult containing the updated state and any error code.
+  ProcessResult process() {
     int response = DispenserSerial::process();
 
     // Handle the response based on the returned code
     switch (response) {
       case ACKNOWLEDGE:
         dispensing_state = ACKNOWLEDGED;
-        return 0;
+        return ProcessResult(ACKNOWLEDGED, 0);
       case DISPENSE_DONE:
         dispensing_state = COMPLETED;
-        return 0;
+        return ProcessResult(COMPLETED, 0);
       case IR_SENSOR_FAILURE:
         dispensing_state = COMPLETED;
-        return IR_SENSOR_FAILURE;
+        return ProcessResult(COMPLETED, IR_SENSOR_FAILURE);
       case MARKER_NOT_DETECTED:
         dispensing_state = COMPLETED;
-        return MARKER_NOT_DETECTED;
-      case -1:  // Unknown error
-        dispensing_state = COMPLETED;
-        return -1;
+        return ProcessResult(COMPLETED, MARKER_NOT_DETECTED);
     }
-    return 0;
+    return ProcessResult(dispensing_state, 0);
   }
 
   // Get the current dispensing state
