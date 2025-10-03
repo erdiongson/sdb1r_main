@@ -52,17 +52,9 @@ InteractionsHandler interactionsHandler;
 uint16_t err_flag = 0;  //E1 = 1, E2 = 2;
 static uint32_t loopIndex = 0;
 
-// Frequency tracking variables
-unsigned long xAxisStepCount = 0;
-unsigned long modeControllerStepCount = 0;
-unsigned long lastFrequencyReport = 0;
-const unsigned long FREQUENCY_REPORT_INTERVAL = 10000; // Report every 10 seconds (in milliseconds)
-
 // Timing variables for loop operations
 unsigned long lastInteractionCheck = 0;
-unsigned long lastModeStep = 0;
 const unsigned long INTERACTION_CHECK_INTERVAL = 100; // Check interactions every 1000ms
-const unsigned long MODE_STEP_INTERVAL = 3000; // Run mode step every 5000ms (5s)
 
 #if DEBUG
 char Password[4][PROFILE_NAME_MAX_LEN] = { "su",  //super password
@@ -174,32 +166,9 @@ void setup() {
   CurProfNum = LoadProfile();
 
   Serial.println("Starting first mode..");
-  modeController.start_mode(MODE_TYPE_RUN, CurProf, phost);
+  modeController.start_mode(MODE_TYPE_MOVE_TEST, CurProf, phost);
 
   dispenserHead.z().setDisabled(true);
-  
-  // Initialize frequency tracking
-  lastFrequencyReport = millis();
-}
-
-void reportFrequencies() {
-  unsigned long currentTime = millis();
-  unsigned long timeDiff = currentTime - lastFrequencyReport;
-  
-  if (timeDiff >= FREQUENCY_REPORT_INTERVAL) {
-    float timeInSeconds = timeDiff / 1000.0;
-    
-    // Serial.println("=== Frequency Report ===");
-    // Serial.println("X-Axis onStep frequency: " + String(xAxisStepCount / timeInSeconds, 2) + " Hz");
-    // Serial.println("ModeController on_step frequency: " + String(modeControllerStepCount / timeInSeconds, 2) + " Hz");
-    // Serial.println("Time period: " + String(timeInSeconds, 2) + " seconds");
-    // Serial.println("========================");
-    
-    // Reset counters and timestamp
-    xAxisStepCount = 0;
-    modeControllerStepCount = 0;
-    lastFrequencyReport = currentTime;
-  }
 }
 
 Interaction interaction;
@@ -211,7 +180,6 @@ void loop() {
   // Responsible for stepper runs, and dispener serial processing
   modeController.on_step();
 
-
   // Check for interactions only periodically
   // Includes touch screen presses, and PLC commands
   int checkInterval = 200;
@@ -222,7 +190,4 @@ void loop() {
       modeController.on_interaction(interaction);
     }
   }
-  
-  // Report frequencies periodically
-  // reportFrequencies();
 }
