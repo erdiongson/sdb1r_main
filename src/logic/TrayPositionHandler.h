@@ -240,7 +240,7 @@ public:
   }
 
   // Get the next valid position and update the current position.
-  // @return PositionResult containing the change in position from previous to new position.
+  // @return PositionResult containing the new position
   PositionResult goToNextValidPosition() {
     // Store the previous position before updating
     Position previousPosition = currentPosition;
@@ -262,9 +262,7 @@ public:
         newPosition = result.position;
       }
 
-      // Calculate the change in position (delta) instead of absolute position
-      result.position.x = newPosition.x - previousPositionTransformed.x;
-      result.position.y = newPosition.y - previousPositionTransformed.y;
+      result.position = newPosition;
     }
 
     return result;

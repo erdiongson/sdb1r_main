@@ -97,8 +97,10 @@ int RunMode::on_step() {
     case RAISE_HEAD_STAGE: {
         TrayHandler::PositionResult result = trayHandler.goToNextValidPosition();
         if (result.hasNext) {
-          target_x = (profile.trayOriginX + (result.position.x * profile.pitch_x)) * -STEPS_PER_UNIT_X;
-          target_y = (profile.trayOriginY + (result.position.y * profile.pitch_y)) * STEPS_PER_UNIT_Y;
+          Serial.println("Next position: " + String(result.position.x) + ", " + String(result.position.y));
+
+          target_x = (profile.trayOriginX + ((result.position.x - 1) * profile.pitch_x)) * -STEPS_PER_UNIT_X;
+          target_y = (profile.trayOriginY + ((result.position.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
 
           // Update Home_Screen
           HomeParams params = {
