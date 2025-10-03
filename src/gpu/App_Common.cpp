@@ -960,7 +960,7 @@ float Keypad(Gpu_Hal_Context_t *phost, float curval, float minval, float maxval 
 	int8_t curpos;
 	float tempval;
 
-	for(int i=0;i<10;i++) buf[i]=0;
+	for(int i=0;i<KEYPAD_MAX_LEN;i++) buf[i]=0;
 	LoadBuffer(buf, curval);
 	curpos=strlen(buf);
 	buf[curpos]=0;
