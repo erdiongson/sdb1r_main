@@ -107,7 +107,7 @@ inline void Home_Screen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const HomeP
   sprintf(buf, "Filling tube: %d", filling_tube);
   Gpu_CoCmd_Text(phost, 25, 220, 20, OPT_FORMAT, buf);
 
-  sprintf(buf, "Current Tube : R%2d C%2d", params ? params->current_row + 1 : 1, params ? params->current_column + 1 : 1);
+  sprintf(buf, "Current Tube : R%2d C%2d", params ? params->current_row : 1, params ? params->current_column : 1);
   Gpu_CoCmd_Text(phost, 292, 208, 20, OPT_RIGHTX | OPT_FORMAT, buf);
 
   sprintf(buf, "Tube left : %3d", params ? params->tubes_left : 0);
