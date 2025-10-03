@@ -1,6 +1,7 @@
 #include "HomeMode.h"
 #include "BaseMode.h"
 #include "ModesCommon.h"
+#include "../views/Home_Screen.h"
 
 HomeMode::HomeMode(DispenserHead& head, Gpu_Hal_Context_t *host, ModeController* controller, ModeCompletionCallback callback)
   : BaseMode(head, host, controller, callback) {}
@@ -8,7 +9,7 @@ HomeMode::HomeMode(DispenserHead& head, Gpu_Hal_Context_t *host, ModeController*
 void HomeMode::on_start(Profile& profile) {
   Serial.println("MODE: Home mode");
 
-  Home_Menu(&host, MAINMENU);
+  Home_Screen(&host, MAINMENU);
 
   dispenserHead.x().moveToMax();
   dispenserHead.y().moveToMin();

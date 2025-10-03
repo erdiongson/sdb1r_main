@@ -84,12 +84,6 @@ void App_Common_Close(Gpu_Hal_Context_t *phost);
 
 // #define BUFFER_SIZE_KEY MAX_CHAR_PER_LINE
 
-enum ScreenType
-{
-    HOME_SCREEN,
-    TRAY_SCREEN
-};
-
 int32_t getLastSavedProfileId();
 
 uint8_t GetKeyPressed(void);
@@ -98,7 +92,6 @@ void WaitKeyRelease(void);
 
 void Logo_XQ_trans(Gpu_Hal_Context_t *phost);
 
-void Home_Menu(Gpu_Hal_Context_t *, uint8_t );
 void Disp_End(Gpu_Hal_Context_t *phost);
 
 void Keyboard(Gpu_Hal_Context_t *phost, char*,char *,bool);

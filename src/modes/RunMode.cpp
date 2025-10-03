@@ -1,5 +1,6 @@
 #include "RunMode.h"
 #include "ModesCommon.h"
+#include "../views/Home_Screen.h"
 
 RunMode::RunMode(DispenserHead& head, Gpu_Hal_Context_t* host, ModeController* controller, ModeCompletionCallback callback)
   : BaseMode(head, host, controller, callback) {}
@@ -14,7 +15,7 @@ void RunMode::on_start(Profile& profile) {
 
   paused = false;
 
-  Home_Menu(phost, RUNMENU);
+  Home_Screen(phost, RUNMENU);
 
   start_stage(ZERO_STAGE);
 }
@@ -29,14 +30,14 @@ void RunMode::on_interaction(const Interaction& interaction) {
     dispenserHead.y().stop();
     dispenserHead.z().stop();
 
-    Home_Menu(phost, PAUSEMENU);
+    Home_Screen(phost, PAUSEMENU);
   }  else if (button == STOP) {
     Serial.println("MODE: Stopped");
     complete_with_next_mode(MODE_TYPE_HOME) ;
   } else if (button == START) {
     Serial.println("MODE: Resumed");
     paused = false;
-    Home_Menu(phost, RUNMENU);
+    Home_Screen(phost, RUNMENU);
     start_stage(stage);
   }
 }
