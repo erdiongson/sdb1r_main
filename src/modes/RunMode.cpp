@@ -46,7 +46,7 @@ int RunMode::on_step() {
 
   switch (stage) {
     case ZERO_STAGE:
-      if (dispenserHead.x().isComplete() && dispenserHead.y().isComplete() && dispenserHead.z().isComplete()) {
+      if (dispenserHead.is_steppers_complete()) {
         Serial.println("Zero stage all completed!");
 
         dispenserHead.x().stop();
@@ -67,7 +67,7 @@ int RunMode::on_step() {
       }
       break;
     case OFFSET_STAGE:
-      if (dispenserHead.x().isComplete() && dispenserHead.y().isComplete()) {
+      if (dispenserHead.is_steppers_complete()) {
         dispenserHead.x().stop();
         dispenserHead.y().stop();
         delay(10);
@@ -81,23 +81,22 @@ int RunMode::on_step() {
       }
       break;
     case LOWER_HEAD_STAGE:
-      if (dispenserHead.z().isComplete()) {
+      if (dispenserHead.is_steppers_complete()) {
         start_stage(START_DISPENSE_STAGE);
       }
       break;
-    // case START_DISPENSE_STAGE:
-    //   if (dispenserHead.get_state() == DispenserHead::SENT) {
-    //     start_stage(WAIT_DISPENSE_STAGE);
-    //   }
-    //   break;
-    // case WAIT_DISPENSE_STAGE:
-    //   dispenserHead.on_step();
-    //   if (dispenserHead.get_state() == DispenserHead::COMPLETED) {
-    //     start_stage(RAISE_HEAD_STAGE);
-    //   }
-    //   break;
+    case START_DISPENSE_STAGE:
+      if (dispenserHead.get_state() == DispenserHead::SENT) {
+        start_stage(WAIT_DISPENSE_STAGE);
+      }
+      break;
+    case WAIT_DISPENSE_STAGE:
+      if (dispenserHead.get_state() == DispenserHead::COMPLETED) {
+        start_stage(RAISE_HEAD_STAGE);
+      }
+      break;
     case RAISE_HEAD_STAGE:
-      if (dispenserHead.z().isComplete()) {
+      if (dispenserHead.is_steppers_complete()) {
         TrayHandler::PositionResult result = trayHandler.goToNextValidPosition();
         if (result.hasNext) {
           target_x = (profile.trayOriginX + (result.position.x * profile.pitch_x)) * -STEPS_PER_UNIT_X;
@@ -109,12 +108,12 @@ int RunMode::on_step() {
       }
       break;
     case MOVE_STAGE:
-      if (dispenserHead.x().isComplete() && dispenserHead.y().isComplete()) {
+      if (dispenserHead.is_steppers_complete()) {
         start_stage(LOWER_HEAD_STAGE);
       }
       break;
     case HOME_STAGE:
-      if (dispenserHead.x().isComplete() && dispenserHead.y().isComplete() && dispenserHead.z().isComplete()) {
+      if (dispenserHead.is_steppers_complete()) {
         stage = IDLE_STAGE;
         return MODE_COMPLETE;
       }
@@ -161,15 +160,12 @@ void RunMode::start_stage(int newStage) {
       Serial.println("MODE: Setting stage: START_DISPENSE");
       this->stage = START_DISPENSE_STAGE;
       dispenserHead.send_dispense();
-      while (dispenserHead.get_state() != DispenserHead::COMPLETED) {
-        dispenserHead.on_step();
-      }
-      start_stage(RAISE_HEAD_STAGE);
+      start_stage(WAIT_DISPENSE_STAGE);
       break;
-    // case WAIT_DISPENSE_STAGE:
-    //   Serial.println("MODE: Setting stage: WAIT_DISPENSE");
-    //   this->stage = WAIT_DISPENSE_STAGE;
-    //   break;
+    case WAIT_DISPENSE_STAGE:
+      Serial.println("MODE: Setting stage: WAIT_DISPENSE");
+      this->stage = WAIT_DISPENSE_STAGE;
+      break;
     case RAISE_HEAD_STAGE:
       Serial.println("MODE: Setting stage: RAISE_HEAD");
       this->stage = RAISE_HEAD_STAGE;

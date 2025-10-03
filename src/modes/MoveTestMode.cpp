@@ -45,18 +45,15 @@ void MoveTestMode::on_interaction(const Interaction& interaction) {
 }
 
 int MoveTestMode::on_step() {
-  // LimitSwitchStates limitStates;
-  // limitStates.x_max_limit = dispenserHead.x().isAtMax();
-  // limitStates.x_min_limit = dispenserHead.x().isAtMin();
-  // limitStates.y_max_limit = dispenserHead.y().isAtMax();
-  // limitStates.y_min_limit = dispenserHead.y().isAtMin();
-  // limitStates.z_max_limit = dispenserHead.z().isAtMax();
-  // limitStates.z_min_limit = dispenserHead.z().isAtMin();
-  // Move_Test_Screen(phost, limitStates);
+  LimitSwitchStates limitStates;
+  limitStates.x_max_limit = dispenserHead.x().isAtMax();
+  limitStates.x_min_limit = dispenserHead.x().isAtMin();
+  limitStates.y_max_limit = dispenserHead.y().isAtMax();
+  limitStates.y_min_limit = dispenserHead.y().isAtMin();
+  limitStates.z_max_limit = dispenserHead.z().isAtMax();
+  limitStates.z_min_limit = dispenserHead.z().isAtMin();
+  Move_Test_Screen(phost, limitStates);
 
-  if (back) {
-    return MODE_COMPLETE;
-  }
   return MODE_CONTINUE;
 }
 

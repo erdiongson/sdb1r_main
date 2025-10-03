@@ -47,6 +47,18 @@ public:
     return zAxis;
   }
 
+  // Run all stepper motors
+  bool run_steppers() {
+    bool x_completed = this->xAxis.onStep();
+    bool y_completed = this->yAxis.onStep();
+    bool z_completed = this->zAxis.onStep();
+    return x_completed || y_completed || z_completed;
+  }
+
+  bool is_steppers_complete() {
+    return this->xAxis.isComplete() && this->yAxis.isComplete() && this->zAxis.isComplete();
+  }
+
   // Send a dispense command to the dispenser.
   void send_dispense() {
     // Don't send a new command if we're still processing the previous one

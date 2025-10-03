@@ -161,7 +161,7 @@ void setup() {
   Serial.print("Enable Global Interrupt");
   sei();
 
-  // Gpu_Hal_Wr8(phost, REG_PWM_DUTY, 10);//brightness control
+  // Gpu_Hal_Wr8(phost, REG_PWM_DUTY, 10); //brightness control
 
   Logo_XQ_trans(&host);
   Dprint("Firmware version :", FWVER);
@@ -205,39 +205,29 @@ void reportFrequencies() {
 Interaction interaction;
 
 void loop() {
-  // Track dispenser head onStep calls - run as frequently as possible
-  dispenserHead.x().onStep();
-  dispenserHead.y().onStep();
-  // dispenserHead.z().onStep();
-  xAxisStepCount++;
-  
-  
   unsigned long currentTime = millis();
+  bool steppers_idle = dispenserHead.run_steppers();
   
-  // Check for interactions every 1000ms
-  if (currentTime - lastInteractionCheck >= INTERACTION_CHECK_INTERVAL) {
+  int checkInterval = steppers_idle ? 10 : 200;  
+
+  if (currentTime - lastInteractionCheck >= checkInterval) {
+    lastInteractionCheck = currentTime;
+
+    // Check for interactions
     if (interactionsHandler.getInteractionFast(interaction)) {
       modeController.on_interaction(interaction);
     }
-    lastInteractionCheck = currentTime;
-  }
 
-  // // Run mode step every 5s
-  if (currentTime - lastModeStep >= MODE_STEP_INTERVAL) {
-    // Serial.println("MODE: on_step");
-    
-    // Track modeController on_step calls
-    int result = modeController.on_step();
-    
-    if (result != 0) {
-      Serial.println("Result: " + String(result));
-    }
-    if (result == MODE_COMPLETE) {
-      modeController.start_mode(MODE_TYPE_HOME, CurProf, phost);
-    }
-    lastModeStep = currentTime;
-  }
+    // Run mode step and dispenser head on_step only if steppers are idle
+    if (steppers_idle) {
+      modeController.on_step();
 
+      if (dispenserHead.get_state() != DispenserHead::COMPLETED) {
+        dispenserHead.on_step();
+      }
+
+    }
+  }
   
   // Report frequencies periodically
   // reportFrequencies();

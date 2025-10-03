@@ -1,5 +1,6 @@
 #include "DispenseTestMode.h"
 #include "../views/Dispense_Test_Screen.h"
+#include "ModesCommon.h"
 
 DispenseTestMode::DispenseTestMode(DispenserHead& head, Gpu_Hal_Context_t *host, ModeController* controller, ModeCompletionCallback callback)
   : BaseMode(head, host, controller, callback) {}
@@ -21,7 +22,7 @@ void DispenseTestMode::on_interaction(const Interaction& interaction) {
   int button = interaction.key_pressed;
   
   if (button == TAG_DISPENSE_BACK) {
-    back = true;
+    complete_with_next_mode(MODE_TYPE_HOME);
   }
   
   // Dispense button
@@ -76,9 +77,6 @@ void DispenseTestMode::on_interaction(const Interaction& interaction) {
 }
 
 int DispenseTestMode::on_step() {
-  if (back) {
-    return MODE_COMPLETE;
-  }
   return MODE_CONTINUE;
 }
 
