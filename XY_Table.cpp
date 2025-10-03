@@ -10,6 +10,7 @@
 * Version 2.03: ii. Revised the saved password logic
 */
 
+#include "src/modes/BaseMode.h"
 #include "src/modes/ModesCommon.h"
 #include "src/gpu/Platform.h"
 #include "src/gpu/App_Common.h"
@@ -52,9 +53,10 @@ InteractionsHandler interactionsHandler;
 uint16_t err_flag = 0;  //E1 = 1, E2 = 2;
 static uint32_t loopIndex = 0;
 
-// Timing variables for loop operations
+// To track when to check for interactions
 unsigned long lastInteractionCheck = 0;
-const unsigned long INTERACTION_CHECK_INTERVAL = 100; // Check interactions every 1000ms
+#define INTERACT_INTERVAL_AXIS_RUNNING 200
+#define INTERACT_INTERVAL_AXIS_IDLE 20
 
 #if DEBUG
 char Password[4][PROFILE_NAME_MAX_LEN] = { "su",  //super password
@@ -177,12 +179,13 @@ void loop() {
   unsigned long currentTime = millis();
 
   // Call the mode's on_step() function
-  // Responsible for stepper runs, and dispener serial processing
-  modeController.on_step();
+  // Responsible for stepper runs, and dispenser serial processing
+  ModeStepResult result = modeController.on_step();
 
   // Check for interactions only periodically
   // Includes touch screen presses, and PLC commands
-  int checkInterval = 200;
+  int checkInterval = result.steppers == AXIS_STATE_RUNNING ? INTERACT_INTERVAL_AXIS_RUNNING : INTERACT_INTERVAL_AXIS_IDLE;
+
   if (currentTime - lastInteractionCheck >= checkInterval) {
     lastInteractionCheck = currentTime;
 
