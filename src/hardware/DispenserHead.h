@@ -57,17 +57,6 @@ public:
     return zAxis;
   }
 
-  // Run all stepper motors
-  bool run_steppers() {
-    int x_result = this->xAxis.onStep();
-    if (x_result == AXIS_STATE_RUNNING) return false;
-    int y_result = this->yAxis.onStep();
-    if (y_result == AXIS_STATE_RUNNING) return false;
-    int z_result = this->zAxis.onStep();
-    if (z_result == AXIS_STATE_RUNNING) return false;
-    return true;
-  }
-
   // Send a dispense command to the dispenser.
   void send_dispense() {
     // Don't send a new command if we're still processing the previous one
@@ -82,11 +71,20 @@ public:
   // @return DispenserProcessResult containing the updated state and any error code.
   DispenserProcessResult process() {
 
-    bool steppers_idle = run_steppers();
-    if (!steppers_idle) return DispenserProcessResult(AXIS_STATE_RUNNING, DISPENSER_STATE_BLOCKED);
+    // Process stepper motors
+    int x_result = this->xAxis.onStep();
+    if (x_result == AXIS_STATE_RUNNING) return DispenserProcessResult(AXIS_STATE_RUNNING, DISPENSER_STATE_BLOCKED);
+    if (x_result == AXIS_STATE_ERROR_LIMIT_SWITCH) return DispenserProcessResult(AXIS_STATE_ERROR_LIMIT_SWITCH, DISPENSER_STATE_BLOCKED);
 
-    // TODO: Add error handling for axis
+    int y_result = this->yAxis.onStep();
+    if (y_result == AXIS_STATE_RUNNING) return DispenserProcessResult(AXIS_STATE_RUNNING, DISPENSER_STATE_BLOCKED);
+    if (y_result == AXIS_STATE_ERROR_LIMIT_SWITCH) return DispenserProcessResult(AXIS_STATE_ERROR_LIMIT_SWITCH, DISPENSER_STATE_BLOCKED);
 
+    int z_result = this->zAxis.onStep();
+    if (z_result == AXIS_STATE_RUNNING) return DispenserProcessResult(AXIS_STATE_RUNNING, DISPENSER_STATE_BLOCKED);
+    if (z_result == AXIS_STATE_ERROR_LIMIT_SWITCH) return DispenserProcessResult(AXIS_STATE_ERROR_LIMIT_SWITCH, DISPENSER_STATE_BLOCKED);
+
+    // Process dispenser's serial data
     int response = DispenserSerial::process();
 
     // Handle the response based on the returned code

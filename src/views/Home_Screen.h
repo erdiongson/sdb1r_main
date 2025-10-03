@@ -8,7 +8,7 @@ struct HomeParams {
   uint16_t current_row;
   uint16_t current_column;
   uint16_t tubes_left;
-  uint8_t error_code;
+  char error_message[100];
 };
 
 inline void SetMainMenuButton(uint8_t whichmenu) {
@@ -114,25 +114,8 @@ inline void Home_Screen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const HomeP
   Gpu_CoCmd_Text(phost, 294, 220, 20, OPT_RIGHTX | OPT_FORMAT, buf);
 
   //INSERT ERROR MESSAGE
-  uint8_t error_code = params ? params->error_code : 0;
-  if (error_code == 1) {
-    sprintf(buf, "Error 1: IR Sensor Detection Failed. Please Restart.");
-    Gpu_CoCmd_Text(phost, 43, 90, 20, OPT_FORMAT, buf);
-  } else if (error_code == 2) {
-    sprintf(buf, "Error 2: Dispenser Head Stucked. Check the head.");
-    Gpu_CoCmd_Text(phost, 43, 90, 20, OPT_FORMAT, buf);
-  } else if (error_code == 3) {
-    sprintf(buf, "Max distance reached. Machine will go back to home.");
-    Gpu_CoCmd_Text(phost, 43, 90, 20, OPT_FORMAT, buf);
-  } else if (error_code == 4) {
-    sprintf(buf, "No Ack Received. Please restart to estalish connection.");
-    Gpu_CoCmd_Text(phost, 43, 90, 20, OPT_FORMAT, buf);
-  } else if (error_code == 5) {
-    sprintf(buf, "No complete received. Please restart to establish connection.");
-    Gpu_CoCmd_Text(phost, 43, 90, 20, OPT_FORMAT, buf);
-  } else if (error_code == 0) {
-    sprintf(buf, " ");
-    Gpu_CoCmd_Text(phost, 43, 90, 20, OPT_FORMAT, buf);
+  if (params && params->error_message[0] != '\0') {
+    Gpu_CoCmd_Text(phost, 43, 90, 20, OPT_FORMAT, params->error_message);
   }
   Disp_End(phost);
 }

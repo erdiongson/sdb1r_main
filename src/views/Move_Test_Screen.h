@@ -129,9 +129,9 @@ void Move_Test_Screen(Gpu_Hal_Context_t *phost, const LimitSwitchStates& limitSt
     Gpu_CoCmd_Button(phost, center_x - button_size - 40, center_y - button_size/2, 
                      button_size, button_size, 26, 0, "LEFT");
     
-    // LEFT button limit switch dot (X min limit)
+    // LEFT button limit switch dot (X max limit)
     App_WrCoCmd_Buffer(phost, TAG_MASK(0));
-    App_WrCoCmd_Buffer(phost, COLOR_RGB(limitStates.x_min_limit ? 255 : 128, limitStates.x_min_limit ? 0 : 128, limitStates.x_min_limit ? 0 : 128));
+    App_WrCoCmd_Buffer(phost, COLOR_RGB(limitStates.x_max_limit ? 255 : 128, limitStates.x_max_limit ? 0 : 128, limitStates.x_max_limit ? 0 : 128));
     App_WrCoCmd_Buffer(phost, POINT_SIZE(4*16));
     App_WrCoCmd_Buffer(phost, BEGIN(POINTS));
     App_WrCoCmd_Buffer(phost, VERTEX2F((center_x - button_size - 32)*16, (center_y - button_size/2 + 8)*16));
@@ -145,9 +145,9 @@ void Move_Test_Screen(Gpu_Hal_Context_t *phost, const LimitSwitchStates& limitSt
     Gpu_CoCmd_Button(phost, center_x + 40, center_y - button_size/2, 
                      button_size, button_size, 26, 0, "RIGHT");
     
-    // RIGHT button limit switch dot (X max limit)
+    // RIGHT button limit switch dot (X min limit)
     App_WrCoCmd_Buffer(phost, TAG_MASK(0));
-    App_WrCoCmd_Buffer(phost, COLOR_RGB(limitStates.x_max_limit ? 255 : 128, limitStates.x_max_limit ? 0 : 128, limitStates.x_max_limit ? 0 : 128));
+    App_WrCoCmd_Buffer(phost, COLOR_RGB(limitStates.x_min_limit ? 255 : 128, limitStates.x_min_limit ? 0 : 128, limitStates.x_min_limit ? 0 : 128));
     App_WrCoCmd_Buffer(phost, POINT_SIZE(4*16));
     App_WrCoCmd_Buffer(phost, BEGIN(POINTS));
     App_WrCoCmd_Buffer(phost, VERTEX2F((center_x + 48)*16, (center_y - button_size/2 + 8)*16));

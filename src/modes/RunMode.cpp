@@ -47,13 +47,39 @@ ModeStepResult RunMode::on_step() {
   DispenserProcessResult dispenserProcessResult = dispenserHead.process();
   if (dispenserProcessResult.steppers == AXIS_STATE_RUNNING) return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
 
-  if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE || dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
-    Serial.println(F("MODE: Dispenser error - IR sensor failure or marker not detected"));
+  if (dispenserProcessResult.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
+    Serial.println(F("MODE: Stepper error - limit switch triggered"));
     HomeParams params = {
       (uint16_t)trayHandler.getCurrentRow(),
       (uint16_t)trayHandler.getCurrentColumn(),
       (uint16_t)trayHandler.getTubesLeft(),
-      (uint8_t)dispenserProcessResult.dispenser
+      "Max distance reached. Machine will go back to home."
+    };
+    Home_Screen(phost, RUNMENU, &params);
+    start_stage(HOME_STAGE);
+    return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
+  }
+
+  if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE) {
+    Serial.println(F("MODE: Dispenser error - IR sensor failure"));
+    HomeParams params = {
+      (uint16_t)trayHandler.getCurrentRow(),
+      (uint16_t)trayHandler.getCurrentColumn(),
+      (uint16_t)trayHandler.getTubesLeft(),
+      "IR Sensor Detection Failed. Please Restart."
+    };
+    Home_Screen(phost, RUNMENU, &params);
+    start_stage(HOME_STAGE);
+    return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
+  }
+
+  if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
+    Serial.println(F("MODE: Dispenser error - marker not detected"));
+    HomeParams params = {
+      (uint16_t)trayHandler.getCurrentRow(),
+      (uint16_t)trayHandler.getCurrentColumn(),
+      (uint16_t)trayHandler.getTubesLeft(),
+      "Dispenser Head Stucked. Check the head."
     };
     Home_Screen(phost, RUNMENU, &params);
     start_stage(HOME_STAGE);
@@ -97,7 +123,7 @@ ModeStepResult RunMode::on_step() {
             (uint16_t)trayHandler.getCurrentRow(),
             (uint16_t)trayHandler.getCurrentColumn(),
             (uint16_t)trayHandler.getTubesLeft(),
-            0
+            ""
           };
           Home_Screen(phost, RUNMENU, &params);
           start_stage(MOVE_STAGE);
@@ -110,8 +136,6 @@ ModeStepResult RunMode::on_step() {
       start_stage(LOWER_HEAD_STAGE);
       break;
     case HOME_STAGE:
-      stage = IDLE_STAGE;
-      return ModeStepResult(MODE_COMPLETE, MODE_COMPLETE);
       break;
     default:
       break;

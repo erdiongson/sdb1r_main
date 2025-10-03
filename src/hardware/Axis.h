@@ -84,6 +84,9 @@ public:
     to_limit = true;
     stepper.move(999999999);
     movingPositive = true;
+
+    prevMinState = isAtMin();
+    prevMaxState = isAtMax();
   }
 
   void moveToMin() {
@@ -93,6 +96,9 @@ public:
     to_limit = true;
     stepper.move(-999999999);
     movingPositive = false;
+
+    prevMinState = isAtMin();
+    prevMaxState = isAtMax();
   }
 
   void moveBy(long position) {
@@ -103,6 +109,9 @@ public:
     to_limit = false;
     stepper.move(position);
     movingPositive = (position > 0);
+
+    prevMinState = isAtMin();
+    prevMaxState = isAtMax();
   }
 
   void moveTo(long position) {
@@ -114,6 +123,9 @@ public:
     to_limit = false;
     stepper.moveTo(position);
     movingPositive = wouldMovePositive;
+
+    prevMinState = isAtMin();
+    prevMaxState = isAtMax();
   }
 
   void stop() {
@@ -163,6 +175,7 @@ public:
         return AXIS_STATE_COMPLETE;
       } else {
         // Not expected, error
+        Serial.println("Hit min!!!");
         return AXIS_STATE_ERROR_LIMIT_SWITCH;
       }
     }
@@ -173,6 +186,7 @@ public:
         return AXIS_STATE_COMPLETE;
       } else {
         // Not expected, error
+        Serial.println("Hit max!!!");
         return AXIS_STATE_ERROR_LIMIT_SWITCH;
       }
     }
