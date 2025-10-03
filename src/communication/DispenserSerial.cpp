@@ -5,11 +5,11 @@
 // @param data Data byte to send.
 void DispenserSerial::send_message(byte command, byte data) {
   uint8_t checksum = command + data;
-  Serial2.write(MSG_SOT);
+  Serial2.write(START_BYTE);
   Serial2.write(command);
   Serial2.write(data);
   Serial2.write(checksum);
-  Serial2.write(MSG_EOT);
+  Serial2.write(END_BYTE);
 }
 
 // Send a dispense command to the dispenser.
@@ -80,7 +80,7 @@ int DispenserSerial::process() {
                    "><0x" + String(response[MSG_EOT], HEX) + ">");
 
     // Validate the response format
-    if (response[MSG_SOT] == MSG_SOT && response[MSG_EOT] == MSG_EOT) {
+    if (response[MSG_SOT] == START_BYTE && response[MSG_EOT] == END_BYTE) {
       // Process the response based on the command
       if (response[MSG_COMMAND] == SDB_HANDSHAKE) {
         return SDB_HANDSHAKE;

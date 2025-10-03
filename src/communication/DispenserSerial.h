@@ -11,6 +11,9 @@
 #define MSG_EOT     4  // End of Transmission position
 #define MSG_LENGTH  5  // Total message length
 
+#define START_BYTE 0xEF
+#define END_BYTE 0xFE
+
 // Command values
 #define SDB_HANDSHAKE 0x06       // Handshake command
 #define SDB_VIBRATE_LEVEL 0x54     // Command to set vibration mode ON
