@@ -10,7 +10,7 @@ ConfigMode::ConfigMode(DispenserHead& head, Gpu_Hal_Context_t* host, ModeControl
   : BaseMode(head, host, controller, callback), currentProfile(nullptr), specialMode(false) {}
 
 void ConfigMode::on_start(Profile& profile) {
-  Serial.println("MODE: Config mode");
+  Serial.println(F("MODE: Config mode"));
 
   // Store reference to the current profile
   currentProfile = &profile;
@@ -50,7 +50,7 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
 
   switch (interaction.key_pressed) {
     case KEY_CONFIG_HOME:  // Home button
-      Serial.println("Button Pressed: HOME");
+      Serial.println(F("Button Pressed: HOME"));
       {
         char buf[PROFILE_NAME_MAX_LEN];
         float maxval = 0;
@@ -82,7 +82,7 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
       break;
 
     case KEY_CONFIG_LOAD:  // Load (Config Screen)
-      Serial.println("Button Pressed: LOAD");
+      Serial.println(F("Button Pressed: LOAD"));
       {
         int i;
         if (strcmp(currentProfile->profileName, "xqreset") == 0) {  //special mode to preload eeprom
@@ -152,7 +152,7 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
       break;
 
     case KEY_CONFIG_PROFILE_NAME:
-      Serial.println("Button Pressed: PROFILE");
+      Serial.println(F("Button Pressed: PROFILE"));
       Keyboard(phost, currentProfile->profileName, "Enter Profile Name", FALSE);
       Config_Screen(phost);
       break;
@@ -275,54 +275,54 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
       break;
 
     case ZDIP:
-      Serial.println("Incrementing Z Dip");
+      Serial.println(F("Incrementing Z Dip"));
       currentProfile->ZDip = Keypad(phost, currentProfile->ZDip, MINZDIP, MAXZDIP, FALSE);
       Config_Screen(phost);
       break;
 
     case VIBLVL:
-      Serial.println("Incrementing vibration level");
+      Serial.println(F("Incrementing vibration level"));
       increment_vibration_level();
       Config_Screen(phost);
       break;
 
     case VIBDURATION:
-      Serial.println("Incrementing vibration duration");
+      Serial.println(F("Incrementing vibration duration"));
       increment_vibration_time();
       Config_Screen(phost);
       break;
 
     case PASSEN:
-      Serial.println("Toggle password enable");
+      Serial.println(F("Toggle password enable"));
       currentProfile->passwordEnabled = !currentProfile->passwordEnabled;
       Config_Screen(phost);
       break;
 
     case SKIP_COLUMNS:
-      Serial.println("Button Pressed: SKIP COLUMNS");
+      Serial.println(F("Button Pressed: SKIP COLUMNS"));
       editSkipColumn(phost);
       Skip_Screen(phost);
       break;
 
     case SKIP_ROWS:
-      Serial.println("Button Pressed: SKIP ROWS");
+      Serial.println(F("Button Pressed: SKIP ROWS"));
       editSkipRow(phost);
       Skip_Screen(phost);
       break;
 
     case SKIP_SINGLE_POS:
-      Serial.println("Button Pressed: SKIP SINGLE POSITION");
+      Serial.println(F("Button Pressed: SKIP SINGLE POSITION"));
       editSkipIndividual(phost);
       Skip_Screen(phost);
       break;
 
     case ADVPROF_BACK:  // Back button
-      Serial.println("Button Pressed: BACK");
+      Serial.println(F("Button Pressed: BACK"));
       Config_Screen(phost);
       break;
 
     case ADVPROF_SAVE:
-      Serial.println("Button Pressed: SAVE");
+      Serial.println(F("Button Pressed: SAVE"));
       {
         char buf[PROFILE_NAME_MAX_LEN];
         Dprint("curprofnum=", CurProfNum);
@@ -337,7 +337,7 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
       break;
 
     case KEY_CONFIG_PREVIEW:
-      Serial.println("Button Pressed: PREVIEW");
+      Serial.println(F("Button Pressed: PREVIEW"));
       {
         // Parse skip positions from the current profile
         TrayHandler::TrayPositionHandler tempHandler;
@@ -353,12 +353,12 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
       break;
 
     case KEY_CONFIG_PREVIEW_BACK:
-      Serial.println("Button Pressed: PREVIEW BACK");
+      Serial.println(F("Button Pressed: PREVIEW BACK"));
       Skip_Screen(phost);
       break;
 
       case CONFIGADVANCE:
-        Serial.println("Button Pressed: ADVANCED");
+        Serial.println(F("Button Pressed: ADVANCED"));
         Skip_Screen(phost);
         break;
 
@@ -413,10 +413,10 @@ void ConfigMode::editSkipColumn(Gpu_Hal_Context_t* phost) {
     if (result.wasCleaned) {
       strncpy(currentProfile->skipCol, result.cleaned, ROW_COL_MAX_LEN - 1);
       currentProfile->skipCol[ROW_COL_MAX_LEN - 1] = '\0';
-      Serial.println("Input was cleaned, showing keyboard again");
+      Serial.println(F("Input was cleaned, showing keyboard again"));
     } else {
       // Input is clean, exit loop
-      Serial.println("Input is clean");
+      Serial.println(F("Input is clean"));
       break;
     }
   }
@@ -436,10 +436,10 @@ void ConfigMode::editSkipRow(Gpu_Hal_Context_t* phost) {
     if (result.wasCleaned) {
       strncpy(currentProfile->skipRow, result.cleaned, ROW_COL_MAX_LEN - 1);
       currentProfile->skipRow[ROW_COL_MAX_LEN - 1] = '\0';
-      Serial.println("Input was cleaned, showing keyboard again");
+      Serial.println(F("Input was cleaned, showing keyboard again"));
     } else {
       // Input is clean, exit loop
-      Serial.println("Input is clean");
+      Serial.println(F("Input is clean"));
       break;
     }
   }
@@ -453,19 +453,19 @@ void ConfigMode::editSkipIndividual(Gpu_Hal_Context_t* phost) {
     Keyboard(phost, currentProfile->skipSinglePos, "Enter positions to skip", FALSE);
     
     // Clean the input with bounds checking
-    Serial.println("Cleaning!");
+    Serial.println(F("Cleaning!"));
     SkipUtils::CleanResult result = SkipUtils::clean(currentProfile->skipSinglePos, SkipUtils::INDIVIDUAL, dimensions);
-    Serial.println("Cleaned!");
+    Serial.println(F("Cleaned!"));
     
     // If input was cleaned, update and loop again
     if (result.wasCleaned) {
-      Serial.println("Actually cleaned!");
+      Serial.println(F("Actually cleaned!"));
       strncpy(currentProfile->skipSinglePos, result.cleaned, ROW_COL_MAX_LEN - 1);
       currentProfile->skipSinglePos[ROW_COL_MAX_LEN - 1] = '\0';
-      Serial.println("Input was cleaned, showing keyboard again");
+      Serial.println(F("Input was cleaned, showing keyboard again"));
     } else {
       // Input is clean, exit loop
-      Serial.println("Nothing changed!");
+      Serial.println(F("Nothing changed!"));
       break;
     }
   }

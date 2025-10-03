@@ -6,7 +6,7 @@ DispenseTestMode::DispenseTestMode(DispenserHead& head, Gpu_Hal_Context_t *host,
   : BaseMode(head, host, controller, callback) {}
 
 void DispenseTestMode::on_start(Profile& profile) {
-  Serial.println("MODE: Dispense test mode");
+  Serial.println(F("MODE: Dispense test mode"));
   
   // Initialize UI
   DispenseTestSettings settings = {0, 0};
@@ -27,52 +27,52 @@ void DispenseTestMode::on_interaction(const Interaction& interaction) {
   
   // Dispense button
   if (button == TAG_DISPENSE) {
-    Serial.println("MODE: Dispense test - setting vibration and dispensing");
+    Serial.println(F("MODE: Dispense test - setting vibration and dispensing"));
     dispenserHead.send_dispense();
   }
   
   // Vibration level buttons (U0-U4)
   if (button == TAG_VIB_U0) {
     current_vibration_level = 0;
-    Serial.println("MODE: Vibration level set to U0");
+    Serial.println(F("MODE: Vibration level set to U0"));
   }
   if (button == TAG_VIB_U1) {
     current_vibration_level = 1;
-    Serial.println("MODE: Vibration level set to U1");
+    Serial.println(F("MODE: Vibration level set to U1"));
   }
   if (button == TAG_VIB_U2) {
     current_vibration_level = 2;
-    Serial.println("MODE: Vibration level set to U2");
+    Serial.println(F("MODE: Vibration level set to U2"));
   }
   if (button == TAG_VIB_U3) {
     current_vibration_level = 3;
-    Serial.println("MODE: Vibration level set to U3");
+    Serial.println(F("MODE: Vibration level set to U3"));
   }
   if (button == TAG_VIB_U4) {
     current_vibration_level = 4;
-    Serial.println("MODE: Vibration level set to U4");
+    Serial.println(F("MODE: Vibration level set to U4"));
   }
   
   // Vibration time buttons (1-5s)
   if (button == TAG_VIB_TIME_1) {
     current_vibration_time = 1;
-    Serial.println("MODE: Vibration time set to 1s");
+    Serial.println(F("MODE: Vibration time set to 1s"));
   }
   if (button == TAG_VIB_TIME_2) {
     current_vibration_time = 2;
-    Serial.println("MODE: Vibration time set to 2s");
+    Serial.println(F("MODE: Vibration time set to 2s"));
   }
   if (button == TAG_VIB_TIME_3) {
     current_vibration_time = 3;
-    Serial.println("MODE: Vibration time set to 3s");
+    Serial.println(F("MODE: Vibration time set to 3s"));
   }
   if (button == TAG_VIB_TIME_4) {
     current_vibration_time = 4;
-    Serial.println("MODE: Vibration time set to 4s");
+    Serial.println(F("MODE: Vibration time set to 4s"));
   }
   if (button == TAG_VIB_TIME_5) {
     current_vibration_time = 5;
-    Serial.println("MODE: Vibration time set to 5s");
+    Serial.println(F("MODE: Vibration time set to 5s"));
   }
 }
 

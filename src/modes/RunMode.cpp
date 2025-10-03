@@ -6,11 +6,11 @@ RunMode::RunMode(DispenserHead& head, Gpu_Hal_Context_t* host, ModeController* c
   : BaseMode(head, host, controller, callback) {}
 
 void RunMode::on_start(Profile& profile) {
-  Serial.println("MODE: Setting profile on trayhandler");
+  Serial.println(F("MODE: Setting profile on trayhandler"));
   trayHandler.load_profile(profile);
   trayHandler.reset();
 
-  Serial.println("MODE: Setting profile");
+  Serial.println(F("MODE: Setting profile"));
   this->profile = profile;
 
   paused = false;
@@ -24,7 +24,7 @@ void RunMode::on_interaction(const Interaction& interaction) {
   int button = interaction.key_pressed;
   
   if (button == PAUSE) {
-    Serial.println("MODE: Paused");
+    Serial.println(F("MODE: Paused"));
     paused = true;
     dispenserHead.x().stop();
     dispenserHead.y().stop();
@@ -32,10 +32,10 @@ void RunMode::on_interaction(const Interaction& interaction) {
 
     Home_Screen(phost, PAUSEMENU);
   }  else if (button == STOP) {
-    Serial.println("MODE: Stopped");
+    Serial.println(F("MODE: Stopped"));
     complete_with_next_mode(MODE_TYPE_HOME) ;
   } else if (button == START) {
-    Serial.println("MODE: Resumed");
+    Serial.println(F("MODE: Resumed"));
     paused = false;
     Home_Screen(phost, RUNMENU);
     start_stage(stage);
@@ -51,7 +51,7 @@ int RunMode::on_step() {
   switch (stage) {
     case ZERO_STAGE:
       if (dispenserHead.is_steppers_complete()) {
-        Serial.println("Zero stage all completed!");
+        Serial.println(F("Zero stage all completed!"));
 
         dispenserHead.x().stop();
         dispenserHead.y().stop();
@@ -62,9 +62,9 @@ int RunMode::on_step() {
         dispenserHead.z().reset();
         delay(10);
 
-        Serial.print("Current X Position: ");
+        Serial.print(F("Current X Position: "));
         Serial.println(dispenserHead.x().getCurrentPosition());
-        Serial.print("Current Y Position: ");
+        Serial.print(F("Current Y Position: "));
         Serial.println(dispenserHead.y().getCurrentPosition());
 
         start_stage(OFFSET_STAGE);
@@ -76,9 +76,9 @@ int RunMode::on_step() {
         dispenserHead.y().stop();
         delay(10);
 
-        Serial.print("Current X Position: ");
+        Serial.print(F("Current X Position: "));
         Serial.println(dispenserHead.x().getCurrentPosition());
-        Serial.print("Current Y Position: ");
+        Serial.print(F("Current Y Position: "));
         Serial.println(dispenserHead.y().getCurrentPosition());
 
         start_stage(LOWER_HEAD_STAGE);
@@ -152,7 +152,7 @@ int RunMode::on_step() {
 void RunMode::start_stage(int newStage) {
   switch (newStage) {
     case ZERO_STAGE:
-      Serial.println("MODE: Setting stage: ZERO");
+      Serial.println(F("MODE: Setting stage: ZERO"));
       this->stage = ZERO_STAGE;
 
       // TODO: Find out why this is required
@@ -165,7 +165,7 @@ void RunMode::start_stage(int newStage) {
       dispenserHead.z().moveToMin();
       break;
     case OFFSET_STAGE:
-      Serial.println("MODE: Setting stage: OFFSET");
+      Serial.println(F("MODE: Setting stage: OFFSET"));
       this->stage = OFFSET_STAGE;
 
       // TODO: Find out why this is required
@@ -177,35 +177,35 @@ void RunMode::start_stage(int newStage) {
       dispenserHead.y().moveTo(STEPS_PER_UNIT_Y * profile.trayOriginY);
       break;
     case LOWER_HEAD_STAGE:
-      Serial.println("MODE: Setting stage: LOWER_HEAD");
+      Serial.println(F("MODE: Setting stage: LOWER_HEAD"));
       this->stage = LOWER_HEAD_STAGE;
       dispenserHead.z().moveTo(STEPS_PER_UNIT_Z * profile.ZDip);
       break;
     case START_DISPENSE_STAGE:
-      Serial.println("MODE: Setting stage: START_DISPENSE");
+      Serial.println(F("MODE: Setting stage: START_DISPENSE"));
       this->stage = START_DISPENSE_STAGE;
       dispenserHead.send_dispense();
       start_stage(WAIT_DISPENSE_STAGE);
       break;
     case WAIT_DISPENSE_STAGE:
-      Serial.println("MODE: Setting stage: WAIT_DISPENSE");
+      Serial.println(F("MODE: Setting stage: WAIT_DISPENSE"));
       this->stage = WAIT_DISPENSE_STAGE;
       break;
     case RAISE_HEAD_STAGE:
-      Serial.println("MODE: Setting stage: RAISE_HEAD");
+      Serial.println(F("MODE: Setting stage: RAISE_HEAD"));
       this->stage = RAISE_HEAD_STAGE;
       dispenserHead.z().moveTo(0);
       break;
     case MOVE_STAGE:
-      Serial.println("MODE: Setting stage: MOVE");
+      Serial.println(F("MODE: Setting stage: MOVE"));
       this->stage = MOVE_STAGE;
 
-      Serial.println("Setting target x and target y!");
+      Serial.println(F("Setting target x and target y!"));
       dispenserHead.x().moveTo( target_x);
       dispenserHead.y().moveTo(target_y);
       break;
     case HOME_STAGE:
-      Serial.println("MODE: Setting stage: HOME");
+      Serial.println(F("MODE: Setting stage: HOME"));
       this->stage = HOME_STAGE;
       dispenserHead.x().moveToMin();
       dispenserHead.y().moveToMin();
