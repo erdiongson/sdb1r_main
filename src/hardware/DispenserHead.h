@@ -68,10 +68,6 @@ public:
     return true;
   }
 
-  bool is_steppers_complete() {
-    return this->xAxis.isComplete() && this->yAxis.isComplete() && this->zAxis.isComplete();
-  }
-
   // Send a dispense command to the dispenser.
   void send_dispense() {
     // Don't send a new command if we're still processing the previous one

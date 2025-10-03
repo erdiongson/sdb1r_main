@@ -41,6 +41,10 @@ private:
   int maxLimitPin;
   bool movingPositive;  // true if moving in positive direction, false if negative
   bool enabled;         // true if axis is enabled, false if disabled
+  bool running = false;
+  bool to_limit = false;
+  bool prevMinState = false;  // Previous state of min limit switch (true = hit)
+  bool prevMaxState = false;  // Previous state of max limit switch (true = hit)
 
 public:
   /**
@@ -74,26 +78,46 @@ public:
   }
 
   void moveToMax() {
+    if (!enabled) return;
+    if (isAtMax()) return;  // Already at max limit
+    running = true;
+    to_limit = true;
     stepper.move(999999999);
     movingPositive = true;
   }
 
   void moveToMin() {
+    if (!enabled) return;
+    if (isAtMin()) return;  // Already at min limit
+    running = true;
+    to_limit = true;
     stepper.move(-999999999);
     movingPositive = false;
   }
 
   void moveBy(long position) {
+    if (!enabled) return;
+    if (position > 0 && isAtMax()) return;  // Trying to move positive but at max limit
+    if (position < 0 && isAtMin()) return;  // Trying to move negative but at min limit
+    running = true;
+    to_limit = false;
     stepper.move(position);
     movingPositive = (position > 0);
   }
 
   void moveTo(long position) {
+    if (!enabled) return;
+    bool wouldMovePositive = (position > stepper.currentPosition());
+    if (wouldMovePositive && isAtMax()) return;  // Trying to move positive but at max limit
+    if (!wouldMovePositive && isAtMin()) return;  // Trying to move negative but at min limit
+    running = true;
+    to_limit = false;
     stepper.moveTo(position);
-    movingPositive = (position > stepper.currentPosition());
+    movingPositive = wouldMovePositive;
   }
 
   void stop() {
+    if (!enabled) return;
     stepper.stop();
   }
 
@@ -105,41 +129,82 @@ public:
     return digitalRead(maxLimitPin) == LOW;
   }
 
+  // Returns true if the min limit switch transitioned from not-hit to hit.
+  // Updates the stored previous state.
+  // @return True if switch just got hit, false otherwise.
+  bool didHitMin() {
+    bool currentState = isAtMin();
+    bool justHit = !prevMinState && currentState;
+    prevMinState = currentState;
+    return justHit;
+  }
+
+  // Returns true if the max limit switch transitioned from not-hit to hit.
+  // Updates the stored previous state.
+  // @return True if switch just got hit, false otherwise.
+  bool didHitMax() {
+    bool currentState = isAtMax();
+    bool justHit = !prevMaxState && currentState;
+    prevMaxState = currentState;
+    return justHit;
+  }
+
   // Process one step of the motor movement.
   // This function should be called frequently in the main loop.
   // @return AxisStepResult containing the completion state and any error code.
   int onStep() {
+    if (!running) return AXIS_STATE_COMPLETE;
 
     // Check limit switches and prevent movement in that direction if triggered
-    if (isComplete())
-      return AXIS_STATE_COMPLETE;
+    if (didHitMin()) {
+      stopRunning();
+      if (to_limit && !movingPositive) {
+        // Expected, should stop
+        return AXIS_STATE_COMPLETE;
+      } else {
+        // Not expected, error
+        return AXIS_STATE_ERROR_LIMIT_SWITCH;
+      }
+    }
+    if (didHitMax()) {
+      stopRunning();
+      if (to_limit && movingPositive) {
+        // Expected, should stop
+        return AXIS_STATE_COMPLETE;
+      } else {
+        // Not expected, error
+        return AXIS_STATE_ERROR_LIMIT_SWITCH;
+      }
+    }
 
-    stepper.run();
+    bool is_running = stepper.run();
+
+    if (!is_running) {
+      // Expected, should stop
+      stopRunning();
+      return AXIS_STATE_COMPLETE;
+    }
+
     return AXIS_STATE_RUNNING;
+  }
+
+  void stopRunning() {
+    if (!enabled) return;
+    running = false;
+    stepper.move(0); // Sets the target position to the current position;
+    stepper.setAcceleration(0);
+    stepper.setSpeed(0);
+    stepper.runToPosition();
   }
 
   AccelStepper& getStepper() {
     return stepper;
   }
 
-  bool isComplete() {
-    // Always complete if disabled
-    if (!enabled)
-      return true;
-
-    bool result = ((movingPositive && digitalRead(maxLimitPin) == LOW) || (!movingPositive && digitalRead(minLimitPin) == LOW) || stepper.distanceToGo() == 0);
-    if (result) { stop(); }
-    return result;
-  }
-
   void runUntilCompleteBlocking() {
     while (stepper.distanceToGo() != 0) {
       stepper.run();
     }
-  }
-
-  long getCurrentPosition() {
-    return stepper.currentPosition();
   }
 };
 

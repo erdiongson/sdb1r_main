@@ -62,23 +62,13 @@ int RunMode::on_step() {
 
   switch (stage) {
     case ZERO_STAGE:
-
-      dispenserHead.x().stop();
-      dispenserHead.y().stop();
-      dispenserHead.z().stop();
-
       dispenserHead.x().reset();
       dispenserHead.y().reset();
       dispenserHead.z().reset();
-      delay(10);
 
       start_stage(OFFSET_STAGE);
       break;
     case OFFSET_STAGE:
-      dispenserHead.x().stop();
-      dispenserHead.y().stop();
-      delay(10);
-
       start_stage(LOWER_HEAD_STAGE);
       break;
     case LOWER_HEAD_STAGE:
@@ -134,12 +124,6 @@ void RunMode::start_stage(int newStage) {
     case ZERO_STAGE:
       Serial.println(F("MODE: Setting stage: ZERO"));
       this->stage = ZERO_STAGE;
-
-      // TODO: Find out why this is required
-      dispenserHead.x().stop();
-      dispenserHead.x().reset();
-      delay(10);
-
       dispenserHead.x().moveToMax();
       dispenserHead.y().moveToMin();
       dispenserHead.z().moveToMin();
@@ -147,11 +131,6 @@ void RunMode::start_stage(int newStage) {
     case OFFSET_STAGE:
       Serial.println(F("MODE: Setting stage: OFFSET"));
       this->stage = OFFSET_STAGE;
-
-      // TODO: Find out why this is required
-      dispenserHead.x().stop();
-      dispenserHead.x().reset();
-      delay(10);
 
       dispenserHead.x().moveTo(STEPS_PER_UNIT_X * -profile.trayOriginX);
       dispenserHead.y().moveTo(STEPS_PER_UNIT_Y * profile.trayOriginY);
