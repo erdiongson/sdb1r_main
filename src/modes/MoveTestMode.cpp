@@ -13,9 +13,6 @@ void MoveTestMode::on_start(Profile& profile) {
 void MoveTestMode::on_interaction(const Interaction& interaction) {
   int button = interaction.key_pressed;
   
-  if (button == BACK) {
-    back = true;
-  }
   if (button == TAG_MOVE_UP) {
     Serial.println("MODE: Move up");
     dispenserHead.y().moveBy(STEPS_PER_UNIT_Y * 1 * 30);
@@ -41,6 +38,10 @@ void MoveTestMode::on_interaction(const Interaction& interaction) {
   if (button == TAG_Z_DOWN) {
     Serial.println("MODE: Move z down");
     dispenserHead.z().moveBy(STEPS_PER_UNIT_Z * 1 * 100);
+  }
+  if (button == TAG_MOVE_BACK) {
+    Serial.println("MODE: Move back");
+    complete_with_next_mode(MODE_TYPE_HOME);
   }
 }
 
