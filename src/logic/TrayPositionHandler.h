@@ -68,6 +68,10 @@ private:
   bool flipped = false;
 
   Position skipPositions[MAX_POSITIONS];
+  
+  // Cached values calculated during reset
+  int totalValidTubes = 0;
+  int tubesDispensed = 0;
 
   // Calculate the next valid position within the current row.
   // @return PositionResult.
@@ -254,6 +258,9 @@ public:
       currentPosition = result.position;
       direction = result.direction;
 
+      // Increment tubes dispensed counter
+      tubesDispensed++;
+
       // Transform the result position if the grid is flipped
       Position newPosition;
       if (flipped) {
@@ -273,26 +280,9 @@ public:
   Position reset() {
     currentPosition = Position(1, 1);
     direction = 1;
-    return currentPosition;
-  }
-
-  // Get the current row (1-indexed).
-  // @return Current row position.
-  int getCurrentRow() const {
-    Position pos = flipped ? flipPosition(currentPosition) : currentPosition;
-    return pos.y;
-  }
-
-  // Get the current column (1-indexed).
-  // @return Current column position.
-  int getCurrentColumn() const {
-    Position pos = flipped ? flipPosition(currentPosition) : currentPosition;
-    return pos.x;
-  }
-
-  // Calculate the number of tubes left to process.
-  // @return Number of remaining tubes.
-  int getTubesLeft() const {
+    tubesDispensed = 0;
+    
+    // Calculate total valid tubes once
     int totalTubes = dimensions.rows * dimensions.columns;
     int skipCount = 0;
     
@@ -314,14 +304,29 @@ public:
       }
     }
     
-    // Calculate processed tubes (current row * columns + current column - 1)
-    int processedTubes = (currentPosition.y - 1) * dimensions.columns + currentPosition.x;
+    totalValidTubes = totalTubes - skipCount;
     
-    // Total valid tubes
-    int validTubes = totalTubes - skipCount;
-    
-    // Remaining tubes
-    return validTubes - processedTubes;
+    return currentPosition;
+  }
+
+  // Get the current row (1-indexed).
+  // @return Current row position.
+  int getCurrentRow() const {
+    Position pos = flipped ? flipPosition(currentPosition) : currentPosition;
+    return pos.y;
+  }
+
+  // Get the current column (1-indexed).
+  // @return Current column position.
+  int getCurrentColumn() const {
+    Position pos = flipped ? flipPosition(currentPosition) : currentPosition;
+    return pos.x;
+  }
+
+  // Calculate the number of tubes left to process.
+  // @return Number of remaining tubes.
+  int getTubesLeft() const {
+    return totalValidTubes - tubesDispensed;
   }
 };
 
