@@ -16,13 +16,12 @@ void RunMode::on_start(Profile& profile) {
   paused = false;
 
   Home_Screen(phost, RUNMENU);
-
   start_stage(ZERO_STAGE);
 }
 
 void RunMode::on_interaction(const Interaction& interaction) {
   int button = interaction.key_pressed;
-  
+
   if (button == PAUSE) {
     Serial.println(F("MODE: Paused"));
     paused = true;
@@ -31,9 +30,9 @@ void RunMode::on_interaction(const Interaction& interaction) {
     dispenserHead.z().stop();
 
     Home_Screen(phost, PAUSEMENU);
-  }  else if (button == STOP) {
+  } else if (button == STOP) {
     Serial.println(F("MODE: Stopped"));
-    complete_with_next_mode(MODE_TYPE_HOME) ;
+    complete_with_next_mode(MODE_TYPE_HOME);
   } else if (button == START) {
     Serial.println(F("MODE: Resumed"));
     paused = false;
@@ -45,73 +44,57 @@ void RunMode::on_interaction(const Interaction& interaction) {
 int RunMode::on_step() {
   if (paused) return MODE_CONTINUE;
 
-  bool steppers_idle = dispenserHead.run_steppers();
-  if (!steppers_idle) return MODE_CONTINUE;
+  DispenserProcessResult dispenserProcessResult = dispenserHead.process();
+  if (dispenserProcessResult.steppers == AXIS_STATE_RUNNING) return MODE_CONTINUE;
+
+  if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE || dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
+    Serial.println(F("MODE: Dispenser error - IR sensor failure or marker not detected"));
+    HomeParams params = {
+      (uint16_t)trayHandler.getCurrentRow(),
+      (uint16_t)trayHandler.getCurrentColumn(),
+      (uint16_t)trayHandler.getTubesLeft(),
+      (uint8_t)dispenserProcessResult.dispenser
+    };
+    Home_Screen(phost, RUNMENU, &params);
+    start_stage(HOME_STAGE);
+    return MODE_CONTINUE;
+  }
 
   switch (stage) {
     case ZERO_STAGE:
-      if (dispenserHead.is_steppers_complete()) {
-        Serial.println(F("Zero stage all completed!"));
 
-        dispenserHead.x().stop();
-        dispenserHead.y().stop();
-        dispenserHead.z().stop();
+      dispenserHead.x().stop();
+      dispenserHead.y().stop();
+      dispenserHead.z().stop();
 
-        dispenserHead.x().reset();
-        dispenserHead.y().reset();
-        dispenserHead.z().reset();
-        delay(10);
+      dispenserHead.x().reset();
+      dispenserHead.y().reset();
+      dispenserHead.z().reset();
+      delay(10);
 
-        Serial.print(F("Current X Position: "));
-        Serial.println(dispenserHead.x().getCurrentPosition());
-        Serial.print(F("Current Y Position: "));
-        Serial.println(dispenserHead.y().getCurrentPosition());
-
-        start_stage(OFFSET_STAGE);
-      }
+      start_stage(OFFSET_STAGE);
       break;
     case OFFSET_STAGE:
-      if (dispenserHead.is_steppers_complete()) {
-        dispenserHead.x().stop();
-        dispenserHead.y().stop();
-        delay(10);
+      dispenserHead.x().stop();
+      dispenserHead.y().stop();
+      delay(10);
 
-        Serial.print(F("Current X Position: "));
-        Serial.println(dispenserHead.x().getCurrentPosition());
-        Serial.print(F("Current Y Position: "));
-        Serial.println(dispenserHead.y().getCurrentPosition());
-
-        start_stage(LOWER_HEAD_STAGE);
-      }
+      start_stage(LOWER_HEAD_STAGE);
       break;
     case LOWER_HEAD_STAGE:
-      if (dispenserHead.is_steppers_complete()) {
-        start_stage(START_DISPENSE_STAGE);
-      }
+      start_stage(START_DISPENSE_STAGE);
       break;
     case START_DISPENSE_STAGE:
-      if (dispenserHead.get_state() == DISPENSER_STATE_SENT) {
+      if (dispenserProcessResult.dispenser == DISPENSER_STATE_ACKNOWLEDGED) {
         start_stage(WAIT_DISPENSE_STAGE);
       }
       break;
     case WAIT_DISPENSE_STAGE:
-      DispenserProcessResult result = dispenserHead.process();
-      if (result.dispenser == DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE || result.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
-        HomeParams params = {
-          (uint16_t)trayHandler.getCurrentRow(),
-          (uint16_t)trayHandler.getCurrentColumn(),
-          (uint16_t)trayHandler.getTubesLeft(),
-          (uint8_t)result.dispenser
-        };
-        Home_Screen(phost, RUNMENU, &params);
-        start_stage(HOME_STAGE);
-      }
-      if (dispenserHead.get_state() == DISPENSER_STATE_IDLING) {
+      if (dispenserProcessResult.dispenser == DISPENSER_STATE_IDLING) {
         start_stage(RAISE_HEAD_STAGE);
       }
       break;
-    case RAISE_HEAD_STAGE:
-      if (dispenserHead.is_steppers_complete()) {
+    case RAISE_HEAD_STAGE: {
         TrayHandler::PositionResult result = trayHandler.goToNextValidPosition();
         if (result.hasNext) {
           target_x = (profile.trayOriginX + (result.position.x * profile.pitch_x)) * -STEPS_PER_UNIT_X;
@@ -125,7 +108,6 @@ int RunMode::on_step() {
             0
           };
           Home_Screen(phost, RUNMENU, &params);
-
           start_stage(MOVE_STAGE);
         } else {
           start_stage(HOME_STAGE);
@@ -133,15 +115,11 @@ int RunMode::on_step() {
       }
       break;
     case MOVE_STAGE:
-      if (dispenserHead.is_steppers_complete()) {
-        start_stage(LOWER_HEAD_STAGE);
-      }
+      start_stage(LOWER_HEAD_STAGE);
       break;
     case HOME_STAGE:
-      if (dispenserHead.is_steppers_complete()) {
-        stage = IDLE_STAGE;
-        return MODE_COMPLETE;
-      }
+      stage = IDLE_STAGE;
+      return MODE_COMPLETE;
       break;
     default:
       break;
@@ -185,7 +163,6 @@ void RunMode::start_stage(int newStage) {
       Serial.println(F("MODE: Setting stage: START_DISPENSE"));
       this->stage = START_DISPENSE_STAGE;
       dispenserHead.send_dispense();
-      start_stage(WAIT_DISPENSE_STAGE);
       break;
     case WAIT_DISPENSE_STAGE:
       Serial.println(F("MODE: Setting stage: WAIT_DISPENSE"));
@@ -201,7 +178,7 @@ void RunMode::start_stage(int newStage) {
       this->stage = MOVE_STAGE;
 
       Serial.println(F("Setting target x and target y!"));
-      dispenserHead.x().moveTo( target_x);
+      dispenserHead.x().moveTo(target_x);
       dispenserHead.y().moveTo(target_y);
       break;
     case HOME_STAGE:
