@@ -4,6 +4,7 @@
 #include "Axis.h"
 #include "../communication/DispenserSerial.h"
 
+#define DISPENSER_STATE_BLOCKED 6
 #define DISPENSER_STATE_IDLING 0
 #define DISPENSER_STATE_SENT 1
 #define DISPENSER_STATE_ACKNOWLEDGED 2
@@ -86,7 +87,7 @@ public:
   DispenserProcessResult process() {
 
     bool steppers_idle = run_steppers();
-    if (steppers_idle) return DispenserProcessResult(AXIS_STATE_RUNNING, DISPENSER_STATE_IDLING);
+    if (!steppers_idle) return DispenserProcessResult(AXIS_STATE_RUNNING, DISPENSER_STATE_BLOCKED);
 
     // TODO: Add error handling for axis
 
@@ -107,7 +108,8 @@ public:
         dispensing_state = DISPENSER_STATE_IDLING;
         return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED);
     }
-    return DispenserProcessResult(dispensing_state, 0);
+
+    return DispenserProcessResult(AXIS_STATE_COMPLETE, dispensing_state);
   }
 
   // Get the current dispensing state
