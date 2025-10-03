@@ -45,6 +45,9 @@ void RunMode::on_interaction(const Interaction& interaction) {
 int RunMode::on_step() {
   if (paused) return MODE_CONTINUE;
 
+  bool steppers_idle = dispenserHead.run_steppers();
+  if (!steppers_idle) return MODE_CONTINUE;
+
   switch (stage) {
     case ZERO_STAGE:
       if (dispenserHead.is_steppers_complete()) {
@@ -87,23 +90,23 @@ int RunMode::on_step() {
       }
       break;
     case START_DISPENSE_STAGE:
-      if (dispenserHead.get_state() == DispenserHead::SENT) {
+      if (dispenserHead.get_state() == DISPENSER_STATE_SENT) {
         start_stage(WAIT_DISPENSE_STAGE);
       }
       break;
     case WAIT_DISPENSE_STAGE:
-      ProcessResult result = dispenserHead.process();
-      if (result.error) {
+      DispenserProcessResult result = dispenserHead.process();
+      if (result.dispenser == DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE || result.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
         HomeParams params = {
           (uint16_t)trayHandler.getCurrentRow(),
           (uint16_t)trayHandler.getCurrentColumn(),
           (uint16_t)trayHandler.getTubesLeft(),
-          (uint8_t)result.error
+          (uint8_t)result.dispenser
         };
         Home_Screen(phost, RUNMENU, &params);
         start_stage(HOME_STAGE);
       }
-      if (dispenserHead.get_state() == DispenserHead::COMPLETED) {
+      if (dispenserHead.get_state() == DISPENSER_STATE_IDLING) {
         start_stage(RAISE_HEAD_STAGE);
       }
       break;

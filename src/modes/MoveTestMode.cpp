@@ -45,6 +45,9 @@ void MoveTestMode::on_interaction(const Interaction& interaction) {
 }
 
 int MoveTestMode::on_step() {
+  bool steppers_idle = dispenserHead.run_steppers();
+  if (!steppers_idle) return MODE_CONTINUE;
+
   LimitSwitchStates limitStates;
   limitStates.x_max_limit = dispenserHead.x().isAtMax();
   limitStates.x_min_limit = dispenserHead.x().isAtMin();

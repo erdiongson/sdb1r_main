@@ -27,6 +27,8 @@ void HomeMode::on_interaction(const Interaction& interaction) {
 }
 
 int HomeMode::on_step() {
+  dispenserHead.run_steppers();
+
   return MODE_CONTINUE;
 }
 

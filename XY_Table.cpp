@@ -158,7 +158,7 @@ void setup() {
   UCSR3B |= (1 << RXCIE3);
 
   // Enable global interrupts
-  Serial.print("Enable Global Interrupt");
+  Serial.println("Enable Global Interrupt");
   sei();
 
   // Gpu_Hal_Wr8(phost, REG_PWM_DUTY, 10); //brightness control
@@ -170,13 +170,13 @@ void setup() {
 
   setupPasswordHandling();
 
+  Serial.println("Loading profile..");
   CurProfNum = LoadProfile();
 
-  modeController.start_mode(MODE_TYPE_HOME, CurProf, phost);
+  Serial.println("Starting first mode..");
+  modeController.start_mode(MODE_TYPE_RUN, CurProf, phost);
 
   dispenserHead.z().setDisabled(true);
-  // dispenserHead.set_vibration_level(1);
-  // dispenserHead.set_vibration_time(1);
   
   // Initialize frequency tracking
   lastFrequencyReport = millis();
@@ -189,11 +189,11 @@ void reportFrequencies() {
   if (timeDiff >= FREQUENCY_REPORT_INTERVAL) {
     float timeInSeconds = timeDiff / 1000.0;
     
-    Serial.println("=== Frequency Report ===");
-    Serial.println("X-Axis onStep frequency: " + String(xAxisStepCount / timeInSeconds, 2) + " Hz");
-    Serial.println("ModeController on_step frequency: " + String(modeControllerStepCount / timeInSeconds, 2) + " Hz");
-    Serial.println("Time period: " + String(timeInSeconds, 2) + " seconds");
-    Serial.println("========================");
+    // Serial.println("=== Frequency Report ===");
+    // Serial.println("X-Axis onStep frequency: " + String(xAxisStepCount / timeInSeconds, 2) + " Hz");
+    // Serial.println("ModeController on_step frequency: " + String(modeControllerStepCount / timeInSeconds, 2) + " Hz");
+    // Serial.println("Time period: " + String(timeInSeconds, 2) + " seconds");
+    // Serial.println("========================");
     
     // Reset counters and timestamp
     xAxisStepCount = 0;
@@ -206,26 +206,20 @@ Interaction interaction;
 
 void loop() {
   unsigned long currentTime = millis();
-  bool steppers_idle = dispenserHead.run_steppers();
-  
-  int checkInterval = steppers_idle ? 10 : 200;  
 
+  // Call the mode's on_step() function
+  // Responsible for stepper runs, and dispener serial processing
+  modeController.on_step();
+
+
+  // Check for interactions only periodically
+  // Includes touch screen presses, and PLC commands
+  int checkInterval = 200;
   if (currentTime - lastInteractionCheck >= checkInterval) {
     lastInteractionCheck = currentTime;
 
-    // Check for interactions
     if (interactionsHandler.getInteractionFast(interaction)) {
       modeController.on_interaction(interaction);
-    }
-
-    // Run mode step and dispenser head on_step only if steppers are idle
-    if (steppers_idle) {
-      modeController.on_step();
-
-      if (dispenserHead.get_state() != DispenserHead::COMPLETED) {
-        dispenserHead.on_step();
-      }
-
     }
   }
   

@@ -4,6 +4,10 @@
 #include "Arduino.h"
 #include <AccelStepper.h>
 
+#define AXIS_STATE_COMPLETE 0
+#define AXIS_STATE_RUNNING 1
+#define AXIS_STATE_ERROR_LIMIT_SWITCH 2
+
 /**
  * Struct for complete axis configuration parameters
  */
@@ -101,18 +105,17 @@ public:
     return digitalRead(maxLimitPin) == LOW;
   }
 
-  /**
-     * Process one step of the motor movement
-     * This function should be called frequently in the main loop
-     */
-  bool onStep() {
+  // Process one step of the motor movement.
+  // This function should be called frequently in the main loop.
+  // @return AxisStepResult containing the completion state and any error code.
+  int onStep() {
 
     // Check limit switches and prevent movement in that direction if triggered
     if (isComplete())
-      return true;
+      return AXIS_STATE_COMPLETE;
 
     stepper.run();
-    return false;
+    return AXIS_STATE_RUNNING;
   }
 
   AccelStepper& getStepper() {
