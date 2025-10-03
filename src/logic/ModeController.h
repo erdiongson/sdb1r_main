@@ -35,7 +35,7 @@ public:
     if (mode != nullptr) {
       return mode->on_step();
     }
-    return ModeStepResult(MODE_CONTINUE, MODE_CONTINUE);  // No mode active
+    return ModeStepResult(-1, -1);  // No mode active
   }
 
   void on_interaction(const Interaction& interaction) {
