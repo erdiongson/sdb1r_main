@@ -8,7 +8,13 @@ RunMode::RunMode(DispenserHead& head, Gpu_Hal_Context_t* host, ModeController* c
 void RunMode::on_start(Profile& profile) {
   Serial.println(F("MODE: Setting profile on trayhandler"));
   trayHandler.load_profile(profile);
-  trayHandler.reset();
+  TrayHandler::Position firstPosition = trayHandler.reset();
+
+  if (firstPosition.x == -1 || firstPosition.y == -1) {
+    Serial.println(F("MODE: No valid positions found, ending run mode"));
+    complete_with_next_mode(MODE_TYPE_HOME);
+    return;
+  }
 
   Serial.println(F("MODE: Setting profile"));
   this->profile = profile;

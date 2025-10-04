@@ -531,6 +531,12 @@ void ConfigMode::start_simulation() {
   simulationHandler.load_profile(*currentProfile);
   TrayHandler::Position firstPosition = simulationHandler.reset();
 
+  if (firstPosition.x == -1 || firstPosition.y == -1) {
+    Serial.println(F("No valid positions found, ending simulation"));
+    end_simulation();
+    return;
+  }
+
   simulateCol = firstPosition.x;
   simulateRow = firstPosition.y;
   

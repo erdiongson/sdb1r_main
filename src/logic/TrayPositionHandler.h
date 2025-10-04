@@ -278,7 +278,11 @@ public:
   // Reset the current position to the bottom-left corner.
   // @return The reset position in the original coordinate system.
   Position reset() {
-    currentPosition = Position(1, 1);
+    currentPosition = Position(1, 1); 
+    if (isSkipPosition(currentPosition)) {
+      currentPosition = getNext().position;
+    }
+
     direction = 1;
     tubesDispensed = 0;
     
