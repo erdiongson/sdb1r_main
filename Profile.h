@@ -53,9 +53,6 @@ extern char Password[4][PROFILE_NAME_MAX_LEN];
 typedef struct
 {
     char profileName[PROFILE_NAME_MAX_LEN];
-    char skipCol[ROW_COL_MAX_LEN];
-    char skipRow[ROW_COL_MAX_LEN];
-    char skipSinglePos[ROW_COL_MAX_LEN];
     int8_t profileId = 0;
     int8_t Tube_No_x = 0; // represent the number of columns
     int8_t Tube_No_y = 0; // represent the number of rows
@@ -71,6 +68,10 @@ typedef struct
     int16_t vibrationDuration = 2;
     int16_t sizeFlag = 1; //small = 0; large = 1;
     float ZDip = 0.0;
+    char skipCol[ROW_COL_MAX_LEN];
+    char skipRow[ROW_COL_MAX_LEN];
+    char skipSinglePos[ROW_COL_MAX_LEN];
+    bool staggered = false;
 } Profile;
 
 

@@ -82,6 +82,10 @@ void PreLoadEEPROM(void)
       CurProf.vibrationDuration=2;
       CurProf.sizeFlag = 1;
       CurProf.ZDip = 0.0;
+      CurProf.skipCol[0] = '\0';
+      CurProf.skipRow[0] = '\0';
+      CurProf.skipSinglePos[0] = '\0';
+      CurProf.staggered = false;
 
     //try054 E }
     WriteProfileEEPROM(i);//try054 ,CurProf);
@@ -126,6 +130,8 @@ uint8_t LoadProfile(void)
 	if(CurProf.Tube_No_y>MAX_TUBES_Y) CurProf.Tube_No_y=MAX_TUBES_Y;
 	if(CurProf.ZDip<0) CurProf.ZDip=0;
 	if(CurProf.ZDip>MAX_ZDIP) CurProf.ZDip=MAX_ZDIP;
+	// if(CurProf.staggered) CurProf.staggered=TRUE;
+    CurProf.staggered = TRUE;
 	return ret;
 }
 
@@ -217,6 +223,14 @@ void WriteProfileEEPROM(int address)//try054 , Profile &profile)
     address += sizeof(CurProf.sizeFlag);
     EEPROM.put(address, CurProf.ZDip);
     address += sizeof(CurProf.ZDip);
+    EEPROM.put(address, CurProf.skipCol);
+    address += sizeof(CurProf.skipCol);
+    EEPROM.put(address, CurProf.skipRow);
+    address += sizeof(CurProf.skipRow);
+    EEPROM.put(address, CurProf.skipSinglePos);
+    address += sizeof(CurProf.skipSinglePos);
+    EEPROM.put(address, CurProf.staggered);
+    address += sizeof(CurProf.staggered);
 	//Dsprintln("size");
 	//Dprintln(sizeof(profile));
 }
@@ -263,6 +277,14 @@ void ReadProfileEEPROM(int address)
     address += sizeof(CurProf.sizeFlag);
     EEPROM.get(address, CurProf.ZDip);
     address += sizeof(CurProf.ZDip);
+    EEPROM.get(address, CurProf.skipCol);
+    address += sizeof(CurProf.skipCol);
+    EEPROM.get(address, CurProf.skipRow);
+    address += sizeof(CurProf.skipRow);
+    EEPROM.get(address, CurProf.skipSinglePos);
+    address += sizeof(CurProf.skipSinglePos);
+    EEPROM.get(address, CurProf.staggered);
+    address += sizeof(CurProf.staggered);
 
 	Dprint("add=",(float)address );
   	CheckProfile();

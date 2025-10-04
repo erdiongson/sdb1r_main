@@ -65,6 +65,7 @@ private:
   Dimensions dimensions;
   Position currentPosition = Position(1, 1);
   int direction = 1;
+  bool staggered = false;
   bool flipped = false;
 
   Position skipPositions[MAX_POSITIONS] = { Position(-1, -1) };
@@ -87,7 +88,7 @@ private:
         return PositionResult::Done();
       }
 
-    } while (isSkipPosition(nextPos));
+    } while (isInvalidPosition(nextPos));
 
     // Return the next valid position
     return PositionResult::Valid(nextPos, dir);
@@ -102,7 +103,7 @@ private:
     // Single pass through the row to find first and last valid positions
     for (int x = 1; x <= dimensions.columns; x++) {
       Position currentPos(x, startPos.y);
-      if (!isSkipPosition(currentPos)) {
+      if (!isInvalidPosition(currentPos)) {
         // If this is the first valid position found, set both first and last
         if (validCount == 0) {
           first = currentPos;
@@ -161,7 +162,7 @@ private:
   // Check if a position should be skipped.
   // @param pos Position to check.
   // @return True if position should be skipped, false otherwise.
-  bool isSkipPosition(const Position &pos) {
+  bool isInvalidPosition(const Position &pos) {
     for (int i = 0; i < MAX_POSITIONS; i++) {
       if (pos.x == -1 || pos.y == -1) { break; }
       if (pos.x == skipPositions[i].x && pos.y == skipPositions[i].y) { return true; }
@@ -169,6 +170,14 @@ private:
       if (pos.x == skipPositions[i].x && skipPositions[i].y == 0) { return true; }
       // Skip entire row
       if (pos.y == skipPositions[i].y && skipPositions[i].x == 0) { return true; }
+      // If stagger is enabled, skip every last position in even rows (or even columns if flipped)
+      if (staggered) {
+        if (flipped) {
+          if (pos.x % 2 == 0 && pos.y == dimensions.rows) { return true; }
+        } else {
+          if (pos.y % 2 == 0 && pos.x == dimensions.columns) { return true; }
+        }
+      }
     }
     return false;
   }
@@ -221,16 +230,19 @@ public:
     // Create dimensions from profile
     Dimensions dimensions(profile.Tube_No_x, profile.Tube_No_y);
 
+    Serial.println("Staggered: " + String(profile.staggered));
+
     // Load the dimensions and skip positions
-    load(dimensions, positions);
+    load(dimensions, positions, profile.staggered);
   }
 
   // Load tray configuration.
   // @param dimensions Dimensions of the tray grid.
   // @param positions Array of positions to skip/ignore.
   void load(const Dimensions &dimensions,
-            const Position newPositions[MAX_POSITIONS]) {
+            const Position newPositions[MAX_POSITIONS], bool staggered) {
 
+    this->staggered = staggered;
     flipped = shouldFlip(newPositions);
 
     this->dimensions = flipped ? flipDimensions(dimensions) : dimensions;
@@ -279,7 +291,7 @@ public:
   // @return The reset position in the original coordinate system.
   Position reset() {
     currentPosition = Position(1, 1); 
-    if (isSkipPosition(currentPosition)) {
+    if (isInvalidPosition(currentPosition)) {
       currentPosition = getNext().position;
     }
 
@@ -287,24 +299,45 @@ public:
     tubesDispensed = 0;
     
     // Calculate total valid tubes once
-    int totalTubes = dimensions.rows * dimensions.columns;
+    int staggeredRows = staggered ? dimensions.rows / 2 : 0;
+    int totalTubes = dimensions.rows * dimensions.columns - staggeredRows;
     int skipCount = 0;
     
-    // Count skip positions
+    // Count skip positions - track which rows/columns are already skipped to avoid double-counting
+    bool skippedRows[MAX_TUBES_Y + 1] = {false};
+    bool skippedCols[MAX_TUBES_X + 1] = {false};
+    
+    // First pass: mark entire rows and columns as skipped
     for (int i = 0; i < MAX_POSITIONS; i++) {
       if (skipPositions[i].x == -1 || skipPositions[i].y == -1) break;
       
-      // Count individual skip positions
-      if (skipPositions[i].x > 0 && skipPositions[i].y > 0) {
-        skipCount++;
+      // Mark entire column as skipped
+      if (skipPositions[i].y == 0 && skipPositions[i].x > 0) {
+        if (!skippedCols[skipPositions[i].x]) {
+          skippedCols[skipPositions[i].x] = true;
+          int rowsInCol = staggered && skipPositions[i].x == dimensions.columns ? dimensions.rows / 2 : dimensions.rows;
+          skipCount += rowsInCol;
+        }
       }
-      // Count entire column skips
-      else if (skipPositions[i].y == 0 && skipPositions[i].x > 0) {
-        skipCount += dimensions.rows;
-      }
-      // Count entire row skips
+      // Mark entire row as skipped
       else if (skipPositions[i].x == 0 && skipPositions[i].y > 0) {
-        skipCount += dimensions.columns;
+        if (!skippedRows[skipPositions[i].y]) {
+          skippedRows[skipPositions[i].y] = true;
+          int colsInRow = staggered && skipPositions[i].y % 2 == 0 ? dimensions.columns - 1 : dimensions.columns;
+          skipCount += colsInRow;
+        }
+      }
+    }
+    
+    // Second pass: count individual skip positions only if not already in a skipped row/column
+    for (int i = 0; i < MAX_POSITIONS; i++) {
+      if (skipPositions[i].x == -1 || skipPositions[i].y == -1) break;
+      
+      // Count individual skip positions only if not in a skipped row or column
+      if (skipPositions[i].x > 0 && skipPositions[i].y > 0) {
+        if (!skippedRows[skipPositions[i].y] && !skippedCols[skipPositions[i].x]) {
+          skipCount++;
+        }
       }
     }
     

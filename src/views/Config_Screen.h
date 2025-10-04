@@ -298,9 +298,9 @@ void Skip_Screen(Gpu_Hal_Context_t *phost) {
 
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(0, 0, 0));
-  Gpu_CoCmd_Text(phost, 10, 20, 21, 0, "Skipped Columns:");
-  Gpu_CoCmd_Text(phost, 10, 74, 21, 0, "Skipped Rows:");
-  Gpu_CoCmd_Text(phost, 10, 128, 21, 0, "Skipped Single Position:");
+  Gpu_CoCmd_Text(phost, 10, 12, 21, 0, "Skipped Columns:");
+  Gpu_CoCmd_Text(phost, 10, 60, 21, 0, "Skipped Rows:");
+  Gpu_CoCmd_Text(phost, 10, 108, 21, 0, "Skipped Single Position:");
 
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, BEGIN(RECTS));
@@ -308,37 +308,37 @@ void Skip_Screen(Gpu_Hal_Context_t *phost) {
   // Skipped Columns (edit name)
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
   App_WrCoCmd_Buffer(phost, TAG(SKIP_COLUMNS));
-  App_WrCoCmd_Buffer(phost, VERTEX2F(160, 1008));
-  App_WrCoCmd_Buffer(phost, VERTEX2F(4944, 624));
+  App_WrCoCmd_Buffer(phost, VERTEX2F(160, 880));
+  App_WrCoCmd_Buffer(phost, VERTEX2F(4944, 496));
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // Skipped Rows (edit name)
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
   App_WrCoCmd_Buffer(phost, TAG(SKIP_ROWS));
-  App_WrCoCmd_Buffer(phost, VERTEX2F(160, 1888));
-  App_WrCoCmd_Buffer(phost, VERTEX2F(4944, 1504));
+  App_WrCoCmd_Buffer(phost, VERTEX2F(160, 1664));
+  App_WrCoCmd_Buffer(phost, VERTEX2F(4944, 1280));
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // Skipped Single Position (edit name)
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
   App_WrCoCmd_Buffer(phost, TAG(SKIP_SINGLE_POS));
-  App_WrCoCmd_Buffer(phost, VERTEX2F(160, 2768));
-  App_WrCoCmd_Buffer(phost, VERTEX2F(4944, 2384));
+  App_WrCoCmd_Buffer(phost, VERTEX2F(160, 2448));
+  App_WrCoCmd_Buffer(phost, VERTEX2F(4944, 2064));
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   App_WrCoCmd_Buffer(phost, END());
 
   // Text - Skip Columns
   App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));
-  Gpu_CoCmd_Text(phost, 15, 44, 21, 0, (const char *)CurProf.skipCol);
+  Gpu_CoCmd_Text(phost, 15, 36, 21, 0, (const char *)CurProf.skipCol);
 
   // Text - Skip Rowa
   App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));
-  Gpu_CoCmd_Text(phost, 15, 99, 21, 0, (const char *)CurProf.skipRow);
+  Gpu_CoCmd_Text(phost, 15, 84, 21, 0, (const char *)CurProf.skipRow);
 
   // Text - Skip Columns
   App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));
-  Gpu_CoCmd_Text(phost, 15, 154, 21, 0, (const char *)CurProf.skipSinglePos);
+  Gpu_CoCmd_Text(phost, 15, 132, 21, 0, (const char *)CurProf.skipSinglePos);
 
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
@@ -357,6 +357,29 @@ void Skip_Screen(Gpu_Hal_Context_t *phost) {
   // Preview Button
   App_WrCoCmd_Buffer(phost, TAG(KEY_CONFIG_PREVIEW));
   Gpu_CoCmd_Button(phost, 77, 196, 62, 26, 21, 0, "Preview");
+
+  // Staggered Mode Toggle
+  App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
+  Gpu_CoCmd_Text(phost, 10, 165, 21, 0, "Staggered:");
+  
+  Gpu_CoCmd_BgColor(phost, 0x00A2E8);
+  // Check the staggered mode status and set the foreground color accordingly
+  int16_t staggeredStatus = CurProf.staggered ? 0 : 65535;
+  if (staggeredStatus == 0) {
+    Gpu_CoCmd_FgColor(phost, 0x007300);               // Green when ON
+    App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 128, 0));  //text color
+  } else {
+    Gpu_CoCmd_FgColor(phost, 0xFF0000);               // Red when OFF
+    App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  //text color
+  }
+
+  App_WrCoCmd_Buffer(phost, TAG_MASK(1));
+  App_WrCoCmd_Buffer(phost, TAG(STAGGERED_TOGGLE));
+  Gpu_CoCmd_Toggle(phost, 92, 168, 40, 21, OPT_FLAT | OPT_FORMAT, staggeredStatus, "On\xFFOff");
+  Gpu_CoCmd_BgColor(phost, 0x00A2E8);
+  Gpu_CoCmd_FgColor(phost, 0x007300);
+  App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+  App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));
 
   Disp_End(phost);
 }

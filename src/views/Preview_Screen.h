@@ -13,6 +13,7 @@ struct PreviewScreenParams {
   int simulateCol;   // Column being simulated (0 = none)
   int simulateRow;   // Row being simulated (0 = none)
   const char* infoText; // Text to display in bottom right (e.g., "Preview (Grid 10x10)" or "Position = 5x3")
+  bool staggered;    // If true, even rows are shifted right by half a step with last cell removed
 };
 
 /**
@@ -120,9 +121,14 @@ void Preview_Screen(Gpu_Hal_Context_t *phost,
   
   int enabledCount = 0;
   for (int row = 1; row <= gridRows; row++) {
-    for (int col = 1; col <= gridCols; col++) {
+    // Check if this is an even row and staggered mode is enabled
+    bool isEvenRow = (row % 2 == 0);
+    int xOffset = (params.staggered && isEvenRow) ? (dotSpacing / 2) : 0;
+    int maxCol = (params.staggered && isEvenRow) ? (gridCols - 1) : gridCols;
+    
+    for (int col = 1; col <= maxCol; col++) {
       if (!isSkipPosition(col, row)) {
-        int centerX = gridStartX + (col * dotSpacing);
+        int centerX = gridStartX + (col * dotSpacing) + xOffset;
         int centerY = gridStartY + (gridRows - row + 1) * dotSpacing;
         App_WrCoCmd_Buffer(phost, VERTEX2F(centerX * 16, centerY * 16));
         enabledCount++;
@@ -136,7 +142,12 @@ void Preview_Screen(Gpu_Hal_Context_t *phost,
     App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 255, 0));
     App_WrCoCmd_Buffer(phost, POINT_SIZE(dotRadius * 16));
     App_WrCoCmd_Buffer(phost, BEGIN(POINTS));
-    int centerX = gridStartX + (params.simulateCol * dotSpacing);
+    
+    // Apply stagger offset for even rows
+    bool isEvenRow = (params.simulateRow % 2 == 0);
+    int xOffset = (params.staggered && isEvenRow) ? (dotSpacing / 2) : 0;
+    
+    int centerX = gridStartX + (params.simulateCol * dotSpacing) + xOffset;
     int centerY = gridStartY + ((gridRows - params.simulateRow + 1) * dotSpacing);
     App_WrCoCmd_Buffer(phost, VERTEX2F(centerX * 16, centerY * 16));
     App_WrCoCmd_Buffer(phost, END());
@@ -149,9 +160,14 @@ void Preview_Screen(Gpu_Hal_Context_t *phost,
   
   int skippedCount = 0;
   for (int row = 1; row <= gridRows; row++) {
-    for (int col = 1; col <= gridCols; col++) {
+    // Check if this is an even row and staggered mode is enabled
+    bool isEvenRow = (row % 2 == 0);
+    int xOffset = (params.staggered && isEvenRow) ? (dotSpacing / 2) : 0;
+    int maxCol = (params.staggered && isEvenRow) ? (gridCols - 1) : gridCols;
+    
+    for (int col = 1; col <= maxCol; col++) {
       if (isSkipPosition(col, row)) {
-        int centerX = gridStartX + (col * dotSpacing);
+        int centerX = gridStartX + (col * dotSpacing) + xOffset;
         int centerY = gridStartY + (gridRows - row + 1) * dotSpacing;
         App_WrCoCmd_Buffer(phost, VERTEX2F(centerX * 16, centerY * 16));
         skippedCount++;

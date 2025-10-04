@@ -309,6 +309,12 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
       Config_Screen(phost);
       break;
 
+    case STAGGERED_TOGGLE:
+      Serial.println(F("Toggle staggered mode"));
+      currentProfile->staggered = !currentProfile->staggered;
+      Skip_Screen(phost);
+      break;
+
     case SKIP_COLUMNS:
       Serial.println(F("Button Pressed: SKIP COLUMNS"));
       editSkipColumn(phost);
@@ -362,16 +368,9 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
         PreviewScreenParams params;
         params.gridCols = currentProfile->Tube_No_x;
         params.gridRows = currentProfile->Tube_No_y;
-        params.simulating = simulating;
-        params.simulateCol = simulateCol;
-        params.simulateRow = simulateRow;
-        
-        // Set info text based on simulation state
-        if (simulating) {
-          snprintf(previewInfoText, sizeof(previewInfoText), "Position = %dx%d", simulateCol, simulateRow);
-        } else {
-          snprintf(previewInfoText, sizeof(previewInfoText), "Preview (Grid %dx%d)", params.gridCols, params.gridRows);
-        }
+        params.staggered = currentProfile->staggered;
+
+        snprintf(previewInfoText, sizeof(previewInfoText), "Preview (Grid %dx%d)", params.gridCols, params.gridRows);
         params.infoText = previewInfoText;
         
         // Display the preview screen
@@ -550,6 +549,7 @@ void ConfigMode::start_simulation() {
   params.simulating = simulating;
   params.simulateCol = simulateCol;
   params.simulateRow = simulateRow;
+  params.staggered = currentProfile->staggered;
   
   // Set info text for simulation
   snprintf(previewInfoText, sizeof(previewInfoText), "Position = %dx%d", simulateCol, simulateRow);
@@ -574,6 +574,7 @@ void ConfigMode::end_simulation() {
   params.simulating = simulating;
   params.simulateCol = simulateCol;
   params.simulateRow = simulateRow;
+  params.staggered = currentProfile->staggered;
   
   // Set info text for non-simulation
   snprintf(previewInfoText, sizeof(previewInfoText), "Preview (Grid %dx%d)", params.gridCols, params.gridRows);
@@ -604,6 +605,7 @@ void ConfigMode::step_simulation() {
   params.simulating = simulating;
   params.simulateCol = simulateCol;
   params.simulateRow = simulateRow;
+  params.staggered = currentProfile->staggered;
   
   // Set info text for simulation
   snprintf(previewInfoText, sizeof(previewInfoText), "Position = %dx%d", simulateCol, simulateRow);

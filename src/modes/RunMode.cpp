@@ -99,7 +99,7 @@ ModeStepResult RunMode::on_step() {
       dispenserHead.z().reset();
 
       TrayHandler::Position firstPosition = trayHandler.reset();
-      target_x = (profile.trayOriginX + ((firstPosition.x - 1) * profile.pitch_x)) * -STEPS_PER_UNIT_X;
+      target_x = (profile.trayOriginX + ((firstPosition.x - 1 + (profile.staggered ? 0.5 : 0)) * profile.pitch_x)) * -STEPS_PER_UNIT_X;
       target_y = (profile.trayOriginY + ((firstPosition.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
 
       start_stage(MOVE_STAGE);
@@ -122,7 +122,7 @@ ModeStepResult RunMode::on_step() {
         if (result.hasNext) {
           Serial.println("Next position: " + String(result.position.x) + ", " + String(result.position.y));
 
-          target_x = (profile.trayOriginX + ((result.position.x - 1) * profile.pitch_x)) * -STEPS_PER_UNIT_X;
+          target_x = (profile.trayOriginX + ((result.position.x - 1 + (profile.staggered ? 0.5: 0)) * profile.pitch_x)) * -STEPS_PER_UNIT_X;
           target_y = (profile.trayOriginY + ((result.position.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
 
           // Update Home_Screen

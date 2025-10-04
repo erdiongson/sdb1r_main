@@ -183,6 +183,7 @@ typedef PROGMEM const int32_t prog_int32_t;
 #define SKIP_SINGLE_POS      33
 #define ADVPROF_BACK         34
 #define ADVPROF_SAVE         35
+#define STAGGERED_TOGGLE     38
 #define KEY_CONFIG_HOME      6
 
 #define KEY_CONFIG_LOAD      11
