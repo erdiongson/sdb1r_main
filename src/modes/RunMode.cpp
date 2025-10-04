@@ -1,6 +1,7 @@
 #include "RunMode.h"
 #include "ModesCommon.h"
 #include "../views/Home_Screen.h"
+#include "../views/Error_Messages.h"
 
 RunMode::RunMode(DispenserHead& head, Gpu_Hal_Context_t* host, ModeController* controller, ModeCompletionCallback callback)
   : BaseMode(head, host, controller, callback) {}
@@ -51,16 +52,19 @@ ModeStepResult RunMode::on_step() {
   if (paused) return ModeStepResult(MODE_CONTINUE, MODE_CONTINUE);
 
   DispenserProcessResult dispenserProcessResult = dispenserHead.process();
-  if (dispenserProcessResult.steppers == AXIS_STATE_RUNNING) return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
+  if (dispenserProcessResult.steppers == AXIS_STATE_RUNNING) {
+    return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
+  }
+
+  HomeParams params = {
+    (uint16_t)trayHandler.getCurrentRow(),
+    (uint16_t)trayHandler.getCurrentColumn(),
+    (uint16_t)trayHandler.getTubesLeft(),
+  };
 
   if (dispenserProcessResult.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
     Serial.println(F("MODE: Stepper error - limit switch triggered"));
-    HomeParams params = {
-      (uint16_t)trayHandler.getCurrentRow(),
-      (uint16_t)trayHandler.getCurrentColumn(),
-      (uint16_t)trayHandler.getTubesLeft(),
-      "Max distance reached. Machine will go back to home."
-    };
+    params.error_code = ERROR_LIMIT_SWITCH;
     Home_Screen(phost, RUNMENU, &params);
     start_stage(HOME_STAGE);
     return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
@@ -68,12 +72,7 @@ ModeStepResult RunMode::on_step() {
 
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE) {
     Serial.println(F("MODE: Dispenser error - IR sensor failure"));
-    HomeParams params = {
-      (uint16_t)trayHandler.getCurrentRow(),
-      (uint16_t)trayHandler.getCurrentColumn(),
-      (uint16_t)trayHandler.getTubesLeft(),
-      "IR Sensor Detection Failed. Please Restart."
-    };
+    params.error_code = ERROR_IR_SENSOR;
     Home_Screen(phost, RUNMENU, &params);
     start_stage(HOME_STAGE);
     return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
@@ -81,12 +80,7 @@ ModeStepResult RunMode::on_step() {
 
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
     Serial.println(F("MODE: Dispenser error - marker not detected"));
-    HomeParams params = {
-      (uint16_t)trayHandler.getCurrentRow(),
-      (uint16_t)trayHandler.getCurrentColumn(),
-      (uint16_t)trayHandler.getTubesLeft(),
-      "Dispenser Head Stucked. Check the head."
-    };
+    params.error_code = ERROR_MARKER_NOT_DETECTED;
     Home_Screen(phost, RUNMENU, &params);
     start_stage(HOME_STAGE);
     return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
@@ -130,7 +124,7 @@ ModeStepResult RunMode::on_step() {
             (uint16_t)trayHandler.getCurrentRow(),
             (uint16_t)trayHandler.getCurrentColumn(),
             (uint16_t)trayHandler.getTubesLeft(),
-            ""
+            0
           };
           Home_Screen(phost, RUNMENU, &params);
           start_stage(MOVE_STAGE);

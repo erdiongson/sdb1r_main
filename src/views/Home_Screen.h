@@ -2,13 +2,14 @@
 #define HOME_SCREEN_H
 
 #include "../gpu/App_Common.h"
+#include "Error_Messages.h"
 
 // Parameters for Home_Screen display.
 struct HomeParams {
   uint16_t current_row;
   uint16_t current_column;
   uint16_t tubes_left;
-  char error_message[100];
+  int error_code;
 };
 
 inline void SetMainMenuButton(uint8_t whichmenu) {
@@ -114,8 +115,8 @@ inline void Home_Screen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const HomeP
   Gpu_CoCmd_Text(phost, 294, 220, 20, OPT_RIGHTX | OPT_FORMAT, buf);
 
   //INSERT ERROR MESSAGE
-  if (params && params->error_message[0] != '\0') {
-    Gpu_CoCmd_Text(phost, 43, 90, 20, OPT_FORMAT, params->error_message);
+  if (params && params->error_code > 0) {
+    Error_Message(phost, params->error_code);
   }
   Disp_End(phost);
 }
