@@ -98,10 +98,11 @@ ModeStepResult RunMode::on_step() {
       dispenserHead.y().reset();
       dispenserHead.z().reset();
 
-      start_stage(OFFSET_STAGE);
-      break;
-    case OFFSET_STAGE:
-      start_stage(LOWER_HEAD_STAGE);
+      TrayHandler::Position firstPosition = trayHandler.reset();
+      target_x = (profile.trayOriginX + ((firstPosition.x - 1) * profile.pitch_x)) * -STEPS_PER_UNIT_X;
+      target_y = (profile.trayOriginY + ((firstPosition.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
+
+      start_stage(MOVE_STAGE);
       break;
     case LOWER_HEAD_STAGE:
       start_stage(START_DISPENSE_STAGE);
@@ -157,13 +158,6 @@ void RunMode::start_stage(int newStage) {
       dispenserHead.x().moveToMax();
       dispenserHead.y().moveToMin();
       dispenserHead.z().moveToMin();
-      break;
-    case OFFSET_STAGE:
-      Serial.println(F("MODE: Setting stage: OFFSET"));
-      this->stage = OFFSET_STAGE;
-
-      dispenserHead.x().moveTo(STEPS_PER_UNIT_X * -profile.trayOriginX);
-      dispenserHead.y().moveTo(STEPS_PER_UNIT_Y * profile.trayOriginY);
       break;
     case LOWER_HEAD_STAGE:
       Serial.println(F("MODE: Setting stage: LOWER_HEAD"));
