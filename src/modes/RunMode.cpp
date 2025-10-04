@@ -28,7 +28,7 @@ void RunMode::on_start(Profile& profile) {
 void RunMode::on_interaction(const Interaction& interaction) {
   int button = interaction.key_pressed;
 
-  if (button == PAUSE) {
+  if (button == PAUSE || interaction.plc_message_type == MSG_PAUSE) {
     Serial.println(F("MODE: Paused"));
     paused = true;
     dispenserHead.x().stop();
@@ -36,7 +36,7 @@ void RunMode::on_interaction(const Interaction& interaction) {
     dispenserHead.z().stop();
 
     Home_Screen(phost, PAUSEMENU);
-  } else if (button == STOP) {
+  } else if (button == STOP || interaction.plc_message_type == MSG_STOP) {
     Serial.println(F("MODE: Stopped"));
     complete_with_next_mode(MODE_TYPE_HOME);
   } else if (button == START) {
@@ -143,6 +143,7 @@ ModeStepResult RunMode::on_step() {
       start_stage(LOWER_HEAD_STAGE);
       break;
     case HOME_STAGE:
+      complete_with_next_mode(MODE_TYPE_HOME);
       break;
     default:
       break;

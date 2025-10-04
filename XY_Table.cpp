@@ -145,7 +145,7 @@ void setup() {
 
   Serial.begin(19200);   // Serial printing
   Serial2.begin(19200);  // UART for Arduino-PIC18 communications
-  Serial3.begin(19200);  // UART for Arduino-PIC18 communications
+  Serial3.begin(19200);  // UART for PLC communication
 
   //20240906: erdiongson - Enable interrupt for UART 3 receive complete
   Serial.print("Setup Serial 3 as interrupt");

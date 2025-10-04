@@ -90,22 +90,19 @@ const char *PlcSerial::getMessageTypeName(PLCMessageType type) {
 // @param bytesReceived Pointer to variable to store number of bytes received.
 // @return True if data was received, false otherwise.
 bool PlcSerial::checkAndReceiveData(byte *buffer, int bufferSize, int *bytesReceived) {
-  // Check if data is available
-  if (!Serial2.available()) return false;
-  
-  // Read available data into buffer
   *bytesReceived = 0;
-  while (Serial2.available() && *bytesReceived < bufferSize) {
-    buffer[*bytesReceived] = Serial2.read();
-    (*bytesReceived)++;
-    
-    // If we've received a complete message (indicated by END_BYTE), stop reading
-    if (buffer[*bytesReceived - 1] == END_BYTE && *bytesReceived >= PLC_MESSAGE_LENGTH) {
-      return true;
-    }
+  
+  // Check if data is available
+  if (!Serial3.available()) {
+    return false;
   }
   
-  // Return true if we received any data
+  // Read all available bytes
+  while (Serial3.available() && *bytesReceived < bufferSize) {
+    buffer[*bytesReceived] = Serial3.read();
+    (*bytesReceived)++;
+  }
+  
   return (*bytesReceived > 0);
 }
 

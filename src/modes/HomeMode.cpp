@@ -23,6 +23,15 @@ void HomeMode::on_interaction(const Interaction& interaction) {
   } else if (interaction.key_pressed == START) {
     Serial.println("MODE: Home mode transitioning to start");
     complete_with_next_mode(MODE_TYPE_RUN);
+  } else if (interaction.plc_message_type == MSG_START) {
+    Serial.println("MODE: Home mode transitioning to start");
+    complete_with_next_mode(MODE_TYPE_RUN);
+  } else if (interaction.plc_message_type == MSG_RAISE_Z) {
+    Serial.println("MODE: Home mode raising Z");
+    dispenserHead.z().moveBy(-interaction.plc_message_data * STEPS_PER_UNIT_Z);
+  } else if (interaction.plc_message_type == MSG_LOWER_Z) {
+    Serial.println("MODE: Home mode lowering Z");
+    dispenserHead.z().moveBy(interaction.plc_message_data * STEPS_PER_UNIT_Z);
   }
 }
 
