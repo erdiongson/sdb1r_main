@@ -66,8 +66,6 @@ void PreLoadEEPROM(void)
       tempprof.passwordEnabled=TRUE;
       tempprof.vibrationDuration=2;
       tempprof.sizeFlag = 1;
-      for(x=0;x<MAX_BUTTONS_X;x++)
-        for(y=0;y<MAX_BUTTONS_Y;y++) tempprof.buttonStates[x][y]=TRUE;
     }
     else
     {
@@ -84,8 +82,7 @@ void PreLoadEEPROM(void)
       CurProf.vibrationDuration=2;
       CurProf.sizeFlag = 1;
       CurProf.ZDip = 0.0;
-      for(x=0;x<MAX_BUTTONS_X;x++)
-        for(y=0;y<MAX_BUTTONS_Y;y++) CurProf.buttonStates[x][y]=TRUE;
+
     //try054 E }
     WriteProfileEEPROM(i);//try054 ,CurProf);
 
@@ -222,24 +219,6 @@ void WriteProfileEEPROM(int address)//try054 , Profile &profile)
     address += sizeof(CurProf.ZDip);
 	//Dsprintln("size");
 	//Dprintln(sizeof(profile));
-
-
-	for (y = 0; y < MAX_BUTTONS_Y; y++)
-	{
-		for (x = 0; x < MAX_BUTTONS_X; x += 8)
-		{
-		    dat = 0;
-            for (bit = 0; bit < 8 && (x + bit) < MAX_BUTTONS_X; ++bit)
-            {
-                if (CurProf.buttonStates[x+ bit][y])
-                    dat |= (1 << bit);
-            }
-
-			EEPROM.put(address, dat);
-			address += sizeof(dat);
-		}
-	}
-
 }
 
 void ReadProfileEEPROM(int address)
@@ -286,25 +265,7 @@ void ReadProfileEEPROM(int address)
     address += sizeof(CurProf.ZDip);
 
 	Dprint("add=",(float)address );
-
-    for (y = 0; y < MAX_BUTTONS_Y; y++)
-    {
-        for (x = 0; x < MAX_BUTTONS_X; x += 8)
-        {
-           	EEPROM.get(address, dat);
-           	address += sizeof(dat);
-
-            for (bit = 0; bit < 8 && (x + bit) < MAX_BUTTONS_X; ++bit)
-            {
-				//dat = 0;
-                CurProf.buttonStates[x+ bit][y]= dat & (1 << bit);			
-            }
-		}
-	}
-	Dprint("add=",(float)address );
-
   	CheckProfile();
-
 }
 
 void ReadProfileMinEEPROM(int address)

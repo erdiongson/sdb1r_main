@@ -71,8 +71,6 @@ typedef struct
     int16_t vibrationDuration = 2;
     int16_t sizeFlag = 1; //small = 0; large = 1;
     float ZDip = 0.0;
-    // bool **buttonStates; // Declare as a double pointer
-    bool buttonStates[MAX_BUTTONS_X][MAX_BUTTONS_Y]; // Declare as a static 2D array
 } Profile;
 
 
