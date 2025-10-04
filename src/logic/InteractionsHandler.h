@@ -45,9 +45,9 @@ public:
         int touchButtonPressed = Gpu_Hal_Rd8(phost, REG_TOUCH_TAG);
         
         // Check for button release (the only case we care about)
-        if (lastTouchButton != 0 && touchButtonPressed == 0) {
+        if (lastTouchButton == 0 && touchButtonPressed != 0) {
             // Button was pressed and now released - register the press
-            interaction.key_pressed = lastTouchButton;
+            interaction.key_pressed = touchButtonPressed;
             interaction.plc_message_type = MSG_UNKNOWN;
             interaction.plc_message_data = 0;
             lastTouchButton = touchButtonPressed;
