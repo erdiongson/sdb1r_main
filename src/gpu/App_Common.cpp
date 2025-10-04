@@ -474,9 +474,9 @@ void DisplayKeyboard(Gpu_Hal_Context_t *phost, uint8_t keypressed,char *displayt
         Gpu_CoCmd_Keys(phost, (DispWidth * 0), (DispHeight * 0.442), DispWidth, (DispHeight * 0.112), font,
                        keypressed, "1234567890");
         Gpu_CoCmd_Keys(phost, (DispWidth * 0.042), (DispHeight * 0.57), (DispWidth * 0.96), (DispHeight * 0.112),
-                       font, keypressed, "-@#$%^&*(");
+                       font, keypressed, "-@#%^&*()");
         Gpu_CoCmd_Keys(phost, (DispWidth * 0.125), (DispHeight * 0.70), (DispWidth * 0.73), (DispHeight * 0.112),
-                       font, keypressed, ")_+[]{}");
+                       font, keypressed, ",_+[]{}");
         App_WrCoCmd_Buffer(phost, TAG(NUMBER_LOCK)); // Numberlock
         Gpu_CoCmd_Button(phost, 0, (DispHeight * 0.83), (DispWidth * 0.10), (DispHeight * 0.112), font, 
 						(keypressed==NUMBER_LOCK)? OPT_FLAT : 0,
