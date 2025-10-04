@@ -22,7 +22,7 @@ struct Position {
   int x;
   int y;
 
-  Position(int x = 0, int y = 0)
+  Position(int x = -1, int y = -1)
     : x(x), y(y) {}
 
   bool operator==(const Position &other) const {
@@ -46,7 +46,7 @@ struct PositionResult {
 
   // Static factory method for "done" state
   static PositionResult Done() {
-    return PositionResult(Position(0, 0), false, 0);
+    return PositionResult(Position(-1, -1), false, 0);
   }
 
   // Static factory method for valid position state
@@ -67,7 +67,7 @@ private:
   int direction = 1;
   bool flipped = false;
 
-  Position skipPositions[MAX_POSITIONS];
+  Position skipPositions[MAX_POSITIONS] = { Position(-1, -1) };
   
   // Cached values calculated during reset
   int totalValidTubes = 0;
@@ -173,15 +173,15 @@ private:
     return false;
   }
 
-  bool shouldFlip() {
+  bool shouldFlip(Position skips[MAX_POSITIONS]) {
     // If there are more vertical skips than horizontal skips, flip the direction
     int verticalSkips = 0;
     int horizontalSkips = 0;
     for (int i = 0; i < MAX_POSITIONS; i++) {
-      if (skipPositions[i].x == -1 || skipPositions[i].y == -1) { break; }
-      if (skipPositions[i].x == 0)
+      if (skips[i].x == -1 || skips[i].y == -1) { break; }
+      if (skips[i].x == 0)
         horizontalSkips++;
-      if (skipPositions[i].y == 0)
+      if (skips[i].y == 0)
         verticalSkips++;
     }
     return verticalSkips > horizontalSkips;
@@ -191,10 +191,17 @@ private:
     return Position(pos.y, pos.x);
   }
 
-  void transformSkipPositions() {
+  // Copy skip positions and flip them if needed.
+  // @param positions Array of positions to transform.
+  // @param outPositions Output array to store flipped positions.
+  // @param flip Whether to flip the positions.
+  void copyPositions(const Position positions[MAX_POSITIONS], Position outPositions[MAX_POSITIONS], bool flip) {
     for (int i = 0; i < MAX_POSITIONS; i++) {
-      if (skipPositions[i].x == -1 || skipPositions[i].y == -1) { break; }
-      skipPositions[i] = flipPosition(skipPositions[i]);
+      if (positions[i].x == -1 || positions[i].y == -1) { 
+        outPositions[i] = Position(-1, -1);
+        break; 
+      }
+      outPositions[i] = flip ? flipPosition(positions[i]) : positions[i];
     }
   }
 
@@ -222,25 +229,18 @@ public:
   // @param dimensions Dimensions of the tray grid.
   // @param positions Array of positions to skip/ignore.
   void load(const Dimensions &dimensions,
-            const Position positions[MAX_POSITIONS]) {
+            const Position newPositions[MAX_POSITIONS]) {
 
-    flipped = shouldFlip();
+    flipped = shouldFlip(newPositions);
 
     this->dimensions = flipped ? flipDimensions(dimensions) : dimensions;
-
-    for (int i = 0; i < MAX_POSITIONS; i++) {
-      if (positions[i].x == -1 || positions[i].y == -1) { break; }
-      skipPositions[i] = positions[i];
-    }
-    if (flipped) transformSkipPositions();
+    copyPositions(newPositions, skipPositions, flipped);
   }
 
   // Get the skip positions array.
   // @param outPositions Output array to copy skip positions to.
   void getSkipPositions(Position outPositions[MAX_POSITIONS]) const {
-    for (int i = 0; i < MAX_POSITIONS; i++) {
-      outPositions[i] = skipPositions[i];
-    }
+    copyPositions(skipPositions, outPositions, flipped);
   }
 
   // Get the next valid position and update the current position.

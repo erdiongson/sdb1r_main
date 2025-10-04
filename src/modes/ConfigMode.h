@@ -2,6 +2,7 @@
 
 #include "BaseMode.h"
 #include "../gpu/Platform.h"
+#include "../logic/TrayPositionHandler.h"
 
 // ConfigMode - Responsible for managing system settings.
 class ConfigMode : public BaseMode {
@@ -36,6 +37,14 @@ private:
   // Flag to track if special mode is enabled
   bool specialMode;
   
+  // Simulation state
+  bool simulating;
+  unsigned long lastSimulationTime;
+  TrayHandler::TrayPositionHandler simulationHandler;
+  int simulateCol;
+  int simulateRow;
+  char previewInfoText[50];  // Buffer for preview screen info text
+  
   // Cycles through vibration levels from U0-U4.
   void increment_vibration_level();
   
@@ -53,4 +62,13 @@ private:
   // Edits skip individual position string, looping until input is clean.
   // @param phost Pointer to GPU HAL context.
   void editSkipIndividual(Gpu_Hal_Context_t* phost);
+  
+  // Starts the simulation and displays the first position.
+  void start_simulation();
+  
+  // Ends the simulation and resets state.
+  void end_simulation();
+  
+  // Steps the simulation to the next position and redraws the preview.
+  void step_simulation();
 };

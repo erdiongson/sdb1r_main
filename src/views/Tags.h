@@ -20,3 +20,7 @@
 #define TAG_VIB_TIME_4          69
 #define TAG_VIB_TIME_5          70
 #define TAG_DISPENSE_BACK       71
+
+// Preview screen control tags
+#define TAG_PREVIEW_SIMULATE    80
+#define TAG_PREVIEW_STOP        81

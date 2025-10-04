@@ -7,7 +7,8 @@
 #include "../logic/SkipUtils.h"
 
 ConfigMode::ConfigMode(DispenserHead& head, Gpu_Hal_Context_t* host, ModeController* controller, ModeCompletionCallback callback)
-  : BaseMode(head, host, controller, callback), currentProfile(nullptr), specialMode(false) {}
+  : BaseMode(head, host, controller, callback), currentProfile(nullptr), specialMode(false), 
+    simulating(false), lastSimulationTime(0), simulateCol(0), simulateRow(0) {}
 
 void ConfigMode::on_start(Profile& profile) {
   Serial.println(F("MODE: Config mode"));
@@ -40,6 +41,16 @@ void ConfigMode::on_start(Profile& profile) {
       specialMode = false;
     }
   }
+
+  // Initialize simulation state
+  simulating = false;
+  simulateCol = 0;
+  simulateRow = 0;
+  lastSimulationTime = 0;
+  
+  // Load profile into simulation handler
+  simulationHandler.load_profile(*currentProfile);
+  simulationHandler.reset();
 
   // Display configuration screen
   Config_Screen(phost);
@@ -347,14 +358,44 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
         TrayHandler::Position skipPositions[MAX_POSITIONS];
         tempHandler.getSkipPositions(skipPositions);
        
+        // Create preview screen parameters
+        PreviewScreenParams params;
+        params.gridCols = currentProfile->Tube_No_x;
+        params.gridRows = currentProfile->Tube_No_y;
+        params.simulating = simulating;
+        params.simulateCol = simulateCol;
+        params.simulateRow = simulateRow;
+        
+        // Set info text based on simulation state
+        if (simulating) {
+          snprintf(previewInfoText, sizeof(previewInfoText), "Position = %dx%d", simulateCol, simulateRow);
+        } else {
+          snprintf(previewInfoText, sizeof(previewInfoText), "Preview (Grid %dx%d)", params.gridCols, params.gridRows);
+        }
+        params.infoText = previewInfoText;
+        
         // Display the preview screen
-        Preview_Screen(phost, skipPositions, currentProfile->Tube_No_x, currentProfile->Tube_No_y);
+        Preview_Screen(phost, skipPositions, params);
       }
       break;
 
     case KEY_CONFIG_PREVIEW_BACK:
       Serial.println(F("Button Pressed: PREVIEW BACK"));
+      // Stop simulation when leaving preview
+      simulating = false;
+      simulateCol = 0;
+      simulateRow = 0;
       Skip_Screen(phost);
+      break;
+
+    case TAG_PREVIEW_SIMULATE:
+      Serial.println(F("Button Pressed: SIMULATE"));
+      start_simulation();
+      break;
+
+    case TAG_PREVIEW_STOP:
+      Serial.println(F("Button Pressed: STOP"));
+      end_simulation();
       break;
 
       case CONFIGADVANCE:
@@ -376,6 +417,15 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
 }
 
 ModeStepResult ConfigMode::on_step() {
+  // Handle simulation updates every 600 ms
+  if (simulating) {
+    unsigned long currentTime = millis();
+    if (currentTime - lastSimulationTime >= 600) {
+      lastSimulationTime = currentTime;
+      step_simulation();
+    }
+  }
+  
   DispenserProcessResult result = dispenserHead.process();
   return ModeStepResult(result.steppers, result.dispenser);
 }
@@ -470,4 +520,88 @@ void ConfigMode::editSkipIndividual(Gpu_Hal_Context_t* phost) {
       break;
     }
   }
+}
+
+void ConfigMode::start_simulation() {
+  // Start simulation
+  simulating = true;
+  lastSimulationTime = millis();
+  
+  // Reset handler and get first position
+  simulationHandler.load_profile(*currentProfile);
+  TrayHandler::Position firstPosition = simulationHandler.reset();
+
+  simulateCol = firstPosition.x;
+  simulateRow = firstPosition.y;
+  
+  // Redraw preview screen
+  TrayHandler::Position skipPositions[MAX_POSITIONS];
+  simulationHandler.getSkipPositions(skipPositions);
+  
+  PreviewScreenParams params;
+  params.gridCols = currentProfile->Tube_No_x;
+  params.gridRows = currentProfile->Tube_No_y;
+  params.simulating = simulating;
+  params.simulateCol = simulateCol;
+  params.simulateRow = simulateRow;
+  
+  // Set info text for simulation
+  snprintf(previewInfoText, sizeof(previewInfoText), "Position = %dx%d", simulateCol, simulateRow);
+  params.infoText = previewInfoText;
+  
+  Preview_Screen(phost, skipPositions, params);
+}
+
+void ConfigMode::end_simulation() {
+  // Stop simulation
+  simulating = false;
+  simulateCol = 0;
+  simulateRow = 0;
+  
+  // Redraw preview screen
+  TrayHandler::Position skipPositions[MAX_POSITIONS];
+  simulationHandler.getSkipPositions(skipPositions);
+  
+  PreviewScreenParams params;
+  params.gridCols = currentProfile->Tube_No_x;
+  params.gridRows = currentProfile->Tube_No_y;
+  params.simulating = simulating;
+  params.simulateCol = simulateCol;
+  params.simulateRow = simulateRow;
+  
+  // Set info text for non-simulation
+  snprintf(previewInfoText, sizeof(previewInfoText), "Preview (Grid %dx%d)", params.gridCols, params.gridRows);
+  params.infoText = previewInfoText;
+  
+  Preview_Screen(phost, skipPositions, params);
+}
+
+void ConfigMode::step_simulation() {
+  // Get next position
+  TrayHandler::PositionResult result = simulationHandler.goToNextValidPosition();
+  
+  if (result.hasNext) {
+    simulateCol = result.position.x;
+    simulateRow = result.position.y;
+  } else {
+    end_simulation();
+    return;
+  }
+  
+  // Redraw preview screen with updated position
+  TrayHandler::Position skipPositions[MAX_POSITIONS];
+  simulationHandler.getSkipPositions(skipPositions);
+  
+  PreviewScreenParams params;
+  params.gridCols = currentProfile->Tube_No_x;
+  params.gridRows = currentProfile->Tube_No_y;
+  params.simulating = simulating;
+  params.simulateCol = simulateCol;
+  params.simulateRow = simulateRow;
+  
+  // Set info text for simulation
+  snprintf(previewInfoText, sizeof(previewInfoText), "Position = %dx%d", simulateCol, simulateRow);
+  params.infoText = previewInfoText;
+  
+  Preview_Screen(phost, skipPositions, params);
 }

@@ -3,26 +3,39 @@
 
 #include "../gpu/App_Common.h"
 #include "../logic/TrayPositionHandler.h"
+#include "Tags.h"
+
+// Parameters for Preview_Screen display
+struct PreviewScreenParams {
+  int gridCols;      // Number of columns in the grid
+  int gridRows;      // Number of rows in the grid
+  bool simulating;   // Whether simulation mode is active
+  int simulateCol;   // Column being simulated (0 = none)
+  int simulateRow;   // Row being simulated (0 = none)
+  const char* infoText; // Text to display in bottom right (e.g., "Preview (Grid 10x10)" or "Position = 5x3")
+};
 
 /**
  * @brief Display a grid preview screen showing enabled/disabled positions
  * 
  * @param phost GPU context
  * @param skipPositions Array of positions to skip (disabled)
- * @param gridCols Number of columns in the grid (from profile Tube_No_x)
- * @param gridRows Number of rows in the grid (from profile Tube_No_y)
+ * @param params Preview screen parameters (grid size, simulation state)
  * 
  * Grid dots are displayed as:
  * - Enabled: White outline circle with empty fill
- * - Disabled: Red outline circle with red X in center
+ * - Disabled: Gray outline circle
+ * - Simulated: Green circle (when simulateCol/simulateRow are set)
  * 
  * The grid is automatically centered on the screen and scaled to fit
  * the maximum grid size (MAX_TUBES_X x MAX_TUBES_Y)
  */
 void Preview_Screen(Gpu_Hal_Context_t *phost, 
                    const TrayHandler::Position skipPositions[MAX_POSITIONS],
-                   int gridCols, 
-                   int gridRows) {
+                   const PreviewScreenParams& params) {
+  
+  int gridCols = params.gridCols;
+  int gridRows = params.gridRows;
   
   // Display dimensions (320x240)
   const int SCREEN_WIDTH = 320;
@@ -83,6 +96,12 @@ void Preview_Screen(Gpu_Hal_Context_t *phost,
     return false;
   };
   
+  // Helper lambda to check if position is being simulated
+  auto isSimulatedPosition = [&](int x, int y) -> bool {
+    return params.simulateCol != 0 && params.simulateRow != 0 &&
+           x == params.simulateCol && y == params.simulateRow;
+  };
+  
   // Start drawing
   Gpu_CoCmd_FlashFast(phost, 0);
   Gpu_CoCmd_Dlstart(phost);
@@ -104,13 +123,24 @@ void Preview_Screen(Gpu_Hal_Context_t *phost,
     for (int col = 1; col <= gridCols; col++) {
       if (!isSkipPosition(col, row)) {
         int centerX = gridStartX + (col * dotSpacing);
-        int centerY = gridStartY + (row * dotSpacing);
+        int centerY = gridStartY + (gridRows - row + 1) * dotSpacing;
         App_WrCoCmd_Buffer(phost, VERTEX2F(centerX * 16, centerY * 16));
         enabledCount++;
       }
     }
   }
   App_WrCoCmd_Buffer(phost, END());
+  
+  // Draw simulated position (green dot)
+  if (params.simulateCol != 0 && params.simulateRow != 0) {
+    App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 255, 0));
+    App_WrCoCmd_Buffer(phost, POINT_SIZE(dotRadius * 16));
+    App_WrCoCmd_Buffer(phost, BEGIN(POINTS));
+    int centerX = gridStartX + (params.simulateCol * dotSpacing);
+    int centerY = gridStartY + ((gridRows - params.simulateRow + 1) * dotSpacing);
+    App_WrCoCmd_Buffer(phost, VERTEX2F(centerX * 16, centerY * 16));
+    App_WrCoCmd_Buffer(phost, END());
+  }
   
   // Draw all skipped positions in one batch (gray dots)
   App_WrCoCmd_Buffer(phost, COLOR_RGB(128, 128, 128));
@@ -122,7 +152,7 @@ void Preview_Screen(Gpu_Hal_Context_t *phost,
     for (int col = 1; col <= gridCols; col++) {
       if (isSkipPosition(col, row)) {
         int centerX = gridStartX + (col * dotSpacing);
-        int centerY = gridStartY + (row * dotSpacing);
+        int centerY = gridStartY + (gridRows - row + 1) * dotSpacing;
         App_WrCoCmd_Buffer(phost, VERTEX2F(centerX * 16, centerY * 16));
         skippedCount++;
       }
@@ -136,13 +166,22 @@ void Preview_Screen(Gpu_Hal_Context_t *phost,
   Gpu_CoCmd_FgColor(phost, 0x00A2E8);
   App_WrCoCmd_Buffer(phost, TAG(KEY_CONFIG_PREVIEW_BACK));
   Gpu_CoCmd_Button(phost, 10, SCREEN_HEIGHT - 26 - 4, 62, 26, 21, 0, "Back");
+  
+  // Draw Simulate/Stop button (next to Back button)
+  if (params.simulating) {
+    Gpu_CoCmd_FgColor(phost, 0xFF0000);  // Red for Stop
+    App_WrCoCmd_Buffer(phost, TAG(TAG_PREVIEW_STOP));
+    Gpu_CoCmd_Button(phost, 82, SCREEN_HEIGHT - 26 - 4, 62, 26, 21, 0, "Stop");
+  } else {
+    Gpu_CoCmd_FgColor(phost, 0x00A2E8);  // Blue for Simulate
+    App_WrCoCmd_Buffer(phost, TAG(TAG_PREVIEW_SIMULATE));
+    Gpu_CoCmd_Button(phost, 82, SCREEN_HEIGHT - 26 - 4, 62, 26, 21, 0, "Simulate");
+  }
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
   
   // Draw grid info (bottom right, aligned with button)
-  char infoText[50];
-  snprintf(infoText, sizeof(infoText), "Position Preview (Grid %dx%d)", gridCols, gridRows);
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
-  Gpu_CoCmd_Text(phost, SCREEN_WIDTH - 10, SCREEN_HEIGHT - 25, 21, OPT_RIGHTX, infoText);
+  Gpu_CoCmd_Text(phost, SCREEN_WIDTH - 10, SCREEN_HEIGHT - 25, 21, OPT_RIGHTX, params.infoText);
   
   Disp_End(phost);
 }
