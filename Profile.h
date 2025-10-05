@@ -35,14 +35,14 @@ Date created - 2022.12.14 - XentiQ version
 //Change MAXNUMX and MAXNUMY depending on the use;
 //for (L) 300x300 - MAXNUMX 33; MAXNUMY 33
 //for (S) 200x300 - MAXNUMX 20; MAXNUMY 27
-#define MAXNUMX 42//try054 33
+#define MAXNUMX 42 //try054 33
 #define MAXNUMY 33
 
 
-#define MINPITCHX 9//v205
-#define MINPITCHY 9//v205
-#define MAXPITCHX 999//v204 99.9
-#define MAXPITCHY 999//v204 99.9
+#define MINPITCHX 9 //v205
+#define MINPITCHY 9 //v205
+#define MAXPITCHX 999 //v204 99.9
+#define MAXPITCHY 999 //v204 99.9
 #define MAXCYCLE 99
 #define MINCYCLE 1
 
@@ -54,14 +54,14 @@ typedef struct
 {
     char profileName[PROFILE_NAME_MAX_LEN];
     int8_t profileId = 0;
-    int8_t Tube_No_x = 0; // represent the number of columns
-    int8_t Tube_No_y = 0; // represent the number of rows
+    int8_t Tube_No_x = 0; //represent the number of columns
+    int8_t Tube_No_y = 0; //represent the number of rows
     float pitch_x = 0.0;
     float pitch_y = 0.0;
     float trayOriginX = 0.0;
     float trayOriginY = 0.0;
     int16_t Cycles = 1;
-    int16_t CurrentCycle = 0; // New field for storing the current cycle
+    int16_t CurrentCycle = 0; //New field for storing the current cycle
     int16_t vibrationEnabled = 0;
     bool dispenseEnabled = false;
     int16_t passwordEnabled = 0;
@@ -114,13 +114,13 @@ void ReadPassEEPROM(char *pass);
 
 
 
-void WriteProfileEEPROM(int address);//try054 , Profile &profile);
+void WriteProfileEEPROM(int address); //try054 , Profile &profile);
 void ReadProfileEEPROM(int address);
 void ReadProfileMinEEPROM(int address);
 
 #endif /*_PROFILE_H_*/
 extern Profile CurProf;
-extern ProfileMin SelectProf;//try055
+extern ProfileMin SelectProf; //try055
 
 
 extern uint8_t CurProfNum;
