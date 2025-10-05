@@ -33,25 +33,7 @@ struct PLCMessage {
 // PlcSerial class for handling PLC communication.
 class PlcSerial {
 public:
-  // Parse received PLC message and identify message type with data extraction.
-  // @param receivedData Pointer to received message bytes.
-  // @param length Length of received message.
+  // Process incoming data from the PLC.
   // @return PLCMessage struct containing message type and data.
-  static PLCMessage parseReceivedMessage(const byte* receivedData, int length);
-  
-  // Get string representation of message type for debugging.
-  // @param type PLCMessageType enum value.
-  // @return String name of message type.
-  static const char* getMessageTypeName(PLCMessageType type);
-  
-  // Check if data is available from PLC and receive it into the provided buffer.
-  // @param buffer Pointer to buffer to store received data.
-  // @param bufferSize Size of the buffer.
-  // @param bytesReceived Pointer to variable to store number of bytes received.
-  // @return True if data was received, false otherwise.
-  static bool checkAndReceiveData(byte* buffer, int bufferSize, int* bytesReceived);
-  
-  // Check for new PLC messages, receive data if available, and parse the message.
-  // @return PLCMessage struct containing message type and data.
-  static PLCMessage getNewMessage();
+  static PLCMessage process();
 };

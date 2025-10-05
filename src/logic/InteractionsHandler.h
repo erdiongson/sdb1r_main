@@ -58,7 +58,7 @@ public:
         lastTouchButton = touchButtonPressed;
         
         // Check for PLC messages before early exit
-        PLCMessage plcMessage = PlcSerial::getNewMessage();
+        PLCMessage plcMessage = PlcSerial::process();
         if (plcMessage.type != MSG_UNKNOWN) {
             Serial.println("PLC message received: " + String(plcMessage.type));
             interaction.key_pressed = 0;

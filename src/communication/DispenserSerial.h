@@ -30,17 +30,9 @@
 
 //Vibration Mode Commands
 #define VIBMODE_U0 0x71  //former 0xC2, changed for 1RC
-#define VIBMODE_U1 0x72  //former 0xB1, changed for 1RC
-#define VIBMODE_U2 0x73  //former 0xB2, changed for 1RC
-#define VIBMODE_U3 0x74  //fomer 0xB3, changed for 1RC
-#define VIBMODE_U4 0x75  //former 0xB4, changed for 1RC
 
 //Vibration Duration/Time Commands
 #define VIBDUR_1 0x81  //1 second/s
-#define VIBDUR_2 0x82  //2 second/s (default in SDB)
-#define VIBDUR_3 0x83  //3 second/s
-#define VIBDUR_4 0x84  //4 second/s
-#define VIBDUR_5 0x85  //5 second/s
 
 // DispenserSerial class for handling dispenser communication.
 class DispenserSerial {
