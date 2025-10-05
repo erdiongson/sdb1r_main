@@ -285,6 +285,11 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
       }
       break;
 
+    case NUM_CYCLES:
+      currentProfile->Cycles = Keypad(phost, currentProfile->Cycles, MINCYCLE, MAXCYCLE, FALSE);
+      Config_Screen(phost);
+      break;
+
     case ZDIP:
       Serial.println(F("Incrementing Z Dip"));
       currentProfile->ZDip = Keypad(phost, currentProfile->ZDip, MINZDIP, MAXZDIP, FALSE);
