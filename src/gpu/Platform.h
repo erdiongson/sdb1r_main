@@ -201,10 +201,6 @@ typedef PROGMEM const int32_t prog_int32_t;
 #define MAXXMM 400 //190 (S) //max x/col dimension in mm
 #define MAXYMM 330 //250 (S) //max y/row dimension in mm
 
-
-#define LINE_STARTPOS DispWidth / 50 // Start of Line
-#define LINE_ENDPOS DispWidth        // max length of the line
-
 // #if EVE_CHIPID <= EVE_FT801
 // #define ROMFONT_TABLEADDRESS (0xFFFFC)
 // #else
@@ -213,13 +209,6 @@ typedef PROGMEM const int32_t prog_int32_t;
 
 // #include "Gpu_Hal.h"
 // #include "Gpu_CoCmd.h"
-
-#define NUM_ROWS 5
-#define NUM_COLS 5
-#define BUTTON_SIZE 300
-#define BUTTON_PADDING 10
-#define START_X 20
-#define START_Y 20
 
 //(S)
 //#define STEPS_PER_UNIT_X 400L // (X step motor specs: lead screw is 4mm, 1600 pulse/rev(8 microsteps driver), 4mm/1600 = 0.0025mm, 1mm/0.0025 = 400 steps)
@@ -238,24 +227,5 @@ typedef PROGMEM const int32_t prog_int32_t;
 #define STEPS_PER_UNIT_Z 30L
 
 extern Gpu_Hal_Context_t host, *phost;
-
-extern int tag;
-
-
-extern int32_t count;
-extern int vibration;
-
-extern int32_t selectedProfileId;
-
-extern bool stop_flag;
-
-extern uint8_t CurX;
-extern uint8_t CurY;
-extern uint16_t TotalTubeLeft;
-
-extern uint16_t err_flag; //E1 = 1, E2 = 2;
-
-void vibration_on(void);
-void vibration_time(void);
 
 #endif /*_PLATFORM_H_*/
