@@ -1,5 +1,6 @@
 #include "MoveTestMode.h"
 #include "../views/Move_Test_Screen.h"
+#include "../../Config.h"
 
 MoveTestMode::MoveTestMode(DispenserHead& head, Gpu_Hal_Context_t *host, ModeController* controller, ModeCompletionCallback callback)
   : BaseMode(head, host, controller, callback) {}

@@ -32,6 +32,27 @@
 #define motor_y_Acceleration 1000 //4000 // 2400 1600 // 3200
 #define motor_z_Acceleration 100000//4000 // 2400 1600 // 3200
 
+
+#define MAXXMM 400 //190 (S) //max x/col dimension in mm
+#define MAXYMM 330 //250 (S) //max y/row dimension in mm
+
+//(S)
+//#define STEPS_PER_UNIT_X 400L // (X step motor specs: lead screw is 4mm, 1600 pulse/rev(8 microsteps driver), 4mm/1600 = 0.0025mm, 1mm/0.0025 = 400 steps)
+//#define STEPS_PER_UNIT_Y 320L // (Y step motor specs: lead screw is 10mm, 3200 pulse/rev(16 microsteps driver), 10mm/3200 = 0.003125mm, 1mm/0.003125 = 320 steps/unit)
+//20240917: erdiongson - Use the STEPS_PER_UNIT_Y 160L if we are using the new motor. use this moving forward
+//#define STEPS_PER_UNIT_Y 160L // (Y step motor specs: lead screw is 20mm, 1600 pulse/rev(8 microsteps driver), 20mm/3200 = 0.00625mm, 1mm/0.00625 = 160 steps/unit)
+
+//(L)
+//20240625: erdiongson - Trying out 3200 pulse per revolution (v2.05L)
+#define STEPS_PER_UNIT_X 300 // (X step motor specs: lead screw is 10mm, 3200 pulse/rev(16 microsteps driver), 10mm/3200 = 0.003125mm, 1mm/0.003125 = 320 steps/unit)
+//#define STEPS_PER_UNIT_X 160L // (X step motor specs: lead screw is 10mm, 3200 pulse/rev(16 microsteps driver), 10mm/3200 = 0.003125mm, 1mm/0.003125 = 320 steps/unit)
+#define STEPS_PER_UNIT_Y 100L // (Y step motor specs: lead screw is 10mm, 3200 pulse/rev(16 microsteps driver), 10mm/3200 = 0.003125mm, 1mm/0.003125 = 320 steps/unit)
+//20240917: erdiongson - Use the STEPS_PER_UNIT_Y 160L if we are using the new motor. use this moving forward
+//#define STEPS_PER_UNIT_Y 160L // (Y step motor specs: lead screw is 20mm, 1600 pulse/rev(8 microsteps driver), 20mm/3200 = 0.00625mm, 1mm/0.00625 = 160 steps/unit)
+
+#define STEPS_PER_UNIT_Z 30L
+
+
 // Defines the number of "dispenses" performed during priming
 #define PRIME_DISPENSE_NUM 2
 
@@ -43,3 +64,4 @@
 
 // Defines if the dispenser should respond to Z-movement requests via PLC commands
 #define EXPERIMENTAL_Z_AXIS_MOVEMENT_API true 
+

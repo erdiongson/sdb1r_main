@@ -144,62 +144,6 @@ typedef PROGMEM const int32_t prog_int32_t;
 #else
 #define MAX_LINES 4
 #endif
-#define SPECIAL_FUN          250
-#define BACK_SPACE           251 // Back space
-#define CAPS_LOCK            252  // Caps Lock
-
-#define NUMBER_LOCK          253 // Number Lock
-#define SAVE_KEY             249    // Number sAVE FROM kEYPAD
-#define CLEAR_KEY            254        // Exit
-#define BACK                 254
-#define KBBACK               248    // Exit Keyboard
-#define NUM_ENTER            247   // Enter Numeric Number
-#define STOP                 5
-#define START                3
-#define PAUSE                4
-#define ERROR                6
-#define SETTING              2
-#define LOGO                 0
-#define MAINMENU             0
-#define RUNMENU              1
-#define PAUSEMENU            2
-#define TXRXERROR            3
-#define HOMEERROR            4
-
-#define PROFILEBACK          6
-#define PROFILELOAD          7
-#define CONFIGADVANCE        8
-#define PROFILEUP            9
-#define PROFILEDOWN          10
-#define PROFILEPASS          40
-
-#define NUM_CYCLES           20
-#define ZDIP                 21
-#define VIBLVL               28
-#define PASSEN               29
-#define VIBDURATION          30
-#define SKIP_COLUMNS         31
-#define SKIP_ROWS            32
-#define SKIP_SINGLE_POS      33
-#define ADVPROF_BACK         34
-#define ADVPROF_SAVE         35
-#define STAGGERED_TOGGLE     38
-#define KEY_CONFIG_HOME      6
-
-#define KEY_CONFIG_LOAD      11
-#define KEY_CONFIG_SAVE      12
-#define KEY_CONFIG_PROFILE_NAME   13
-#define KEY_CONFIG_TUBES_X   14
-#define KEY_CONFIG_TUBES_Y   15
-#define KEY_CONFIG_PITCH_X   16
-#define KEY_CONFIG_PITCH_Y   17
-#define KEY_CONFIG_ORIGIN_X  18
-#define KEY_CONFIG_ORIGIN_Y  19
-#define KEY_CONFIG_PREVIEW   36
-#define KEY_CONFIG_PREVIEW_BACK   37
-
-#define MAXXMM 400 //190 (S) //max x/col dimension in mm
-#define MAXYMM 330 //250 (S) //max y/row dimension in mm
 
 // #if EVE_CHIPID <= EVE_FT801
 // #define ROMFONT_TABLEADDRESS (0xFFFFC)
@@ -209,22 +153,6 @@ typedef PROGMEM const int32_t prog_int32_t;
 
 // #include "Gpu_Hal.h"
 // #include "Gpu_CoCmd.h"
-
-//(S)
-//#define STEPS_PER_UNIT_X 400L // (X step motor specs: lead screw is 4mm, 1600 pulse/rev(8 microsteps driver), 4mm/1600 = 0.0025mm, 1mm/0.0025 = 400 steps)
-//#define STEPS_PER_UNIT_Y 320L // (Y step motor specs: lead screw is 10mm, 3200 pulse/rev(16 microsteps driver), 10mm/3200 = 0.003125mm, 1mm/0.003125 = 320 steps/unit)
-//20240917: erdiongson - Use the STEPS_PER_UNIT_Y 160L if we are using the new motor. use this moving forward
-//#define STEPS_PER_UNIT_Y 160L // (Y step motor specs: lead screw is 20mm, 1600 pulse/rev(8 microsteps driver), 20mm/3200 = 0.00625mm, 1mm/0.00625 = 160 steps/unit)
-
-//(L)
-//20240625: erdiongson - Trying out 3200 pulse per revolution (v2.05L)
-#define STEPS_PER_UNIT_X 300 // (X step motor specs: lead screw is 10mm, 3200 pulse/rev(16 microsteps driver), 10mm/3200 = 0.003125mm, 1mm/0.003125 = 320 steps/unit)
-//#define STEPS_PER_UNIT_X 160L // (X step motor specs: lead screw is 10mm, 3200 pulse/rev(16 microsteps driver), 10mm/3200 = 0.003125mm, 1mm/0.003125 = 320 steps/unit)
-#define STEPS_PER_UNIT_Y 100L // (Y step motor specs: lead screw is 10mm, 3200 pulse/rev(16 microsteps driver), 10mm/3200 = 0.003125mm, 1mm/0.003125 = 320 steps/unit)
-//20240917: erdiongson - Use the STEPS_PER_UNIT_Y 160L if we are using the new motor. use this moving forward
-//#define STEPS_PER_UNIT_Y 160L // (Y step motor specs: lead screw is 20mm, 1600 pulse/rev(8 microsteps driver), 20mm/3200 = 0.00625mm, 1mm/0.00625 = 160 steps/unit)
-
-#define STEPS_PER_UNIT_Z 30L
 
 extern Gpu_Hal_Context_t host, *phost;
 

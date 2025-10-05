@@ -39,6 +39,8 @@ Revision History:
 #error "Should select a GPU chip in Platform.h"
 #endif
 
+#include "../Constants.h"
+
 #define SIZE_HOME_START_ICON (460)
 #define SIZE_LOGO (6703)
 
@@ -47,6 +49,17 @@ Revision History:
 
 #define START_ICON_HANDLE 14
 #define LOGO_ICON_HANDLE 15
+
+#define SPECIAL_FUN          250
+#define BACK_SPACE           251 // Back space
+#define CAPS_LOCK            252  // Caps Lock
+
+#define NUMBER_LOCK          253 // Number Lock
+#define SAVE_KEY             249    // Number sAVE FROM kEYPAD
+#define CLEAR_KEY            254        // Exit
+#define BACK                 254
+#define KBBACK               248    // Exit Keyboard
+#define NUM_ENTER            247   // Enter Numeric Number
 
 /******************************************************************************/
 

@@ -2,6 +2,7 @@
 
 #include "BaseMode.h"
 #include "../logic/TrayPositionHandler.h"
+#include "../../Config.h"
 
 // RunMode - Responsible for automated dispensing operation.
 class RunMode : public BaseMode {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaseMode.h"
+#include "../../Config.h"
 
 // HomeMode - Responsible for homing the dispenser head.
 class HomeMode : public BaseMode {
