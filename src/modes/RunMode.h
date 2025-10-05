@@ -28,6 +28,7 @@ private:
 
   int target_x = 0;
   int target_y = 0;
+  int cycle = 0;
 
 public:
   // Constructor.

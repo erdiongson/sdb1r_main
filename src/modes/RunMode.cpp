@@ -99,6 +99,7 @@ ModeStepResult RunMode::on_step() {
       start_stage(MOVE_STAGE);
       break;
     case LOWER_HEAD_STAGE:
+      cycle = 0;
       start_stage(START_DISPENSE_STAGE);
       break;
     case START_DISPENSE_STAGE:
@@ -108,7 +109,8 @@ ModeStepResult RunMode::on_step() {
       break;
     case WAIT_DISPENSE_STAGE:
       if (dispenserProcessResult.dispenser == DISPENSER_STATE_IDLING) {
-        start_stage(RAISE_HEAD_STAGE);
+        cycle++;
+        start_stage(cycle >= profile.cycles ? RAISE_HEAD_STAGE : START_DISPENSE_STAGE);
       }
       break;
     case RAISE_HEAD_STAGE: {
