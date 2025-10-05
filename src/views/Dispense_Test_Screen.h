@@ -13,7 +13,7 @@
 
 #include "../gpu/App_Common.h"
 #include "../gpu/Platform.h"
-#include "Tags.h"
+#include "../Constants.h"
 
 // Dispense test settings structure
 struct DispenseTestSettings {
