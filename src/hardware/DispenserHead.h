@@ -4,13 +4,6 @@
 #include "Axis.h"
 #include "../communication/DispenserSerial.h"
 
-#define DISPENSER_STATE_BLOCKED 6
-#define DISPENSER_STATE_IDLING 0
-#define DISPENSER_STATE_SENT 1
-#define DISPENSER_STATE_ACKNOWLEDGED 2
-#define DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE 4
-#define DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED 5
-
 // Struct for dispenser process result containing state and error information.
 struct DispenserProcessResult {
   int steppers;

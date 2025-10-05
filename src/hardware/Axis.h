@@ -3,10 +3,7 @@
 
 #include "Arduino.h"
 #include <AccelStepper.h>
-
-#define AXIS_STATE_COMPLETE 0
-#define AXIS_STATE_RUNNING 1
-#define AXIS_STATE_ERROR_LIMIT_SWITCH 2
+#include "../Constants.h"
 
 /**
  * Struct for complete axis configuration parameters
