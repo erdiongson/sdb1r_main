@@ -12,7 +12,7 @@ Date created - 2022.12.14 - XentiQ version
 #include "src/gpu/Platform.h"
 
 #define EEPROM_SIZE 2048 
-#define MAX_PROFILES 10//(EEPROM_SIZE / sizeof(Profile))
+#define MAX_PROFILES 10 //(EEPROM_SIZE / sizeof(Profile))
 #define PROFILE_START_ADDR 0
 
 #define PROFILE_NAME_MAX_LEN 30
@@ -71,15 +71,10 @@ typedef struct
     bool staggered = false;
 } Profile;
 
-bool checkPasscode(Gpu_Hal_Context_t *phost, const char *enteredPasscode, const char *correctPasscode);
-
-uint16_t calculateChecksum(const Profile &profile);
-void loadProfile(void);
 uint8_t LoadProfile(void);
 
 void PreLoadEEPROM(void);
 void BlankEEPROM(void);
-
 
 void WriteCurIDEEPROM(uint8_t curprofid);
 uint8_t ReadCurIDEEPROM(void);
@@ -87,13 +82,10 @@ void WritePassEEPROM(char *pass);
 
 void ReadPassEEPROM(char *pass);
 
-
-
 void WriteProfileEEPROM(int address); //try054 , Profile &profile);
 void ReadProfileEEPROM(int address);
 
 #endif /*_PROFILE_H_*/
+
 extern Profile CurProf;
-
-
 extern uint8_t CurProfNum;
