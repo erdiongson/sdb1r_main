@@ -1,5 +1,5 @@
 #include "ProfileController.h"
-#include "../views/Profile_Screen.h"
+#include "../views/ProfileScreen.h"
 #include "../Constants.h"
 #include "../../Config.h"
 #include "../../Profile.h"

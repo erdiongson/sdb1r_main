@@ -1,5 +1,5 @@
 #include "HomeController.h"
-#include "../views/Home_Screen.h"
+#include "../views/HomeScreen.h"
 #include "../Constants.h"
 #include "../../Config.h"
 #include "../Utils.h"

@@ -1,6 +1,6 @@
 #include "RunController.h"
-#include "../views/Home_Screen.h"
-#include "../views/Error_Messages.h"
+#include "../views/HomeScreen.h"
+#include "../views/ErrorMessages.h"
 
 RunController::RunController(ControllerParams params)
   : BaseController(params) {}

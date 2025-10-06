@@ -1,5 +1,5 @@
 /*
- * Dispense_Test_Screen.h
+ * DispenseTestScreen.h
  * 
  * Dispense test screen for SDB-1R
  * Provides controls for testing dispense functionality with vibration settings

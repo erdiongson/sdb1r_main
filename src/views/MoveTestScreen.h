@@ -1,5 +1,5 @@
 /*
- * Move_Test_Screen.h
+ * MoveTestScreen.h
  * 
  * Manual movement test screen for SDB-1R
  * Provides directional controls for testing movement functionality

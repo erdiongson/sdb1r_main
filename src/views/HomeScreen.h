@@ -2,7 +2,7 @@
 #define HOME_SCREEN_H
 
 #include "../gpu/App_Common.h"
-#include "Error_Messages.h"
+#include "ErrorMessages.h"
 
 // Parameters for Home_Screen display.
 struct HomeParams {
