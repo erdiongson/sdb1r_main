@@ -2,6 +2,7 @@
 #define TRAY_POSITION_HANDLER_H
 
 #include <Arduino.h>
+#include "../../Config.h"
 
 
 #define MAX_POSITIONS 100
