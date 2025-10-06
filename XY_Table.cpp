@@ -26,6 +26,7 @@
 #include "src/controllers/MoveTestController.h"
 #include "src/controllers/DispenseTestController.h"
 #include "src/controllers/ConfigController.h"
+#include "src/controllers/ProfileController.h"
 
 // Define placement new operator for Arduino (if not already available).
 inline void* operator new(size_t size, void* ptr) { return ptr; }
@@ -146,6 +147,9 @@ void start_next_controller(int nextControllerType) {
       break;
     case CONTROLLER_CONFIG:
       controller = new (controllerBuffer.data) ConfigController(params);
+      break;
+    case CONTROLLER_PROFILE:
+      controller = new (controllerBuffer.data) ProfileController(params);
       break;
     default:
       Serial.print("Unknown controller type: ");

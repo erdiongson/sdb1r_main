@@ -16,6 +16,7 @@ Date created - 2022.12.14 - XentiQ version
 #define PROFILE_START_ADDR 0
 
 #define PROFILE_NAME_MAX_LEN 30
+#define PASSWORD_MAX_LEN 30
 #define KEYPAD_MAX_LEN 6
 #define ROW_COL_MAX_LEN 45
 

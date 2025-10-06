@@ -2,7 +2,6 @@
 #include "../../Config.h"
 #include "../views/Config_Screen.h"
 #include "../views/Preview_Screen.h"
-#include "../views/Profile_Screen.h"
 #include "../logic/SkipUtils.h"
 #include "ConfigController.h"
 #include "../Utils.h"
@@ -143,8 +142,8 @@ void ConfigController::on_interaction(const Interaction& interaction) {
           sprintf(currentProfile->profileName, "xqsize-s ");
           Config_Screen(phost);
         }
-        Profile_Menu(&host);
-        Config_Screen(phost);
+
+        start_next_controller(CONTROLLER_PROFILE);
       }
       break;
 
