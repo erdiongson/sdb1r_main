@@ -1,17 +1,16 @@
-#include "ConfigMode.h"
+#include "../gpu/Platform.h"
 #include "../../Config.h"
-#include "ModesCommon.h"
-
 #include "../views/Config_Screen.h"
 #include "../views/Preview_Screen.h"
 #include "../views/Profile_Screen.h"
 #include "../logic/SkipUtils.h"
+#include "ConfigController.h"
 
-ConfigMode::ConfigMode(DispenserHead& head, Gpu_Hal_Context_t* host, ModeController* controller, ModeCompletionCallback callback)
-  : BaseMode(head, host, controller, callback), currentProfile(nullptr), specialMode(false), 
+ConfigController::ConfigController(ControllerParams params)
+  : BaseController(params), currentProfile(nullptr), specialMode(false), 
     simulating(false), lastSimulationTime(0), simulateCol(0), simulateRow(0) {}
 
-void ConfigMode::on_start(Profile& profile) {
+void ConfigController::on_start(Profile& profile) {
   Serial.println(F("MODE: Config mode"));
 
   // Store reference to the current profile
@@ -30,7 +29,7 @@ void ConfigMode::on_start(Profile& profile) {
     if (!passwordValid) {
       DisplayKeyboard(phost, 0, "Wrong Password", " ", FALSE, FALSE, FALSE);
       delay(2000);
-      complete_with_next_mode(MODE_TYPE_HOME);
+      start_next_controller(CONTROLLER_HOME);
       return;
     }
   }
@@ -57,7 +56,7 @@ void ConfigMode::on_start(Profile& profile) {
   Config_Screen(phost);
 }
 
-void ConfigMode::on_interaction(const Interaction& interaction) {
+void ConfigController::on_interaction(const Interaction& interaction) {
   if (interaction.key_pressed == 0) return;
 
   switch (interaction.key_pressed) {
@@ -88,7 +87,7 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
           Config_Screen(phost);
           delay(3000);
         } else {
-          complete_with_next_mode(MODE_TYPE_HOME);
+          start_next_controller(CONTROLLER_HOME);
         }
       }
       break;
@@ -421,7 +420,7 @@ void ConfigMode::on_interaction(const Interaction& interaction) {
   }
 }
 
-ModeStepResult ConfigMode::on_step() {
+ControllerStepResult ConfigController::on_step() {
   // Handle simulation updates every 600 ms
   if (simulating) {
     unsigned long currentTime = millis();
@@ -432,14 +431,14 @@ ModeStepResult ConfigMode::on_step() {
   }
   
   DispenserProcessResult result = dispenserHead.process();
-  return ModeStepResult(result.steppers, result.dispenser);
+  return ControllerStepResult(result.steppers, result.dispenser);
 }
 
-int ConfigMode::get_mode_type() const {
-  return MODE_TYPE_CONFIG;
+int ConfigController::get_mode_type() const {
+  return CONTROLLER_CONFIG;
 }
 
-void ConfigMode::increment_vibration_level() {
+void ConfigController::increment_vibration_level() {
   int next_level = currentProfile->vibrationEnabled + 1;
   if (next_level > 4) next_level = 0;
 
@@ -447,7 +446,7 @@ void ConfigMode::increment_vibration_level() {
   dispenserHead.set_vibration_level(next_level);
 }
 
-void ConfigMode::increment_vibration_time() {
+void ConfigController::increment_vibration_time() {
   int next_duration = currentProfile->vibrationDuration + 1;
   if (next_duration > 5) next_duration = 1;
 
@@ -455,7 +454,7 @@ void ConfigMode::increment_vibration_time() {
   dispenserHead.set_vibration_time(next_duration);
 }
 
-void ConfigMode::editSkipColumn(Gpu_Hal_Context_t* phost) {
+void ConfigController::editSkipColumn(Gpu_Hal_Context_t* phost) {
   // Create dimensions from profile
   TrayHandler::Dimensions dimensions(currentProfile->Tube_No_x, currentProfile->Tube_No_y);
   
@@ -478,7 +477,7 @@ void ConfigMode::editSkipColumn(Gpu_Hal_Context_t* phost) {
   }
 }
 
-void ConfigMode::editSkipRow(Gpu_Hal_Context_t* phost) {
+void ConfigController::editSkipRow(Gpu_Hal_Context_t* phost) {
   // Create dimensions from profile
   TrayHandler::Dimensions dimensions(currentProfile->Tube_No_x, currentProfile->Tube_No_y);
   
@@ -501,7 +500,7 @@ void ConfigMode::editSkipRow(Gpu_Hal_Context_t* phost) {
   }
 }
 
-void ConfigMode::editSkipIndividual(Gpu_Hal_Context_t* phost) {
+void ConfigController::editSkipIndividual(Gpu_Hal_Context_t* phost) {
   // Create dimensions from profile
   TrayHandler::Dimensions dimensions(currentProfile->Tube_No_x, currentProfile->Tube_No_y);
   
@@ -527,7 +526,7 @@ void ConfigMode::editSkipIndividual(Gpu_Hal_Context_t* phost) {
   }
 }
 
-void ConfigMode::start_simulation() {
+void ConfigController::start_simulation() {
   // Start simulation
   simulating = true;
   lastSimulationTime = millis();
@@ -564,7 +563,7 @@ void ConfigMode::start_simulation() {
   Preview_Screen(phost, skipPositions, params);
 }
 
-void ConfigMode::end_simulation() {
+void ConfigController::end_simulation() {
   // Stop simulation
   simulating = false;
   simulateCol = 0;
@@ -589,7 +588,7 @@ void ConfigMode::end_simulation() {
   Preview_Screen(phost, skipPositions, params);
 }
 
-void ConfigMode::step_simulation() {
+void ConfigController::step_simulation() {
   // Get next position
   TrayHandler::PositionResult result = simulationHandler.goToNextValidPosition();
   
@@ -619,3 +618,4 @@ void ConfigMode::step_simulation() {
   
   Preview_Screen(phost, skipPositions, params);
 }
+

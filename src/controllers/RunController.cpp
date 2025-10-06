@@ -1,19 +1,18 @@
-#include "RunMode.h"
-#include "ModesCommon.h"
+#include "RunController.h"
 #include "../views/Home_Screen.h"
 #include "../views/Error_Messages.h"
 
-RunMode::RunMode(DispenserHead& head, Gpu_Hal_Context_t* host, ModeController* controller, ModeCompletionCallback callback)
-  : BaseMode(head, host, controller, callback) {}
+RunController::RunController(ControllerParams params)
+  : BaseController(params) {}
 
-void RunMode::on_start(Profile& profile) {
+void RunController::on_start(Profile& profile) {
   Serial.println(F("MODE: Setting profile on trayhandler"));
   trayHandler.load_profile(profile);
   TrayHandler::Position firstPosition = trayHandler.reset();
 
   if (firstPosition.x == -1 || firstPosition.y == -1) {
     Serial.println(F("MODE: No valid positions found, ending run mode"));
-    complete_with_next_mode(MODE_TYPE_HOME);
+    start_next_controller(CONTROLLER_HOME);
     return;
   }
 
@@ -26,7 +25,7 @@ void RunMode::on_start(Profile& profile) {
   // start_stage(ZERO_STAGE);
 }
 
-void RunMode::on_interaction(const Interaction& interaction) {
+void RunController::on_interaction(const Interaction& interaction) {
   int button = interaction.key_pressed;
 
   if (button == PAUSE || interaction.plc_message_type == MSG_PAUSE) {
@@ -39,7 +38,7 @@ void RunMode::on_interaction(const Interaction& interaction) {
     Home_Screen(phost, PAUSEMENU);
   } else if (button == STOP || interaction.plc_message_type == MSG_STOP) {
     Serial.println(F("MODE: Stopped"));
-    complete_with_next_mode(MODE_TYPE_HOME);
+    start_next_controller(CONTROLLER_HOME);
   } else if (button == START) {
     Serial.println(F("MODE: Resumed"));
     paused = false;
@@ -48,7 +47,7 @@ void RunMode::on_interaction(const Interaction& interaction) {
   }
 }
 
-void RunMode::process_stage_logic(DispenserProcessResult& dispenserProcessResult) {
+void RunController::process_stage_logic(DispenserProcessResult& dispenserProcessResult) {
   switch (stage) {
     case IDLE_STAGE:
       Serial.println(F("MODE: IDLE STAGE -> ZERO STAGE"));
@@ -155,7 +154,7 @@ void RunMode::process_stage_logic(DispenserProcessResult& dispenserProcessResult
       break;
 
     case HOME_STAGE:
-      complete_with_next_mode(MODE_TYPE_HOME);
+      start_next_controller(CONTROLLER_HOME);
       break;
 
     default:
@@ -163,12 +162,12 @@ void RunMode::process_stage_logic(DispenserProcessResult& dispenserProcessResult
   }
 }
 
-ModeStepResult RunMode::on_step() {
-  if (paused) return ModeStepResult(MODE_CONTINUE, MODE_CONTINUE);
+ControllerStepResult RunController::on_step() {
+  if (paused) return ControllerStepResult(-1, -1);
 
   DispenserProcessResult dispenserProcessResult = dispenserHead.process();
   if (dispenserProcessResult.steppers == AXIS_STATE_RUNNING) {
-    return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
+    return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
   }
 
   HomeParams params = {
@@ -182,7 +181,7 @@ ModeStepResult RunMode::on_step() {
     params.error_code = ERROR_LIMIT_SWITCH;
     Home_Screen(phost, RUNMENU, &params);
     // start_stage(HOME_STAGE);
-    return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
+    return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
   }
 
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
@@ -190,7 +189,7 @@ ModeStepResult RunMode::on_step() {
     params.error_code = ERROR_IR_SENSOR;
     Home_Screen(phost, RUNMENU, &params);
     // start_stage(HOME_STAGE);
-    return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
+    return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
   }
 
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
@@ -198,7 +197,7 @@ ModeStepResult RunMode::on_step() {
     params.error_code = ERROR_ACK_ERROR;
     Home_Screen(phost, RUNMENU, &params);
     // start_stage(HOME_STAGE);
-    return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
+    return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
   }
 
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
@@ -206,15 +205,15 @@ ModeStepResult RunMode::on_step() {
     params.error_code = ERROR_MARKER_NOT_DETECTED;
     Home_Screen(phost, RUNMENU, &params);
     // start_stage(HOME_STAGE);
-    return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
+    return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
   }
 
   // Perform logic after all axis are idle (all movement is completed)
   process_stage_logic(dispenserProcessResult);
 
-  return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
+  return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
 }
 
-int RunMode::get_mode_type() const {
-  return MODE_TYPE_RUN;
+int RunController::get_mode_type() const {
+  return CONTROLLER_RUN;
 }

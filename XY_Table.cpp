@@ -10,8 +10,6 @@
 * Version 2.03: ii. Revised the saved password logic
 */
 
-#include "src/modes/BaseMode.h"
-#include "src/modes/ModesCommon.h"
 #include "src/gpu/Platform.h"
 #include "src/gpu/App_Common.h"
 #include <EEPROM.h>
@@ -21,8 +19,15 @@
 
 #include "src/hardware/Axis.h"
 #include "src/hardware/DispenserHead.h"
-#include "src/logic/ModeController.h"
+#include "src/controllers/BaseController.h"
+#include "src/controllers/HomeController.h"
+#include "src/controllers/RunController.h"
+#include "src/controllers/MoveTestController.h"
+#include "src/controllers/DispenseTestController.h"
+#include "src/controllers/ConfigController.h"
 
+// Define placement new operator for Arduino (if not already available).
+inline void* operator new(size_t size, void* ptr) { return ptr; }
 
 Gpu_Hal_Context_t host, *phost;
 Profile CurProf;        //current profile
@@ -47,8 +52,24 @@ AxisParams zAxis(
 
 DispenserHeadParams params = { xAxis, yAxis, zAxis };
 DispenserHead dispenserHead(params);
-ModeController modeController(dispenserHead);
 InteractionsHandler interactionsHandler;
+
+// Calculate the maximum controller size at compile time.
+constexpr size_t MAX_CONTROLLER_SIZE = MaxSize<
+  HomeController,
+  RunController,
+  MoveTestController,
+  DispenseTestController,
+  ConfigController
+>::value;
+
+// Static buffer to hold any controller (aligned for proper object construction).
+struct alignas(BaseController) ControllerBuffer {
+  uint8_t data[MAX_CONTROLLER_SIZE];
+} controllerBuffer;
+
+// Pointer to the current controller being used.
+BaseController* controller = nullptr;
 
 uint16_t err_flag = 0;  //E1 = 1, E2 = 2;
 static uint32_t loopIndex = 0;
@@ -135,6 +156,47 @@ void setupPasswordHandling() {
   Serial.println();
 }
 
+// Transitions to the next controller based on the controller type.
+// @param nextControllerType The type of controller to transition to.
+void start_next_controller(int nextControllerType) {
+  // Destroy the current controller if it exists (call destructor)
+  if (controller != nullptr) {
+    controller->~BaseController();
+    controller = nullptr;
+  }
+
+  // Create controller parameters
+  ControllerParams params = { dispenserHead, phost, start_next_controller };
+
+  // Create the new controller in the static buffer using placement new
+  switch(nextControllerType) {
+    case CONTROLLER_HOME:
+      controller = new (controllerBuffer.data) HomeController(params);
+      break;
+    case CONTROLLER_RUN:
+      controller = new (controllerBuffer.data) RunController(params);
+      break;
+    case CONTROLLER_MOVE_TEST:
+      controller = new (controllerBuffer.data) MoveTestController(params);
+      break;
+    case CONTROLLER_DISPENSE_TEST:
+      controller = new (controllerBuffer.data) DispenseTestController(params);
+      break;
+    case CONTROLLER_CONFIG:
+      controller = new (controllerBuffer.data) ConfigController(params);
+      break;
+    default:
+      Serial.print("Unknown controller type: ");
+      Serial.println(nextControllerType);
+      return;
+  }
+
+  // Start the new controller
+  if (controller != nullptr) {
+    controller->on_start(CurProf);
+  }
+}
+
 
 void setup() {
   phost = &host;
@@ -167,8 +229,12 @@ void setup() {
   Serial.println("Loading profile..");
   CurProfNum = LoadProfile();
 
-  Serial.println("Starting first mode..");
-  modeController.start_mode(MODE_TYPE_MOVE_TEST, CurProf, phost);
+  Serial.print("Controller buffer size: ");
+  Serial.print(MAX_CONTROLLER_SIZE);
+  Serial.println(" bytes");
+  
+  Serial.println("Starting first controller..");
+  start_next_controller(CONTROLLER_HOME);
 
   dispenserHead.z().setDisabled(true);
 }
@@ -180,7 +246,7 @@ void loop() {
 
   // Call the mode's on_step() function
   // Responsible for stepper runs, and dispenser serial processing
-  ModeStepResult result = modeController.on_step();
+  ControllerStepResult result = controller->on_step();
 
   // Check for interactions only periodically
   // Includes touch screen presses, and PLC commands
@@ -190,7 +256,7 @@ void loop() {
     lastInteractionCheck = currentTime;
 
     if (interactionsHandler.getInteractionFast(interaction)) {
-      modeController.on_interaction(interaction);
+      controller->on_interaction(interaction);
     }
   }
 }

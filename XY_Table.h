@@ -14,6 +14,11 @@ Date created - 2022.12.14 - XentiQ version
 #define MAX_TUBES_Y 33
 #define MAX_ZDIP 2000 // 20cm
 
+class BaseController;
+
+// External reference to the current controller being used.
+extern BaseController* controller;
+
 void setupPasswordHandling(void);
 
 #endif /*_XY_TABLE_H_*/

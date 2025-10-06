@@ -80,3 +80,9 @@
 // Preview screen control tags
 #define TAG_PREVIEW_SIMULATE    80
 #define TAG_PREVIEW_STOP        81
+
+#define CONTROLLER_HOME 1
+#define CONTROLLER_RUN 2
+#define CONTROLLER_MOVE_TEST 3
+#define CONTROLLER_DISPENSE_TEST 4
+#define CONTROLLER_CONFIG 5
