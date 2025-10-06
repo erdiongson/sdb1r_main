@@ -13,6 +13,4 @@ class BaseController;
 // External reference to the current controller being used.
 extern BaseController* controller;
 
-void setupPasswordHandling(void);
-
 #endif /*_XY_TABLE_H_*/

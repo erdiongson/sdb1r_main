@@ -19,21 +19,6 @@ void ConfigController::on_start(Profile& profile) {
   // Check if special mode is enabled
   specialMode = (digitalRead(Limit_S_y_MAX) == 0);
 
-  // Reset password buffer
-  Password[2][0] = 0;
-
-  // Handle password protection if enabled
-  if (currentProfile->passwordEnabled) {
-    Keyboard(phost, Password[2], "Enter Password", FALSE);
-    bool passwordValid = (strcmp(Password[1], Password[2]) == 0 || strcmp(Password[0], Password[2]) == 0);
-    if (!passwordValid) {
-      DisplayKeyboard(phost, 0, "Wrong Password", " ", FALSE, FALSE, FALSE);
-      delay(2000);
-      start_next_controller(CONTROLLER_HOME);
-      return;
-    }
-  }
-
   if (specialMode) {
     if (digitalRead(Limit_S_y_MAX) != 0) {
       BlankEEPROM();

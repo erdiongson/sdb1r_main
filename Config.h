@@ -59,6 +59,9 @@
 #define MAX_TUBES_Y 33
 #define MAX_ZDIP 2000 // 20cm
 
+#define SUPER_PASSWORD "superXQ"
+#define INITIAL_PASSWORD "init1234"
+
 // Defines the number of "dispenses" performed during priming
 #define PRIME_DISPENSE_NUM 2
 

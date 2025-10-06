@@ -47,10 +47,6 @@ Date created - 2022.12.14 - XentiQ version
 #define MAXCYCLE 99
 #define MINCYCLE 1
 
-
-extern char Password[4][PROFILE_NAME_MAX_LEN];
-
-
 typedef struct
 {
     char profileName[PROFILE_NAME_MAX_LEN];

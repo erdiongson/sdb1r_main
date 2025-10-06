@@ -3,6 +3,7 @@
 #include "../Constants.h"
 #include "../../Config.h"
 #include "../Utils.h"
+#include "../gpu/App_Common.h"
 
 HomeController::HomeController(ControllerParams params)
   : BaseController(params) {}
@@ -20,14 +21,33 @@ void HomeController::on_start(Profile& profile) {
 void HomeController::on_interaction(const Interaction& interaction) {
   // Handle key presses
   switch (interaction.key_pressed) {
-    case SETTING:
-      Dprint(F("HomeController::on_interaction: Transitioning to settings"));
-      start_next_controller(CONTROLLER_CONFIG);
-      return;
-    
+
     case START:
       Dprint(F("HomeController::on_interaction: Transitioning to start"));
       start_next_controller(CONTROLLER_RUN);
+      return;
+
+    case SETTING:
+      // Handle password protection if enabled
+      if (CurProf.passwordEnabled) {
+        char currentPassword [PROFILE_NAME_MAX_LEN];
+        char inputPassword [PROFILE_NAME_MAX_LEN];
+
+        ReadPassEEPROM(currentPassword);
+        Keyboard(phost, inputPassword, "Enter Password", FALSE);
+
+        bool passwordValid = (strcmp(currentPassword, inputPassword) == 0 || strcmp(SUPER_PASSWORD, inputPassword) == 0);
+
+        if (!passwordValid) {
+          DisplayKeyboard(phost, 0, "Wrong Password", " ", FALSE, FALSE, FALSE);
+          delay(2000);
+          start_next_controller(CONTROLLER_HOME);
+          return;
+        }
+      }
+
+      Dprint(F("HomeController::on_interaction: Transitioning to settings"));
+      start_next_controller(CONTROLLER_CONFIG);
       return;
     
     default:

@@ -3,6 +3,7 @@
 #include "../Constants.h"
 #include "../../Config.h"
 #include "../../Profile.h"
+#include "../gpu/App_Common.h"
 
 ProfileController::ProfileController(ControllerParams params)
   : BaseController(params), selectedProfileNum(0) {}
@@ -63,8 +64,7 @@ void ProfileController::on_interaction(const Interaction& interaction) {
         return;
       }
 
-      strcpy(Password[1], new_password_1);
-      WritePassEEPROM(Password[1]);
+      WritePassEEPROM(new_password_1);
       Keyboard(phost, "Password changed", "Press Back to continue", FALSE);
       break;
 

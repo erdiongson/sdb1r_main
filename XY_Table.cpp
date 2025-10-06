@@ -76,48 +76,7 @@ BaseController* controller = nullptr;
 // To track when to check for interactions
 unsigned long lastInteractionCheck = 0;
 
-#if DEBUG
-char Password[4][PROFILE_NAME_MAX_LEN] = { "su",  //super password
-                                           "in",  //current password
-                                           "",    //user enter password to be check
-                                           "" };  //user enter 2nd time password to be check
-
-
-#else
-char Password[4][PROFILE_NAME_MAX_LEN] = { "superXQ",   //super password
-                                           "init1234",  //current password
-                                           "",          //user enter password to be check
-                                           "" };        //user enter 2nd time password to be check
-#endif
 bool SpecialMode;
-
-
-/**
- * Sets up and handles the password validation and initialization
- * Checks if the password in EEPROM matches the default, and handles accordingly
- */
-void setupPasswordHandling() {
-  Serial.print("Setup Password[1]: ");
-  Serial.println(Password[1]);
-  Serial.print("Setup Password[2]: ");
-  Serial.println(Password[2]);
-  ReadPassEEPROM(Password[2]);
-  Serial.print("ReadPassEEPROM Password[2]: ");
-  Serial.println(Password[2]);
-
-  if (strcmp(Password[1], Password[2]) == 0) {
-    //20240226: erdiongson - Revised the password copying logic to Password[1]
-    strcpy(Password[1], Password[2]);  //if eeprom is blank load preset value (locked to init1234)
-    Serial.println("Initial Password used.");
-  } else {
-    //20240226: erdiongson - If the password changed, it will automatically save to Password[1]
-    ReadPassEEPROM(Password[1]);  //if they changed the password other than init1234
-    Serial.println("Password changed.");
-  }
-  Serial.print("New Password[1]: ");
-  Serial.print(Password[1]);
-  Serial.println();
-}
 
 // Transitions to the next controller based on the controller type.
 // @param nextControllerType The type of controller to transition to.
@@ -189,8 +148,6 @@ void setup() {
   Dprint("Firmware version :", FWVER);
 
   Gpu_Hal_Wr8(phost, REG_TOUCH_SETTLE, 3);
-
-  setupPasswordHandling();
 
   Serial.println("Loading profile..");
   CurProfNum = LoadProfile();
