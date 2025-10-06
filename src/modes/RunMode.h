@@ -55,7 +55,6 @@ public:
   int get_mode_type() const override;
 
 private:
-  // Start a new dispensing stage.
-  // @param newStage The stage to start.
-  void start_stage(int newStage);
+  // Process the next stage of the dispensing process.
+  void process_stage_logic(DispenserProcessResult& dispenserProcessResult);
 };

@@ -23,7 +23,7 @@ void RunMode::on_start(Profile& profile) {
   paused = false;
 
   Home_Screen(phost, RUNMENU);
-  start_stage(ZERO_STAGE);
+  // start_stage(ZERO_STAGE);
 }
 
 void RunMode::on_interaction(const Interaction& interaction) {
@@ -44,63 +44,11 @@ void RunMode::on_interaction(const Interaction& interaction) {
     Serial.println(F("MODE: Resumed"));
     paused = false;
     Home_Screen(phost, RUNMENU);
-    start_stage(stage);
+    // start_stage(stage);
   }
 }
 
-ModeStepResult RunMode::on_step() {
-  if (paused) return ModeStepResult(MODE_CONTINUE, MODE_CONTINUE);
-
-  DispenserProcessResult dispenserProcessResult = dispenserHead.process();
-  if (dispenserProcessResult.steppers == AXIS_STATE_RUNNING) {
-    return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
-  }
-
-  HomeParams params = {
-    (uint16_t)trayHandler.getCurrentRow(),
-    (uint16_t)trayHandler.getCurrentColumn(),
-    (uint16_t)trayHandler.getTubesLeft(),
-  };
-
-  if (dispenserProcessResult.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
-    Serial.println(F("MODE: Stepper error - limit switch triggered"));
-    params.error_code = ERROR_LIMIT_SWITCH;
-    Home_Screen(phost, RUNMENU, &params);
-    start_stage(HOME_STAGE);
-    return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
-  }
-
-  if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
-    Serial.println(F("MODE: Dispenser error - IR sensor failure"));
-    params.error_code = ERROR_IR_SENSOR;
-    Home_Screen(phost, RUNMENU, &params);
-    start_stage(HOME_STAGE);
-    return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
-  }
-
-  if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
-    Serial.println(F("MODE: Dispenser error - Acknowledgment error"));
-    params.error_code = ERROR_ACK_ERROR;
-    Home_Screen(phost, RUNMENU, &params);
-    start_stage(HOME_STAGE);
-    return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
-  }
-
-  if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
-    Serial.println(F("MODE: Dispenser error - marker not detected"));
-    params.error_code = ERROR_MARKER_NOT_DETECTED;
-    Home_Screen(phost, RUNMENU, &params);
-    start_stage(HOME_STAGE);
-    return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
-  }
-
-  // Perform logic after all axis are idle (all movement is completed)
-  process_stage_logic();
-
-  return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
-}
-
-void RunMode::process_stage_logic() {
+void RunMode::process_stage_logic(DispenserProcessResult& dispenserProcessResult) {
   switch (stage) {
     case IDLE_STAGE:
       Serial.println(F("MODE: IDLE STAGE -> ZERO STAGE"));
@@ -128,7 +76,7 @@ void RunMode::process_stage_logic() {
         cycle++;
 
         // Check if priming should end
-        if (cycle >= profile.cycles) {
+      if (cycle >= profile.Cycles) {
           // Calculate the first position and move to it
           TrayHandler::Position firstPosition = trayHandler.reset();
           target_x = (profile.trayOriginX + ((firstPosition.x - 1 + (profile.staggered ? 0.5 : 0)) * profile.pitch_x)) * -STEPS_PER_UNIT_X;
@@ -166,7 +114,7 @@ void RunMode::process_stage_logic() {
         cycle++;
 
         // Check if dispensing should end
-        if (cycle >= profile.cycles) {
+        if (cycle >= profile.Cycles) {
           dispenserHead.z().moveTo(0);
           Serial.println(F("MODE: DISPENSE STAGE -> RAISE_HEAD STAGE"));
           this->stage = RAISE_HEAD_STAGE;
@@ -213,6 +161,58 @@ void RunMode::process_stage_logic() {
     default:
       break;
   }
+}
+
+ModeStepResult RunMode::on_step() {
+  if (paused) return ModeStepResult(MODE_CONTINUE, MODE_CONTINUE);
+
+  DispenserProcessResult dispenserProcessResult = dispenserHead.process();
+  if (dispenserProcessResult.steppers == AXIS_STATE_RUNNING) {
+    return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
+  }
+
+  HomeParams params = {
+    (uint16_t)trayHandler.getCurrentRow(),
+    (uint16_t)trayHandler.getCurrentColumn(),
+    (uint16_t)trayHandler.getTubesLeft(),
+  };
+
+  if (dispenserProcessResult.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
+    Serial.println(F("MODE: Stepper error - limit switch triggered"));
+    params.error_code = ERROR_LIMIT_SWITCH;
+    Home_Screen(phost, RUNMENU, &params);
+    // start_stage(HOME_STAGE);
+    return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
+  }
+
+  if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
+    Serial.println(F("MODE: Dispenser error - IR sensor failure"));
+    params.error_code = ERROR_IR_SENSOR;
+    Home_Screen(phost, RUNMENU, &params);
+    // start_stage(HOME_STAGE);
+    return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
+  }
+
+  if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
+    Serial.println(F("MODE: Dispenser error - Acknowledgment error"));
+    params.error_code = ERROR_ACK_ERROR;
+    Home_Screen(phost, RUNMENU, &params);
+    // start_stage(HOME_STAGE);
+    return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
+  }
+
+  if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
+    Serial.println(F("MODE: Dispenser error - marker not detected"));
+    params.error_code = ERROR_MARKER_NOT_DETECTED;
+    Home_Screen(phost, RUNMENU, &params);
+    // start_stage(HOME_STAGE);
+    return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
+  }
+
+  // Perform logic after all axis are idle (all movement is completed)
+  process_stage_logic(dispenserProcessResult);
+
+  return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
 }
 
 int RunMode::get_mode_type() const {
