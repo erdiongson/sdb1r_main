@@ -74,28 +74,6 @@ typedef struct
     bool staggered = false;
 } Profile;
 
-
-typedef struct
-{
-    char profileName[PROFILE_NAME_MAX_LEN];
-    int8_t profileId = 0;
-    int8_t Tube_No_x = 0; // represent the number of columns
-    int8_t Tube_No_y = 0; // represent the number of rows
-    float pitch_x = 0.0;
-    float pitch_y = 0.0;
-    float trayOriginX = 0.0;
-    float trayOriginY = 0.0;
-    int16_t Cycles = 1;
-    int16_t CurrentCycle = 0; // New field for storing the current cycle
-    float ZDip = 0.0;
-    int16_t vibrationEnabled = 0;
-    bool dispenseEnabled = false;
-    int16_t passwordEnabled = 0;
-    int16_t vibrationDuration = 2;
-    int16_t sizeFlag = 1; //small = 0; large = 1;
-} ProfileMin;
-
-
 bool checkPasscode(Gpu_Hal_Context_t *phost, const char *enteredPasscode, const char *correctPasscode);
 
 uint16_t calculateChecksum(const Profile &profile);
@@ -116,11 +94,9 @@ void ReadPassEEPROM(char *pass);
 
 void WriteProfileEEPROM(int address); //try054 , Profile &profile);
 void ReadProfileEEPROM(int address);
-void ReadProfileMinEEPROM(int address);
 
 #endif /*_PROFILE_H_*/
 extern Profile CurProf;
-extern ProfileMin SelectProf; //try055
 
 
 extern uint8_t CurProfNum;

@@ -26,7 +26,7 @@
 
 Gpu_Hal_Context_t host, *phost;
 Profile CurProf;        //current profile
-ProfileMin SelectProf;  //current profile
+Profile SelectProf;  //current profile
 
 uint8_t CurProfNum;  //current profile id
 
