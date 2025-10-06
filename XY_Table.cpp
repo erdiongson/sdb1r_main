@@ -71,13 +71,8 @@ struct alignas(BaseController) ControllerBuffer {
 // Pointer to the current controller being used.
 BaseController* controller = nullptr;
 
-uint16_t err_flag = 0;  //E1 = 1, E2 = 2;
-static uint32_t loopIndex = 0;
-
 // To track when to check for interactions
 unsigned long lastInteractionCheck = 0;
-#define INTERACT_INTERVAL_AXIS_RUNNING 200
-#define INTERACT_INTERVAL_AXIS_IDLE 20
 
 #if DEBUG
 char Password[4][PROFILE_NAME_MAX_LEN] = { "su",  //super password

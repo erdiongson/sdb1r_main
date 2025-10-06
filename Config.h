@@ -52,6 +52,12 @@
 
 #define STEPS_PER_UNIT_Z 30L
 
+//Change MAX_TUBES_X and MAX_TUBES_Y depending on the use;
+//for (L) 300x300 - MAX_TUBES_X 33; MAX_TUBES_Y 33
+//for (S) 200x300 - MAX_TUBES_X 20; MAX_TUBES_Y 27
+#define MAX_TUBES_X 42//try054 33
+#define MAX_TUBES_Y 33
+#define MAX_ZDIP 2000 // 20cm
 
 // Defines the number of "dispenses" performed during priming
 #define PRIME_DISPENSE_NUM 2
