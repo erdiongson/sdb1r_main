@@ -4,7 +4,6 @@
 class ConfigController : public BaseController {
 private:
   Profile* currentProfile;
-  bool specialMode;
   bool simulating;
   unsigned long lastSimulationTime;
   TrayHandler::TrayPositionHandler simulationHandler;

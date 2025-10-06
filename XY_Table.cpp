@@ -33,7 +33,6 @@ inline void* operator new(size_t size, void* ptr) { return ptr; }
 
 Gpu_Hal_Context_t host, *phost;
 Profile CurProf;        //current profile
-Profile SelectProf;  //current profile
 
 uint8_t CurProfNum;  //current profile id
 
@@ -75,8 +74,6 @@ BaseController* controller = nullptr;
 
 // To track when to check for interactions
 unsigned long lastInteractionCheck = 0;
-
-bool SpecialMode;
 
 // Transitions to the next controller based on the controller type.
 // @param nextControllerType The type of controller to transition to.
@@ -126,7 +123,6 @@ void start_next_controller(int nextControllerType) {
 void setup() {
   phost = &host;
 
-  SpecialMode = FALSE;
   App_Common_Init(&host);  //* Init HW Hal */
   // App_Calibrate_Screen(&host); ///*Screen Calibration*//
 

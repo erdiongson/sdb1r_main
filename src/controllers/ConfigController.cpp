@@ -7,7 +7,7 @@
 #include "../Utils.h"
 
 ConfigController::ConfigController(ControllerParams params)
-  : BaseController(params), currentProfile(nullptr), specialMode(false), 
+  : BaseController(params), currentProfile(nullptr), 
     simulating(false), lastSimulationTime(0), simulateCol(0), simulateRow(0) {}
 
 void ConfigController::on_start(Profile& profile) {
@@ -15,17 +15,6 @@ void ConfigController::on_start(Profile& profile) {
 
   // Store reference to the current profile
   currentProfile = &profile;
-
-  // Check if special mode is enabled
-  specialMode = (digitalRead(Limit_S_y_MAX) == 0);
-
-  if (specialMode) {
-    if (digitalRead(Limit_S_y_MAX) != 0) {
-      BlankEEPROM();
-    } else {
-      specialMode = false;
-    }
-  }
 
   // Initialize simulation state
   simulating = false;
