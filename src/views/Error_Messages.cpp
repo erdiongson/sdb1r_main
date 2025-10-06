@@ -121,6 +121,15 @@ void Error_Message(Gpu_Hal_Context_t *phost, int error_code) {
       params.rightTag = 104;
       break;
       
+    case ERROR_ACK_ERROR:
+      params.title = "Dispenser Error";
+      params.subtitle = "Dispenser Head Stuck. Check the head.";
+      params.leftBtn = nullptr;
+      params.rightBtn = "OK";
+      params.leftTag = 0;
+      params.rightTag = 103;
+      break;
+      
     default:
       params.title = "Unknown Error";
       params.subtitle = "An unknown error occurred.";

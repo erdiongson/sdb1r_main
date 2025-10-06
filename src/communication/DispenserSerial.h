@@ -27,6 +27,7 @@
 #define DISPENSE_DONE 0xF9        // Dispense operation completed
 #define IR_SENSOR_FAILURE 0xE1    // Error: IR sensor failure
 #define MARKER_NOT_DETECTED 0xE2  // Error: Marker not detected
+#define ACK_ERROR 0xE0            // Error: Acknowledgment error
 
 //Vibration Mode Commands
 #define VIBMODE_U0 0x71  //former 0xC2, changed for 1RC
@@ -63,6 +64,9 @@ private:
   // @param command The command byte.
   // @param data The data byte.
   static void send_message(byte command, byte data);
+  
+  // Timeout timestamp in milliseconds.
+  static unsigned long timeout_at;
 };
 
 #endif  // DISPENSER_SERIAL_H

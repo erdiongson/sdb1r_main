@@ -70,9 +70,17 @@ ModeStepResult RunMode::on_step() {
     return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
   }
 
-  if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE) {
+  if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
     Serial.println(F("MODE: Dispenser error - IR sensor failure"));
     params.error_code = ERROR_IR_SENSOR;
+    Home_Screen(phost, RUNMENU, &params);
+    start_stage(HOME_STAGE);
+    return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
+  }
+
+  if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
+    Serial.println(F("MODE: Dispenser error - Acknowledgment error"));
+    params.error_code = ERROR_ACK_ERROR;
     Home_Screen(phost, RUNMENU, &params);
     start_stage(HOME_STAGE);
     return ModeStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);

@@ -19,6 +19,7 @@ typedef struct {
 #define ERROR_IR_SENSOR 2
 #define ERROR_MARKER_NOT_DETECTED 3
 #define ERROR_LIMIT_SWITCH 4
+#define ERROR_ACK_ERROR 5
 
 // Displays an error/message dialog with a black box, white outline, title, subtitle, and optional buttons.
 // @param phost GPU context.

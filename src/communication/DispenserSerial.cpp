@@ -1,5 +1,8 @@
 #include "DispenserSerial.h"
 
+// Initialize static member.
+unsigned long DispenserSerial::timeout_at = 0;
+
 // Send a message to the dispenser with command and data bytes.
 // @param command Command byte to send.
 // @param data Data byte to send.
@@ -7,6 +10,9 @@ void DispenserSerial::send_message(byte command, byte data) {
   uint8_t checksum = command + data;
   uint8_t msg[] = {START_BYTE, command, data, checksum, END_BYTE};
   Serial2.write(msg, 5);
+  
+  // Set timeout to 5 seconds from now.
+  timeout_at = millis() + 5000;
 }
 
 // Send a dispense command to the dispenser.
@@ -33,6 +39,12 @@ void DispenserSerial::send_vibration_time(uint8_t seconds) {
 // Process incoming data from the dispenser.
 // @return Command code if valid message received, 0 if no message, -1 if error.
 int DispenserSerial::process() {
+  // Check for timeout.
+  if (millis() >= timeout_at && timeout_at != 0) {
+    timeout_at = 0; // Reset timeout
+    return ACK_ERROR;
+  }
+  
   if (Serial2.available() == 0) return 0;
   
   // Check if first byte is START_BYTE
