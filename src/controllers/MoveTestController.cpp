@@ -2,6 +2,7 @@
 #include "../views/Move_Test_Screen.h"
 #include "../Constants.h"
 #include "../../Config.h"
+#include "../Utils.h"
 
 MoveTestController::MoveTestController(ControllerParams params)
   : BaseController(params) {}

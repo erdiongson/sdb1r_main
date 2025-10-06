@@ -2,6 +2,7 @@
 #include "../views/Home_Screen.h"
 #include "../Constants.h"
 #include "../../Config.h"
+#include "../Utils.h"
 
 HomeController::HomeController(ControllerParams params)
   : BaseController(params) {}

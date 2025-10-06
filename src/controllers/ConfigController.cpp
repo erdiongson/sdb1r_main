@@ -5,6 +5,7 @@
 #include "../views/Profile_Screen.h"
 #include "../logic/SkipUtils.h"
 #include "ConfigController.h"
+#include "../Utils.h"
 
 ConfigController::ConfigController(ControllerParams params)
   : BaseController(params), currentProfile(nullptr), specialMode(false), 

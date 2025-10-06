@@ -45,6 +45,7 @@ Revision History:
 #include <math.h>
 #include <string.h>
 #include <inttypes.h>
+#include "../Utils.h"
 /*************************************************************************************************
  *                      These functions work with FT8XX GPU buffer
  **************************************************************************************************/

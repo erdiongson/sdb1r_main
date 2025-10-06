@@ -16,6 +16,7 @@
 #include "Config.h"
 #include "Profile.h"
 #include "XY_Table.h"
+#include "src/Utils.h"
 
 #include "src/hardware/Axis.h"
 #include "src/hardware/DispenserHead.h"
@@ -89,40 +90,6 @@ char Password[4][PROFILE_NAME_MAX_LEN] = { "superXQ",   //super password
 #endif
 bool SpecialMode;
 
-#if DEBUG
-void Dprint(char x) {
-  Serial.print(x, HEX);
-}
-void Dprint(String x) {
-  Serial.print(x);
-}
-void Dprint(String x, String y) {
-  Serial.print(x);
-  Serial.print(y);
-}
-void Dprint(String x, float y) {
-  char buf[20];
-
-  dtostrf(y, 3, 5, buf);
-  Serial.print(x);
-  Serial.println(buf);
-}
-void Dprint(String x, uint8_t y) {
-  char buf[20];
-
-  sprintf(buf, "%d", y);
-  Serial.print(x);
-  Serial.println(buf);
-}
-
-#else
-void Dprint(char x) {}
-void Dprint(String x) {}
-void Dprint(String x, String y) {}
-void Dprint(String x, uint8_t y) {}
-void Dprint(String x, float y) {}
-
-#endif
 
 /**
  * Sets up and handles the password validation and initialization

@@ -118,11 +118,6 @@ void toggleButton(Gpu_Hal_Context_t *phost, int tag, int x, int y, int buttonSiz
 void Tray_Screen(Gpu_Hal_Context_t *phost);
 
 uint8_t offsetStepperPosition(void);
-void Dprint(char );
-void Dprint(String);
-void Dprint(String,String);
-void Dprint(String , uint8_t );
-void Dprint(String , float );
 void Round1Dec(float *x);//v204
 
 

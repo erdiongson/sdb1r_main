@@ -1,4 +1,5 @@
 #include "../gpu/App_Common.h"
+#include "../Utils.h"
 
 void Config_Screen(Gpu_Hal_Context_t *phost) {
 

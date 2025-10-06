@@ -11,6 +11,7 @@ Date created - 2022.12.14 - XentiQ version
 #include <EEPROM.h>
 #include "src/gpu/Platform.h"
 #include "src/gpu/app_common.h"
+#include "src/Utils.h"
 
 #define SINGLE_PROFILE
 
