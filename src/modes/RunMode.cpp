@@ -110,15 +110,34 @@ void RunMode::process_stage_logic() {
       dispenserHead.y().reset();
       dispenserHead.z().reset();
 
-      // Calculate the first position and move to it
-      TrayHandler::Position firstPosition = trayHandler.reset();
-      target_x = (profile.trayOriginX + ((firstPosition.x - 1 + (profile.staggered ? 0.5 : 0)) * profile.pitch_x)) * -STEPS_PER_UNIT_X;
-      target_y = (profile.trayOriginY + ((firstPosition.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
+      cycle = 0;
+      dispenserHead.send_dispense();
+      this->stage = PRIME_STAGE;
+      break;
 
-      dispenserHead.x().moveTo(target_x);
-      dispenserHead.y().moveTo(target_y);
+    case PRIME_STAGE:
+      if (dispenserProcessResult.dispenser == DISPENSER_STATE_IDLING) {
+        cycle++;
 
-      this->stage = MOVE_STAGE;
+        // Check if priming should end
+        if (cycle >= profile.cycles) {
+          // Calculate the first position and move to it
+          TrayHandler::Position firstPosition = trayHandler.reset();
+          target_x = (profile.trayOriginX + ((firstPosition.x - 1 + (profile.staggered ? 0.5 : 0)) * profile.pitch_x)) * -STEPS_PER_UNIT_X;
+          target_y = (profile.trayOriginY + ((firstPosition.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
+
+          dispenserHead.x().moveTo(target_x);
+          dispenserHead.y().moveTo(target_y);
+
+          Serial.println(F("MODE: PRIME_STAGE -> MOVE STAGE"));
+          this->stage = MOVE_STAGE;
+        } else {
+          dispenserHead.send_dispense();
+
+          Serial.println(F("MODE: PRIME_STAGE -> PRIME STAGE"));
+          this->stage = PRIME_STAGE;
+        }
+      }
       break;
 
     case MOVE_STAGE:
@@ -134,25 +153,21 @@ void RunMode::process_stage_logic() {
       this->stage = START_DISPENSE_STAGE;
       break;
 
-    case START_DISPENSE_STAGE:
-      if (dispenserProcessResult.dispenser == DISPENSER_STATE_ACKNOWLEDGED) {
-        Serial.println(F("MODE: START_DISPENSE STAGE -> WAIT_DISPENSE STAGE"));
-        this->stage = WAIT_DISPENSE_STAGE;
-      }
-      break;
-
-    case WAIT_DISPENSE_STAGE:
+    case DISPENSE_STAGE:
       if (dispenserProcessResult.dispenser == DISPENSER_STATE_IDLING) {
-        if (cycle >= porfile.cycles) {
-          Serial.println(F("MODE: WAIT_DISPENSE STAGE -> RAISE_HEAD STAGE"));
+        cycle++;
+
+        // Check if dispensing should end
+        if (cycle >= profile.cycles) {
+          dispenserHead.z().moveTo(0);
+          Serial.println(F("MODE: DISPENSE STAGE -> RAISE_HEAD STAGE"));
           this->stage = RAISE_HEAD_STAGE;
         } else {
-          Serial.println(F("MODE: WAIT_DISPENSE STAGE -> START_DISPENSE STAGE"));
+          Serial.println(F("MODE: DISPENSE STAGE -> DISPENSE STAGE"));
           dispenserHead.send_dispense();
-          this->stage = START_DISPENSE_STAGE;
+          this->stage = DISPENSE_STAGE;
         }
       }
-      dispenserHead.z().moveTo(0);
       break;
 
     case RAISE_HEAD_STAGE:
