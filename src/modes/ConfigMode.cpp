@@ -4,6 +4,7 @@
 
 #include "../views/Config_Screen.h"
 #include "../views/Preview_Screen.h"
+#include "../views/Profile_Screen.h"
 #include "../logic/SkipUtils.h"
 
 ConfigMode::ConfigMode(DispenserHead& head, Gpu_Hal_Context_t* host, ModeController* controller, ModeCompletionCallback callback)
