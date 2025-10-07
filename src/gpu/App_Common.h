@@ -90,18 +90,9 @@ void App_Common_Close(Gpu_Hal_Context_t *phost);
  **************************************************************************************************/
 #include "../../Profile.h"
 
-uint8_t GetKeyPressed(void);
-void WaitKeyRelease(void);
-
 void Logo_XQ_trans(Gpu_Hal_Context_t *phost);
 void Disp_End(Gpu_Hal_Context_t *phost);
 
-void Keyboard(Gpu_Hal_Context_t *phost, char*,char *,bool);
-void DisplayKeyboard(Gpu_Hal_Context_t *, uint8_t,char *,char *, bool,bool, bool);
-
-float Keypad(Gpu_Hal_Context_t *, float, float, float, bool);
-
-void Round1Dec(float *x);//v204
 void Toggle_Button(Gpu_Hal_Context_t *phost, bool enabled, uint8_t tag, int16_t x, int16_t y, const char *enabledLabel, const char *disabledLabel);
 
 
