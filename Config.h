@@ -74,3 +74,5 @@
 // Defines if the dispenser should respond to Z-movement requests via PLC commands
 #define EXPERIMENTAL_Z_AXIS_MOVEMENT_API true 
 
+#define DEBUG 1
+

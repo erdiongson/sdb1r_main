@@ -2,6 +2,7 @@
 #define DISPENSER_HEAD_H
 
 #include "Axis.h"
+#include "../../Config.h"
 #include "../communication/DispenserSerial.h"
 
 // Struct for dispenser process result containing state and error information.
@@ -63,6 +64,10 @@ public:
   // Process incoming data from the dispenser.
   // @return DispenserProcessResult containing the updated state and any error code.
   DispenserProcessResult process() {
+
+    #if DEBUG
+      return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_IDLING);
+    #endif
 
     // Process stepper motors
     int x_result = this->xAxis.onStep();

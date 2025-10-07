@@ -1,9 +1,10 @@
 #pragma once
+#include "../Config.h"
 
 #if DEBUG
 
-  void inline Dprint(char x) { Serial.print(x, HEX); }
-  void inline Dprint(String x) { Serial.print(x); }
+  void inline Dprint(char x) { Serial.println(x, HEX); }
+  void inline Dprint(String x) { Serial.println(x); }
   void inline Dprint(String x, String y) {
     Serial.print(x);
     Serial.print(y);
