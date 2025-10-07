@@ -348,6 +348,9 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         params.gridCols = currentProfile->Tube_No_x;
         params.gridRows = currentProfile->Tube_No_y;
         params.staggered = currentProfile->staggered;
+        params.simulating = false;
+        params.simulateCol = 0;
+        params.simulateRow = 0;
 
         snprintf(previewInfoText, sizeof(previewInfoText), "Preview (Grid %dx%d)", params.gridCols, params.gridRows);
         params.infoText = previewInfoText;
