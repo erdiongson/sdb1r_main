@@ -54,7 +54,6 @@ AxisParams zAxis(
 
 DispenserHeadParams params = { xAxis, yAxis, zAxis };
 DispenserHead dispenserHead(params);
-InteractionsHandler interactionsHandler;
 
 // Calculate the maximum controller size at compile time.
 constexpr size_t MAX_CONTROLLER_SIZE = MaxSize<
@@ -180,7 +179,7 @@ void loop() {
   if (currentTime - lastInteractionCheck >= checkInterval) {
     lastInteractionCheck = currentTime;
 
-    if (interactionsHandler.getInteractionFast(interaction)) {
+    if (InteractionsHandler::getAllInteractions(interaction)) {
       controller->on_interaction(interaction);
     }
   }
