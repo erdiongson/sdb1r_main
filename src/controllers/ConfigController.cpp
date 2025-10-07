@@ -417,7 +417,6 @@ void ConfigController::increment_vibration_level() {
   if (next_level > 4) next_level = 0;
 
   currentProfile->vibrationEnabled = next_level;
-  dispenserHead.set_vibration_level(next_level);
 }
 
 void ConfigController::increment_vibration_time() {
@@ -425,7 +424,6 @@ void ConfigController::increment_vibration_time() {
   if (next_duration > 5) next_duration = 1;
 
   currentProfile->vibrationDuration = next_duration;
-  dispenserHead.set_vibration_time(next_duration);
 }
 
 void ConfigController::editSkipColumn(Gpu_Hal_Context_t* phost) {

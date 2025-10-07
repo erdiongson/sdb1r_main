@@ -6,7 +6,7 @@ RunController::RunController(ControllerParams params)
   : BaseController(params) {}
 
 void RunController::on_start(Profile& profile) {
-  Serial.println(F("MODE: Setting profile on trayhandler"));
+  this->profile = profile;
   trayHandler.load_profile(profile);
   TrayHandler::Position firstPosition = trayHandler.reset();
 
@@ -16,13 +16,8 @@ void RunController::on_start(Profile& profile) {
     return;
   }
 
-  Serial.println(F("MODE: Setting profile"));
-  this->profile = profile;
-
-  paused = false;
-
   Home_Screen(phost, RUNMENU);
-  // start_stage(ZERO_STAGE);
+  // on_step will trigger process_stage_logic to transition into SET_VIB_LEVEL_STAGE
 }
 
 void RunController::on_interaction(const Interaction& interaction) {
@@ -43,14 +38,30 @@ void RunController::on_interaction(const Interaction& interaction) {
     Serial.println(F("MODE: Resumed"));
     paused = false;
     Home_Screen(phost, RUNMENU);
-    // start_stage(stage);
   }
 }
 
 void RunController::process_stage_logic(DispenserProcessResult& dispenserProcessResult) {
   switch (stage) {
     case IDLE_STAGE:
-      Serial.println(F("MODE: IDLE STAGE -> ZERO STAGE"));
+      dispenserHead.set_vibration_level(profile.vibrationEnabled);
+
+      Serial.println(F("MODE: IDLE STAGE -> SET_VIBRATION_LEVEL STAGE"));
+      this->stage = SET_VIB_LEVEL_STAGE;
+      break;
+
+    case SET_VIB_LEVEL_STAGE:
+      if (dispenserProcessResult.dispenser == DISPENSER_STATE_IDLING) {
+        dispenserHead.set_vibration_time(profile.vibrationDuration);
+
+        Serial.println(F("MODE: SET_VIBRATION_LEVEL STAGE -> SET_VIBRATION_TIME STAGE"));
+        this->stage = SET_VIB_DURATION_STAGE;
+      }
+      break;
+
+    case SET_VIB_DURATION_STAGE:
+      Serial.println(F("MODE: SET_VIBRATION_TIME STAGE -> ZERO STAGE"));
+
       dispenserHead.x().moveToMax();
       dispenserHead.y().moveToMin();
       dispenserHead.z().moveToMin();

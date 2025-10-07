@@ -134,14 +134,12 @@ public:
   // @param level Vibration level (0-4).
   void set_vibration_level(uint8_t level) {
     DispenserSerial::send_vibration_level(level);
-    DispenserSerial::blockUntilResponse();
   }
 
   // Set vibration time and wait for response.
   // @param seconds Vibration duration in seconds (1-5).
   void set_vibration_time(uint8_t seconds) {
     DispenserSerial::send_vibration_time(seconds);
-    DispenserSerial::blockUntilResponse();
   }
 
 private:

@@ -8,6 +8,8 @@ private:
 
   enum Stage {
     IDLE_STAGE,
+    SET_VIB_LEVEL_STAGE,
+    SET_VIB_DURATION_STAGE,
     ZERO_STAGE,
     PRIME_STAGE,
     LOWER_HEAD_STAGE,
