@@ -46,6 +46,7 @@ Revision History:
 #include <string.h>
 #include <inttypes.h>
 #include "../Utils.h"
+#include "../logic/InteractionsHandler.h"
 /*************************************************************************************************
  *                      These functions work with FT8XX GPU buffer
  **************************************************************************************************/
@@ -514,15 +515,12 @@ void DisplayKeyboard(Gpu_Hal_Context_t *phost, uint8_t keypressed,char *displayt
 
 	
 }
-uint8_t GetKeyPressed(void)
-{
-	uint8_t tempkey[2];
-	
-	tempkey[0]=Gpu_Hal_Rd8(phost, REG_TOUCH_TAG);
-	//delay(10);
-	tempkey[1]=Gpu_Hal_Rd8(phost, REG_TOUCH_TAG);
-
-	return (tempkey[0] == tempkey[1])? tempkey[0] : 0;
+uint8_t GetKeyPressed(void) {
+    Interaction interaction;
+    do {
+        InteractionsHandler::getTouchInteraction(interaction);
+    } while (interaction.key_pressed == 0);
+    return interaction.key_pressed;
 }
 
 void WaitKeyRelease(void)
@@ -562,7 +560,7 @@ void Keyboard(Gpu_Hal_Context_t *phost,char *curtext,char *curtitle,bool passwor
 	Dprint("end");
 
 	do{
-		keypressed = GetKeyPressed();
+        keypressed = GetKeyPressed();
 	
 		if(keypressed>0)
 		{
@@ -675,7 +673,7 @@ void Round1Dec(float *x)
 
 void DisplayKeypad(Gpu_Hal_Context_t *phost, int32_t keypressed,char* displaynum,int8_t errorcode)
 {
-	char buf[KEYPAD_MAX_LEN+20];
+	char buf[KEYPAD_MAX_LEN];
 
     Gpu_CoCmd_Dlstart(phost);
     App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(120, 120, 120));
@@ -718,9 +716,9 @@ void DisplayKeypad(Gpu_Hal_Context_t *phost, int32_t keypressed,char* displaynum
 
     //App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
     //v204 if(errorcode)
-  //v204  sprintf(buf,"%s  %s",displaynum,"out of range");
-  //v204 else
-		sprintf(buf,displaynum);
+    //v204  sprintf(buf,"%s  %s",displaynum,"out of range");
+    //v204 else
+    sprintf(buf, "%s", displaynum);
 	Gpu_CoCmd_Text(phost, 0, 0, 30, 0, buf);
 
     App_WrCoCmd_Buffer(phost, DISPLAY());
@@ -729,18 +727,18 @@ void DisplayKeypad(Gpu_Hal_Context_t *phost, int32_t keypressed,char* displaynum
 
 }
 
-void LoadBuffer( char *buf, float curval)
-{
-	float temp;
 
-	temp=(int8_t)curval;
-	if(curval-temp>0)
-	{
-		dtostrf(curval,3,1,buf);
-	}
-	else
-		sprintf(buf,"%d",(int16_t)curval);
+void LoadBuffer(char *buf, float curval) {
+    float temp;
+    temp=(int8_t)curval;
 
+    if(curval-temp>0) {
+        dtostrf(curval,3,1,buf);
+        buf[KEYPAD_MAX_LEN-1] = '\0'; // Force null termination
+    } else {
+        sprintf(buf,"%d",(int16_t)curval);
+        buf[KEYPAD_MAX_LEN-1] = '\0'; // Force null termination
+    }
 }
 
 float Keypad(Gpu_Hal_Context_t *phost, float curval, float minval, float maxval ,bool isfloat)
@@ -749,7 +747,7 @@ float Keypad(Gpu_Hal_Context_t *phost, float curval, float minval, float maxval 
     uint8_t keypressed = 0;
 	bool wait4key=TRUE;
 
-	char buf[KEYPAD_MAX_LEN+1];
+	char buf[KEYPAD_MAX_LEN];
 	int8_t curpos;
 	float tempval;
 
@@ -778,6 +776,7 @@ float Keypad(Gpu_Hal_Context_t *phost, float curval, float minval, float maxval 
 			DisplayKeypad(phost,keypressed,buf,0);
 			WaitKeyRelease();
 			Dprint("T10");
+
 			switch(keypressed)
 			{
 				case BACK_SPACE:    if(curpos>=0)
