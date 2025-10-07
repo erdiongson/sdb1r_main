@@ -2,7 +2,7 @@
 #include "../gpu/Platform.h"
 #include "../Constants.h"
 
-void DisplayProfileMenu(uint8_t keypressed, uint8_t curprofnum, Profile &profile) {
+void draw_profile_screen(uint8_t keypressed, uint8_t curprofnum, Profile &profile) {
 	char buf[100]; // a buffer to format your text before printing.
 
 	Gpu_CoCmd_FlashFast(phost, 0);

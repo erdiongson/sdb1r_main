@@ -27,7 +27,7 @@ void ConfigController::on_start(Profile& profile) {
   simulationHandler.reset();
 
   // Display configuration screen
-  Config_Screen(phost);
+  draw_config_screen(phost);
 }
 
 void ConfigController::on_interaction(const Interaction& interaction) {
@@ -55,10 +55,10 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         if (error) {
           strcpy(buf, currentProfile->profileName);
           sprintf(currentProfile->profileName, "Error in entry");
-          Config_Screen(phost);
+          draw_config_screen(phost);
           delay(3000);
           strcpy(currentProfile->profileName, buf);
-          Config_Screen(phost);
+          draw_config_screen(phost);
           delay(3000);
         } else {
           start_next_controller(CONTROLLER_HOME);
@@ -79,42 +79,42 @@ void ConfigController::on_interaction(const Interaction& interaction) {
             }
           } else PreLoadEEPROM();
           sprintf(currentProfile->profileName, "EEprom reseted");
-          Config_Screen(phost);
+          draw_config_screen(phost);
           delay(3000);
           sprintf(currentProfile->profileName, "Profile 1 ");
-          Config_Screen(phost);
+          draw_config_screen(phost);
         }
         if (strcmp(currentProfile->profileName, "xqver") == 0) {
           Dprint("show version");
           sprintf(currentProfile->profileName, "version : %s", FWVER);
-          Config_Screen(phost);
+          draw_config_screen(phost);
           delay(3000);
           sprintf(currentProfile->profileName, "xqver ");
-          Config_Screen(phost);
+          draw_config_screen(phost);
         }
         if (strcmp(currentProfile->profileName, "xqhome") == 0) {
           Dprint("home");
           // Homing();
-          Config_Screen(phost);
+          draw_config_screen(phost);
         }
         if (strcmp(currentProfile->profileName, "xqblank") == 0) {
           Dprint("blankeeprom");
           BlankEEPROM();
           sprintf(currentProfile->profileName, "EEprom blank");
-          Config_Screen(phost);
+          draw_config_screen(phost);
           delay(3000);
           sprintf(currentProfile->profileName, "xqblank ");
-          Config_Screen(phost);
+          draw_config_screen(phost);
           delay(3000);
         }
         if (strcmp(currentProfile->profileName, "xqsize-s") == 0) {
           Dprint("Change the size to small.");
           sprintf(currentProfile->profileName, "Size Change : SMALL");
           currentProfile->sizeFlag = 0;
-          Config_Screen(phost);
+          draw_config_screen(phost);
           delay(3000);
           sprintf(currentProfile->profileName, "xqsize-s ");
-          Config_Screen(phost);
+          draw_config_screen(phost);
         }
 
         start_next_controller(CONTROLLER_PROFILE);
@@ -130,7 +130,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         WriteProfileEEPROM(CurProfNum);
         strcpy(buf, currentProfile->profileName);
         strcpy(currentProfile->profileName, "Profile saved");
-        Config_Screen(phost);
+        draw_config_screen(phost);
         delay(3000);
         strcpy(currentProfile->profileName, buf);
       }
@@ -139,7 +139,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
     case TAG_CONFIG_PROFILE_NAME:
       Serial.println(F("Button Pressed: PROFILE"));
       Keyboard(phost, currentProfile->profileName, "Enter Profile Name", FALSE);
-      Config_Screen(phost);
+      draw_config_screen(phost);
       break;
 
     case TAG_CONFIG_TUBES_X:  //no. of Tubes row
@@ -170,7 +170,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
           }
         }
         
-        Config_Screen(phost);
+        draw_config_screen(phost);
       }
       break;
 
@@ -202,7 +202,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
           }
         }
         
-        Config_Screen(phost);
+        draw_config_screen(phost);
       }
       break;
 
@@ -215,7 +215,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         Dprint("max val=", maxval);
         if (maxval > MAXPITCHX) maxval = MAXPITCHX;
         currentProfile->pitch_x = Keypad(&host, currentProfile->pitch_x, MINPITCHX, MAXPITCHX, FALSE);
-        Config_Screen(phost);
+        draw_config_screen(phost);
       }
       break;
 
@@ -228,7 +228,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         if (maxval > MAXPITCHY) maxval = MAXPITCHY;
         Dprint("max val=", maxval);
         currentProfile->pitch_y = Keypad(&host, currentProfile->pitch_y, MINPITCHY, MAXPITCHY, FALSE);
-        Config_Screen(phost);
+        draw_config_screen(phost);
       }
       break;
 
@@ -242,7 +242,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         Dprint("max val=", maxval);
 
         currentProfile->trayOriginX = Keypad(&host, currentProfile->trayOriginX, 0, MAXORGX, FALSE);
-        Config_Screen(phost);
+        draw_config_screen(phost);
       }
       break;
 
@@ -255,66 +255,66 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         if (maxval > MAXORGY) maxval = MAXORGY;
         Dprint("max val=", maxval);
         currentProfile->trayOriginY = Keypad(&host, currentProfile->trayOriginY, 0, MAXORGY, FALSE);
-        Config_Screen(phost);
+        draw_config_screen(phost);
       }
       break;
 
     case TAG_NUM_CYCLE:
       currentProfile->Cycles = Keypad(phost, currentProfile->Cycles, MINCYCLE, MAXCYCLE, FALSE);
-      Config_Screen(phost);
+      draw_config_screen(phost);
       break;
 
     case TAG_Z_DIP:
       Serial.println(F("Incrementing Z Dip"));
       currentProfile->ZDip = Keypad(phost, currentProfile->ZDip, MINZDIP, MAXZDIP, FALSE);
-      Config_Screen(phost);
+      draw_config_screen(phost);
       break;
 
     case TAG_VIBRATION_LEVEL:
       Serial.println(F("Incrementing vibration level"));
       increment_vibration_level();
-      Config_Screen(phost);
+      draw_config_screen(phost);
       break;
 
     case TAG_VIBRATION_DURATION:
       Serial.println(F("Incrementing vibration duration"));
       increment_vibration_time();
-      Config_Screen(phost);
+      draw_config_screen(phost);
       break;
 
     case TAG_PASSWORD_ENABLED:
       Serial.println(F("Toggle password enable"));
       currentProfile->passwordEnabled = !currentProfile->passwordEnabled;
-      Config_Screen(phost);
+      draw_config_screen(phost);
       break;
 
     case TAG_STAGGERED_TOGGLE:
       Serial.println(F("Toggle staggered mode"));
       currentProfile->staggered = !currentProfile->staggered;
-      Skip_Screen(phost);
+      draw_skip_screen(phost);
       break;
 
     case TAG_SKIP_COLUMNS:
       Serial.println(F("Button Pressed: SKIP COLUMNS"));
       editSkipColumn(phost);
-      Skip_Screen(phost);
+      draw_skip_screen(phost);
       break;
 
     case TAG_SKIP_ROWS:
       Serial.println(F("Button Pressed: SKIP ROWS"));
       editSkipRow(phost);
-      Skip_Screen(phost);
+      draw_skip_screen(phost);
       break;
 
     case TAG_SKIP_SINGLE_POS:
       Serial.println(F("Button Pressed: SKIP SINGLE POSITION"));
       editSkipIndividual(phost);
-      Skip_Screen(phost);
+      draw_skip_screen(phost);
       break;
 
     case TAG_ADV_PROF_BACK:  // Back button
       Serial.println(F("Button Pressed: BACK"));
-      Config_Screen(phost);
+      draw_config_screen(phost);
       break;
 
     case TAG_ADV_PROF_SAVE:
@@ -326,7 +326,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         WriteProfileEEPROM(CurProfNum);
         strcpy(buf, currentProfile->profileName);
         strcpy(currentProfile->profileName, "Profile saved");
-        Config_Screen(phost);
+        draw_config_screen(phost);
         delay(3000);
         strcpy(currentProfile->profileName, buf);
       }
@@ -356,7 +356,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         params.infoText = previewInfoText;
         
         // Display the preview screen
-        Preview_Screen(phost, skipPositions, params);
+        draw_preview_screen(phost, skipPositions, params);
       }
       break;
 
@@ -366,7 +366,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
       simulating = false;
       simulateCol = 0;
       simulateRow = 0;
-      Skip_Screen(phost);
+      draw_skip_screen(phost);
       break;
 
     case TAG_PREVIEW_SIMULATE:
@@ -381,7 +381,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
 
       case TAG_ADVANCED:
         Serial.println(F("Button Pressed: ADVANCED"));
-        Skip_Screen(phost);
+        draw_skip_screen(phost);
         break;
 
       //case 246: // No button for Advanced Setting
@@ -535,7 +535,7 @@ void ConfigController::start_simulation() {
   snprintf(previewInfoText, sizeof(previewInfoText), "Position = %dx%d", simulateCol, simulateRow);
   params.infoText = previewInfoText;
   
-  Preview_Screen(phost, skipPositions, params);
+  draw_preview_screen(phost, skipPositions, params);
 }
 
 void ConfigController::end_simulation() {
@@ -560,7 +560,7 @@ void ConfigController::end_simulation() {
   snprintf(previewInfoText, sizeof(previewInfoText), "Preview (Grid %dx%d)", params.gridCols, params.gridRows);
   params.infoText = previewInfoText;
   
-  Preview_Screen(phost, skipPositions, params);
+  draw_preview_screen(phost, skipPositions, params);
 }
 
 void ConfigController::step_simulation() {
@@ -591,6 +591,6 @@ void ConfigController::step_simulation() {
   snprintf(previewInfoText, sizeof(previewInfoText), "Position = %dx%d", simulateCol, simulateRow);
   params.infoText = previewInfoText;
   
-  Preview_Screen(phost, skipPositions, params);
+  draw_preview_screen(phost, skipPositions, params);
 }
 

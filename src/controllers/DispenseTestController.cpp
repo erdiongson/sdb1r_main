@@ -11,7 +11,7 @@ void DispenseTestController::on_start(Profile& profile) {
   
   // Initialize UI
   DispenseTestSettings settings = {0, 0};
-  Dispense_Test_Screen(phost, settings);
+  draw_dispense_test_screen(phost, settings);
   
   // Initialize to home position
   dispenserHead.x().moveToMax();

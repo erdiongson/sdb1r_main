@@ -9,7 +9,7 @@ MoveTestController::MoveTestController(ControllerParams params)
 
 void MoveTestController::on_start(Profile& profile) {
   Dprint(F("MoveTestController::on_start"));
-  Move_Test_Screen(phost, {});  
+  draw_move_test_screen(phost, {});  
 }
 
 void MoveTestController::on_interaction(const Interaction& interaction) {
@@ -67,7 +67,7 @@ ControllerStepResult MoveTestController::on_step() {
     limitStates.y_min_limit = dispenserHead.y().isAtMin();
     limitStates.z_max_limit = dispenserHead.z().isAtMax();
     limitStates.z_min_limit = dispenserHead.z().isAtMin();
-    Move_Test_Screen(phost, limitStates);
+    draw_move_test_screen(phost, limitStates);
   }
 
   return ControllerStepResult(result.steppers, result.dispenser);

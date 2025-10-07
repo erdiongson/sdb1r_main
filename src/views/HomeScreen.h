@@ -12,7 +12,7 @@ struct HomeParams {
   int error_code;
 };
 
-inline void SetMainMenuButton(uint8_t whichmenu) {
+inline void draw_menu_buttons(uint8_t whichmenu) {
   //					 	 SETTING START PAUSE STOP
   bool_t act_but[][6] = {
     { 1, 1, 0, 0 },  //main menu
@@ -63,7 +63,7 @@ inline void SetMainMenuButton(uint8_t whichmenu) {
   }
 }
 
-inline void Home_Screen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const HomeParams* params = nullptr) {
+inline void draw_home_screen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const HomeParams* params = nullptr) {
 
   int32_t filling_tube = 0;
   char buf[100];
@@ -96,7 +96,7 @@ inline void Home_Screen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const HomeP
   App_WrCoCmd_Buffer(phost, TAG_MASK(255));
 
 
-  SetMainMenuButton(whichmenu);
+  draw_menu_buttons(whichmenu);
 
   sprintf(buf, "Profile Name: %s", CurProf.profileName);
   Gpu_CoCmd_Text(phost, 25, 195, 20, OPT_FORMAT, buf);  //OPT_CENTER | OPT_RIGHTX |
@@ -116,7 +116,7 @@ inline void Home_Screen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const HomeP
 
   //INSERT ERROR MESSAGE
   if (params && params->error_code > 0) {
-    Error_Message(phost, params->error_code);
+    draw_error_message(phost, params->error_code);
   }
   Disp_End(phost);
 }

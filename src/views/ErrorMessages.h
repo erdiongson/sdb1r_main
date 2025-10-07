@@ -24,11 +24,11 @@ typedef struct {
 // Displays an error/message dialog with a black box, white outline, title, subtitle, and optional buttons.
 // @param phost GPU context.
 // @param params ErrorMessageParams structure containing title, subtitle, button labels and tags.
-void Base_Error_Message(Gpu_Hal_Context_t *phost, const ErrorMessageParams& params);
+void draw_base_error_message(Gpu_Hal_Context_t *phost, const ErrorMessageParams& params);
 
 // Displays an error message based on error code.
 // @param phost GPU context.
 // @param error_code The error code to display.
-void Error_Message(Gpu_Hal_Context_t *phost, int error_code);
+void draw_error_message(Gpu_Hal_Context_t *phost, int error_code);
 
 #endif /* ERROR_MESSAGES_H */

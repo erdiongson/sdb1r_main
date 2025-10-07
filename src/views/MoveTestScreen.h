@@ -35,7 +35,7 @@ struct LimitSwitchStates {
  * @param phost Pointer to GPU HAL context
  * @param limitStates Limit switch states for display
  */
-void Move_Test_Screen(Gpu_Hal_Context_t *phost, const LimitSwitchStates& limitStates);
+void draw_move_test_screen(Gpu_Hal_Context_t *phost, const LimitSwitchStates& limitStates);
 
 #endif /* _MOVE_TEST_SCREEN_H_ */
 
@@ -47,7 +47,7 @@ void Move_Test_Screen(Gpu_Hal_Context_t *phost, const LimitSwitchStates& limitSt
  * @param phost Pointer to GPU HAL context
  * @param limitStates Limit switch states for display
  */
-void Move_Test_Screen(Gpu_Hal_Context_t *phost, const LimitSwitchStates& limitStates)
+void draw_move_test_screen(Gpu_Hal_Context_t *phost, const LimitSwitchStates& limitStates)
 {
     char buf[100];
     

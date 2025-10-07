@@ -33,7 +33,7 @@ struct DispenseTestSettings {
  * @param phost Pointer to GPU HAL context
  * @param settings Current dispense test settings for highlighting selected options
  */
-void Dispense_Test_Screen(Gpu_Hal_Context_t *phost, const DispenseTestSettings& settings);
+void draw_dispense_test_screen(Gpu_Hal_Context_t *phost, const DispenseTestSettings& settings);
 
 #endif /* _DISPENSE_TEST_SCREEN_H_ */
 
@@ -45,7 +45,7 @@ void Dispense_Test_Screen(Gpu_Hal_Context_t *phost, const DispenseTestSettings& 
  * @param phost Pointer to GPU HAL context
  * @param settings Current dispense test settings for highlighting selected options
  */
-void Dispense_Test_Screen(Gpu_Hal_Context_t *phost, const DispenseTestSettings& settings)
+void draw_dispense_test_screen(Gpu_Hal_Context_t *phost, const DispenseTestSettings& settings)
 {
     char buf[100];
     

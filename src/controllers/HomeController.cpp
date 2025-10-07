@@ -10,7 +10,7 @@ HomeController::HomeController(ControllerParams params)
 
 void HomeController::on_start(Profile& profile) {
   Dprint(F("HomeController::on_start"));
-  Home_Screen(phost, MAINMENU);
+  draw_home_screen(phost, MAINMENU);
 
   // Home the dispenser head
   dispenserHead.x().moveToMax();

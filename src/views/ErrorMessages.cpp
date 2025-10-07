@@ -3,7 +3,7 @@
 // Displays an error/message dialog with a black box, white outline, title, subtitle, and optional buttons.
 // @param phost GPU context.
 // @param params ErrorMessageParams structure containing title, subtitle, button labels and tags.
-void Base_Error_Message(Gpu_Hal_Context_t *phost, const ErrorMessageParams& params) {
+void draw_base_error_message(Gpu_Hal_Context_t *phost, const ErrorMessageParams& params) {
   // Don't clear the screen - draw on top of existing content
 
   // Draw an invisible rectangle covering the entire screen to block touches
@@ -81,7 +81,7 @@ void Base_Error_Message(Gpu_Hal_Context_t *phost, const ErrorMessageParams& para
 // Displays an error message based on error code.
 // @param phost GPU context.
 // @param error_code The error code to display.
-void Error_Message(Gpu_Hal_Context_t *phost, int error_code) {
+void draw_error_message(Gpu_Hal_Context_t *phost, int error_code) {
   ErrorMessageParams params;
   
   switch (error_code) {
@@ -140,5 +140,5 @@ void Error_Message(Gpu_Hal_Context_t *phost, int error_code) {
       break;
   }
   
-  Base_Error_Message(phost, params);
+  draw_base_error_message(phost, params);
 }

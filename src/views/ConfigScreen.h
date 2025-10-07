@@ -1,7 +1,7 @@
 #include "../gpu/App_Common.h"
 #include "../Utils.h"
 
-void Config_Screen(Gpu_Hal_Context_t *phost) {
+void draw_config_screen(Gpu_Hal_Context_t *phost) {
 
   int16_t vibstatus;
   int16_t passwordStatus;
@@ -264,7 +264,7 @@ void Config_Screen(Gpu_Hal_Context_t *phost) {
   Disp_End(phost);
 }
 
-void Skip_Screen(Gpu_Hal_Context_t *phost) {
+void draw_skip_screen(Gpu_Hal_Context_t *phost) {
   char rowBuf[ROW_COL_MAX_LEN];        // a buffer for skip row entry
   char colBuf[ROW_COL_MAX_LEN];        // a buffer for skip column entry
   char singlePosBuf[ROW_COL_MAX_LEN];  // a buffer for skip single position entry

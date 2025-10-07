@@ -9,7 +9,7 @@ ProfileController::ProfileController(ControllerParams params)
   : BaseController(params), selectedProfileNum(0) {}
 
 void ProfileController::on_start(Profile& profile) {
-  DisplayProfileMenu(0, 0, CurProf);
+  draw_profile_screen(0, 0, CurProf);
 }
 
 void ProfileController::on_interaction(const Interaction& interaction) {
@@ -34,7 +34,7 @@ void ProfileController::on_interaction(const Interaction& interaction) {
         selectedProfileNum = 0;
       }
       ReadProfileEEPROM(selectedProfileNum);
-      DisplayProfileMenu(interaction.key_pressed, selectedProfileNum, CurProf);
+      draw_profile_screen(interaction.key_pressed, selectedProfileNum, CurProf);
       break;
 
     case TAG_PROFILE_DOWN:
@@ -44,7 +44,7 @@ void ProfileController::on_interaction(const Interaction& interaction) {
         selectedProfileNum = MAX_PROFILES - 1;
       }
       ReadProfileEEPROM(selectedProfileNum);
-      DisplayProfileMenu(interaction.key_pressed, selectedProfileNum, CurProf);
+      draw_profile_screen(interaction.key_pressed, selectedProfileNum, CurProf);
       break;
 
     case TAG_PROFILE_CHANGE_PASSWORD:
@@ -54,7 +54,7 @@ void ProfileController::on_interaction(const Interaction& interaction) {
       Keyboard(phost, new_password_1, "Enter New Password", FALSE);
       if (new_password_1[0] == 0) {
         Keyboard(phost, "Error : No password entered", "Press Back to continue", FALSE);
-        DisplayProfileMenu(0, selectedProfileNum, CurProf);
+        draw_profile_screen(0, selectedProfileNum, CurProf);
         return;
       }
 
@@ -62,13 +62,13 @@ void ProfileController::on_interaction(const Interaction& interaction) {
 
       if (strcmp(new_password_1, new_password_2) != 0) {
         Keyboard(phost, "Error : Different password entered", "Press Back to continue", FALSE);
-        DisplayProfileMenu(0, selectedProfileNum, CurProf);
+        draw_profile_screen(0, selectedProfileNum, CurProf);
         return;
       }
 
       WritePassEEPROM(new_password_1);
       Keyboard(phost, "Password changed", "Press Back to continue", FALSE);
-      DisplayProfileMenu(0, selectedProfileNum, CurProf);
+      draw_profile_screen(0, selectedProfileNum, CurProf);
       break;
 
     default:
