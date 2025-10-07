@@ -357,28 +357,6 @@ void App_Common_Close(Gpu_Hal_Context_t *phost)
  *                                XentiQ Functions - 23JUN23
  *************************************************************************************************/
 
-void Logo_XQ_trans(Gpu_Hal_Context_t *phost)
-{
-    Gpu_CoCmd_FlashFast(phost, 0);
-    Gpu_CoCmd_Dlstart(phost);
-
-    Gpu_Hal_WrCmd32(phost, CMD_INFLATE);
-    Gpu_Hal_WrCmd32(phost, RAM_XQ_LOGO);
-    Gpu_Hal_WrCmdBufFromFlash(phost, (uint8_t *)XQ_Logo_trans, sizeof(XQ_Logo_trans));
-
-    App_WrCoCmd_Buffer(phost, CLEAR(1, 1, 1));
-    App_WrCoCmd_Buffer(phost, END());
-    App_WrCoCmd_Buffer(phost, BITMAP_HANDLE(0));
-    Gpu_CoCmd_SetBitmap(phost, 0, RGB565, 100, 82);
-    App_WrCoCmd_Buffer(phost, BEGIN(BITMAPS));
-    App_WrCoCmd_Buffer(phost, PALETTE_SOURCE(0));
-    App_WrCoCmd_Buffer(phost, VERTEX2F(1856, 1152));
-    App_WrCoCmd_Buffer(phost, END());
-
-    Disp_End(phost);
-    Gpu_Hal_Sleep(800);
-}
-
 void Disp_End(Gpu_Hal_Context_t *phost)
 {
     App_WrCoCmd_Buffer(phost, DISPLAY());

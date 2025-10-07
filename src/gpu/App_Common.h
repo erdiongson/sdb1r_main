@@ -90,7 +90,7 @@ void App_Common_Close(Gpu_Hal_Context_t *phost);
  **************************************************************************************************/
 #include "../../Profile.h"
 
-void Logo_XQ_trans(Gpu_Hal_Context_t *phost);
+void draw_logo_screen(Gpu_Hal_Context_t *phost);
 void Disp_End(Gpu_Hal_Context_t *phost);
 
 void Toggle_Button(Gpu_Hal_Context_t *phost, bool enabled, uint8_t tag, int16_t x, int16_t y, const char *enabledLabel, const char *disabledLabel);

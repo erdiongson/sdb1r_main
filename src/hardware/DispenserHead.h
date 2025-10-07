@@ -39,17 +39,9 @@ public:
       yAxis(params.yAxis),
       zAxis(params.zAxis) {}
 
-  Axis& x() {
-    return xAxis;
-  }
-
-  Axis& y() {
-    return yAxis;
-  }
-
-  Axis& z() {
-    return zAxis;
-  }
+  Axis& x() { return xAxis; }
+  Axis& y() { return yAxis; }
+  Axis& z() { return zAxis; }
 
   // Send a dispense command to the dispenser.
   void send_dispense() {
@@ -58,6 +50,34 @@ public:
 
     // Use the serial handler to send the dispense command
     DispenserSerial::send_dispense();
+    dispensing_state = DISPENSER_STATE_SENT;
+  }
+
+  // Send a dispense command to the dispenser.
+  void send_handshake() {
+    // Don't send a new command if we're still processing the previous one
+    if (dispensing_state != DISPENSER_STATE_IDLING) return;
+
+    // Use the serial handler to send the dispense command
+    DispenserSerial::send_handshake();
+    dispensing_state = DISPENSER_STATE_SENT;
+  }
+
+  // Set vibration level and wait for response.
+  // @param level Vibration level (0-4).
+  void set_vibration_level(uint8_t level) {
+    if (dispensing_state != DISPENSER_STATE_IDLING) return;
+
+    DispenserSerial::send_vibration_level(level);
+    dispensing_state = DISPENSER_STATE_SENT;
+  }
+
+  // Set vibration time and wait for response.
+  // @param seconds Vibration duration in seconds (1-5).
+  void set_vibration_time(uint8_t seconds) {
+    if (dispensing_state != DISPENSER_STATE_IDLING) return;
+
+    DispenserSerial::send_vibration_time(seconds);
     dispensing_state = DISPENSER_STATE_SENT;
   }
 
@@ -82,11 +102,23 @@ public:
     if (z_result == AXIS_STATE_RUNNING) return DispenserProcessResult(AXIS_STATE_RUNNING, DISPENSER_STATE_BLOCKED);
     if (z_result == AXIS_STATE_ERROR_LIMIT_SWITCH) return DispenserProcessResult(AXIS_STATE_ERROR_LIMIT_SWITCH, DISPENSER_STATE_BLOCKED);
 
+    // If not expecting any dispenser response, skip processing
+    if (dispensing_state == DISPENSER_STATE_IDLING) return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_IDLING);
+
     // Process dispenser's serial data
     int response = DispenserSerial::process();
 
     // Handle the response based on the returned code
     switch (response) {
+      case SDB_HANDSHAKE:
+        dispensing_state = DISPENSER_STATE_IDLING;
+        return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_IDLING);
+      case SDB_VIBRATE_LEVEL:
+        dispensing_state = DISPENSER_STATE_IDLING;
+        return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_IDLING);
+      case SDB_VIBRATE_TIME:
+        dispensing_state = DISPENSER_STATE_IDLING;
+        return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_IDLING);
       case ACKNOWLEDGE:
         dispensing_state = DISPENSER_STATE_ACKNOWLEDGED;
         return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_ACKNOWLEDGED);
@@ -107,39 +139,6 @@ public:
   // Get the current dispensing state
   int get_state() const {
     return dispensing_state;
-  }
-
-  // Send a handshake command and wait for response with timeout.
-  // @return True if connected, false if timeout occurred.
-  bool get_connected() {
-    DispenserSerial::send_handshake();
-
-    // Add timeout of 2 seconds (2000ms)
-    unsigned long startTime = millis();
-    const unsigned long timeout = 2000;  // 2 seconds timeout
-
-    while (DispenserSerial::process() != SDB_HANDSHAKE) {
-      delay(10);
-
-      // Check if timeout has occurred
-      if (millis() - startTime > timeout) {
-        return false;  // Timeout occurred
-      }
-    }
-
-    return true;  // Handshake successful
-  }
-
-  // Set vibration level and wait for response.
-  // @param level Vibration level (0-4).
-  void set_vibration_level(uint8_t level) {
-    DispenserSerial::send_vibration_level(level);
-  }
-
-  // Set vibration time and wait for response.
-  // @param seconds Vibration duration in seconds (1-5).
-  void set_vibration_time(uint8_t seconds) {
-    DispenserSerial::send_vibration_time(seconds);
   }
 
 private:

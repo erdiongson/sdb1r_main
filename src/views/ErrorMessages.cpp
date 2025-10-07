@@ -104,8 +104,8 @@ void draw_error_message(Gpu_Hal_Context_t *phost, int error_code) {
       break;
       
     case ERROR_MARKER_NOT_DETECTED:
-      params.title = "Dispenser Error";
-      params.subtitle = "Dispenser Head Stuck. Check the head.";
+      params.title = "Dispenser Head Stuck";
+      params.subtitle = "Please check the head and restart.";
       params.leftBtn = nullptr;
       params.rightBtn = "OK";
       params.leftTag = 0;
@@ -114,7 +114,7 @@ void draw_error_message(Gpu_Hal_Context_t *phost, int error_code) {
       
     case ERROR_LIMIT_SWITCH:
       params.title = "Limit Switch Error";
-      params.subtitle = "Max distance reached. Machine will go back to home.";
+      params.subtitle = "Limit switch triggered unexpectedly. Please check the head and restart.";
       params.leftBtn = nullptr;
       params.rightBtn = "OK";
       params.leftTag = 0;
@@ -123,7 +123,7 @@ void draw_error_message(Gpu_Hal_Context_t *phost, int error_code) {
       
     case ERROR_ACK_ERROR:
       params.title = "Dispenser Error";
-      params.subtitle = "Dispenser Head Stuck. Check the head.";
+      params.subtitle = "Please restart the device.";
       params.leftBtn = nullptr;
       params.rightBtn = "OK";
       params.leftTag = 0;

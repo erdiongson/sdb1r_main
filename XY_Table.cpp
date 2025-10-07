@@ -145,8 +145,8 @@ void setup() {
 
   // Gpu_Hal_Wr8(phost, REG_PWM_DUTY, 10); //brightness control
 
-  Logo_XQ_trans(&host);
   Dprint("Firmware version :", FWVER);
+  Serial.println("");
 
   Gpu_Hal_Wr8(phost, REG_TOUCH_SETTLE, 3);
 

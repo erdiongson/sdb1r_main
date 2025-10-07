@@ -22,8 +22,6 @@
 
 // Response command values
 #define ACKNOWLEDGE 0x46          // Acknowledgment response
-#define VIBRATION_ON 0x1C         // Vibration ON response
-#define VIBRATION_OFF 0x2C        // Vibration OFF response
 #define DISPENSE_DONE 0xF9        // Dispense operation completed
 #define IR_SENSOR_FAILURE 0xE1    // Error: IR sensor failure
 #define MARKER_NOT_DETECTED 0xE2  // Error: Marker not detected

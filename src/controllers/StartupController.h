@@ -1,6 +1,14 @@
 #include "BaseController.h"
 
 class StartupController : public BaseController {
+private:
+  enum {
+    STAGE_HANDSHAKE,
+    STAGE_HOME,
+    STAGE_ERROR,
+  };
+  int stage = STAGE_HANDSHAKE;
+  DispenserHead &dispenserHead;
 public:
   StartupController(ControllerParams params);
 

@@ -14,9 +14,6 @@ void HomeController::on_start(Profile& profile) {
   draw_home_screen(phost, MAINMENU);
 
   // Home the dispenser head
-  dispenserHead.x().moveToMax();
-  dispenserHead.y().moveToMin();
-  dispenserHead.z().moveToMin();
 }
 
 void HomeController::on_interaction(const Interaction& interaction) {
