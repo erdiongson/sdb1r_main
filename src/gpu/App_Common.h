@@ -90,34 +90,17 @@ void App_Common_Close(Gpu_Hal_Context_t *phost);
  **************************************************************************************************/
 #include "../../Profile.h"
 
-#define TAG_START 28
-#define PRE_TAGSTART 27
-
-#define MAX_CHAR_PER_LINE 30
-
-// #define BUFFER_SIZE_KEY MAX_CHAR_PER_LINE
-
-int32_t getLastSavedProfileId();
-
 uint8_t GetKeyPressed(void);
 void WaitKeyRelease(void);
 
-
 void Logo_XQ_trans(Gpu_Hal_Context_t *phost);
-
 void Disp_End(Gpu_Hal_Context_t *phost);
 
 void Keyboard(Gpu_Hal_Context_t *phost, char*,char *,bool);
 void DisplayKeyboard(Gpu_Hal_Context_t *, uint8_t,char *,char *, bool,bool, bool);
 
-void Profile_Menu(Gpu_Hal_Context_t *phost);
-
 float Keypad(Gpu_Hal_Context_t *, float, float, float, bool);
-void displayTextMatrixName();
-void toggleButton(Gpu_Hal_Context_t *phost, int tag, int x, int y, int buttonSize, int row, int col, int i, int j);
-void Tray_Screen(Gpu_Hal_Context_t *phost);
 
-uint8_t offsetStepperPosition(void);
 void Round1Dec(float *x);//v204
 void Toggle_Button(Gpu_Hal_Context_t *phost, bool enabled, uint8_t tag, int16_t x, int16_t y, const char *enabledLabel, const char *disabledLabel);
 

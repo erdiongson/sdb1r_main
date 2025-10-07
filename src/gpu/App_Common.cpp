@@ -638,31 +638,6 @@ void Keyboard(Gpu_Hal_Context_t *phost,char *curtext,char *curtitle,bool passwor
 
 }
 
-  String KeyboardWithReturn(Gpu_Hal_Context_t *phost, String &buf, String &curtitle, bool numlock, bool caplock)
-{
-    char curtext[PROFILE_NAME_MAX_LEN];
-    char title[100];
-    
-    // Convert String to C-string
-    buf.toCharArray(curtext, PROFILE_NAME_MAX_LEN);
-    curtitle.toCharArray(title, 100);
-    
-    // Call the original Keyboard function
-    Keyboard(phost, curtext, title, false);
-    
-    // Copy result back to buf and return
-    buf = String(curtext);
-    return buf;
-}
-
-
-void UpdateConfigSet(Gpu_Hal_Context_t *phost, Profile curprof)
-{
-
-
-}
-	
-
 void Round1Dec(float *x)
 {
 	char buf[PROFILE_NAME_MAX_LEN];
