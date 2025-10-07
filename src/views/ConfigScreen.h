@@ -108,29 +108,9 @@ void Config_Screen(Gpu_Hal_Context_t *phost) {
   App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));
   Gpu_CoCmd_Text(phost, 150, 53, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, (const char *)CurProf.profileName);
 
-  //20240918: erdiongson - Added for Password Enable and Disable process
-  App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
-  Gpu_CoCmd_BgColor(phost, 0x00A2E8);
-  // Check the password enable status and set the foreground color accordingly
-  passwordStatus = CurProf.passwordEnabled ? 0 : 65535;
-  if (passwordStatus == 0) {
-    Gpu_CoCmd_FgColor(phost, 0x007300);               // Green when ON
-    App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 128, 0));  //text color
-  } else {
-    Gpu_CoCmd_FgColor(phost, 0xFF0000);               // Red when OFF
-    App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  //text color
-  }
+  // Password Enable/Disable
+  Toggle_Button(phost, CurProf.passwordEnabled, TAG_PASSWORD_ENABLED, 242, 180, "On", "Off");
 
-  App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-  App_WrCoCmd_Buffer(phost, TAG(TAG_PASSWORD_ENABLED));
-  Gpu_CoCmd_Toggle(phost, 242, 180, 40, 21, OPT_FLAT | OPT_FORMAT, passwordStatus, "On\xFFOff");
-  Gpu_CoCmd_BgColor(phost, 0x00A2E8);
-  Gpu_CoCmd_FgColor(phost, 0x007300);
-  App_WrCoCmd_Buffer(phost, TAG_MASK(0));
-  App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));
-  //END
-
-  //v204
   if (CurProf.Tube_No_x > MAXNUMX)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
   else
@@ -362,25 +342,7 @@ void Skip_Screen(Gpu_Hal_Context_t *phost) {
   // Staggered Mode Toggle
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   Gpu_CoCmd_Text(phost, 10, 165, 21, 0, "Staggered:");
-  
-  Gpu_CoCmd_BgColor(phost, 0x00A2E8);
-  // Check the staggered mode status and set the foreground color accordingly
-  int16_t staggeredStatus = CurProf.staggered ? 0 : 65535;
-  if (staggeredStatus == 0) {
-    Gpu_CoCmd_FgColor(phost, 0x007300);               // Green when ON
-    App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 128, 0));  //text color
-  } else {
-    Gpu_CoCmd_FgColor(phost, 0xFF0000);               // Red when OFF
-    App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  //text color
-  }
-
-  App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-  App_WrCoCmd_Buffer(phost, TAG(TAG_STAGGERED_TOGGLE));
-  Gpu_CoCmd_Toggle(phost, 92, 168, 40, 21, OPT_FLAT | OPT_FORMAT, staggeredStatus, "On\xFFOff");
-  Gpu_CoCmd_BgColor(phost, 0x00A2E8);
-  Gpu_CoCmd_FgColor(phost, 0x007300);
-  App_WrCoCmd_Buffer(phost, TAG_MASK(0));
-  App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));
+  Toggle_Button(phost, CurProf.staggered, TAG_STAGGERED_TOGGLE, 92, 168, "On", "Off");
 
   Disp_End(phost);
 }
