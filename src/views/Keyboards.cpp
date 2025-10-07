@@ -20,7 +20,7 @@ struct
   uint8_t Exit : 1;
 } Flag;
 
-void DisplayKeyboard(Gpu_Hal_Context_t *phost, uint8_t keypressed, char *displaytext, char *displaytitle, bool numlock, bool caplock, bool errorcode) {
+void draw_keyboard(Gpu_Hal_Context_t *phost, uint8_t keypressed, char *displaytext, char *displaytitle, bool numlock, bool caplock, bool errorcode) {
   char buf[PROFILE_NAME_MAX_LEN + 8];
 
   // Display List start
@@ -103,8 +103,9 @@ void DisplayKeyboard(Gpu_Hal_Context_t *phost, uint8_t keypressed, char *display
   if (errorcode) {
     sprintf(buf, "%s\n%s", displaytext, "error");
     Gpu_CoCmd_Text(phost, 0, 0, font, 0, buf);
-  } else
+  } else {
     Gpu_CoCmd_Text(phost, 0, 0, font, 0, displaytext);
+  }
 
   App_WrCoCmd_Buffer(phost, SCISSOR_XY(0, 77));
   App_WrCoCmd_Buffer(phost, SCISSOR_SIZE(DispWidth, (uint16_t)(DispHeight * 0.1)));
@@ -115,130 +116,95 @@ void DisplayKeyboard(Gpu_Hal_Context_t *phost, uint8_t keypressed, char *display
 
   Disp_End(phost);
 }
-uint8_t GetKeyPressed(void) {
-  Interaction interaction;
-  do {
-    InteractionsHandler::getTouchInteraction(interaction);
-  } while (interaction.key_pressed == 0);
-  return interaction.key_pressed;
-}
 
-void WaitKeyRelease(void) {
-  while (Gpu_Hal_Rd8(phost, REG_TOUCH_TAG) > 0) {}
-}
-
-void Keyboard(Gpu_Hal_Context_t *phost, char *curtext, char *curtitle, bool password) {
-  uint8_t keypressed = 0;
-
-  delay(200);  // Added to create smooth transition between screen
-  //phost = &host;
-  /*local variables*/
-  uint16_t noofchars = 0, line2disp = 0, nextline = 0;
+void get_keyboard_value(Gpu_Hal_Context_t *phost, char *curtext, char *curtitle, bool password) {
+  delay(200); // Added to create smooth transition between screen
   uint8_t font = 27;
-  //char curtext[PROFILE_NAME_MAX_LEN]="hello";
-  char buf[PROFILE_NAME_MAX_LEN + 20];
-  uint8_t i;
+  char buf[PROFILE_NAME_MAX_LEN] = "";
   uint8_t curpos = 0;
-  bool wait4key = TRUE;
-  bool numlock = FALSE;
-  bool caplock = FALSE;
 
+  bool numlock = false;
+  bool caplock = false;
 
-  for (i = 0; i < PROFILE_NAME_MAX_LEN; i++) buf[i] = '\0';
   strcpy(buf, curtext);
 
-
-  /*initial setup*/
   curpos = strlen(buf);  // starting pos
   buf[curpos] = 0;
   Flag.Numeric = OFF;  // Disable the numbers and spcial charaters
 
-  DisplayKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, 0);
-  //for(i=0;i<14;i++) Dprint(buf[i]);
-  Dprint("end");
+  draw_keyboard(phost, 0, buf, curtitle, numlock, caplock, 0);
+  InteractionsHandler::waitForTouchRelease();
 
-  do {
-    keypressed = GetKeyPressed();
+  while (true) {
+    int keypressed = InteractionsHandler::getTouchStateChanged();
 
-    if (keypressed > 0) {
-      //DisplayKeyboard(phost, keypressed,buf,numlock,caplock,0);
-      WaitKeyRelease();
+    // Only update the keyboard if a key was pressed
+    if (keypressed == -1) continue;
 
-      switch (keypressed) {
-        case BACK_SPACE:
-          if (curpos > 0)  // check in the line there is any characters are present, cursor not included
-          {
-            Dprint("BKSP");
-            curpos--;  // clear the character in the buffer
-            buf[curpos] = 0;
-            if (password) curtext[curpos] = 0;
-            Dprint(curpos);
-          }
-          keypressed = 0;
-          break;
+    draw_keyboard(phost, keypressed, buf, curtitle, numlock, caplock, 0);
 
-        case CAPS_LOCK:
-          Dprint("cap");
-          keypressed = 0;
-          caplock = !caplock;  // toggle the caps lock on when the key detect
-          break;
+    switch (keypressed) {
+      // No key
+      case 0:
+        draw_keyboard(phost, 0, buf, curtitle, numlock, caplock, false);
+        break;
 
-        case NUMBER_LOCK:
-          Dprint("num");
-          keypressed = 0;
-          numlock = (numlock) ? FALSE : TRUE;  // toggle the number lock on when the key detect
-          break;
-        case CLEAR_KEY:
-          keypressed = 0;
-          curpos = 0;
+      case BACK_SPACE:
+        // check in the line there is any characters are present, cursor not included
+        if (curpos > 0)  {
+          curpos--;  // clear the character in the buffer
           buf[curpos] = 0;
           if (password) curtext[curpos] = 0;
-          break;
-        case KBBACK:
-          keypressed = 0;
-          wait4key = FALSE;
-          break;
+        }
+        break;
 
-        case SAVE_KEY:
-          keypressed = 0;
-          wait4key = FALSE;
-          strcpy(curtext, buf);
-          break;
-        default:
-          if (curpos < PROFILE_NAME_MAX_LEN) {
-            //Dprint(curpos);
-            buf[curpos] = keypressed;
-            if (password) {
-              curtext[curpos] = '*';
-              curtext[curpos + 1] = 0;
-            }
-            buf[++curpos] = 0;
-            keypressed = 0;
-          } else {
-            DisplayKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, TRUE);
-            keypressed = 0;
-            delay(500);
+      case CAPS_LOCK:
+        caplock = !caplock;  // toggle the caps lock on when the key detect
+        break;
+
+      case NUMBER_LOCK:
+        numlock = (numlock) ? FALSE : TRUE;  // toggle the number lock on when the key detect
+        break;
+      case CLEAR_KEY:
+        curpos = 0;
+        buf[curpos] = 0;
+        if (password) curtext[curpos] = 0;
+        break;
+
+      case KBBACK:
+        return;
+
+      case SAVE_KEY:
+        strcpy(curtext, buf);
+        return;
+
+      default:
+        if (curpos < PROFILE_NAME_MAX_LEN) {
+          buf[curpos] = keypressed;
+          if (password) {
+            curtext[curpos] = '*';
+            curtext[curpos + 1] = 0;
           }
-          break;
-      }
-      if (wait4key) {
-        if (password)
-          DisplayKeyboard(phost, keypressed, curtext, curtitle, numlock, caplock, 0);
-        else
-          DisplayKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, 0);
-      }
+          buf[++curpos] = 0;
+          draw_keyboard(phost, keypressed, buf, curtitle, numlock, caplock, false);
+        } else {
+          draw_keyboard(phost, keypressed, buf, curtitle, numlock, caplock, TRUE);
+          delay(1000);
+          draw_keyboard(phost, keypressed, buf, curtitle, numlock, caplock, false);
+        }
+        break;
     }
-  } while (wait4key);
+  }
 }
 
-void Round1Dec(float *x) {
+void round_1_decimal(float *x) {
   char buf[PROFILE_NAME_MAX_LEN];
 
   dtostrf(*x, 3, 1, buf);
   *x = atof(buf);
 }
 
-void DisplayKeypad(Gpu_Hal_Context_t *phost, int32_t keypressed, char *displaynum, int8_t errorcode) {
+void draw_keypad(Gpu_Hal_Context_t *phost, int32_t keypressed, char *displaynum, int8_t errorcode) {
   char buf[KEYPAD_MAX_LEN];
 
   Gpu_CoCmd_Dlstart(phost);
@@ -280,10 +246,6 @@ void DisplayKeypad(Gpu_Hal_Context_t *phost, int32_t keypressed, char *displaynu
   App_WrCoCmd_Buffer(phost, CLEAR(1, 1, 1));
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));  // Text Color
 
-  //App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
-  //v204 if(errorcode)
-  //v204  sprintf(buf,"%s  %s",displaynum,"out of range");
-  //v204 else
   sprintf(buf, "%s", displaynum);
   Gpu_CoCmd_Text(phost, 0, 0, 30, 0, buf);
 
@@ -292,113 +254,68 @@ void DisplayKeypad(Gpu_Hal_Context_t *phost, int32_t keypressed, char *displaynu
   App_Flush_Co_Buffer(phost);
 }
 
-
-void LoadBuffer(char *buf, float curval) {
-  float temp;
-  temp = (int8_t)curval;
-
-  if (curval - temp > 0) {
-    dtostrf(curval, 3, 1, buf);
-    buf[KEYPAD_MAX_LEN - 1] = '\0';  // Force null termination
-  } else {
-    sprintf(buf, "%d", (int16_t)curval);
-    buf[KEYPAD_MAX_LEN - 1] = '\0';  // Force null termination
-  }
-}
-
-float Keypad(Gpu_Hal_Context_t *phost, float curval, float minval, float maxval, bool isfloat) {
+float get_keypad_value(Gpu_Hal_Context_t *phost, float curval, float minval, float maxval, bool isfloat) {
   phost = &host;
-  uint8_t keypressed = 0;
-  bool wait4key = TRUE;
-
-  char buf[KEYPAD_MAX_LEN];
+  char buf[KEYPAD_MAX_LEN] = "";
   int8_t curpos;
-  float tempval;
+  int8_t lastKeyPressed = 0;
 
-  for (int i = 0; i < KEYPAD_MAX_LEN; i++) buf[i] = 0;
-  LoadBuffer(buf, curval);
+  // Load buf with curval
+  dtostrf(curval, 2, 1, buf);
   curpos = strlen(buf);
-  buf[curpos] = 0;
 
-  Dprint("T112");
-  Dprint(buf[0]);
-  Dprint(buf[1]);
-  Dprint(buf[2]);
-  Dprint(buf[3]);
-  Dprint(buf[4]);
+  InteractionsHandler::waitForTouchRelease();
 
-  // Display List start
-  DisplayKeypad(phost, keypressed, buf, 0);
-  Dprint(curpos);
+  draw_keypad(phost, 0, buf, 0);
 
-  do {
-    keypressed = GetKeyPressed();
+  while(true) {
+    int keypressed = InteractionsHandler::getTouchStateChanged();
 
-    if (keypressed > 0) {
-      //Dprintln(keypressed);
-      DisplayKeypad(phost, keypressed, buf, 0);
-      WaitKeyRelease();
-      Dprint("T10");
+    // Only update when key actually changed
+    if (keypressed == -1) { continue; }
 
-      switch (keypressed) {
-        case BACK_SPACE:
-          if (curpos >= 0) {
-            if (curpos > 0) curpos--;
-            buf[curpos] = 0;
-            Dprint(curpos);
-          }
-          keypressed = 0;
-          Dprint("T11");
-          break;
-        case NUM_ENTER:
-          keypressed = 0;
-          wait4key = FALSE;
-          break;
-        case BACK:
-          keypressed = 0;
-          wait4key = FALSE;
-          LoadBuffer(buf, curval);
-          break;
-        default:
-          if (curpos < KEYPAD_MAX_LEN - 1) {
-            Dprint(curpos);
-            buf[curpos] = keypressed;
-            buf[++curpos] = 0;
-            keypressed = 0;
-          } else {  //max entry
-            DisplayKeypad(phost, keypressed, buf, 1);
-          }
-          break;
-      }
-      Dprint(buf[0]);
-      Dprint(buf[1]);
-      Dprint(buf[2]);
-      Dprint(buf[3]);
-      Dprint(buf[4]);
-      if (!wait4key) {
-        tempval = atof(buf);
-        Dprint("tempval=", tempval);
-        if (tempval < minval || tempval > maxval) {  //out of range error
-                                                     //v204 DisplayKeypad(phost,keypressed,buf,1);
-                                                     //v204 delay(2000);
-          if (tempval > maxval) LoadBuffer(buf, maxval);
-          else LoadBuffer(buf, minval);
-          curpos = strlen(buf);
-          DisplayKeypad(phost, keypressed, buf, 0);
-          wait4key = TRUE;  //error re enter again
+    switch (keypressed) {
+      // No key
+      case 0:
+        draw_keypad(phost, 0, buf, 0);
+        break;
 
-        } else {
-          curval = tempval;  //accept entry
-          LoadBuffer(buf, curval);
-          DisplayKeypad(phost, keypressed, buf, 0);
+      case BACK_SPACE:
+        if (curpos >= 0) {
+          if (curpos > 0) curpos--;
+          buf[curpos] = 0;
         }
-      } else {
-        DisplayKeypad(phost, keypressed, buf, 0);
-      }
-      if (wait4key) WaitKeyRelease();
-    }
+        break;
 
-  } while (wait4key);
+      case BACK:
+        return curval;
+
+      case NUM_ENTER: {
+        float tempval = atof(buf);
+
+        // Check if the value is within the range
+        if (tempval > maxval || tempval < minval) {
+          // If no, load the max or min value and show it on the keypad
+          dtostrf(tempval > maxval ? maxval : minval, 2, 1, buf);
+          curpos = strlen(buf);
+          break;
+        }
+
+        return tempval;
+      }
+
+      // Any other key
+      default: 
+        if (curpos < KEYPAD_MAX_LEN - 1) {
+          buf[curpos] = keypressed;
+          buf[++curpos] = 0;
+          draw_keypad(phost, keypressed, buf, 0);
+        } else { //max entry
+          draw_keypad(phost, keypressed, buf, 1);
+        }
+        break;
+    }
+  } 
 
   return curval;
 }

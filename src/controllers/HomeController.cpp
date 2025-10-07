@@ -32,12 +32,12 @@ void HomeController::on_interaction(const Interaction& interaction) {
         char inputPassword [PROFILE_NAME_MAX_LEN];
 
         ReadPassEEPROM(currentPassword);
-        Keyboard(phost, inputPassword, "Enter Password", FALSE);
+        get_keyboard_value(phost, inputPassword, "Enter Password", FALSE);
 
         bool passwordValid = (strcmp(currentPassword, inputPassword) == 0 || strcmp(SUPER_PASSWORD, inputPassword) == 0);
 
         if (!passwordValid) {
-          DisplayKeyboard(phost, 0, "Wrong Password", " ", FALSE, FALSE, FALSE);
+          draw_keyboard(phost, 0, "Wrong Password", " ", FALSE, FALSE, FALSE);
           delay(2000);
           start_next_controller(CONTROLLER_HOME);
           return;

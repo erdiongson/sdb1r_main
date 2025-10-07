@@ -44,12 +44,12 @@ void ConfigController::on_interaction(const Interaction& interaction) {
 
         if (currentProfile->Tube_No_x == 0) maxval = MAXXMM - currentProfile->trayOriginX;
         else maxval = (MAXXMM - currentProfile->trayOriginX) / (currentProfile->Tube_No_x - 1);
-        Round1Dec(&maxval);
+        round_1_decimal(&maxval);
         if (currentProfile->pitch_x > maxval) error = TRUE;
         else {
           if (currentProfile->Tube_No_y == 0) maxval = MAXYMM - currentProfile->trayOriginY;
           else maxval = (MAXYMM - currentProfile->trayOriginY) / (currentProfile->Tube_No_y - 1);
-          Round1Dec(&maxval);
+          round_1_decimal(&maxval);
           if (currentProfile->pitch_y > maxval) error = TRUE;
         }
 
@@ -139,7 +139,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
 
     case TAG_CONFIG_PROFILE_NAME:
       Serial.println(F("Button Pressed: PROFILE"));
-      Keyboard(phost, currentProfile->profileName, "Enter Profile Name", FALSE);
+      get_keyboard_value(phost, currentProfile->profileName, "Enter Profile Name", FALSE);
       draw_config_screen(phost);
       break;
 
@@ -150,7 +150,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
 
         Dprint("max val=", maxval);
         int oldTubeNoX = currentProfile->Tube_No_x;
-        currentProfile->Tube_No_x = Keypad(&host, currentProfile->Tube_No_x, MINNUMX, MAXNUMX, FALSE);
+        currentProfile->Tube_No_x = get_keypad_value(&host, currentProfile->Tube_No_x, MINNUMX, MAXNUMX, FALSE);
         
         // If rows decreased, clean skip strings to remove out-of-bounds positions
         if (currentProfile->Tube_No_x < oldTubeNoX) {
@@ -182,7 +182,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         if (maxval > MAXNUMY) maxval = MAXNUMY;
         Dprint("max val=", maxval);
         int oldTubeNoY = currentProfile->Tube_No_y;
-        currentProfile->Tube_No_y = Keypad(&host, currentProfile->Tube_No_y, MINNUMY, MAXNUMY, FALSE);
+        currentProfile->Tube_No_y = get_keypad_value(&host, currentProfile->Tube_No_y, MINNUMY, MAXNUMY, FALSE);
         
         // If columns decreased, clean skip strings to remove out-of-bounds positions
         if (currentProfile->Tube_No_y < oldTubeNoY) {
@@ -212,10 +212,10 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         float maxval;
         if (currentProfile->Tube_No_x == 0) maxval = MAXXMM - currentProfile->trayOriginX;
         else maxval = (MAXXMM - currentProfile->trayOriginX) / (currentProfile->Tube_No_x - 1);
-        Round1Dec(&maxval);
+        round_1_decimal(&maxval);
         Dprint("max val=", maxval);
         if (maxval > MAXPITCHX) maxval = MAXPITCHX;
-        currentProfile->pitch_x = Keypad(&host, currentProfile->pitch_x, MINPITCHX, MAXPITCHX, FALSE);
+        currentProfile->pitch_x = get_keypad_value(&host, currentProfile->pitch_x, MINPITCHX, MAXPITCHX, FALSE);
         draw_config_screen(phost);
       }
       break;
@@ -225,10 +225,10 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         float maxval;
         if (currentProfile->Tube_No_y == 0) maxval = MAXYMM - currentProfile->trayOriginY;
         else maxval = (MAXYMM - currentProfile->trayOriginY) / (currentProfile->Tube_No_y - 1);
-        Round1Dec(&maxval);
+        round_1_decimal(&maxval);
         if (maxval > MAXPITCHY) maxval = MAXPITCHY;
         Dprint("max val=", maxval);
-        currentProfile->pitch_y = Keypad(&host, currentProfile->pitch_y, MINPITCHY, MAXPITCHY, FALSE);
+        currentProfile->pitch_y = get_keypad_value(&host, currentProfile->pitch_y, MINPITCHY, MAXPITCHY, FALSE);
         draw_config_screen(phost);
       }
       break;
@@ -238,11 +238,11 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         float maxval;
         if (currentProfile->Tube_No_x == 0) maxval = MAXXMM;
         else maxval = MAXXMM - (currentProfile->pitch_x * (currentProfile->Tube_No_x - 1));
-        Round1Dec(&maxval);
+        round_1_decimal(&maxval);
         if (maxval > MAXORGX) maxval = MAXORGX;
         Dprint("max val=", maxval);
 
-        currentProfile->trayOriginX = Keypad(&host, currentProfile->trayOriginX, 0, MAXORGX, FALSE);
+        currentProfile->trayOriginX = get_keypad_value(&host, currentProfile->trayOriginX, 0, MAXORGX, FALSE);
         draw_config_screen(phost);
       }
       break;
@@ -252,22 +252,22 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         float maxval;
         if (currentProfile->Tube_No_y == 0) maxval = MAXYMM;
         else maxval = MAXYMM - (currentProfile->pitch_y * (currentProfile->Tube_No_y - 1));
-        Round1Dec(&maxval);
+        round_1_decimal(&maxval);
         if (maxval > MAXORGY) maxval = MAXORGY;
         Dprint("max val=", maxval);
-        currentProfile->trayOriginY = Keypad(&host, currentProfile->trayOriginY, 0, MAXORGY, FALSE);
+        currentProfile->trayOriginY = get_keypad_value(&host, currentProfile->trayOriginY, 0, MAXORGY, FALSE);
         draw_config_screen(phost);
       }
       break;
 
     case TAG_NUM_CYCLE:
-      currentProfile->Cycles = Keypad(phost, currentProfile->Cycles, MINCYCLE, MAXCYCLE, FALSE);
+      currentProfile->Cycles = get_keypad_value(phost, currentProfile->Cycles, MINCYCLE, MAXCYCLE, FALSE);
       draw_config_screen(phost);
       break;
 
     case TAG_Z_DIP:
       Serial.println(F("Incrementing Z Dip"));
-      currentProfile->ZDip = Keypad(phost, currentProfile->ZDip, MINZDIP, MAXZDIP, FALSE);
+      currentProfile->ZDip = get_keypad_value(phost, currentProfile->ZDip, MINZDIP, MAXZDIP, FALSE);
       draw_config_screen(phost);
       break;
 
@@ -435,7 +435,7 @@ void ConfigController::editSkipColumn(Gpu_Hal_Context_t* phost) {
   TrayHandler::Dimensions dimensions(currentProfile->Tube_No_x, currentProfile->Tube_No_y);
   
   while (true) {
-    Keyboard(phost, currentProfile->skipCol, "Enter columns to skip", FALSE);
+    get_keyboard_value(phost, currentProfile->skipCol, "Enter columns to skip", FALSE);
     
     // Clean the input with bounds checking
     SkipUtils::CleanResult result = SkipUtils::clean(currentProfile->skipCol, SkipUtils::COLUMN, dimensions);
@@ -458,7 +458,7 @@ void ConfigController::editSkipRow(Gpu_Hal_Context_t* phost) {
   TrayHandler::Dimensions dimensions(currentProfile->Tube_No_x, currentProfile->Tube_No_y);
   
   while (true) {
-    Keyboard(phost, currentProfile->skipRow, "Enter rows to skip", FALSE);
+    get_keyboard_value(phost, currentProfile->skipRow, "Enter rows to skip", FALSE);
     
     // Clean the input with bounds checking
     SkipUtils::CleanResult result = SkipUtils::clean(currentProfile->skipRow, SkipUtils::ROW, dimensions);
@@ -481,7 +481,7 @@ void ConfigController::editSkipIndividual(Gpu_Hal_Context_t* phost) {
   TrayHandler::Dimensions dimensions(currentProfile->Tube_No_x, currentProfile->Tube_No_y);
   
   while (true) {
-    Keyboard(phost, currentProfile->skipSinglePos, "Enter positions to skip", FALSE);
+    get_keyboard_value(phost, currentProfile->skipSinglePos, "Enter positions to skip", FALSE);
     
     // Clean the input with bounds checking
     Serial.println(F("Cleaning!"));

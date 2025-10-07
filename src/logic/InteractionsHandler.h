@@ -15,29 +15,28 @@ public:
     InteractionsHandler() {}
     ~InteractionsHandler() {}
 
-    static inline int lastTouchButton = 0; // Inline static member (C++17)
+    static inline int lastTouchState = 0; // Inline static member (C++17)
 
-    // Optimized version: pass by reference to avoid struct copy
-    static void getTouchInteraction(Interaction& interaction) {
-        // Initialize with default values using member initialization
-        interaction = {0, MSG_UNKNOWN, 0};
-        
+    static int waitForTouchRelease() {
+        while (Gpu_Hal_Rd8(phost, REG_TOUCH_TAG) != 0) {
+            delay(10);
+        }
+    };
+
+    static int getTouchStateChanged() {
         // Read hardware register only once
-        int touchButtonPressed = Gpu_Hal_Rd8(phost, REG_TOUCH_TAG);
-        
-        // Button press cycle: non-zero (pressed) followed by zero (released)
-        if (lastTouchButton == 0 && touchButtonPressed != 0) {
-            // Button was pressed and now released - register the press
-            interaction.key_pressed = touchButtonPressed;
+        int latestTouchState = Gpu_Hal_Rd8(phost, REG_TOUCH_TAG);
+       
+        // Check if the state changed
+        if (lastTouchState != latestTouchState) {
+            lastTouchState = latestTouchState;
+            return latestTouchState;
         }
         
         // Update last button state for next check
-        lastTouchButton = touchButtonPressed;
-        
-        // Check for PLC messages
-        // PLCMessage plcMessage = PlcSerial::getNewMessage();
-        // interaction.plc_message_type = plcMessage.type;
-    }
+        lastTouchState = latestTouchState;
+        return -1;
+    };
     
     // Alternative: even faster version that returns early when no interaction
     static bool getAllInteractions(Interaction& interaction) {
@@ -45,17 +44,17 @@ public:
         int touchButtonPressed = Gpu_Hal_Rd8(phost, REG_TOUCH_TAG);
         
         // Check for button release (the only case we care about)
-        if (lastTouchButton == 0 && touchButtonPressed != 0) {
+        if (lastTouchState == 0 && touchButtonPressed != 0) {
             // Button was pressed and now released - register the press
             interaction.key_pressed = touchButtonPressed;
             interaction.plc_message_type = MSG_UNKNOWN;
             interaction.plc_message_data = 0;
-            lastTouchButton = touchButtonPressed;
+            lastTouchState = touchButtonPressed;
             return true; // Interaction detected
         }
         
         // Update last button state
-        lastTouchButton = touchButtonPressed;
+        lastTouchState = touchButtonPressed;
         
         // Check for PLC messages before early exit
         PLCMessage plcMessage = PlcSerial::process();

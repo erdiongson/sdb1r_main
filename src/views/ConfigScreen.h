@@ -134,7 +134,7 @@ void draw_config_screen(Gpu_Hal_Context_t *phost) {
   //Text - Pitch Row
   if (CurProf.Tube_No_x == 0) maxval = MAXXMM - CurProf.trayOriginX;
   else maxval = (MAXXMM - CurProf.trayOriginX) / (CurProf.Tube_No_x - 1);
-  Round1Dec(&maxval);
+  round_1_decimal(&maxval);
   Dprint("max val Pitch X =", maxval);
   if (maxval < CurProf.pitch_x)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
@@ -149,7 +149,7 @@ void draw_config_screen(Gpu_Hal_Context_t *phost) {
   //Text - Pitch Column
   if (CurProf.Tube_No_y == 0) maxval = MAXYMM - CurProf.trayOriginY;
   else maxval = (MAXYMM - CurProf.trayOriginY) / (CurProf.Tube_No_y - 1);
-  Round1Dec(&maxval);
+  round_1_decimal(&maxval);
   Dprint("max val Pitch Y =", maxval);
   if (maxval < CurProf.pitch_y)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
@@ -164,7 +164,7 @@ void draw_config_screen(Gpu_Hal_Context_t *phost) {
   //Text - Origin X
   if (CurProf.Tube_No_x == 0) maxval = MAXXMM;
   else maxval = MAXXMM - (CurProf.pitch_x * (CurProf.Tube_No_x - 1));
-  Round1Dec(&maxval);
+  round_1_decimal(&maxval);
   Dprint("max val Org X =", maxval);
   if (maxval < CurProf.trayOriginX)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
@@ -179,7 +179,7 @@ void draw_config_screen(Gpu_Hal_Context_t *phost) {
   //Text - Origin Y
   if (CurProf.Tube_No_y == 0) maxval = MAXYMM;
   else maxval = MAXYMM - (CurProf.pitch_y * (CurProf.Tube_No_y - 1));
-  Round1Dec(&maxval);
+  round_1_decimal(&maxval);
   Dprint("max val Org Y =", maxval);
   if (maxval < CurProf.trayOriginY)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text

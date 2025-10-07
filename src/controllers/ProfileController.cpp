@@ -52,23 +52,23 @@ void ProfileController::on_interaction(const Interaction& interaction) {
       char new_password_1[PASSWORD_MAX_LEN] = "";
       char new_password_2[PASSWORD_MAX_LEN] = "";
       
-      Keyboard(phost, new_password_1, "Enter New Password", FALSE);
+      get_keyboard_value(phost, new_password_1, "Enter New Password", FALSE);
       if (new_password_1[0] == 0) {
-        Keyboard(phost, "Error : No password entered", "Press Back to continue", FALSE);
+        get_keyboard_value(phost, "Error : No password entered", "Press Back to continue", FALSE);
         draw_profile_screen(0, selectedProfileNum, CurProf);
         return;
       }
 
-      Keyboard(phost, new_password_2, "Enter New Password again", FALSE);
+      get_keyboard_value(phost, new_password_2, "Enter New Password again", FALSE);
 
       if (strcmp(new_password_1, new_password_2) != 0) {
-        Keyboard(phost, "Error : Different password entered", "Press Back to continue", FALSE);
+        get_keyboard_value(phost, "Error : Different password entered", "Press Back to continue", FALSE);
         draw_profile_screen(0, selectedProfileNum, CurProf);
         return;
       }
 
       WritePassEEPROM(new_password_1);
-      Keyboard(phost, "Password changed", "Press Back to continue", FALSE);
+      get_keyboard_value(phost, "Password changed", "Press Back to continue", FALSE);
       draw_profile_screen(0, selectedProfileNum, CurProf);
       break;
 
