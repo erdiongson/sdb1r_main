@@ -28,7 +28,7 @@ Date created - 2022.12.14 - XentiQ version
 #define MAXORGX 999//v204 99.9
 #define MAXORGY 999//v204 99.9
 
-#define MINZDIP 1
+#define MINZDIP 0
 #define MAXZDIP 999
 
 #define MINNUMX 1
