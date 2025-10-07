@@ -327,18 +327,12 @@ void draw_skip_screen(Gpu_Hal_Context_t *phost) {
   Gpu_CoCmd_FgColor(phost, 0x00A2E8);
 
   // Back Button
-  //App_WrCoCmd_Buffer(phost, TAG_MASK(disableButtons ? 0 : 1)); // Enable or disable based on the flag
   App_WrCoCmd_Buffer(phost, TAG(TAG_ADV_PROF_BACK));
-  Gpu_CoCmd_Button(phost, 247, 196, 62, 26, 21, 0, "Back");
-
-  // Save Button
-  //App_WrCoCmd_Buffer(phost, TAG_MASK(disableButtons ? 0 : 1)); // Enable or disable based on the flag
-  App_WrCoCmd_Buffer(phost, TAG(TAG_ADV_PROF_SAVE));
-  Gpu_CoCmd_Button(phost, 10, 196, 62, 26, 21, 0, "Save");
+  Gpu_CoCmd_Button(phost, 10, 196, 62, 26, 21, 0, "Back");
 
   // Preview Button
   App_WrCoCmd_Buffer(phost, TAG(TAG_CONFIG_PREVIEW));
-  Gpu_CoCmd_Button(phost, 77, 196, 62, 26, 21, 0, "Preview");
+  Gpu_CoCmd_Button(phost, 247, 196, 62, 26, 21, 0, "Preview");
 
   // Staggered Mode Toggle
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));

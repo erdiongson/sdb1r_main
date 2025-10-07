@@ -38,7 +38,6 @@
 #define TAG_SKIP_ROWS        32
 #define TAG_SKIP_SINGLE_POS  33
 #define TAG_ADV_PROF_BACK    34
-#define TAG_ADV_PROF_SAVE    35
 #define TAG_STAGGERED_TOGGLE 38
 #define TAG_CONFIG_HOME      6
 

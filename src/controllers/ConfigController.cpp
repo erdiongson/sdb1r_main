@@ -318,21 +318,6 @@ void ConfigController::on_interaction(const Interaction& interaction) {
       draw_config_screen(phost);
       break;
 
-    case TAG_ADV_PROF_SAVE:
-      Serial.println(F("Button Pressed: SAVE"));
-      {
-        char buf[PROFILE_NAME_MAX_LEN];
-        Dprint("curprofnum=", CurProfNum);
-        WriteCurIDEEPROM(CurProfNum);
-        WriteProfileEEPROM(CurProfNum);
-        strcpy(buf, currentProfile->profileName);
-        strcpy(currentProfile->profileName, "Profile saved");
-        draw_config_screen(phost);
-        delay(3000);
-        strcpy(currentProfile->profileName, buf);
-      }
-      break;
-
     case TAG_CONFIG_PREVIEW:
       Serial.println(F("Button Pressed: PREVIEW"));
       {
