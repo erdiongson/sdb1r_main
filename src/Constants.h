@@ -22,37 +22,37 @@
 #define TXRXERROR            3
 #define HOMEERROR            4
 
-#define PROFILEBACK          6
-#define PROFILELOAD          7
-#define CONFIGADVANCE        8
-#define PROFILEUP            9
-#define PROFILEDOWN          10
-#define PROFILEPASS          40
+#define TAG_PROFILE_BACK     6
+#define TAG_PROFILE_LOAD     7
+#define TAG_ADVANCED         8
+#define TAG_PROFILE_UP       9
+#define TAG_PROFILE_DOWN     10
+#define TAG_PROFILE_CHANGE_PASSWORD 40
 
-#define NUM_CYCLES           20
-#define ZDIP                 21
-#define VIBLVL               28
-#define PASSEN               29
-#define VIBDURATION          30
-#define SKIP_COLUMNS         31
-#define SKIP_ROWS            32
-#define SKIP_SINGLE_POS      33
-#define ADVPROF_BACK         34
-#define ADVPROF_SAVE         35
-#define STAGGERED_TOGGLE     38
-#define KEY_CONFIG_HOME      6
+#define TAG_NUM_CYCLE        20
+#define TAG_Z_DIP            21
+#define TAG_VIBRATION_LEVEL  28
+#define TAG_PASSWORD_ENABLED 29
+#define TAG_VIBRATION_DURATION 30
+#define TAG_SKIP_COLUMNS     31
+#define TAG_SKIP_ROWS        32
+#define TAG_SKIP_SINGLE_POS  33
+#define TAG_ADV_PROF_BACK    34
+#define TAG_ADV_PROF_SAVE    35
+#define TAG_STAGGERED_TOGGLE 38
+#define TAG_CONFIG_HOME      6
 
-#define KEY_CONFIG_LOAD      11
-#define KEY_CONFIG_SAVE      12
-#define KEY_CONFIG_PROFILE_NAME   13
-#define KEY_CONFIG_TUBES_X   14
-#define KEY_CONFIG_TUBES_Y   15
-#define KEY_CONFIG_PITCH_X   16
-#define KEY_CONFIG_PITCH_Y   17
-#define KEY_CONFIG_ORIGIN_X  18
-#define KEY_CONFIG_ORIGIN_Y  19
-#define KEY_CONFIG_PREVIEW   36
-#define KEY_CONFIG_PREVIEW_BACK   37
+#define TAG_CONFIG_LOAD      11
+#define TAG_CONFIG_SAVE      12
+#define TAG_CONFIG_PROFILE_NAME   13
+#define TAG_CONFIG_TUBES_X   14
+#define TAG_CONFIG_TUBES_Y   15
+#define TAG_CONFIG_PITCH_X   16
+#define TAG_CONFIG_PITCH_Y   17
+#define TAG_CONFIG_ORIGIN_X  18
+#define TAG_CONFIG_ORIGIN_Y  19
+#define TAG_CONFIG_PREVIEW   36
+#define TAG_CONFIG_PREVIEW_BACK   37
 
 // Movement control tags
 #define TAG_MOVE_UP         50

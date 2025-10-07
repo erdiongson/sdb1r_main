@@ -122,7 +122,7 @@ void Config_Screen(Gpu_Hal_Context_t *phost) {
   }
 
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-  App_WrCoCmd_Buffer(phost, TAG(PASSEN));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_PASSWORD_ENABLED));
   Gpu_CoCmd_Toggle(phost, 242, 180, 40, 21, OPT_FLAT | OPT_FORMAT, passwordStatus, "On\xFFOff");
   Gpu_CoCmd_BgColor(phost, 0x00A2E8);
   Gpu_CoCmd_FgColor(phost, 0x007300);
@@ -227,56 +227,56 @@ void Config_Screen(Gpu_Hal_Context_t *phost) {
 
   // Load Button
   //App_WrCoCmd_Buffer(phost, TAG_MASK(disableButtons ? 0 : 1)); // Enable or disable based on the flag
-  App_WrCoCmd_Buffer(phost, TAG(KEY_CONFIG_LOAD));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_CONFIG_LOAD));
   Gpu_CoCmd_Button(phost, 116, 205, 76, 26, 21, 0, "Load");
 
   // Save Button
   //App_WrCoCmd_Buffer(phost, TAG_MASK(disableButtons ? 0 : 1)); // Enable or disable based on the flag
-  App_WrCoCmd_Buffer(phost, TAG(KEY_CONFIG_SAVE));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_CONFIG_SAVE));
   Gpu_CoCmd_Button(phost, 8, 205, 76, 26, 21, 0, "Save");
 
 
 
-  App_WrCoCmd_Buffer(phost, TAG(CONFIGADVANCE));  //disable advanced button
+  App_WrCoCmd_Buffer(phost, TAG(TAG_ADVANCED));  //disable advanced button
   Gpu_CoCmd_Button(phost, 233, 205, 76, 26, 21, 0, "Advanced");
 
   //20240903: erdiongson - add the variation of vibration U1 - U4
   vibstatus = CurProf.vibrationEnabled;
   if (vibstatus == 1) {
-    App_WrCoCmd_Buffer(phost, TAG(VIBLVL));  //U1 Button
+    App_WrCoCmd_Buffer(phost, TAG(TAG_VIBRATION_LEVEL));  //U1 Button
     Gpu_CoCmd_Button(phost, 101, 175, 44, 20, 27, 0, "1");
   } else if (vibstatus == 2) {
-    App_WrCoCmd_Buffer(phost, TAG(VIBLVL));  //U2 Button
+    App_WrCoCmd_Buffer(phost, TAG(TAG_VIBRATION_LEVEL));  //U2 Button
     Gpu_CoCmd_Button(phost, 101, 175, 44, 20, 27, 0, "2");
   } else if (vibstatus == 3) {
-    App_WrCoCmd_Buffer(phost, TAG(VIBLVL));  //U3 Button
+    App_WrCoCmd_Buffer(phost, TAG(TAG_VIBRATION_LEVEL));  //U3 Button
     Gpu_CoCmd_Button(phost, 101, 175, 44, 20, 27, 0, "3");
   } else if (vibstatus == 4) {
-    App_WrCoCmd_Buffer(phost, TAG(VIBLVL));  //U4 Button
+    App_WrCoCmd_Buffer(phost, TAG(TAG_VIBRATION_LEVEL));  //U4 Button
     Gpu_CoCmd_Button(phost, 101, 175, 44, 20, 27, 0, "4");
   } else {
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
     Gpu_CoCmd_FgColor(phost, 0xA1A1A1);
-    App_WrCoCmd_Buffer(phost, TAG(VIBLVL));  //U0 Button
+    App_WrCoCmd_Buffer(phost, TAG(TAG_VIBRATION_LEVEL));  //U0 Button
     Gpu_CoCmd_Button(phost, 101, 175, 44, 20, 27, 0, "0");
   }
 
   //20241001: erdiongson - add the variation of Vibration Duration (1-5)s
   vibtime_status = CurProf.vibrationDuration;
   if (vibtime_status == 3) {
-    App_WrCoCmd_Buffer(phost, TAG(VIBDURATION));  //3 Seconds Vibration
+    App_WrCoCmd_Buffer(phost, TAG(TAG_VIBRATION_DURATION));  //3 Seconds Vibration
     Gpu_CoCmd_Button(phost, 159, 175, 44, 20, 27, 0, "3s");
   } else if (vibtime_status == 4) {
-    App_WrCoCmd_Buffer(phost, TAG(VIBDURATION));  //4 Seconds Vibration
+    App_WrCoCmd_Buffer(phost, TAG(TAG_VIBRATION_DURATION));  //4 Seconds Vibration
     Gpu_CoCmd_Button(phost, 159, 175, 44, 20, 27, 0, "4s");
   } else if (vibtime_status == 5) {
-    App_WrCoCmd_Buffer(phost, TAG(VIBDURATION));  //5 Seconds Vibration
+    App_WrCoCmd_Buffer(phost, TAG(TAG_VIBRATION_DURATION));  //5 Seconds Vibration
     Gpu_CoCmd_Button(phost, 159, 175, 44, 20, 27, 0, "5s");
   } else if (vibtime_status == 1) {
-    App_WrCoCmd_Buffer(phost, TAG(VIBDURATION));  //1 Second Vibration
+    App_WrCoCmd_Buffer(phost, TAG(TAG_VIBRATION_DURATION));  //1 Second Vibration
     Gpu_CoCmd_Button(phost, 159, 175, 44, 20, 27, 0, "1s");
   } else {
-    App_WrCoCmd_Buffer(phost, TAG(VIBDURATION));  //2 Seconds Vibration
+    App_WrCoCmd_Buffer(phost, TAG(TAG_VIBRATION_DURATION));  //2 Seconds Vibration
     Gpu_CoCmd_Button(phost, 159, 175, 44, 20, 27, 0, "2s");
   }
 
@@ -308,21 +308,21 @@ void Skip_Screen(Gpu_Hal_Context_t *phost) {
 
   // Skipped Columns (edit name)
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-  App_WrCoCmd_Buffer(phost, TAG(SKIP_COLUMNS));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_SKIP_COLUMNS));
   App_WrCoCmd_Buffer(phost, VERTEX2F(160, 880));
   App_WrCoCmd_Buffer(phost, VERTEX2F(4944, 496));
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // Skipped Rows (edit name)
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-  App_WrCoCmd_Buffer(phost, TAG(SKIP_ROWS));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_SKIP_ROWS));
   App_WrCoCmd_Buffer(phost, VERTEX2F(160, 1664));
   App_WrCoCmd_Buffer(phost, VERTEX2F(4944, 1280));
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // Skipped Single Position (edit name)
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-  App_WrCoCmd_Buffer(phost, TAG(SKIP_SINGLE_POS));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_SKIP_SINGLE_POS));
   App_WrCoCmd_Buffer(phost, VERTEX2F(160, 2448));
   App_WrCoCmd_Buffer(phost, VERTEX2F(4944, 2064));
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
@@ -347,16 +347,16 @@ void Skip_Screen(Gpu_Hal_Context_t *phost) {
 
   // Back Button
   //App_WrCoCmd_Buffer(phost, TAG_MASK(disableButtons ? 0 : 1)); // Enable or disable based on the flag
-  App_WrCoCmd_Buffer(phost, TAG(ADVPROF_BACK));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_ADV_PROF_BACK));
   Gpu_CoCmd_Button(phost, 247, 196, 62, 26, 21, 0, "Back");
 
   // Save Button
   //App_WrCoCmd_Buffer(phost, TAG_MASK(disableButtons ? 0 : 1)); // Enable or disable based on the flag
-  App_WrCoCmd_Buffer(phost, TAG(ADVPROF_SAVE));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_ADV_PROF_SAVE));
   Gpu_CoCmd_Button(phost, 10, 196, 62, 26, 21, 0, "Save");
 
   // Preview Button
-  App_WrCoCmd_Buffer(phost, TAG(KEY_CONFIG_PREVIEW));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_CONFIG_PREVIEW));
   Gpu_CoCmd_Button(phost, 77, 196, 62, 26, 21, 0, "Preview");
 
   // Staggered Mode Toggle
@@ -375,7 +375,7 @@ void Skip_Screen(Gpu_Hal_Context_t *phost) {
   }
 
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-  App_WrCoCmd_Buffer(phost, TAG(STAGGERED_TOGGLE));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_STAGGERED_TOGGLE));
   Gpu_CoCmd_Toggle(phost, 92, 168, 40, 21, OPT_FLAT | OPT_FORMAT, staggeredStatus, "On\xFFOff");
   Gpu_CoCmd_BgColor(phost, 0x00A2E8);
   Gpu_CoCmd_FgColor(phost, 0x007300);

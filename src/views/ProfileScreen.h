@@ -17,31 +17,31 @@ void DisplayProfileMenu(uint8_t keypressed, uint8_t curprofnum, Profile &profile
 	Gpu_CoCmd_Text(phost, 84, 16, 27, 0, "Profile Selector");
 	
 	Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-	App_WrCoCmd_Buffer(phost, TAG(PROFILEBACK));
+	App_WrCoCmd_Buffer(phost, TAG(TAG_PROFILE_BACK));
 	App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(255, 255, 255));
-	Gpu_CoCmd_Button(phost, 233, 11, 76, 26, 21, (keypressed==PROFILEBACK)? OPT_FLAT :0 , "Back");
+	Gpu_CoCmd_Button(phost, 233, 11, 76, 26, 21, (keypressed==TAG_PROFILE_BACK)? OPT_FLAT :0 , "Back");
 	
 	Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-	App_WrCoCmd_Buffer(phost, TAG(PROFILELOAD));
+	App_WrCoCmd_Buffer(phost, TAG(TAG_PROFILE_LOAD));
 	App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(255, 255, 255));
-	Gpu_CoCmd_Button(phost, 8, 205, 76, 26, 21, (keypressed==PROFILELOAD)? OPT_FLAT :0 , "Load");
+	Gpu_CoCmd_Button(phost, 8, 205, 76, 26, 21, (keypressed==TAG_PROFILE_LOAD)? OPT_FLAT :0 , "Load");
 	
 	Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-	App_WrCoCmd_Buffer(phost, TAG(PROFILEPASS)); //disable advanced button
+	App_WrCoCmd_Buffer(phost, TAG(TAG_PROFILE_CHANGE_PASSWORD)); //disable advanced button
 	App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(255, 255, 255));		
-	Gpu_CoCmd_Button(phost, 180, 205, 132, 26, 21, (keypressed==PROFILEPASS)? OPT_FLAT :0 , "Change Password");
+	Gpu_CoCmd_Button(phost, 180, 205, 132, 26, 21, (keypressed==TAG_PROFILE_CHANGE_PASSWORD)? OPT_FLAT :0 , "Change Password");
 	
 	Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-	App_WrCoCmd_Buffer(phost, TAG(PROFILEUP));
+	App_WrCoCmd_Buffer(phost, TAG(TAG_PROFILE_UP));
 	//App_WrCoCmd_Buffer(phost, TAG(350)); //disbale Up
 	App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(255, 255, 255));
-	Gpu_CoCmd_Button(phost, 265, 76, 44, 29, 21, (keypressed==PROFILEUP)? OPT_FLAT :0 , "Up");
+	Gpu_CoCmd_Button(phost, 265, 76, 44, 29, 21, (keypressed==TAG_PROFILE_UP)? OPT_FLAT :0 , "Up");
 	
 	Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-	App_WrCoCmd_Buffer(phost, TAG(PROFILEDOWN));// disbale Up and down
+	App_WrCoCmd_Buffer(phost, TAG(TAG_PROFILE_DOWN));// disbale Up and down
 	//App_WrCoCmd_Buffer(phost, TAG(300)); //disbale Down and down
 	App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(255, 255, 255));
-	Gpu_CoCmd_Button(phost, 265, 121, 44, 29, 21, (keypressed==PROFILEDOWN)? OPT_FLAT :0 , "Down");
+	Gpu_CoCmd_Button(phost, 265, 121, 44, 29, 21, (keypressed==TAG_PROFILE_DOWN)? OPT_FLAT :0 , "Down");
 	
 	App_WrCoCmd_Buffer(phost, BEGIN(RECTS)); // Profile Name Field
 	App_WrCoCmd_Buffer(phost, VERTEX2F(160, 1008));

@@ -17,17 +17,17 @@ void ProfileController::on_interaction(const Interaction& interaction) {
 
   switch (interaction.key_pressed) {
 
-    case PROFILEBACK:
+    case TAG_PROFILE_BACK:
       start_next_controller(CONTROLLER_CONFIG);
       break;
 
-    case PROFILELOAD:
+    case TAG_PROFILE_LOAD:
       CurProfNum = selectedProfileNum;
       WriteCurIDEEPROM(selectedProfileNum);
       ReadProfileEEPROM(selectedProfileNum);
       break;
 
-    case PROFILEUP:
+    case TAG_PROFILE_UP:
       if (selectedProfileNum < MAX_PROFILES - 1) {
         ++selectedProfileNum;
       } else {
@@ -37,7 +37,7 @@ void ProfileController::on_interaction(const Interaction& interaction) {
       DisplayProfileMenu(interaction.key_pressed, selectedProfileNum, CurProf);
       break;
 
-    case PROFILEDOWN:
+    case TAG_PROFILE_DOWN:
       if (selectedProfileNum > 0) {
         --selectedProfileNum;
       } else {
@@ -47,7 +47,7 @@ void ProfileController::on_interaction(const Interaction& interaction) {
       DisplayProfileMenu(interaction.key_pressed, selectedProfileNum, CurProf);
       break;
 
-    case PROFILEPASS:
+    case TAG_PROFILE_CHANGE_PASSWORD:
       char new_password_1[PASSWORD_MAX_LEN];
       char new_password_2[PASSWORD_MAX_LEN];
       

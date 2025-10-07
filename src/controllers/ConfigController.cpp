@@ -34,7 +34,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
   if (interaction.key_pressed == 0) return;
 
   switch (interaction.key_pressed) {
-    case KEY_CONFIG_HOME:  // Home button
+    case TAG_CONFIG_HOME:  // Home button
       Serial.println(F("Button Pressed: HOME"));
       {
         char buf[PROFILE_NAME_MAX_LEN];
@@ -66,7 +66,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
       }
       break;
 
-    case KEY_CONFIG_LOAD:  // Load (Config Screen)
+    case TAG_CONFIG_LOAD:  // Load (Config Screen)
       Serial.println(F("Button Pressed: LOAD"));
       {
         int i;
@@ -121,7 +121,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
       }
       break;
 
-    case KEY_CONFIG_SAVE:
+    case TAG_CONFIG_SAVE:
       Serial.println("Button Pressed: SAVE");
       {
         char buf[PROFILE_NAME_MAX_LEN];
@@ -136,13 +136,13 @@ void ConfigController::on_interaction(const Interaction& interaction) {
       }
       break;
 
-    case KEY_CONFIG_PROFILE_NAME:
+    case TAG_CONFIG_PROFILE_NAME:
       Serial.println(F("Button Pressed: PROFILE"));
       Keyboard(phost, currentProfile->profileName, "Enter Profile Name", FALSE);
       Config_Screen(phost);
       break;
 
-    case KEY_CONFIG_TUBES_X:  //no. of Tubes row
+    case TAG_CONFIG_TUBES_X:  //no. of Tubes row
       {
         float maxval = (int)((MAXXMM - currentProfile->trayOriginX) / currentProfile->pitch_x) + 1;
         if (maxval > MAXNUMX) maxval = MAXNUMX;
@@ -174,7 +174,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
       }
       break;
 
-    case KEY_CONFIG_TUBES_Y:  //no. of Tubes col
+    case TAG_CONFIG_TUBES_Y:  //no. of Tubes col
       {
         float maxval = (int)((MAXYMM - currentProfile->trayOriginY) / currentProfile->pitch_y) + 1;
 
@@ -206,7 +206,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
       }
       break;
 
-    case KEY_CONFIG_PITCH_X:  //pitch row
+    case TAG_CONFIG_PITCH_X:  //pitch row
       {
         float maxval;
         if (currentProfile->Tube_No_x == 0) maxval = MAXXMM - currentProfile->trayOriginX;
@@ -219,7 +219,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
       }
       break;
 
-    case KEY_CONFIG_PITCH_Y:  //pitch col
+    case TAG_CONFIG_PITCH_Y:  //pitch col
       {
         float maxval;
         if (currentProfile->Tube_No_y == 0) maxval = MAXYMM - currentProfile->trayOriginY;
@@ -232,7 +232,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
       }
       break;
 
-    case KEY_CONFIG_ORIGIN_X:  //origin row
+    case TAG_CONFIG_ORIGIN_X:  //origin row
       {
         float maxval;
         if (currentProfile->Tube_No_x == 0) maxval = MAXXMM;
@@ -246,7 +246,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
       }
       break;
 
-    case KEY_CONFIG_ORIGIN_Y:  //origin col
+    case TAG_CONFIG_ORIGIN_Y:  //origin col
       {
         float maxval;
         if (currentProfile->Tube_No_y == 0) maxval = MAXYMM;
@@ -259,65 +259,65 @@ void ConfigController::on_interaction(const Interaction& interaction) {
       }
       break;
 
-    case NUM_CYCLES:
+    case TAG_NUM_CYCLE:
       currentProfile->Cycles = Keypad(phost, currentProfile->Cycles, MINCYCLE, MAXCYCLE, FALSE);
       Config_Screen(phost);
       break;
 
-    case ZDIP:
+    case TAG_Z_DIP:
       Serial.println(F("Incrementing Z Dip"));
       currentProfile->ZDip = Keypad(phost, currentProfile->ZDip, MINZDIP, MAXZDIP, FALSE);
       Config_Screen(phost);
       break;
 
-    case VIBLVL:
+    case TAG_VIBRATION_LEVEL:
       Serial.println(F("Incrementing vibration level"));
       increment_vibration_level();
       Config_Screen(phost);
       break;
 
-    case VIBDURATION:
+    case TAG_VIBRATION_DURATION:
       Serial.println(F("Incrementing vibration duration"));
       increment_vibration_time();
       Config_Screen(phost);
       break;
 
-    case PASSEN:
+    case TAG_PASSWORD_ENABLED:
       Serial.println(F("Toggle password enable"));
       currentProfile->passwordEnabled = !currentProfile->passwordEnabled;
       Config_Screen(phost);
       break;
 
-    case STAGGERED_TOGGLE:
+    case TAG_STAGGERED_TOGGLE:
       Serial.println(F("Toggle staggered mode"));
       currentProfile->staggered = !currentProfile->staggered;
       Skip_Screen(phost);
       break;
 
-    case SKIP_COLUMNS:
+    case TAG_SKIP_COLUMNS:
       Serial.println(F("Button Pressed: SKIP COLUMNS"));
       editSkipColumn(phost);
       Skip_Screen(phost);
       break;
 
-    case SKIP_ROWS:
+    case TAG_SKIP_ROWS:
       Serial.println(F("Button Pressed: SKIP ROWS"));
       editSkipRow(phost);
       Skip_Screen(phost);
       break;
 
-    case SKIP_SINGLE_POS:
+    case TAG_SKIP_SINGLE_POS:
       Serial.println(F("Button Pressed: SKIP SINGLE POSITION"));
       editSkipIndividual(phost);
       Skip_Screen(phost);
       break;
 
-    case ADVPROF_BACK:  // Back button
+    case TAG_ADV_PROF_BACK:  // Back button
       Serial.println(F("Button Pressed: BACK"));
       Config_Screen(phost);
       break;
 
-    case ADVPROF_SAVE:
+    case TAG_ADV_PROF_SAVE:
       Serial.println(F("Button Pressed: SAVE"));
       {
         char buf[PROFILE_NAME_MAX_LEN];
@@ -332,7 +332,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
       }
       break;
 
-    case KEY_CONFIG_PREVIEW:
+    case TAG_CONFIG_PREVIEW:
       Serial.println(F("Button Pressed: PREVIEW"));
       {
         // Parse skip positions from the current profile
@@ -357,7 +357,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
       }
       break;
 
-    case KEY_CONFIG_PREVIEW_BACK:
+    case TAG_CONFIG_PREVIEW_BACK:
       Serial.println(F("Button Pressed: PREVIEW BACK"));
       // Stop simulation when leaving preview
       simulating = false;
@@ -376,7 +376,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
       end_simulation();
       break;
 
-      case CONFIGADVANCE:
+      case TAG_ADVANCED:
         Serial.println(F("Button Pressed: ADVANCED"));
         Skip_Screen(phost);
         break;

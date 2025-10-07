@@ -180,7 +180,7 @@ void Preview_Screen(Gpu_Hal_Context_t *phost,
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
   Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-  App_WrCoCmd_Buffer(phost, TAG(KEY_CONFIG_PREVIEW_BACK));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_CONFIG_PREVIEW_BACK));
   Gpu_CoCmd_Button(phost, 10, SCREEN_HEIGHT - 26 - 4, 62, 26, 21, 0, "Back");
   
   // Draw Simulate/Stop button (next to Back button)
