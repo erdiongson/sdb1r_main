@@ -292,11 +292,12 @@ public:
   // @return The reset position in the original coordinate system.
   Position reset() {
     currentPosition = Position(1, 1); 
+    direction = 1;
+
     if (isInvalidPosition(currentPosition)) {
       currentPosition = getNext().position;
     }
 
-    direction = 1;
     tubesDispensed = 0;
     
     // Calculate total valid tubes once
