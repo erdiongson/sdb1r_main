@@ -43,9 +43,9 @@ ControllerStepResult StartupController::on_step() {
 
   if (stage == STAGE_HANDSHAKE && result.dispenser == DISPENSER_STATE_IDLING) {
     Dprint(F("Handshake acknowledged 👍"));
-    if (dispenserHead.x().isAtMin()) dispenserHead.x().moveBy(STEPS_PER_UNIT_X * 30);
-    if (dispenserHead.y().isAtMin()) dispenserHead.y().moveBy(STEPS_PER_UNIT_Y * 30);
-    if (dispenserHead.z().isAtMin()) dispenserHead.z().moveBy(STEPS_PER_UNIT_Z * 30);
+    if (dispenserHead.x().isAtMin()) dispenserHead.x().moveBy(STEPS_PER_UNIT_X * 10);
+    if (dispenserHead.y().isAtMin()) dispenserHead.y().moveBy(STEPS_PER_UNIT_Y * 10);
+    if (dispenserHead.z().isAtMin()) dispenserHead.z().moveBy(STEPS_PER_UNIT_Z * 10);
     
     stage = STAGE_CLEAR;
     return ControllerStepResult(-1, -1);
