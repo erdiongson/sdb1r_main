@@ -33,7 +33,18 @@ void RunController::on_interaction(const Interaction& interaction) {
     draw_home_screen(phost, PAUSEMENU);
   } else if (button == STOP || interaction.plc_message_type == MSG_STOP) {
     Serial.println(F("MODE: Stopped"));
+    draw_home_screen(phost, STOPPINGMENU);
     paused = false;
+
+    dispenserHead.x().stopRunning();
+    dispenserHead.y().stopRunning();
+    dispenserHead.z().stopRunning();
+
+    // Wait until dispenser is finished with any ongoing action
+    while (dispenserHead.get_state() != DISPENSER_STATE_IDLING) {
+      dispenserHead.process();
+    }
+
     start_stage(HOME_STAGE);
   } else if (button == START) {
     Serial.println(F("MODE: Resumed"));
@@ -106,6 +117,7 @@ void RunController::start_stage(Stage newStage) {
     case HOME_STAGE:
       Serial.println(F("STAGE: Returning to home position"));
       this->stage = HOME_STAGE;
+      draw_home_screen(phost, HOMINGMENU);
       dispenserHead.x().moveToMin();
       dispenserHead.y().moveToMin();
       dispenserHead.z().moveToMin();

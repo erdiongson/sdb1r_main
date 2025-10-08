@@ -15,11 +15,11 @@ struct HomeParams {
 inline void draw_menu_buttons(uint8_t whichmenu) {
   //					 	 SETTING START PAUSE STOP
   bool_t act_but[][6] = {
-    { 1, 1, 0, 0 },  //main menu
-    { 0, 0, 1, 1 },  //running menu
-    { 0, 1, 0, 1 },  //pause menu
-    { 0, 0, 0, 1 },  //error1 menu
-    { 0, 0, 0, 1 },  //error2 menu
+    { 1, 1, 0, 0 }, // main menu
+    { 0, 0, 1, 1 }, // running menu
+    { 0, 1, 0, 1 }, // pause menu
+    { 0, 0, 0, 0},  // homing menu
+    { 0, 0, 0, 0},  // stopping menu
   };
   int i;
   char but[4] = { SETTING, START, PAUSE, STOP };
@@ -49,11 +49,13 @@ inline void draw_menu_buttons(uint8_t whichmenu) {
         break;
       case STOP:
         Gpu_CoCmd_FgColor(phost, 0xAA0000);
-        if (whichmenu == TXRXERROR) {
-          Gpu_CoCmd_Button(phost, 25, 157, 273, 36, 28, 0, "Communication error");
-        } else if (whichmenu == HOMEERROR) {
-          Gpu_CoCmd_Button(phost, 25, 157, 273, 36, 28, 0, "Home error");
-        } else Gpu_CoCmd_Button(phost, 25, 157, 273, 36, 28, 0, "STOP");
+        if (whichmenu == HOMINGMENU)
+          Gpu_CoCmd_Button(phost, 25, 157, 273, 36, 28, 0, "HOMING");
+        else if (whichmenu == STOPPINGMENU)
+          Gpu_CoCmd_Button(phost, 25, 157, 273, 36, 28, 0, "STOPPING");
+        else {
+          Gpu_CoCmd_Button(phost, 25, 157, 273, 36, 28, 0, "STOP");
+        }
         break;
       case SETTING:
         Gpu_CoCmd_FgColor(phost, 0x00A2E8);

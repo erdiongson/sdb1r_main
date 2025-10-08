@@ -19,8 +19,8 @@
 #define MAINMENU             0
 #define RUNMENU              1
 #define PAUSEMENU            2
-#define TXRXERROR            3
-#define HOMEERROR            4
+#define HOMINGMENU           3
+#define STOPPINGMENU         4
 
 #define TAG_PROFILE_BACK     6
 #define TAG_PROFILE_LOAD     7
