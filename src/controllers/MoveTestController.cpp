@@ -18,32 +18,32 @@ void MoveTestController::on_interaction(const Interaction& interaction) {
   switch (button) {
     case TAG_MOVE_UP:
       Dprint(F("MoveTestController::on_interaction: Move up"));
-      dispenserHead.y().moveBy(STEPS_PER_UNIT_Y * 1 * 30);
+      dispenserHead.y().moveBy(STEPS_PER_UNIT_Y * 1 * 50);
       break;
     
     case TAG_MOVE_DOWN:
       Dprint(F("MoveTestController::on_interaction: Move down"));
-      dispenserHead.y().moveBy(-STEPS_PER_UNIT_Y * 1 * 30);
+      dispenserHead.y().moveBy(-STEPS_PER_UNIT_Y * 1 * 50);
       break;
     
     case TAG_MOVE_LEFT:
       Dprint(F("MoveTestController::on_interaction: Move left"));
-      dispenserHead.x().moveBy(STEPS_PER_UNIT_X * 1 * 30);
+      dispenserHead.x().moveBy(STEPS_PER_UNIT_X * 1 * 50);
       break;
     
     case TAG_MOVE_RIGHT:
       Dprint(F("MoveTestController::on_interaction: Move right"));
-      dispenserHead.x().moveBy(-STEPS_PER_UNIT_X * 1 * 30);
+      dispenserHead.x().moveBy(-STEPS_PER_UNIT_X * 1 * 50);
       break;
     
     case TAG_Z_UP:
       Dprint(F("MoveTestController::on_interaction: Move z up"));
-      dispenserHead.z().moveBy(-STEPS_PER_UNIT_Z * 1 * 100);
+      dispenserHead.z().moveBy(-STEPS_PER_UNIT_Z * 1 * 30);
       break;
     
     case TAG_Z_DOWN:
       Dprint(F("MoveTestController::on_interaction: Move z down"));
-      dispenserHead.z().moveBy(STEPS_PER_UNIT_Z * 1 * 100);
+      dispenserHead.z().moveBy(STEPS_PER_UNIT_Z * 1 * 30);
       break;
     
     case TAG_MOVE_BACK:
