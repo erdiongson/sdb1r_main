@@ -261,7 +261,7 @@ float get_keypad_value(Gpu_Hal_Context_t *phost, float curval, float minval, flo
   int8_t lastKeyPressed = 0;
 
   // Load buf with curval
-  dtostrf(curval, 2, 1, buf);
+  dtostrf(curval, 2, isfloat ? 1 : 0, buf);
   curpos = strlen(buf);
 
   InteractionsHandler::waitForTouchRelease();
@@ -296,12 +296,12 @@ float get_keypad_value(Gpu_Hal_Context_t *phost, float curval, float minval, flo
         // Check if the value is within the range
         if (tempval > maxval || tempval < minval) {
           // If no, load the max or min value and show it on the keypad
-          dtostrf(tempval > maxval ? maxval : minval, 2, 1, buf);
+          dtostrf(tempval > maxval ? maxval : minval, 2, isfloat ? 1 : 0, buf);
           curpos = strlen(buf);
           break;
         }
 
-        return tempval;
+        return isfloat ? tempval : (float)(int)tempval;
       }
 
       // Any other key

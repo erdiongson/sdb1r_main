@@ -224,7 +224,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         round_1_decimal(&maxval);
         Dprint("max val=", maxval);
         if (maxval > MAXPITCHX) maxval = MAXPITCHX;
-        currentProfile->pitch_x = get_keypad_value(&host, currentProfile->pitch_x, MINPITCHX, MAXPITCHX, FALSE);
+        currentProfile->pitch_x = get_keypad_value(&host, currentProfile->pitch_x, MINPITCHX, MAXPITCHX, TRUE);
         draw_config_screen(phost);
       }
       break;
@@ -237,7 +237,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         round_1_decimal(&maxval);
         if (maxval > MAXPITCHY) maxval = MAXPITCHY;
         Dprint("max val=", maxval);
-        currentProfile->pitch_y = get_keypad_value(&host, currentProfile->pitch_y, MINPITCHY, MAXPITCHY, FALSE);
+        currentProfile->pitch_y = get_keypad_value(&host, currentProfile->pitch_y, MINPITCHY, MAXPITCHY, TRUE);
         draw_config_screen(phost);
       }
       break;
@@ -251,7 +251,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         if (maxval > MAXORGX) maxval = MAXORGX;
         Dprint("max val=", maxval);
 
-        currentProfile->trayOriginX = get_keypad_value(&host, currentProfile->trayOriginX, 0, MAXORGX, FALSE);
+        currentProfile->trayOriginX = get_keypad_value(&host, currentProfile->trayOriginX, 0, MAXORGX, TRUE);
         draw_config_screen(phost);
       }
       break;
@@ -264,7 +264,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         round_1_decimal(&maxval);
         if (maxval > MAXORGY) maxval = MAXORGY;
         Dprint("max val=", maxval);
-        currentProfile->trayOriginY = get_keypad_value(&host, currentProfile->trayOriginY, 0, MAXORGY, FALSE);
+        currentProfile->trayOriginY = get_keypad_value(&host, currentProfile->trayOriginY, 0, MAXORGY, TRUE);
         draw_config_screen(phost);
       }
       break;
@@ -276,7 +276,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
 
     case TAG_Z_DIP:
       Serial.println(F("Incrementing Z Dip"));
-      currentProfile->ZDip = get_keypad_value(phost, currentProfile->ZDip, MINZDIP, MAXZDIP, FALSE);
+      currentProfile->ZDip = get_keypad_value(phost, currentProfile->ZDip, MINZDIP, MAXZDIP, TRUE);
       draw_config_screen(phost);
       break;
 
