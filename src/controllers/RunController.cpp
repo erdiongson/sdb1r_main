@@ -16,8 +16,12 @@ void RunController::on_start(Profile& profile) {
     return;
   }
 
-  draw_home_screen(phost, RUNMENU);
-  // on_step will trigger process_stage_logic to transition into SET_VIB_LEVEL_STAGE
+  // Set the current position as the default 0 as a safe position
+  // in the case when STOP is triggered before the Zeroing is completed
+  dispenserHead.z().reset();
+
+  // Actually start the sequence
+  start();
 }
 
 void RunController::on_interaction(const Interaction& interaction) {
@@ -51,6 +55,10 @@ void RunController::stop() {
   dispenserHead.x().stopRunning();
   dispenserHead.y().stopRunning();
   dispenserHead.z().stopRunning();
+
+  // Ensure the Z axis is back at 0;
+  dispenserHead.z().moveTo(0);
+  dispenserHead.z().runUntilCompleteBlocking();
 
   // Wait until dispenser is finished with any ongoing action
   while (dispenserHead.get_state() != DISPENSER_STATE_IDLING) {

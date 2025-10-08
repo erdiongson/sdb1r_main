@@ -213,9 +213,7 @@ public:
   }
 
   void runUntilCompleteBlocking() {
-    while (stepper.distanceToGo() != 0) {
-      stepper.run();
-    }
+    while (onStep() == AXIS_STATE_RUNNING) {}
   }
 };
 
