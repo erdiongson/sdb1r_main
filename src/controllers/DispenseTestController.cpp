@@ -11,11 +11,6 @@ void DispenseTestController::on_start(Profile& profile) {
   
   DispenseTestScreenParams params = {"Ready"};
   draw_dispense_test_screen(phost, params);
-  
-  // Initialize to home position
-  dispenserHead.x().moveToMax();
-  dispenserHead.y().moveToMin();
-  dispenserHead.z().moveToMin();
 }
 
 void DispenseTestController::on_interaction(const Interaction& interaction) {
