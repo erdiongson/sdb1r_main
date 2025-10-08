@@ -23,11 +23,12 @@ private:
   int stage = IDLE_STAGE;
   Profile profile;
   TrayHandler::TrayPositionHandler trayHandler;
-  int target_x = 0;
-  int target_y = 0;
+  int32_t target_x = 0;
+  int32_t target_y = 0;
   int cycle = 0;
 
   void process_stage_logic(DispenserProcessResult& dispenserProcessResult);
+  void start_stage(Stage newStage);
 
 public:
   RunController(ControllerParams params);
