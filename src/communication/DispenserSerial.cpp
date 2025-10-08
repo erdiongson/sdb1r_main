@@ -7,8 +7,22 @@ unsigned long DispenserSerial::timeout_at = 0;
 // @param command Command byte to send.
 // @param data Data byte to send.
 void DispenserSerial::send_message(byte command, byte data) {
+  // Clear serial buffer
+  while (Serial2.available()) Serial2.read();
+
   uint8_t checksum = command + data;
   uint8_t msg[] = {START_BYTE, command, data, checksum, END_BYTE};
+  Serial.print("DispenserSerial - Sending Message: ");
+  Serial.print(msg[0], HEX);
+  Serial.print(" ");
+  Serial.print(msg[1], HEX);
+  Serial.print(" ");
+  Serial.print(msg[2], HEX);
+  Serial.print(" ");
+  Serial.print(msg[3], HEX);
+  Serial.print(" ");
+  Serial.println(msg[4], HEX);
+
   Serial2.write(msg, 5);
   
   // Set timeout to 5 seconds from now.
@@ -64,6 +78,7 @@ int DispenserSerial::process() {
     return 0;
   }
 
+  timeout_at = 0;
   return response[MSG_COMMAND];
 }
 
