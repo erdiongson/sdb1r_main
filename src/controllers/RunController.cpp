@@ -24,38 +24,59 @@ void RunController::on_interaction(const Interaction& interaction) {
   int button = interaction.key_pressed;
 
   if (button == PAUSE || interaction.plc_message_type == MSG_PAUSE) {
-    Serial.println(F("MODE: Paused"));
-    paused = true;
-    dispenserHead.x().stop();
-    dispenserHead.y().stop();
-    dispenserHead.z().stop();
-
     draw_home_screen(phost, PAUSEMENU);
+    pause();
   } else if (button == STOP || interaction.plc_message_type == MSG_STOP) {
-    Serial.println(F("MODE: Stopped"));
-    draw_home_screen(phost, STOPPINGMENU);
-    paused = false;
-
-    dispenserHead.x().stopRunning();
-    dispenserHead.y().stopRunning();
-    dispenserHead.z().stopRunning();
-
-    // Wait until dispenser is finished with any ongoing action
-    while (dispenserHead.get_state() != DISPENSER_STATE_IDLING) {
-      dispenserHead.process();
-    }
-
-    start_stage(HOME_STAGE);
+    stop();
   } else if (button == START) {
-    Serial.println(F("MODE: Resumed"));
-    paused = false;
-    draw_home_screen(phost, RUNMENU);
-    start_stage(stage);
+    start();
   }
+}
+
+// Pauses the run by stopping all axis movements immediately.
+void RunController::pause() {
+  Serial.println(F("MODE: Paused"));
+  paused = true;
+  dispenserHead.x().stop();
+  dispenserHead.y().stop();
+  dispenserHead.z().stop();
+}
+
+// Stops the run and returns to home position.
+void RunController::stop() {
+  Serial.println(F("MODE: Stopped"));
+  draw_home_screen(phost, STOPPINGMENU);
+  paused = false;
+
+  dispenserHead.x().stopRunning();
+  dispenserHead.y().stopRunning();
+  dispenserHead.z().stopRunning();
+
+  // Wait until dispenser is finished with any ongoing action
+  while (dispenserHead.get_state() != DISPENSER_STATE_IDLING) {
+    dispenserHead.process();
+  }
+
+  draw_home_screen(phost, HOMINGMENU);
+  start_stage(HOME_STAGE);
+}
+
+// Resumes the run from a paused state.
+void RunController::start() {
+  Serial.println(F("MODE: Resumed"));
+  paused = false;
+  draw_home_screen(phost, RUNMENU);
+  start_stage(stage);
 }
 
 void RunController::start_stage(Stage newStage) {
   switch (newStage) {
+    case IDLE_STAGE:
+      dispenserHead.x().stopRunning();
+      dispenserHead.y().stopRunning();
+      dispenserHead.z().stopRunning();
+      break;
+
     case SET_VIB_LEVEL_STAGE:
       Serial.println(F("STAGE: Setting vibration level"));
       this->stage = SET_VIB_LEVEL_STAGE;
@@ -117,7 +138,6 @@ void RunController::start_stage(Stage newStage) {
     case HOME_STAGE:
       Serial.println(F("STAGE: Returning to home position"));
       this->stage = HOME_STAGE;
-      draw_home_screen(phost, HOMINGMENU);
       dispenserHead.x().moveToMin();
       dispenserHead.y().moveToMin();
       dispenserHead.z().moveToMin();
@@ -225,6 +245,7 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
         draw_home_screen(phost, RUNMENU, &params);
         start_stage(MOVE_STAGE);
       } else {
+        draw_home_screen(phost, HOMINGMENU);
         start_stage(HOME_STAGE);
       }
       break;
@@ -258,8 +279,9 @@ ControllerStepResult RunController::on_step() {
 
   if (dispenserProcessResult.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
     Serial.println(F("MODE: Stepper error - limit switch triggered"));
+    params.error_code = DIALOG_ERROR_LIMIT_SWITCH;
     draw_home_screen(phost, RUNMENU, &params);
-    start_stage(HOME_STAGE);
+    pause();
     return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
   }
 
@@ -267,7 +289,7 @@ ControllerStepResult RunController::on_step() {
     Serial.println(F("MODE: Dispenser error - IR sensor failure"));
     params.error_code = DIALOG_ERROR_IR_SENSOR;
     draw_home_screen(phost, RUNMENU, &params);
-    start_stage(HOME_STAGE);
+    pause();
     return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
   }
 
@@ -275,7 +297,7 @@ ControllerStepResult RunController::on_step() {
     Serial.println(F("MODE: Dispenser error - Acknowledgment error"));
     params.error_code = DIALOG_ERROR_ACK_ERROR;
     draw_home_screen(phost, RUNMENU, &params);
-    start_stage(HOME_STAGE);
+    pause();
     return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
   }
 
@@ -283,7 +305,8 @@ ControllerStepResult RunController::on_step() {
     Serial.println(F("MODE: Dispenser error - marker not detected"));
     params.error_code = DIALOG_ERROR_MARKER_NOT_DETECTED;
     draw_home_screen(phost, RUNMENU, &params);
-    start_stage(HOME_STAGE);
+    pause();
+    
     return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
   }
 
