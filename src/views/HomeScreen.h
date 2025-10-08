@@ -9,6 +9,7 @@ struct HomeParams {
   uint16_t current_row;
   uint16_t current_column;
   uint16_t tubes_left;
+  uint16_t filling_tube;
   int error_code;
 };
 
@@ -67,7 +68,6 @@ inline void draw_menu_buttons(uint8_t whichmenu) {
 
 inline void draw_home_screen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const HomeParams* params = nullptr) {
 
-  int32_t filling_tube = 0;
   char buf[100];
 
   Gpu_CoCmd_FlashFast(phost, 0);
@@ -105,9 +105,7 @@ inline void draw_home_screen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const 
   sprintf(buf, "No. of Cycles: %d", CurProf.Cycles);
   Gpu_CoCmd_Text(phost, 25, 208, 20, OPT_FORMAT, buf);
 
-  filling_tube = CurProf.Tube_No_x * CurProf.Tube_No_y;
-
-  sprintf(buf, "Filling tube: %d", filling_tube);
+  sprintf(buf, "Filling tube: %d", params ? params->filling_tube : 0);
   Gpu_CoCmd_Text(phost, 25, 220, 20, OPT_FORMAT, buf);
 
   sprintf(buf, "Current Tube : R%2d C%2d", params ? params->current_row : 1, params ? params->current_column : 1);

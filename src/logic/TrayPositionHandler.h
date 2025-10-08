@@ -367,6 +367,12 @@ public:
   int getTubesLeft() const {
     return totalValidTubes - tubesDispensed;
   }
+
+  // Get the number of tubes dispensed so far.
+  // @return Number of tubes dispensed.
+  int getTubesDispensed() const {
+    return tubesDispensed;
+  }
 };
 
 }  // namespace TrayHandler

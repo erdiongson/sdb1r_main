@@ -219,6 +219,7 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
           (uint16_t)trayHandler.getCurrentRow(),
           (uint16_t)trayHandler.getCurrentColumn(),
           (uint16_t)trayHandler.getTubesLeft(),
+          (uint16_t)trayHandler.getTubesDispensed() + 1,
           0
         };
         draw_home_screen(phost, RUNMENU, &params);
@@ -251,6 +252,8 @@ ControllerStepResult RunController::on_step() {
     (uint16_t)trayHandler.getCurrentRow(),
     (uint16_t)trayHandler.getCurrentColumn(),
     (uint16_t)trayHandler.getTubesLeft(),
+    (uint16_t)trayHandler.getTubesDispensed() + 1,
+    0
   };
 
   if (dispenserProcessResult.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {

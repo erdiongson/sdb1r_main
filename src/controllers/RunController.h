@@ -29,6 +29,9 @@ private:
 
   void process_stage_logic(DispenserProcessResult& dispenserProcessResult);
   void start_stage(Stage newStage);
+  void pause();
+  void stop();
+  void start();
 
 public:
   RunController(ControllerParams params);
