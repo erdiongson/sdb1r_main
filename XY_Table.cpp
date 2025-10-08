@@ -28,6 +28,7 @@
 #include "src/controllers/ConfigController.h"
 #include "src/controllers/ProfileController.h"
 #include "src/controllers/StartupController.h"
+#include "src/controllers/DebugController.h"
 
 // Define placement new operator for Arduino (if not already available).
 inline void* operator new(size_t size, void* ptr) { return ptr; }
@@ -63,7 +64,8 @@ constexpr size_t MAX_CONTROLLER_SIZE = MaxSize<
   DispenseTestController,
   ConfigController,
   ProfileController,
-  StartupController
+  StartupController,
+  DebugController
 >::value;
 
 // Static buffer to hold any controller (aligned for proper object construction).
@@ -111,6 +113,9 @@ void start_next_controller(int nextControllerType) {
       break;
     case CONTROLLER_STARTUP:
       controller = new (controllerBuffer.data) StartupController(params);
+      break;
+    case CONTROLLER_DEBUG:
+      controller = new (controllerBuffer.data) DebugController(params);
       break;
     default:
       Serial.print("Unknown controller type: ");

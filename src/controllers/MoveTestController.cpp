@@ -48,7 +48,7 @@ void MoveTestController::on_interaction(const Interaction& interaction) {
     
     case TAG_MOVE_BACK:
       Dprint(F("MoveTestController::on_interaction: Move back"));
-      start_next_controller(CONTROLLER_HOME);
+      start_next_controller(CONTROLLER_DEBUG);
       break;
     
     default:

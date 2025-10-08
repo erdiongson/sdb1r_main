@@ -24,7 +24,7 @@ void DispenseTestController::on_interaction(const Interaction& interaction) {
   
   switch (button) {
     case TAG_DISPENSE_BACK:
-      start_next_controller(CONTROLLER_HOME);
+      start_next_controller(CONTROLLER_DEBUG);
       break;
     
     case TAG_DISPENSE:

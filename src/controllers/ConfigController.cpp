@@ -70,53 +70,53 @@ void ConfigController::on_interaction(const Interaction& interaction) {
     case TAG_CONFIG_LOAD:  // Load (Config Screen)
       Serial.println(F("Button Pressed: LOAD"));
       {
-        int i;
-        if (strcmp(currentProfile->profileName, "xqreset") == 0) {  //special mode to preload eeprom
-          Dprint("write preset data to eeprom");
-          if (CurProfNum == 0) {
-            for (i = 1; i < MAX_PROFILES; i++) {
-              sprintf(currentProfile->profileName, "%s %d", "Profile", i + 1);
-              WriteProfileEEPROM(i);
-            }
-          } else PreLoadEEPROM();
-          sprintf(currentProfile->profileName, "EEprom reseted");
-          draw_config_screen(phost);
-          delay(3000);
-          sprintf(currentProfile->profileName, "Profile 1 ");
-          draw_config_screen(phost);
-        }
-        if (strcmp(currentProfile->profileName, "xqver") == 0) {
-          Dprint("show version");
-          sprintf(currentProfile->profileName, "version : %s", FWVER);
-          draw_config_screen(phost);
-          delay(3000);
-          sprintf(currentProfile->profileName, "xqver ");
-          draw_config_screen(phost);
-        }
-        if (strcmp(currentProfile->profileName, "xqhome") == 0) {
-          Dprint("home");
-          // Homing();
-          draw_config_screen(phost);
-        }
-        if (strcmp(currentProfile->profileName, "xqblank") == 0) {
-          Dprint("blankeeprom");
-          BlankEEPROM();
-          sprintf(currentProfile->profileName, "EEprom blank");
-          draw_config_screen(phost);
-          delay(3000);
-          sprintf(currentProfile->profileName, "xqblank ");
-          draw_config_screen(phost);
-          delay(3000);
-        }
-        if (strcmp(currentProfile->profileName, "xqsize-s") == 0) {
-          Dprint("Change the size to small.");
-          sprintf(currentProfile->profileName, "Size Change : SMALL");
-          currentProfile->sizeFlag = 0;
-          draw_config_screen(phost);
-          delay(3000);
-          sprintf(currentProfile->profileName, "xqsize-s ");
-          draw_config_screen(phost);
-        }
+        // int i;
+        // if (strcmp(currentProfile->profileName, "xqreset") == 0) {  //special mode to preload eeprom
+        //   Dprint("write preset data to eeprom");
+        //   if (CurProfNum == 0) {
+        //     for (i = 1; i < MAX_PROFILES; i++) {
+        //       sprintf(currentProfile->profileName, "%s %d", "Profile", i + 1);
+        //       WriteProfileEEPROM(i);
+        //     }
+        //   } else PreLoadEEPROM();
+        //   sprintf(currentProfile->profileName, "EEprom reseted");
+        //   draw_config_screen(phost);
+        //   delay(3000);
+        //   sprintf(currentProfile->profileName, "Profile 1 ");
+        //   draw_config_screen(phost);
+        // }
+        // if (strcmp(currentProfile->profileName, "xqver") == 0) {
+        //   Dprint("show version");
+        //   sprintf(currentProfile->profileName, "version : %s", FWVER);
+        //   draw_config_screen(phost);
+        //   delay(3000);
+        //   sprintf(currentProfile->profileName, "xqver ");
+        //   draw_config_screen(phost);
+        // }
+        // if (strcmp(currentProfile->profileName, "xqhome") == 0) {
+        //   Dprint("home");
+        //   // Homing();
+        //   draw_config_screen(phost);
+        // }
+        // if (strcmp(currentProfile->profileName, "xqblank") == 0) {
+        //   Dprint("blankeeprom");
+        //   BlankEEPROM();
+        //   sprintf(currentProfile->profileName, "EEprom blank");
+        //   draw_config_screen(phost);
+        //   delay(3000);
+        //   sprintf(currentProfile->profileName, "xqblank ");
+        //   draw_config_screen(phost);
+        //   delay(3000);
+        // }
+        // if (strcmp(currentProfile->profileName, "xqsize-s") == 0) {
+        //   Dprint("Change the size to small.");
+        //   sprintf(currentProfile->profileName, "Size Change : SMALL");
+        //   currentProfile->sizeFlag = 0;
+        //   draw_config_screen(phost);
+        //   delay(3000);
+        //   sprintf(currentProfile->profileName, "xqsize-s ");
+        //   draw_config_screen(phost);
+        // }
 
         start_next_controller(CONTROLLER_PROFILE);
       }
@@ -139,8 +139,19 @@ void ConfigController::on_interaction(const Interaction& interaction) {
 
     case TAG_CONFIG_PROFILE_NAME:
       Serial.println(F("Button Pressed: PROFILE"));
-      get_keyboard_value(phost, currentProfile->profileName, "Enter Profile Name", FALSE);
-      draw_config_screen(phost);
+      {
+        char buf[PROFILE_NAME_MAX_LEN];
+        strcpy(buf, currentProfile->profileName);
+        get_keyboard_value(phost, buf, "Enter Profile Name", FALSE);
+        
+        if (strcmp(buf, "debug") == 0) {
+          start_next_controller(CONTROLLER_DEBUG);
+          return;
+        }
+
+        strcpy(currentProfile->profileName, buf);
+        draw_config_screen(phost);
+      }
       break;
 
     case TAG_CONFIG_TUBES_X:  //no. of Tubes row
