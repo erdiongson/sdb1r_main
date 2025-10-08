@@ -4,6 +4,7 @@ class StartupController : public BaseController {
 private:
   enum {
     STAGE_HANDSHAKE,
+    STAGE_CLEAR,
     STAGE_HOME,
     STAGE_ERROR,
   };

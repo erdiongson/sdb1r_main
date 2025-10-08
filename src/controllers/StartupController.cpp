@@ -39,10 +39,21 @@ ControllerStepResult StartupController::on_step() {
 
   if (stage == STAGE_HANDSHAKE && result.dispenser == DISPENSER_STATE_IDLING) {
     Dprint(F("Handshake acknowledged 👍"));
+    if (dispenserHead.x().isAtMax()) dispenserHead.x().moveBy(-STEPS_PER_UNIT_X * 30);
+    if (dispenserHead.y().isAtMin()) dispenserHead.y().moveBy(STEPS_PER_UNIT_Y * 30);
+    if (dispenserHead.z().isAtMin()) dispenserHead.z().moveBy(STEPS_PER_UNIT_Z * 30);
+    
+    stage = STAGE_CLEAR;
+    return ControllerStepResult(-1, -1);
+  }
+  
+  if (stage == STAGE_CLEAR && result.steppers == AXIS_STATE_COMPLETE) {
+    Dprint(F("Axis cleared 👍"));
     dispenserHead.x().moveToMax();
     dispenserHead.y().moveToMin();
     dispenserHead.z().moveToMin();
     stage = STAGE_HOME;
+    return ControllerStepResult(-1, -1);
   }
 
   if (stage == STAGE_HOME && result.steppers == AXIS_STATE_COMPLETE) {
