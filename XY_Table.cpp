@@ -164,8 +164,6 @@ void setup() {
   
   Serial.println("Starting first controller..");
   start_next_controller(CONTROLLER_STARTUP);
-
-  dispenserHead.z().setDisabled(true);
 }
 
 Interaction interaction;
