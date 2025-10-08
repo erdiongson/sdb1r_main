@@ -42,63 +42,63 @@ void draw_config_screen(Gpu_Hal_Context_t *phost) {
 
   // profile name(edit name)
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-  App_WrCoCmd_Buffer(phost, TAG(13));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_CONFIG_PROFILE_NAME));
   App_WrCoCmd_Buffer(phost, VERTEX2F(160, 1008));
   App_WrCoCmd_Buffer(phost, VERTEX2F(4944, 704));
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // No. of tube(row)
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-  App_WrCoCmd_Buffer(phost, TAG(14));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_CONFIG_TUBES_Y));
   App_WrCoCmd_Buffer(phost, VERTEX2F(1632, 1632));
   App_WrCoCmd_Buffer(phost, VERTEX2F(2305, 1392));
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // No. of tube(column)
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-  App_WrCoCmd_Buffer(phost, TAG(15));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_CONFIG_TUBES_X));
   App_WrCoCmd_Buffer(phost, VERTEX2F(2544, 1632));
   App_WrCoCmd_Buffer(phost, VERTEX2F(3216, 1392));
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // pitch(row)
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-  App_WrCoCmd_Buffer(phost, TAG(16));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_CONFIG_PITCH_Y));
   App_WrCoCmd_Buffer(phost, VERTEX2F(1632, 2032));
   App_WrCoCmd_Buffer(phost, VERTEX2F(2305, 1776));
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // pitch(column)
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-  App_WrCoCmd_Buffer(phost, TAG(17));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_CONFIG_PITCH_X));
   App_WrCoCmd_Buffer(phost, VERTEX2F(2544, 2032));
   App_WrCoCmd_Buffer(phost, VERTEX2F(3216, 1776));
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // origin(row)
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-  App_WrCoCmd_Buffer(phost, TAG(18));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_CONFIG_ORIGIN_Y));
   App_WrCoCmd_Buffer(phost, VERTEX2F(1632, 2432));
   App_WrCoCmd_Buffer(phost, VERTEX2F(2305, 2160));
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // origin(column)
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-  App_WrCoCmd_Buffer(phost, TAG(19));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_CONFIG_ORIGIN_X));
   App_WrCoCmd_Buffer(phost, VERTEX2F(2544, 2432));
   App_WrCoCmd_Buffer(phost, VERTEX2F(3216, 2160));
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // Cycles
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-  App_WrCoCmd_Buffer(phost, TAG(20));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_NUM_CYCLE));
   App_WrCoCmd_Buffer(phost, VERTEX2F(3744, 1632));
   App_WrCoCmd_Buffer(phost, VERTEX2F(4480, 1392));
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // Z Dip
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-  App_WrCoCmd_Buffer(phost, TAG(21));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_Z_DIP));
   App_WrCoCmd_Buffer(phost, VERTEX2F(3744, 2248));
   App_WrCoCmd_Buffer(phost, VERTEX2F(4480, 2008));
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
@@ -119,7 +119,7 @@ void draw_config_screen(Gpu_Hal_Context_t *phost) {
   //v204
   //Text - Tube Number Row
   sprintf(buf, "%d", CurProf.Tube_No_x);
-  Gpu_CoCmd_Text(phost, 122, 95, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
+  Gpu_CoCmd_Text(phost, 180, 95, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 
   //v204
   //Text - Tube Number Column
@@ -129,7 +129,7 @@ void draw_config_screen(Gpu_Hal_Context_t *phost) {
     App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));  // Change the color back to black
   //v204
   sprintf(buf, "%d", CurProf.Tube_No_y);
-  Gpu_CoCmd_Text(phost, 180, 95, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
+  Gpu_CoCmd_Text(phost, 122, 95, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
   //v204
   //Text - Pitch Row
   if (CurProf.Tube_No_x == 0) maxval = MAXXMM - CurProf.trayOriginX;
@@ -143,7 +143,7 @@ void draw_config_screen(Gpu_Hal_Context_t *phost) {
                                                     //v204
 
   dtostrf(CurProf.pitch_x, 4, 1, buf);
-  Gpu_CoCmd_Text(phost, 122, 119, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
+  Gpu_CoCmd_Text(phost, 180, 119, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 
   //v204
   //Text - Pitch Column
@@ -158,7 +158,7 @@ void draw_config_screen(Gpu_Hal_Context_t *phost) {
                                                     //v204
 
   dtostrf(CurProf.pitch_y, 4, 1, buf);
-  Gpu_CoCmd_Text(phost, 180, 119, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
+  Gpu_CoCmd_Text(phost, 122, 119, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 
   //v204
   //Text - Origin X
@@ -173,7 +173,7 @@ void draw_config_screen(Gpu_Hal_Context_t *phost) {
                                                     //v204
 
   dtostrf(CurProf.trayOriginX, 4, 1, buf);
-  Gpu_CoCmd_Text(phost, 122, 143, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
+  Gpu_CoCmd_Text(phost, 180, 143, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 
   //v204
   //Text - Origin Y
@@ -188,7 +188,7 @@ void draw_config_screen(Gpu_Hal_Context_t *phost) {
                                                     //v204
 
   dtostrf(CurProf.trayOriginY, 4, 1, buf);
-  Gpu_CoCmd_Text(phost, 180, 143, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
+  Gpu_CoCmd_Text(phost, 122, 143, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 
   App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));  // Change the color back to black
                                                   //Text - Cycles

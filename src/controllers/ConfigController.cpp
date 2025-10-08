@@ -154,12 +154,11 @@ void ConfigController::on_interaction(const Interaction& interaction) {
       }
       break;
 
-    case TAG_CONFIG_TUBES_X:  //no. of Tubes row
+    case TAG_CONFIG_TUBES_X:  // Number of Columns
       {
         float maxval = (int)((MAXXMM - currentProfile->trayOriginX) / currentProfile->pitch_x) + 1;
         if (maxval > MAXNUMX) maxval = MAXNUMX;
 
-        Dprint("max val=", maxval);
         int oldTubeNoX = currentProfile->Tube_No_x;
         currentProfile->Tube_No_x = get_keypad_value(&host, currentProfile->Tube_No_x, MINNUMX, MAXNUMX, FALSE);
         
@@ -186,12 +185,11 @@ void ConfigController::on_interaction(const Interaction& interaction) {
       }
       break;
 
-    case TAG_CONFIG_TUBES_Y:  //no. of Tubes col
+    case TAG_CONFIG_TUBES_Y:  // Number of Rows
       {
         float maxval = (int)((MAXYMM - currentProfile->trayOriginY) / currentProfile->pitch_y) + 1;
 
         if (maxval > MAXNUMY) maxval = MAXNUMY;
-        Dprint("max val=", maxval);
         int oldTubeNoY = currentProfile->Tube_No_y;
         currentProfile->Tube_No_y = get_keypad_value(&host, currentProfile->Tube_No_y, MINNUMY, MAXNUMY, FALSE);
         
