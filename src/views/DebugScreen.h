@@ -40,21 +40,22 @@ inline void draw_debug_screen(Gpu_Hal_Context_t *phost, const DebugScreenParams*
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
 
-  // Button layout - 5 test buttons
+  // Button layout
   int button_y = 50;
   int button_spacing = 30;
   int button_height = 28;
 
-  // Move Test button
+  // Move Test and Dispenser Test buttons side-by-side (50% width each)
   App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_MOVE_TEST));
   Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-  Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, "Move Test");
-  button_y += button_spacing;
-
-  // Dispenser Test button
+  Gpu_CoCmd_Button(phost, 25, button_y, 130, button_height, 26, 0, "Move Test");
+  
   App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_DISPENSER_TEST));
   Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-  Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, "Dispenser Test");
+  Gpu_CoCmd_Button(phost, 165, button_y, 130, button_height, 26, 0, "Dispenser Test");
+  button_y += button_spacing;
+
+  // Leave empty space where second row would be
   button_y += button_spacing;
 
   // Blank EEPROM button
@@ -86,12 +87,11 @@ inline void draw_debug_screen(Gpu_Hal_Context_t *phost, const DebugScreenParams*
   } else {
     Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, "Toggle Size");
   }
-  button_y += button_spacing;
 
-  // Back button at bottom
+  // Back button at bottom left (smaller, similar to PreviewScreen)
   App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_BACK));
   Gpu_CoCmd_FgColor(phost, 0x808080);
-  Gpu_CoCmd_Button(phost, 25, 200, 270, button_height, 26, 0, "Back");
+  Gpu_CoCmd_Button(phost, 10, 210, 62, 26, 21, 0, "Back");
 
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
