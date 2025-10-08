@@ -20,6 +20,10 @@ void draw_logo_screen(Gpu_Hal_Context_t *phost, int error_code)
     App_WrCoCmd_Buffer(phost, VERTEX2F(1856, 1152));
     App_WrCoCmd_Buffer(phost, END());
 
+    // Draw firmware version at bottom of screen
+    App_WrCoCmd_Buffer(phost, COLOR_RGB(40, 40, 40));
+    Gpu_CoCmd_Text(phost, 160, 220, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, "v" FWVER);
+
     if (error_code != 0) {
         draw_dialog(phost, error_code);
     }
