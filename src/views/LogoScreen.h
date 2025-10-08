@@ -1,6 +1,6 @@
 #include "../gpu/Platform.h"
 #include "../gpu/App_Common.h"
-#include "ErrorMessages.h"
+#include "Dialogs.h"
 
 void draw_logo_screen(Gpu_Hal_Context_t *phost, int error_code)
 {
@@ -21,7 +21,7 @@ void draw_logo_screen(Gpu_Hal_Context_t *phost, int error_code)
     App_WrCoCmd_Buffer(phost, END());
 
     if (error_code != 0) {
-        draw_error_message(phost, error_code);
+        draw_dialog(phost, error_code);
     }
 
     Disp_End(phost);

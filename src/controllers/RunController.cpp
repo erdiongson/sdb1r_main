@@ -1,6 +1,6 @@
 #include "RunController.h"
 #include "../views/HomeScreen.h"
-#include "../views/ErrorMessages.h"
+#include "../views/Dialogs.h"
 
 RunController::RunController(ControllerParams params)
   : BaseController(params) {}
@@ -255,7 +255,6 @@ ControllerStepResult RunController::on_step() {
 
   if (dispenserProcessResult.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
     Serial.println(F("MODE: Stepper error - limit switch triggered"));
-    params.error_code = ERROR_LIMIT_SWITCH;
     draw_home_screen(phost, RUNMENU, &params);
     start_stage(HOME_STAGE);
     return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
@@ -263,7 +262,7 @@ ControllerStepResult RunController::on_step() {
 
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE) {
     Serial.println(F("MODE: Dispenser error - IR sensor failure"));
-    params.error_code = ERROR_IR_SENSOR;
+    params.error_code = DIALOG_ERROR_IR_SENSOR;
     draw_home_screen(phost, RUNMENU, &params);
     start_stage(HOME_STAGE);
     return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
@@ -271,7 +270,7 @@ ControllerStepResult RunController::on_step() {
 
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
     Serial.println(F("MODE: Dispenser error - Acknowledgment error"));
-    params.error_code = ERROR_ACK_ERROR;
+    params.error_code = DIALOG_ERROR_ACK_ERROR;
     draw_home_screen(phost, RUNMENU, &params);
     start_stage(HOME_STAGE);
     return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
@@ -279,7 +278,7 @@ ControllerStepResult RunController::on_step() {
 
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
     Serial.println(F("MODE: Dispenser error - marker not detected"));
-    params.error_code = ERROR_MARKER_NOT_DETECTED;
+    params.error_code = DIALOG_ERROR_MARKER_NOT_DETECTED;
     draw_home_screen(phost, RUNMENU, &params);
     start_stage(HOME_STAGE);
     return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);

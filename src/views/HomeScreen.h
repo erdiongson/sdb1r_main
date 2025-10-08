@@ -2,7 +2,7 @@
 #define HOME_SCREEN_H
 
 #include "../gpu/App_Common.h"
-#include "ErrorMessages.h"
+#include "Dialogs.h"
 
 // Parameters for Home_Screen display.
 struct HomeParams {
@@ -116,9 +116,9 @@ inline void draw_home_screen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const 
   sprintf(buf, "Tube left : %3d", params ? params->tubes_left : 0);
   Gpu_CoCmd_Text(phost, 294, 220, 20, OPT_RIGHTX | OPT_FORMAT, buf);
 
-  //INSERT ERROR MESSAGE
+  //INSERT DIALOG
   if (params && params->error_code > 0) {
-    draw_error_message(phost, params->error_code);
+    draw_dialog(phost, params->error_code);
   }
   Disp_End(phost);
 }
