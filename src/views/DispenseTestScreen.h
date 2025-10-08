@@ -15,10 +15,9 @@
 #include "../gpu/Platform.h"
 #include "../Constants.h"
 
-// Dispense test settings structure
-struct DispenseTestSettings {
-  uint8_t current_vibration_level;
-  uint8_t current_vibration_time;
+// Dispense test screen parameters
+struct DispenseTestScreenParams {
+  const char* statusMessage;
 };
 
 /**
@@ -31,9 +30,9 @@ struct DispenseTestSettings {
  * - Back button
  * 
  * @param phost Pointer to GPU HAL context
- * @param settings Current dispense test settings for highlighting selected options
+ * @param params Screen parameters including status message
  */
-void draw_dispense_test_screen(Gpu_Hal_Context_t *phost, const DispenseTestSettings& settings);
+void draw_dispense_test_screen(Gpu_Hal_Context_t *phost, const DispenseTestScreenParams& params);
 
 #endif /* _DISPENSE_TEST_SCREEN_H_ */
 
@@ -43,9 +42,9 @@ void draw_dispense_test_screen(Gpu_Hal_Context_t *phost, const DispenseTestSetti
  * Creates a test interface for dispense functionality testing
  * 
  * @param phost Pointer to GPU HAL context
- * @param settings Current dispense test settings for highlighting selected options
+ * @param params Screen parameters including status message
  */
-void draw_dispense_test_screen(Gpu_Hal_Context_t *phost, const DispenseTestSettings& settings)
+void draw_dispense_test_screen(Gpu_Hal_Context_t *phost, const DispenseTestScreenParams& params)
 {
     char buf[100];
     
@@ -103,27 +102,27 @@ void draw_dispense_test_screen(Gpu_Hal_Context_t *phost, const DispenseTestSetti
     int32_t vib_start_x = (DispWidth - total_vib_width) / 2;
     
     // U0 button
-    Gpu_CoCmd_FgColor(phost, settings.current_vibration_level == 0 ? 0x00AA00 : 0x666666);
+    Gpu_CoCmd_FgColor(phost, 0x666666);
     App_WrCoCmd_Buffer(phost, TAG(TAG_VIB_U0));
     Gpu_CoCmd_Button(phost, vib_start_x, vib_level_y, button_width, button_height, 20, 0, "U0");
     
     // U1 button
-    Gpu_CoCmd_FgColor(phost, settings.current_vibration_level == 1 ? 0x00AA00 : 0x666666);
+    Gpu_CoCmd_FgColor(phost, 0x666666);
     App_WrCoCmd_Buffer(phost, TAG(TAG_VIB_U1));
     Gpu_CoCmd_Button(phost, vib_start_x + (button_width + button_spacing), vib_level_y, button_width, button_height, 20, 0, "U1");
     
     // U2 button
-    Gpu_CoCmd_FgColor(phost, settings.current_vibration_level == 2 ? 0x00AA00 : 0x666666);
+    Gpu_CoCmd_FgColor(phost, 0x666666);
     App_WrCoCmd_Buffer(phost, TAG(TAG_VIB_U2));
     Gpu_CoCmd_Button(phost, vib_start_x + 2*(button_width + button_spacing), vib_level_y, button_width, button_height, 20, 0, "U2");
     
     // U3 button
-    Gpu_CoCmd_FgColor(phost, settings.current_vibration_level == 3 ? 0x00AA00 : 0x666666);
+    Gpu_CoCmd_FgColor(phost, 0x666666);
     App_WrCoCmd_Buffer(phost, TAG(TAG_VIB_U3));
     Gpu_CoCmd_Button(phost, vib_start_x + 3*(button_width + button_spacing), vib_level_y, button_width, button_height, 20, 0, "U3");
     
     // U4 button
-    Gpu_CoCmd_FgColor(phost, settings.current_vibration_level == 4 ? 0x00AA00 : 0x666666);
+    Gpu_CoCmd_FgColor(phost, 0x666666);
     App_WrCoCmd_Buffer(phost, TAG(TAG_VIB_U4));
     Gpu_CoCmd_Button(phost, vib_start_x + 4*(button_width + button_spacing), vib_level_y, button_width, button_height, 20, 0, "U4");
     
@@ -138,27 +137,27 @@ void draw_dispense_test_screen(Gpu_Hal_Context_t *phost, const DispenseTestSetti
     int32_t time_start_x = (DispWidth - total_time_width) / 2;
     
     // 1s button
-    Gpu_CoCmd_FgColor(phost, settings.current_vibration_time == 1 ? 0x0066CC : 0x666666);
+    Gpu_CoCmd_FgColor(phost, 0x666666);
     App_WrCoCmd_Buffer(phost, TAG(TAG_VIB_TIME_1));
     Gpu_CoCmd_Button(phost, time_start_x, vib_time_y, button_width, button_height, 20, 0, "1s");
     
     // 2s button
-    Gpu_CoCmd_FgColor(phost, settings.current_vibration_time == 2 ? 0x0066CC : 0x666666);
+    Gpu_CoCmd_FgColor(phost, 0x666666);
     App_WrCoCmd_Buffer(phost, TAG(TAG_VIB_TIME_2));
     Gpu_CoCmd_Button(phost, time_start_x + (button_width + button_spacing), vib_time_y, button_width, button_height, 20, 0, "2s");
     
     // 3s button
-    Gpu_CoCmd_FgColor(phost, settings.current_vibration_time == 3 ? 0x0066CC : 0x666666);
+    Gpu_CoCmd_FgColor(phost, 0x666666);
     App_WrCoCmd_Buffer(phost, TAG(TAG_VIB_TIME_3));
     Gpu_CoCmd_Button(phost, time_start_x + 2*(button_width + button_spacing), vib_time_y, button_width, button_height, 20, 0, "3s");
     
     // 4s button
-    Gpu_CoCmd_FgColor(phost, settings.current_vibration_time == 4 ? 0x0066CC : 0x666666);
+    Gpu_CoCmd_FgColor(phost, 0x666666);
     App_WrCoCmd_Buffer(phost, TAG(TAG_VIB_TIME_4));
     Gpu_CoCmd_Button(phost, time_start_x + 3*(button_width + button_spacing), vib_time_y, button_width, button_height, 20, 0, "4s");
     
     // 5s button
-    Gpu_CoCmd_FgColor(phost, settings.current_vibration_time == 5 ? 0x0066CC : 0x666666);
+    Gpu_CoCmd_FgColor(phost, 0x666666);
     App_WrCoCmd_Buffer(phost, TAG(TAG_VIB_TIME_5));
     Gpu_CoCmd_Button(phost, time_start_x + 4*(button_width + button_spacing), vib_time_y, button_width, button_height, 20, 0, "5s");
     
@@ -168,11 +167,10 @@ void draw_dispense_test_screen(Gpu_Hal_Context_t *phost, const DispenseTestSetti
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
     Gpu_CoCmd_Button(phost, 10, DispHeight - 30, 50, 22, 20, 0, "Back");
     
-    // Current settings display
+    // Status message display
     App_WrCoCmd_Buffer(phost, TAG_MASK(0));
     App_WrCoCmd_Buffer(phost, COLOR_RGB(200, 200, 200));
-    sprintf(buf, "Current: U%d, %ds", settings.current_vibration_level, settings.current_vibration_time);
-    Gpu_CoCmd_Text(phost, DispWidth - 10, DispHeight - 15, 20, OPT_RIGHTX | OPT_FORMAT, buf);
+    Gpu_CoCmd_Text(phost, DispWidth - 10, DispHeight - 15, 20, OPT_RIGHTX | OPT_FORMAT, params.statusMessage);
     App_WrCoCmd_Buffer(phost, TAG_MASK(0));
     
     // Finalize display

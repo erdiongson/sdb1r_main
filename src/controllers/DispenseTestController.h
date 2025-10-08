@@ -1,7 +1,14 @@
 #include "BaseController.h"
 
 class DispenseTestController : public BaseController {
+private:
+  enum State {
+    READY,
+    WAITING_FOR_RESPONSE,
+    RECEIVED_RESPONSE,
+  };
 
+  State state;
 public:
   DispenseTestController(ControllerParams params);
   void on_start(Profile& profile) override;
