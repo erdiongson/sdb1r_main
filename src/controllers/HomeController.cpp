@@ -46,7 +46,8 @@ void HomeController::on_interaction(const Interaction& interaction) {
         // Attempted
         bool passwordValid = (strcmp(currentPassword, inputPassword) == 0 || strcmp(SUPER_PASSWORD, inputPassword) == 0);
         if (!passwordValid) {
-          draw_keyboard(phost, 0, "Wrong Password", " ", FALSE, FALSE, FALSE);
+          HomeParams params = {0, 0, 0, 0, DIALOG_ERROR_WRONG_PASSWORD};
+          draw_home_screen(phost, MAINMENU, &params);
           delay(2000);
           draw_home_screen(phost, MAINMENU);
           return;

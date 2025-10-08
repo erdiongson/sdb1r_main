@@ -14,12 +14,10 @@ struct ProfileParams {
   int dialog_code;
 };
 
-void draw_profile_screen(const ProfileParams* params) {
-	if (!params) return;
-	
-	uint8_t keypressed = params->keypressed;
-	uint8_t curprofnum = params->curprofnum;
-	Profile &profile = params->profile;
+void draw_profile_screen(Gpu_Hal_Context_t *phost, ProfileParams params) {
+	uint8_t keypressed = params.keypressed;
+	uint8_t curprofnum = params.curprofnum;
+	Profile &profile = params.profile;
 	char buf[100]; // a buffer to format your text before printing.
 
 	Gpu_CoCmd_FlashFast(phost, 0);
@@ -126,8 +124,8 @@ void draw_profile_screen(const ProfileParams* params) {
 	
 	
 	// Draw dialog if dialog_code is set
-	if (params && params->dialog_code > 0) {
-		draw_dialog(phost, params->dialog_code);
+	if (params.dialog_code > 0) {
+		draw_dialog(phost, params.dialog_code);
 	}
 	
 	Disp_End(phost);

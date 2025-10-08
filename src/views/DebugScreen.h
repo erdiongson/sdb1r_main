@@ -13,8 +13,8 @@ struct DebugScreenParams {
 
 // Draws the debug screen with test and utility buttons.
 // @param phost Pointer to the GPU HAL context.
-// @param params Pointer to debug screen parameters.
-inline void draw_debug_screen(Gpu_Hal_Context_t *phost, const DebugScreenParams* params = nullptr) {
+// @param params Debug screen parameters.
+inline void draw_debug_screen(Gpu_Hal_Context_t *phost, DebugScreenParams params) {
   char buf[100];
 
   Gpu_CoCmd_FlashFast(phost, 0);
@@ -61,7 +61,7 @@ inline void draw_debug_screen(Gpu_Hal_Context_t *phost, const DebugScreenParams*
   // Blank EEPROM button
   App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_BLANK_EEPROM));
   Gpu_CoCmd_FgColor(phost, 0xFF6600);
-  if (params && params->blankedEeprom) {
+  if (params.blankedEeprom) {
     Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, "Blank EEPROM (Done)");
   } else {
     Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, "Blank EEPROM");
@@ -71,7 +71,7 @@ inline void draw_debug_screen(Gpu_Hal_Context_t *phost, const DebugScreenParams*
   // Reset Profiles button
   App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_RESET_PROFILES));
   Gpu_CoCmd_FgColor(phost, 0xFF6600);
-  if (params && params->profilesReset) {
+  if (params.profilesReset) {
     Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, "Reset Profiles (Done)");
   } else {
     Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, "Reset Profiles");
@@ -81,12 +81,8 @@ inline void draw_debug_screen(Gpu_Hal_Context_t *phost, const DebugScreenParams*
   // Toggle Size button
   App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_TOGGLE_SIZE));
   Gpu_CoCmd_FgColor(phost, 0x9370DB);
-  if (params) {
-    sprintf(buf, "Toggle Size (Current: %s)", params->currentSize == 1 ? "L" : "S");
-    Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, buf);
-  } else {
-    Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, "Toggle Size");
-  }
+  sprintf(buf, "Toggle Size (Current: %s)", params.currentSize == 1 ? "L" : "S");
+  Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, buf);
 
   // Back button at bottom left (smaller, similar to PreviewScreen)
   App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_BACK));

@@ -21,6 +21,9 @@ typedef struct {
 #define DIALOG_ERROR_ACK_ERROR 5
 #define DIALOG_PROFILE_SAVED 6
 #define DIALOG_PROFILE_LOADED 7
+#define DIALOG_ERROR_PASSWORD_MISMATCH 8
+#define DIALOG_PASSWORD_CHANGED 9
+#define DIALOG_ERROR_WRONG_PASSWORD 10
 
 // Displays a dialog with a black box, white outline, title, subtitle, and optional buttons.
 // @param phost GPU context.

@@ -11,11 +11,13 @@ ProfileController::ProfileController(ControllerParams params)
 
 void ProfileController::on_start(Profile& profile) {
   ProfileParams params = {0, 0, CurProf, 0};
-  draw_profile_screen(&params);
+  draw_profile_screen(phost, params);
 }
 
 void ProfileController::on_interaction(const Interaction& interaction) {
   if (interaction.key_pressed == 0) return;
+
+  static ProfileParams params = {0, 0, CurProf, 0};
 
   switch (interaction.key_pressed) {
 
@@ -29,8 +31,10 @@ void ProfileController::on_interaction(const Interaction& interaction) {
       ReadProfileEEPROM(selectedProfileNum);
       
       // Show profile loaded dialog
-      ProfileParams params = {0, selectedProfileNum, CurProf, DIALOG_PROFILE_LOADED};
-      draw_profile_screen(&params);
+      params.keypressed = 0;
+      params.curprofnum = selectedProfileNum;
+      params.dialog_code = DIALOG_PROFILE_LOADED;
+      draw_profile_screen(phost, params);
       delay(2000);
       start_next_controller(CONTROLLER_CONFIG);
       break;
@@ -44,8 +48,10 @@ void ProfileController::on_interaction(const Interaction& interaction) {
       }
 
       ReadProfileEEPROM(selectedProfileNum);
-      ProfileParams params1 = {interaction.key_pressed, selectedProfileNum, CurProf, 0};
-      draw_profile_screen(&params1);
+      params.keypressed = interaction.key_pressed;
+      params.curprofnum = selectedProfileNum;
+      params.dialog_code = 0;
+      draw_profile_screen(phost, params);
       break;
     }
 
@@ -56,8 +62,10 @@ void ProfileController::on_interaction(const Interaction& interaction) {
         selectedProfileNum = MAX_PROFILES - 1;
       }
       ReadProfileEEPROM(selectedProfileNum);
-      ProfileParams params2 = {interaction.key_pressed, selectedProfileNum, CurProf, 0};
-      draw_profile_screen(&params2);
+      params.keypressed = interaction.key_pressed;
+      params.curprofnum = selectedProfileNum;
+      params.dialog_code = 0;
+      draw_profile_screen(phost, params);
       break;
     }
 
@@ -67,31 +75,42 @@ void ProfileController::on_interaction(const Interaction& interaction) {
       
       get_keyboard_value(phost, new_password_1, "Enter New Password", FALSE);
       if (new_password_1[0] == 0) {
-        get_keyboard_value(phost, "Error : No password entered", "Press Back to continue", FALSE);
-        ProfileParams params3 = {0, selectedProfileNum, CurProf, 0};
-        draw_profile_screen(&params3);
+        params.keypressed = 0;
+        params.curprofnum = selectedProfileNum;
+        params.dialog_code = 0;
+        draw_profile_screen(phost, params);
         break;
       }
 
       get_keyboard_value(phost, new_password_2, "Enter New Password again", FALSE);
 
+      if (new_password_2[0] == 0) {
+        params.keypressed = 0;
+        params.curprofnum = selectedProfileNum;
+        params.dialog_code = 0;
+        draw_profile_screen(phost, params);
+        break;
+      }
+
       if (strcmp(new_password_1, new_password_2) != 0) {
-        get_keyboard_value(phost, "Error : Different password entered", "Press Back to continue", FALSE);
-        Serial.println("DEFINING PARAM");
-        delay(100);
-        ProfileParams params4 = {0, selectedProfileNum, CurProf, 0};
-        Serial.println("DRAWING SCREEN");
-        delay(100);
-        draw_profile_screen(&params4);
-        Serial.println("SCREEN DRAWN");
-        delay(100);
+        params.keypressed = 0;
+        params.curprofnum = selectedProfileNum;
+        params.dialog_code = DIALOG_ERROR_PASSWORD_MISMATCH;
+        draw_profile_screen(phost, params);
+        delay(2000);
+        params.dialog_code = 0;
+        draw_profile_screen(phost, params);
         break;
       }
 
       WritePassEEPROM(new_password_1);
-      get_keyboard_value(phost, "Password changed", "Press Back to continue", FALSE);
-      ProfileParams params5 = {0, selectedProfileNum, CurProf, 0};
-      draw_profile_screen(&params5);
+      params.keypressed = 0;
+      params.curprofnum = selectedProfileNum;
+      params.dialog_code = DIALOG_PASSWORD_CHANGED;
+      draw_profile_screen(phost, params);
+      delay(2000);
+      params.dialog_code = 0;
+      draw_profile_screen(phost, params);
       break;
     }
 

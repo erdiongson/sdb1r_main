@@ -28,7 +28,7 @@ void ConfigController::on_start(Profile& profile) {
   simulationHandler.reset();
 
   // Display configuration screen
-  draw_config_screen(phost, nullptr);
+  draw_config_screen(phost);
 }
 
 void ConfigController::on_interaction(const Interaction& interaction) {
@@ -56,10 +56,10 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         if (error) {
           strcpy(buf, currentProfile->profileName);
           sprintf(currentProfile->profileName, "Error in entry");
-          draw_config_screen(phost, nullptr);
+          draw_config_screen(phost);
           delay(3000);
           strcpy(currentProfile->profileName, buf);
-          draw_config_screen(phost, nullptr);
+          draw_config_screen(phost);
           delay(3000);
         } else {
           start_next_controller(CONTROLLER_HOME);
@@ -80,42 +80,42 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         //     }
         //   } else PreLoadEEPROM();
         //   sprintf(currentProfile->profileName, "EEprom reseted");
-        //   draw_config_screen(phost, nullptr);
+        //   draw_config_screen(phost);
         //   delay(3000);
         //   sprintf(currentProfile->profileName, "Profile 1 ");
-        //   draw_config_screen(phost, nullptr);
+        //   draw_config_screen(phost);
         // }
         // if (strcmp(currentProfile->profileName, "xqver") == 0) {
         //   Dprint("show version");
         //   sprintf(currentProfile->profileName, "version : %s", FWVER);
-        //   draw_config_screen(phost, nullptr);
+        //   draw_config_screen(phost);
         //   delay(3000);
         //   sprintf(currentProfile->profileName, "xqver ");
-        //   draw_config_screen(phost, nullptr);
+        //   draw_config_screen(phost);
         // }
         // if (strcmp(currentProfile->profileName, "xqhome") == 0) {
         //   Dprint("home");
         //   // Homing();
-        //   draw_config_screen(phost, nullptr);
+        //   draw_config_screen(phost);
         // }
         // if (strcmp(currentProfile->profileName, "xqblank") == 0) {
         //   Dprint("blankeeprom");
         //   BlankEEPROM();
         //   sprintf(currentProfile->profileName, "EEprom blank");
-        //   draw_config_screen(phost, nullptr);
+        //   draw_config_screen(phost);
         //   delay(3000);
         //   sprintf(currentProfile->profileName, "xqblank ");
-        //   draw_config_screen(phost, nullptr);
+        //   draw_config_screen(phost);
         //   delay(3000);
         // }
         // if (strcmp(currentProfile->profileName, "xqsize-s") == 0) {
         //   Dprint("Change the size to small.");
         //   sprintf(currentProfile->profileName, "Size Change : SMALL");
         //   currentProfile->sizeFlag = 0;
-        //   draw_config_screen(phost, nullptr);
+        //   draw_config_screen(phost);
         //   delay(3000);
         //   sprintf(currentProfile->profileName, "xqsize-s ");
-        //   draw_config_screen(phost, nullptr);
+        //   draw_config_screen(phost);
         // }
 
         start_next_controller(CONTROLLER_PROFILE);
@@ -130,10 +130,10 @@ void ConfigController::on_interaction(const Interaction& interaction) {
       
       // Show profile saved dialog
       ConfigParams params = {DIALOG_PROFILE_SAVED};
-      draw_config_screen(phost, &params);
+      draw_config_screen(phost, params);
       delay(2000);
       params.dialog_code = 0;
-      draw_config_screen(phost, &params);
+      draw_config_screen(phost, params);
       break;
     }
 
@@ -149,7 +149,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         }
 
         strcpy(currentProfile->profileName, buf);
-        draw_config_screen(phost, nullptr);
+        draw_config_screen(phost);
       break;
     }
 
@@ -180,7 +180,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
           }
         }
         
-        draw_config_screen(phost, nullptr);
+        draw_config_screen(phost);
       }
       break;
 
@@ -211,7 +211,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
           }
         }
         
-        draw_config_screen(phost, nullptr);
+        draw_config_screen(phost);
       }
       break;
 
@@ -224,7 +224,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         Dprint("max val=", maxval);
         if (maxval > MAXPITCHX) maxval = MAXPITCHX;
         currentProfile->pitch_x = get_keypad_value(&host, currentProfile->pitch_x, MINPITCHX, MAXPITCHX, TRUE);
-        draw_config_screen(phost, nullptr);
+        draw_config_screen(phost);
       }
       break;
 
@@ -237,7 +237,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         if (maxval > MAXPITCHY) maxval = MAXPITCHY;
         Dprint("max val=", maxval);
         currentProfile->pitch_y = get_keypad_value(&host, currentProfile->pitch_y, MINPITCHY, MAXPITCHY, TRUE);
-        draw_config_screen(phost, nullptr);
+        draw_config_screen(phost);
       }
       break;
 
@@ -251,7 +251,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         Dprint("max val=", maxval);
 
         currentProfile->trayOriginX = get_keypad_value(&host, currentProfile->trayOriginX, 0, MAXORGX, TRUE);
-        draw_config_screen(phost, nullptr);
+        draw_config_screen(phost);
       }
       break;
 
@@ -264,37 +264,37 @@ void ConfigController::on_interaction(const Interaction& interaction) {
         if (maxval > MAXORGY) maxval = MAXORGY;
         Dprint("max val=", maxval);
         currentProfile->trayOriginY = get_keypad_value(&host, currentProfile->trayOriginY, 0, MAXORGY, TRUE);
-        draw_config_screen(phost, nullptr);
+        draw_config_screen(phost);
       }
       break;
 
     case TAG_NUM_CYCLE:
       currentProfile->Cycles = get_keypad_value(phost, currentProfile->Cycles, MINCYCLE, MAXCYCLE, FALSE);
-      draw_config_screen(phost, nullptr);
+      draw_config_screen(phost);
       break;
 
     case TAG_Z_DIP:
       Serial.println(F("Incrementing Z Dip"));
       currentProfile->ZDip = get_keypad_value(phost, currentProfile->ZDip, MINZDIP, MAXZDIP, TRUE);
-      draw_config_screen(phost, nullptr);
+      draw_config_screen(phost);
       break;
 
     case TAG_VIBRATION_LEVEL:
       Serial.println(F("Incrementing vibration level"));
       increment_vibration_level();
-      draw_config_screen(phost, nullptr);
+      draw_config_screen(phost);
       break;
 
     case TAG_VIBRATION_DURATION:
       Serial.println(F("Incrementing vibration duration"));
       increment_vibration_time();
-      draw_config_screen(phost, nullptr);
+      draw_config_screen(phost);
       break;
 
     case TAG_PASSWORD_ENABLED:
       Serial.println(F("Toggle password enable"));
       currentProfile->passwordEnabled = !currentProfile->passwordEnabled;
-      draw_config_screen(phost, nullptr);
+      draw_config_screen(phost);
       break;
 
     case TAG_STAGGERED_TOGGLE:
@@ -323,7 +323,7 @@ void ConfigController::on_interaction(const Interaction& interaction) {
 
     case TAG_ADV_PROF_BACK:  // Back button
       Serial.println(F("Button Pressed: BACK"));
-      draw_config_screen(phost, nullptr);
+      draw_config_screen(phost);
       break;
 
     case TAG_CONFIG_PREVIEW:

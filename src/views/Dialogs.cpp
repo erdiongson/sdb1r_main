@@ -132,7 +132,34 @@ void draw_dialog(Gpu_Hal_Context_t *phost, int dialog_code) {
       
     case DIALOG_PROFILE_LOADED:
       params.title = "Profile Loaded";
-      params.subtitle = "Profile has been loaded successfully.";
+      params.subtitle = "Profile has been loaded successfully!";
+      params.leftBtn = nullptr;
+      params.rightBtn = nullptr;
+      params.leftTag = 0;
+      params.rightTag = 0;
+      break;
+      
+    case DIALOG_ERROR_PASSWORD_MISMATCH:
+      params.title = "Password Mismatch";
+      params.subtitle = "Different passwords were entered, please try again.";
+      params.leftBtn = nullptr;
+      params.rightBtn = nullptr;
+      params.leftTag = 0;
+      params.rightTag = 0;
+      break;
+      
+    case DIALOG_PASSWORD_CHANGED:
+      params.title = "Password Changed";
+      params.subtitle = "Password has been changed successfully!";
+      params.leftBtn = nullptr;
+      params.rightBtn = nullptr;
+      params.leftTag = 0;
+      params.rightTag = 0;
+      break;
+      
+    case DIALOG_ERROR_WRONG_PASSWORD:
+      params.title = "Incorrect Password";
+      params.subtitle = "The password you entered is incorrect. Please try again.";
       params.leftBtn = nullptr;
       params.rightBtn = nullptr;
       params.leftTag = 0;
