@@ -28,18 +28,27 @@ void HomeController::on_interaction(const Interaction& interaction) {
     case SETTING:
       // Handle password protection if enabled
       if (CurProf.passwordEnabled) {
-        char currentPassword [PROFILE_NAME_MAX_LEN];
-        char inputPassword [PROFILE_NAME_MAX_LEN];
+        char currentPassword [PROFILE_NAME_MAX_LEN] = "";
+        char inputPassword [PROFILE_NAME_MAX_LEN] = "";
 
         ReadPassEEPROM(currentPassword);
+        if (strcmp(currentPassword, "") == 0) strcpy(currentPassword, INITIAL_PASSWORD);
+        Serial.println("Current password:" + String(currentPassword));
+
         get_keyboard_value(phost, inputPassword, "Enter Password", FALSE);
 
-        bool passwordValid = (strcmp(currentPassword, inputPassword) == 0 || strcmp(SUPER_PASSWORD, inputPassword) == 0);
+        // Cancelled
+        if (strcmp(inputPassword, "") == 0) {
+          draw_home_screen(phost, MAINMENU);
+          return;
+        }
 
+        // Attempted
+        bool passwordValid = (strcmp(currentPassword, inputPassword) == 0 || strcmp(SUPER_PASSWORD, inputPassword) == 0);
         if (!passwordValid) {
           draw_keyboard(phost, 0, "Wrong Password", " ", FALSE, FALSE, FALSE);
           delay(2000);
-          start_next_controller(CONTROLLER_HOME);
+          draw_home_screen(phost, MAINMENU);
           return;
         }
       }

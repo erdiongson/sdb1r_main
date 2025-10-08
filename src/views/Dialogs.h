@@ -19,6 +19,8 @@ typedef struct {
 #define DIALOG_ERROR_MARKER_NOT_DETECTED 3
 #define DIALOG_ERROR_LIMIT_SWITCH 4
 #define DIALOG_ERROR_ACK_ERROR 5
+#define DIALOG_PROFILE_SAVED 6
+#define DIALOG_PROFILE_LOADED 7
 
 // Displays a dialog with a black box, white outline, title, subtitle, and optional buttons.
 // @param phost GPU context.

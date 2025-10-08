@@ -121,6 +121,24 @@ void draw_dialog(Gpu_Hal_Context_t *phost, int dialog_code) {
       params.rightTag = 0;
       break;
       
+    case DIALOG_PROFILE_SAVED:
+      params.title = "Profile Saved";
+      params.subtitle = "Profile has been saved successfully.";
+      params.leftBtn = nullptr;
+      params.rightBtn = nullptr;
+      params.leftTag = 0;
+      params.rightTag = 0;
+      break;
+      
+    case DIALOG_PROFILE_LOADED:
+      params.title = "Profile Loaded";
+      params.subtitle = "Profile has been loaded successfully.";
+      params.leftBtn = nullptr;
+      params.rightBtn = nullptr;
+      params.leftTag = 0;
+      params.rightTag = 0;
+      break;
+      
     default:
       params.title = "Unknown Error";
       params.subtitle = "An unknown error occurred.";

@@ -1,8 +1,17 @@
+#ifndef CONFIG_SCREEN_H
+#define CONFIG_SCREEN_H
+
 #include "../gpu/App_Common.h"
 #include "../Utils.h"
 #include "../views/Keyboards.h"
+#include "Dialogs.h"
 
-void draw_config_screen(Gpu_Hal_Context_t *phost) {
+// Parameters for Config_Screen display.
+struct ConfigParams {
+  int dialog_code;
+};
+
+void draw_config_screen(Gpu_Hal_Context_t *phost, const ConfigParams* params = nullptr) {
 
   int16_t vibstatus;
   int16_t passwordStatus;
@@ -262,6 +271,12 @@ void draw_config_screen(Gpu_Hal_Context_t *phost) {
   }
 
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+  
+  // Draw dialog if dialog_code is set
+  if (params && params->dialog_code > 0) {
+    draw_dialog(phost, params->dialog_code);
+  }
+  
   Disp_End(phost);
 }
 
@@ -355,3 +370,5 @@ void confirmAdvanceSetting(Gpu_Hal_Context_t *phost) {
 
   Disp_End(phost);
 }
+
+#endif /* CONFIG_SCREEN_H */

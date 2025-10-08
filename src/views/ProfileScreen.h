@@ -1,8 +1,25 @@
+#ifndef PROFILE_SCREEN_H
+#define PROFILE_SCREEN_H
+
 #include "../gpu/App_Common.h"
 #include "../gpu/Platform.h"
 #include "../Constants.h"
+#include "Dialogs.h"
 
-void draw_profile_screen(uint8_t keypressed, uint8_t curprofnum, Profile &profile) {
+// Parameters for Profile_Screen display.
+struct ProfileParams {
+  uint8_t keypressed;
+  uint8_t curprofnum;
+  Profile &profile;
+  int dialog_code;
+};
+
+void draw_profile_screen(const ProfileParams* params) {
+	if (!params) return;
+	
+	uint8_t keypressed = params->keypressed;
+	uint8_t curprofnum = params->curprofnum;
+	Profile &profile = params->profile;
 	char buf[100]; // a buffer to format your text before printing.
 
 	Gpu_CoCmd_FlashFast(phost, 0);
@@ -107,6 +124,14 @@ void draw_profile_screen(uint8_t keypressed, uint8_t curprofnum, Profile &profil
     sprintf(buf, "Vibration Time: %d", profile.vibrationDuration);
     Gpu_CoCmd_Text(phost, 150, 80, 21, 0, buf);
 	
+	
+	// Draw dialog if dialog_code is set
+	if (params && params->dialog_code > 0) {
+		draw_dialog(phost, params->dialog_code);
+	}
+	
 	Disp_End(phost);
 
 }
+
+#endif /* PROFILE_SCREEN_H */

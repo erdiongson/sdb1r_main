@@ -10,7 +10,8 @@ ProfileController::ProfileController(ControllerParams params)
   : BaseController(params), selectedProfileNum(0) {}
 
 void ProfileController::on_start(Profile& profile) {
-  draw_profile_screen(0, 0, CurProf);
+  ProfileParams params = {0, 0, CurProf, 0};
+  draw_profile_screen(&params);
 }
 
 void ProfileController::on_interaction(const Interaction& interaction) {
@@ -22,55 +23,77 @@ void ProfileController::on_interaction(const Interaction& interaction) {
       start_next_controller(CONTROLLER_CONFIG);
       break;
 
-    case TAG_PROFILE_LOAD:
+    case TAG_PROFILE_LOAD: {
       CurProfNum = selectedProfileNum;
       WriteCurIDEEPROM(selectedProfileNum);
       ReadProfileEEPROM(selectedProfileNum);
+      
+      // Show profile loaded dialog
+      ProfileParams params = {0, selectedProfileNum, CurProf, DIALOG_PROFILE_LOADED};
+      draw_profile_screen(&params);
+      delay(2000);
+      start_next_controller(CONTROLLER_CONFIG);
       break;
+    }
 
-    case TAG_PROFILE_UP:
+    case TAG_PROFILE_UP: {
       if (selectedProfileNum < MAX_PROFILES - 1) {
         ++selectedProfileNum;
       } else {
         selectedProfileNum = 0;
       }
-      ReadProfileEEPROM(selectedProfileNum);
-      draw_profile_screen(interaction.key_pressed, selectedProfileNum, CurProf);
-      break;
 
-    case TAG_PROFILE_DOWN:
+      ReadProfileEEPROM(selectedProfileNum);
+      ProfileParams params1 = {interaction.key_pressed, selectedProfileNum, CurProf, 0};
+      draw_profile_screen(&params1);
+      break;
+    }
+
+    case TAG_PROFILE_DOWN: {
       if (selectedProfileNum > 0) {
         --selectedProfileNum;
       } else {
         selectedProfileNum = MAX_PROFILES - 1;
       }
       ReadProfileEEPROM(selectedProfileNum);
-      draw_profile_screen(interaction.key_pressed, selectedProfileNum, CurProf);
+      ProfileParams params2 = {interaction.key_pressed, selectedProfileNum, CurProf, 0};
+      draw_profile_screen(&params2);
       break;
+    }
 
-    case TAG_PROFILE_CHANGE_PASSWORD:
+    case TAG_PROFILE_CHANGE_PASSWORD: {
       char new_password_1[PASSWORD_MAX_LEN] = "";
       char new_password_2[PASSWORD_MAX_LEN] = "";
       
       get_keyboard_value(phost, new_password_1, "Enter New Password", FALSE);
       if (new_password_1[0] == 0) {
         get_keyboard_value(phost, "Error : No password entered", "Press Back to continue", FALSE);
-        draw_profile_screen(0, selectedProfileNum, CurProf);
-        return;
+        ProfileParams params3 = {0, selectedProfileNum, CurProf, 0};
+        draw_profile_screen(&params3);
+        break;
       }
 
       get_keyboard_value(phost, new_password_2, "Enter New Password again", FALSE);
 
       if (strcmp(new_password_1, new_password_2) != 0) {
         get_keyboard_value(phost, "Error : Different password entered", "Press Back to continue", FALSE);
-        draw_profile_screen(0, selectedProfileNum, CurProf);
-        return;
+        Serial.println("DEFINING PARAM");
+        delay(100);
+        ProfileParams params4 = {0, selectedProfileNum, CurProf, 0};
+        Serial.println("DRAWING SCREEN");
+        delay(100);
+        draw_profile_screen(&params4);
+        Serial.println("SCREEN DRAWN");
+        delay(100);
+        break;
       }
 
       WritePassEEPROM(new_password_1);
       get_keyboard_value(phost, "Password changed", "Press Back to continue", FALSE);
-      draw_profile_screen(0, selectedProfileNum, CurProf);
+      ProfileParams params5 = {0, selectedProfileNum, CurProf, 0};
+      draw_profile_screen(&params5);
       break;
+    }
 
     default:
       break;
