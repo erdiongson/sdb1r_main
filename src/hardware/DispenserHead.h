@@ -125,6 +125,9 @@ public:
       case DISPENSE_DONE:
         dispensing_state = DISPENSER_STATE_IDLING;
         return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_IDLING);
+      case ACK_ERROR:
+        dispensing_state = DISPENSER_STATE_IDLING;
+        return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_ERROR_ACK_ERROR);
       case IR_SENSOR_FAILURE:
         dispensing_state = DISPENSER_STATE_IDLING;
         return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE);
