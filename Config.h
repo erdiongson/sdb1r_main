@@ -76,3 +76,4 @@
 
 #define DEBUG 1
 
+#define FWVER "4.0"
