@@ -1,26 +1,26 @@
-#include "HomeController.h"
-#include "../views/HomeScreen.h"
+#include "ReadyController.h"
+#include "../views/MainScreen.h"
 #include "../views/common/Keyboards.h"
 #include "../Constants.h"
 #include "../../Config.h"
 #include "../Utils.h"
 
-HomeController::HomeController(ControllerParams params)
+ReadyController::ReadyController(ControllerParams params)
   : BaseController(params) {}
 
-void HomeController::on_start(Profile& profile) {
-  Dprint(F("HomeController::on_start"));
-  draw_home_screen(phost, MAINMENU);
+void ReadyController::on_start(Profile& profile) {
+  Dprint(F("ReadyController::on_start"));
+  draw_main_screen(phost, MAINMENU);
 
   // Home the dispenser head
 }
 
-void HomeController::on_interaction(const Interaction& interaction) {
+void ReadyController::on_interaction(const Interaction& interaction) {
   // Handle key presses
   switch (interaction.key_pressed) {
 
     case START:
-      Dprint(F("HomeController::on_interaction: Transitioning to start"));
+      Dprint(F("ReadyController::on_interaction: Transitioning to start"));
       start_next_controller(CONTROLLER_RUN);
       return;
 
@@ -38,22 +38,22 @@ void HomeController::on_interaction(const Interaction& interaction) {
 
         // Cancelled
         if (strcmp(inputPassword, "") == 0) {
-          draw_home_screen(phost, MAINMENU);
+          draw_main_screen(phost, MAINMENU);
           return;
         }
 
         // Attempted
         bool passwordValid = (strcmp(currentPassword, inputPassword) == 0 || strcmp(SUPER_PASSWORD, inputPassword) == 0);
         if (!passwordValid) {
-          HomeParams params = {0, 0, 0, 0, DIALOG_ERROR_WRONG_PASSWORD};
-          draw_home_screen(phost, MAINMENU, &params);
+          MainScreenParams params = {0, 0, 0, 0, DIALOG_ERROR_WRONG_PASSWORD};
+          draw_main_screen(phost, MAINMENU, &params);
           delay(2000);
-          draw_home_screen(phost, MAINMENU);
+          draw_main_screen(phost, MAINMENU);
           return;
         }
       }
 
-      Dprint(F("HomeController::on_interaction: Transitioning to settings"));
+      Dprint(F("ReadyController::on_interaction: Transitioning to settings"));
       start_next_controller(CONTROLLER_SETTINGS);
       return;
     
@@ -64,17 +64,17 @@ void HomeController::on_interaction(const Interaction& interaction) {
   // Handle PLC messages
   switch (interaction.plc_message_type) {
     case MSG_START:
-      Dprint(F("HomeController::on_interaction: Transitioning to start"));
+      Dprint(F("ReadyController::on_interaction: Transitioning to start"));
       start_next_controller(CONTROLLER_RUN);
       break;
     
     case MSG_RAISE_Z:
-      Dprint(F("HomeController::on_interaction: Raising Z"));
+      Dprint(F("ReadyController::on_interaction: Raising Z"));
       dispenserHead.z().moveBy(-interaction.plc_message_data * STEPS_PER_UNIT_Z);
       break;
     
     case MSG_LOWER_Z:
-      Dprint(F("HomeController::on_interaction: Lowering Z"));
+      Dprint(F("ReadyController::on_interaction: Lowering Z"));
       dispenserHead.z().moveBy(interaction.plc_message_data * STEPS_PER_UNIT_Z);
       break;
     
@@ -83,11 +83,11 @@ void HomeController::on_interaction(const Interaction& interaction) {
   }
 }
 
-ControllerStepResult HomeController::on_step() {
+ControllerStepResult ReadyController::on_step() {
   DispenserProcessResult result = dispenserHead.process();
   return ControllerStepResult(result.steppers, result.dispenser);
 }
 
-int HomeController::get_mode_type() const {
-  return CONTROLLER_HOME;
+int ReadyController::get_mode_type() const {
+  return CONTROLLER_READY;
 }

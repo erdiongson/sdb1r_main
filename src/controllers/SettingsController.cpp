@@ -62,7 +62,7 @@ void SettingsController::on_interaction(const Interaction& interaction) {
           draw_settings_screen(phost);
           delay(3000);
         } else {
-          start_next_controller(CONTROLLER_HOME);
+          start_next_controller(CONTROLLER_READY);
         }
       }
       break;

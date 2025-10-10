@@ -1,11 +1,11 @@
-#ifndef HOME_SCREEN_H
-#define HOME_SCREEN_H
+#ifndef MAIN_SCREEN_H
+#define MAIN_SCREEN_H
 
 #include "../gpu/App_Common.h"
 #include "common/Dialogs.h"
 
 // Parameters for Home_Screen display.
-struct HomeParams {
+struct MainScreenParams {
   uint16_t current_row;
   uint16_t current_column;
   uint16_t tubes_left;
@@ -66,7 +66,7 @@ inline void draw_menu_buttons(uint8_t whichmenu) {
   }
 }
 
-inline void draw_home_screen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const HomeParams* params = nullptr) {
+inline void draw_main_screen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const MainScreenParams* params = nullptr) {
 
   char buf[100];
 

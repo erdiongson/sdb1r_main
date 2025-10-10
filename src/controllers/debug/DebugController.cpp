@@ -53,7 +53,7 @@ void DebugController::on_interaction(const Interaction& interaction) {
 
     case TAG_DEBUG_BACK:
       Dprint(F("Debug: Back button pressed"));
-      start_next_controller(CONTROLLER_HOME);
+      start_next_controller(CONTROLLER_READY);
       break;
 
     default:

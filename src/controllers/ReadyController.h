@@ -1,8 +1,8 @@
 #include "BaseController.h"
 
-class HomeController : public BaseController {
+class ReadyController : public BaseController {
 public:
-  HomeController(ControllerParams params);
+  ReadyController(ControllerParams params);
 
   void on_start(Profile& profile) override;
   void on_interaction(const Interaction& interaction) override;

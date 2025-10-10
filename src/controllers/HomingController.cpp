@@ -2,7 +2,7 @@
 #include "../Constants.h"
 #include "../../Config.h"
 #include "../Utils.h"
-#include "../views/HomeScreen.h"
+#include "../views/MainScreen.h"
 
 HomingController::HomingController(ControllerParams params)
   : BaseController(params) {}
@@ -12,14 +12,14 @@ void HomingController::on_start(Profile& profile) {
 
   // If the dispenser head is at the limit switches, clear them before
   // proceeding with the homing process
-  draw_home_screen(phost, HOMINGMENU);
+  draw_main_screen(phost, HOMINGMENU);
   dispenserHead.clear_limits();
 }
 
 void HomingController::on_interaction(const Interaction& interaction) {
   if (interaction.key_pressed == TAG_CONTINUE) {
     stage = STAGE_CLEAR;
-    draw_home_screen(phost, HOMINGMENU);
+    draw_main_screen(phost, HOMINGMENU);
     dispenserHead.clear_limits();
   }
 }
@@ -29,8 +29,8 @@ ControllerStepResult HomingController::on_step() {
 
   // Handle possible errors
   if (result.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
-    HomeParams params = { 0, 0, 0, 0, DIALOG_ERROR_LIMIT_SWITCH };
-    draw_home_screen(phost, HOMINGMENU, &params);
+    MainScreenParams params = { 0, 0, 0, 0, DIALOG_ERROR_LIMIT_SWITCH };
+    draw_main_screen(phost, HOMINGMENU, &params);
     stage = STAGE_ERROR;
     return ControllerStepResult(-1, -1);
   }
@@ -46,7 +46,7 @@ ControllerStepResult HomingController::on_step() {
 
   if (stage == STAGE_HOME && result.steppers == AXIS_STATE_COMPLETE) {
     Dprint(F("Axis homed 👍"));
-    start_next_controller(CONTROLLER_HOME);
+    start_next_controller(CONTROLLER_READY);
   }
 
   return ControllerStepResult(-1, -1);

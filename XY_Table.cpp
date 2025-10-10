@@ -21,7 +21,7 @@
 #include "src/hardware/Axis.h"
 #include "src/hardware/DispenserHead.h"
 #include "src/controllers/BaseController.h"
-#include "src/controllers/HomeController.h"
+#include "src/controllers/ReadyController.h"
 #include "src/controllers/RunController.h"
 #include "src/controllers/SettingsController.h"
 #include "src/controllers/ProfileController.h"
@@ -58,7 +58,7 @@ DispenserHead dispenserHead(params);
 
 // Calculate the maximum controller size at compile time.
 constexpr size_t MAX_CONTROLLER_SIZE = MaxSize<
-  HomeController,
+  ReadyController,
   RunController,
   MoveTestController,
   DispenseTestController,
@@ -113,8 +113,8 @@ void start_next_controller(int nextControllerType) {
 
   // Create the new controller in the static buffer using placement new
   switch(nextControllerType) {
-    case CONTROLLER_HOME:
-      controller = new (controllerBuffer.data) HomeController(params);
+    case CONTROLLER_READY:
+      controller = new (controllerBuffer.data) ReadyController(params);
       break;
     case CONTROLLER_RUN:
       controller = new (controllerBuffer.data) RunController(params);

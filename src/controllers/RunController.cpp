@@ -1,5 +1,5 @@
 #include "RunController.h"
-#include "../views/HomeScreen.h"
+#include "../views/MainScreen.h"
 #include "../views/common/Dialogs.h"
 
 RunController::RunController(ControllerParams params)
@@ -12,7 +12,7 @@ void RunController::on_start(Profile& profile) {
 
   if (firstPosition.x == -1 || firstPosition.y == -1) {
     Serial.println(F("MODE: No valid positions found, ending run mode"));
-    start_next_controller(CONTROLLER_HOME);
+    start_next_controller(CONTROLLER_READY);
     return;
   }
 
@@ -28,7 +28,7 @@ void RunController::on_interaction(const Interaction& interaction) {
   int button = interaction.key_pressed;
 
   if (button == PAUSE || interaction.plc_message_type == MSG_PAUSE) {
-    draw_home_screen(phost, PAUSEMENU);
+    draw_main_screen(phost, PAUSEMENU);
     pause();
   } else if (button == STOP || interaction.plc_message_type == MSG_STOP) {
     stop();
@@ -49,7 +49,7 @@ void RunController::pause() {
 // Stops the run and returns to home position.
 void RunController::stop() {
   Serial.println(F("MODE: Stopped"));
-  draw_home_screen(phost, STOPPINGMENU);
+  draw_main_screen(phost, STOPPINGMENU);
   paused = false;
 
   dispenserHead.x().stopRunning();
@@ -65,7 +65,7 @@ void RunController::stop() {
     dispenserHead.process();
   }
 
-  draw_home_screen(phost, HOMINGMENU);
+  draw_main_screen(phost, HOMINGMENU);
   start_stage(HOME_STAGE);
 }
 
@@ -73,7 +73,7 @@ void RunController::stop() {
 void RunController::start() {
   Serial.println(F("MODE: Resumed"));
   paused = false;
-  draw_home_screen(phost, RUNMENU);
+  draw_main_screen(phost, RUNMENU);
   start_stage(stage);
 }
 
@@ -243,17 +243,17 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
         target_y = (profile.trayOriginY + ((result.position.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
 
         // Update Home_Screen
-        HomeParams params = {
+        MainScreenParams params = {
           (uint16_t)trayHandler.getCurrentRow(),
           (uint16_t)trayHandler.getCurrentColumn(),
           (uint16_t)trayHandler.getTubesLeft(),
           (uint16_t)trayHandler.getTubesDispensed() + 1,
           0
         };
-        draw_home_screen(phost, RUNMENU, &params);
+        draw_main_screen(phost, RUNMENU, &params);
         start_stage(MOVE_STAGE);
       } else {
-        draw_home_screen(phost, HOMINGMENU);
+        draw_main_screen(phost, HOMINGMENU);
         start_stage(HOME_STAGE);
       }
       break;
@@ -261,7 +261,7 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
 
     case HOME_STAGE:
       if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
-      start_next_controller(CONTROLLER_HOME);
+      start_next_controller(CONTROLLER_READY);
       break;
 
     default:
@@ -277,7 +277,7 @@ ControllerStepResult RunController::on_step() {
     return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
   }
 
-  HomeParams params = {
+  MainScreenParams params = {
     (uint16_t)trayHandler.getCurrentRow(),
     (uint16_t)trayHandler.getCurrentColumn(),
     (uint16_t)trayHandler.getTubesLeft(),
@@ -288,7 +288,7 @@ ControllerStepResult RunController::on_step() {
   if (dispenserProcessResult.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
     Serial.println(F("MODE: Stepper error - limit switch triggered"));
     params.error_code = DIALOG_ERROR_LIMIT_SWITCH;
-    draw_home_screen(phost, RUNMENU, &params);
+    draw_main_screen(phost, RUNMENU, &params);
     pause();
     return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
   }
@@ -296,7 +296,7 @@ ControllerStepResult RunController::on_step() {
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE) {
     Serial.println(F("MODE: Dispenser error - IR sensor failure"));
     params.error_code = DIALOG_ERROR_IR_SENSOR;
-    draw_home_screen(phost, RUNMENU, &params);
+    draw_main_screen(phost, RUNMENU, &params);
     pause();
     return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
   }
@@ -304,7 +304,7 @@ ControllerStepResult RunController::on_step() {
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
     Serial.println(F("MODE: Dispenser error - Acknowledgment error"));
     params.error_code = DIALOG_ERROR_ACK_ERROR;
-    draw_home_screen(phost, RUNMENU, &params);
+    draw_main_screen(phost, RUNMENU, &params);
     pause();
     return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
   }
@@ -312,7 +312,7 @@ ControllerStepResult RunController::on_step() {
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
     Serial.println(F("MODE: Dispenser error - marker not detected"));
     params.error_code = DIALOG_ERROR_MARKER_NOT_DETECTED;
-    draw_home_screen(phost, RUNMENU, &params);
+    draw_main_screen(phost, RUNMENU, &params);
     pause();
     
     return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
