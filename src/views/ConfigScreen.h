@@ -3,8 +3,8 @@
 
 #include "../gpu/App_Common.h"
 #include "../Utils.h"
-#include "../views/Keyboards.h"
-#include "Dialogs.h"
+#include "common/Keyboards.h"
+#include "common/Dialogs.h"
 
 // Parameters for Config_Screen display.
 struct ConfigParams {

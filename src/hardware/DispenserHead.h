@@ -3,7 +3,7 @@
 
 #include "Axis.h"
 #include "../../Config.h"
-#include "../communication/DispenserSerial.h"
+#include "../serial/DispenserSerial.h"
 
 // Struct for dispenser process result containing state and error information.
 struct DispenserProcessResult {

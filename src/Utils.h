@@ -1,7 +1,6 @@
 #pragma once
 #include "../Config.h"
 
-#if DEBUG
 
   void inline Dprint(char x) { Serial.println(x, HEX); }
   void inline Dprint(String x) { Serial.println(x); }
@@ -24,12 +23,12 @@
     Serial.println(buf);
   }
 
-#else
+// #else
 
-  void inline Dprint(char x) {}
-  void inline Dprint(String x) {}
-  void inline Dprint(String x, String y) {}
-  void inline Dprint(String x, uint8_t y) {}
-  void inline Dprint(String x, float y) {}
+//   void inline Dprint(char x) {}
+//   void inline Dprint(String x) {}
+//   void inline Dprint(String x, String y) {}
+//   void inline Dprint(String x, uint8_t y) {}
+//   void inline Dprint(String x, float y) {}
 
-#endif
+// #endif

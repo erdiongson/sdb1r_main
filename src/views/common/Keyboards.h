@@ -11,8 +11,8 @@
 #ifndef _KEYBOARDS_H_
 #define _KEYBOARDS_H_
 
-#include "../gpu/Platform.h"
-#include "../gpu/App_Common.h"
+#include "../../gpu/Platform.h"
+#include "../../gpu/App_Common.h"
 
 // Displays the on-screen keyboard interface.
 // @param phost GPU context pointer.

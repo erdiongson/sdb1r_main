@@ -11,9 +11,9 @@
 #ifndef _DISPENSE_TEST_SCREEN_H_
 #define _DISPENSE_TEST_SCREEN_H_
 
-#include "../gpu/App_Common.h"
-#include "../gpu/Platform.h"
-#include "../Constants.h"
+#include "../../gpu/App_Common.h"
+#include "../../gpu/Platform.h"
+#include "../../Constants.h"
 
 // Dispense test screen parameters
 struct DispenseTestScreenParams {

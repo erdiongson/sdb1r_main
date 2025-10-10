@@ -4,7 +4,7 @@
 #include "../gpu/App_Common.h"
 #include "../gpu/Platform.h"
 #include "../Constants.h"
-#include "Dialogs.h"
+#include "common/Dialogs.h"
 
 // Parameters for Profile_Screen display.
 struct ProfileParams {

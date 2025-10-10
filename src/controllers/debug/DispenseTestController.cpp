@@ -1,7 +1,7 @@
 #include "DispenseTestController.h"
-#include "../views/DispenseTestScreen.h"
-#include "../Constants.h"
-#include "../Utils.h"
+#include "../../views/debug/DispenseTestScreen.h"
+#include "../../Constants.h"
+#include "../../Utils.h"
 
 DispenseTestController::DispenseTestController(ControllerParams params)
   : BaseController(params) {}

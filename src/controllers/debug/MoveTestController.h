@@ -1,4 +1,4 @@
-#include "BaseController.h"
+#include "../BaseController.h"
 
 class MoveTestController : public BaseController {
 public:

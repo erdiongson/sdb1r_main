@@ -1,9 +1,8 @@
 #include "DebugController.h"
-#include "../views/DebugScreen.h"
-#include "../Constants.h"
-#include "../../Config.h"
-#include "../Utils.h"
-#include "../gpu/App_Common.h"
+#include "../../views/debug/DebugScreen.h"
+#include "../../Constants.h"
+#include "../../../Config.h"
+#include "../../Utils.h"
 
 DebugController::DebugController(ControllerParams params)
   : BaseController(params) {}

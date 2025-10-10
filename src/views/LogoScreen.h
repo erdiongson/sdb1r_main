@@ -1,6 +1,6 @@
 #include "../gpu/Platform.h"
 #include "../gpu/App_Common.h"
-#include "Dialogs.h"
+#include "common/Dialogs.h"
 
 void draw_logo_screen(Gpu_Hal_Context_t *phost, int error_code)
 {

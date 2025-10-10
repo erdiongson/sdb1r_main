@@ -44,13 +44,13 @@
 
 //(L)
 //20240625: erdiongson - Trying out 3200 pulse per revolution (v2.05L)
-#define STEPS_PER_UNIT_X 300 // (X step motor specs: lead screw is 10mm, 3200 pulse/rev(16 microsteps driver), 10mm/3200 = 0.003125mm, 1mm/0.003125 = 320 steps/unit)
+#define STEPS_PER_UNIT_X 402L // (X step motor specs: lead screw is 10mm, 3200 pulse/rev(16 microsteps driver), 10mm/3200 = 0.003125mm, 1mm/0.003125 = 320 steps/unit)
 //#define STEPS_PER_UNIT_X 160L // (X step motor specs: lead screw is 10mm, 3200 pulse/rev(16 microsteps driver), 10mm/3200 = 0.003125mm, 1mm/0.003125 = 320 steps/unit)
-#define STEPS_PER_UNIT_Y 100L // (Y step motor specs: lead screw is 10mm, 3200 pulse/rev(16 microsteps driver), 10mm/3200 = 0.003125mm, 1mm/0.003125 = 320 steps/unit)
+#define STEPS_PER_UNIT_Y 160L // (Y step motor specs: lead screw is 10mm, 3200 pulse/rev(16 microsteps driver), 10mm/3200 = 0.003125mm, 1mm/0.003125 = 320 steps/unit)
 //20240917: erdiongson - Use the STEPS_PER_UNIT_Y 160L if we are using the new motor. use this moving forward
 //#define STEPS_PER_UNIT_Y 160L // (Y step motor specs: lead screw is 20mm, 1600 pulse/rev(8 microsteps driver), 20mm/3200 = 0.00625mm, 1mm/0.00625 = 160 steps/unit)
 
-#define STEPS_PER_UNIT_Z 30L
+#define STEPS_PER_UNIT_Z 390L
 
 //Change MAX_TUBES_X and MAX_TUBES_Y depending on the use;
 //for (L) 300x300 - MAX_TUBES_X 33; MAX_TUBES_Y 33
@@ -74,6 +74,6 @@
 // Defines if the dispenser should respond to Z-movement requests via PLC commands
 #define EXPERIMENTAL_Z_AXIS_MOVEMENT_API true 
 
-#define DEBUG 1
+#define DEBUG 0
 
 #define FWVER "4.0"

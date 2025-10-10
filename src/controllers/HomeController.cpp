@@ -1,10 +1,9 @@
 #include "HomeController.h"
 #include "../views/HomeScreen.h"
-#include "../views/Keyboards.h"
+#include "../views/common/Keyboards.h"
 #include "../Constants.h"
 #include "../../Config.h"
 #include "../Utils.h"
-#include "../gpu/App_Common.h"
 
 HomeController::HomeController(ControllerParams params)
   : BaseController(params) {}

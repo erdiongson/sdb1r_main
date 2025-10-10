@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../hardware/DispenserHead.h"
-#include "../../Profile.h"
+#include "../logic/Profile.h"
 #include "../gpu/App_Common.h"
 #include "../logic/InteractionsHandler.h"
 

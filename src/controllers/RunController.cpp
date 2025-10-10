@@ -1,6 +1,6 @@
 #include "RunController.h"
 #include "../views/HomeScreen.h"
-#include "../views/Dialogs.h"
+#include "../views/common/Dialogs.h"
 
 RunController::RunController(ControllerParams params)
   : BaseController(params) {}

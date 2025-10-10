@@ -2,7 +2,7 @@
 #define HOME_SCREEN_H
 
 #include "../gpu/App_Common.h"
-#include "Dialogs.h"
+#include "common/Dialogs.h"
 
 // Parameters for Home_Screen display.
 struct HomeParams {

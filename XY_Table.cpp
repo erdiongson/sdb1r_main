@@ -12,9 +12,9 @@
 
 #include "src/gpu/Platform.h"
 #include "src/gpu/App_Common.h"
+#include "src/logic/Profile.h"
 #include <EEPROM.h>
 #include "Config.h"
-#include "Profile.h"
 #include "XY_Table.h"
 #include "src/Utils.h"
 
@@ -23,12 +23,12 @@
 #include "src/controllers/BaseController.h"
 #include "src/controllers/HomeController.h"
 #include "src/controllers/RunController.h"
-#include "src/controllers/MoveTestController.h"
-#include "src/controllers/DispenseTestController.h"
 #include "src/controllers/ConfigController.h"
 #include "src/controllers/ProfileController.h"
 #include "src/controllers/StartupController.h"
-#include "src/controllers/DebugController.h"
+#include "src/controllers/debug/DebugController.h"
+#include "src/controllers/debug/MoveTestController.h"
+#include "src/controllers/debug/DispenseTestController.h"
 
 // Define placement new operator for Arduino (if not already available).
 inline void* operator new(size_t size, void* ptr) { return ptr; }

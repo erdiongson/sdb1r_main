@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../communication/PlcSerial.h"
+#include "../serial/PlcSerial.h"
 #include "../gpu/Platform.h"
 #include "../gpu/App_Common.h"
 

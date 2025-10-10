@@ -1,8 +1,8 @@
 #ifndef DIALOGS_H
 #define DIALOGS_H
 
-#include "../gpu/Platform.h"
-#include "../gpu/App_Common.h"
+#include "../../gpu/Platform.h"
+#include "../../gpu/App_Common.h"
 
 // Dialog parameters structure.
 typedef struct {

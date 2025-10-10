@@ -1,8 +1,8 @@
 #ifndef DEBUG_SCREEN_H
 #define DEBUG_SCREEN_H
 
-#include "../gpu/App_Common.h"
-#include "../Constants.h"
+#include "../../gpu/App_Common.h"
+#include "../../Constants.h"
 
 // Parameters for Debug Screen display.
 struct DebugScreenParams {

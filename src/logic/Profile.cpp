@@ -9,11 +9,10 @@ Date created - 2022.12.14 - XentiQ version
 
 #include "Profile.h"
 #include <EEPROM.h>
-#include "src/gpu/Platform.h"
-#include "src/Utils.h"
-#include "src/Constants.h"
-#include "Config.h"
-#include "XY_Table.h"
+#include "../gpu/Platform.h"
+#include "../Utils.h"
+#include "../Constants.h"
+#include "../../Config.h"
 
 const int PROFILE_SIZE = sizeof(Profile);
 

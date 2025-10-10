@@ -2,7 +2,7 @@
 #include "../../Config.h"
 #include "../views/ConfigScreen.h"
 #include "../views/PreviewScreen.h"
-#include "../views/Keyboards.h"
+#include "../views/common/Keyboards.h"
 #include "../logic/SkipUtils.h"
 #include "ConfigController.h"
 #include "../Utils.h"

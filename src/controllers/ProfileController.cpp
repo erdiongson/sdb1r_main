@@ -1,10 +1,9 @@
 #include "ProfileController.h"
 #include "../views/ProfileScreen.h"
-#include "../views/Keyboards.h"
+#include "../views/common/Keyboards.h"
+#include "../logic/Profile.h"
 #include "../Constants.h"
 #include "../../Config.h"
-#include "../../Profile.h"
-#include "../gpu/App_Common.h"
 
 ProfileController::ProfileController(ControllerParams params)
   : BaseController(params), selectedProfileNum(0) {}

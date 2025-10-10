@@ -2,7 +2,7 @@
 #define SKIP_UTILS_H
 
 #include <Arduino.h>
-#include "../../Profile.h"
+#include "../logic/Profile.h"
 
 // Define MAX_POSITIONS if not already defined
 #ifndef MAX_POSITIONS

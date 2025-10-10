@@ -8,8 +8,8 @@ Date created - 2022.12.14 - XentiQ version
 #define _PROFILE_H_
 
 #include <Arduino.h>
-#include "XY_Table.h"
-#include "src/gpu/Platform.h"
+#include "../../XY_Table.h"
+#include "../gpu/Platform.h"
 
 #define EEPROM_SIZE 2048 
 #define MAX_PROFILES 10 //(EEPROM_SIZE / sizeof(Profile))
