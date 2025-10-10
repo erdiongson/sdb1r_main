@@ -1,5 +1,5 @@
-#ifndef CONFIG_SCREEN_H
-#define CONFIG_SCREEN_H
+#ifndef SETTINGS_SCREEN_H
+#define SETTINGS_SCREEN_H
 
 #include "../gpu/App_Common.h"
 #include "../Utils.h"
@@ -7,11 +7,11 @@
 #include "common/Dialogs.h"
 
 // Parameters for Config_Screen display.
-struct ConfigParams {
+struct SettingsScreenParams {
   int dialog_code;
 };
 
-void draw_config_screen(Gpu_Hal_Context_t *phost, ConfigParams params = {0}) {
+void draw_settings_screen(Gpu_Hal_Context_t *phost, SettingsScreenParams params = {0}) {
 
   int16_t vibstatus;
   int16_t passwordStatus;
@@ -371,4 +371,4 @@ void confirmAdvanceSetting(Gpu_Hal_Context_t *phost) {
   Disp_End(phost);
 }
 
-#endif /* CONFIG_SCREEN_H */
+#endif /* SETTINGS_SCREEN_H */

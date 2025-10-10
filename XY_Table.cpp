@@ -23,7 +23,7 @@
 #include "src/controllers/BaseController.h"
 #include "src/controllers/HomeController.h"
 #include "src/controllers/RunController.h"
-#include "src/controllers/ConfigController.h"
+#include "src/controllers/SettingsController.h"
 #include "src/controllers/ProfileController.h"
 #include "src/controllers/StartupController.h"
 #include "src/controllers/debug/DebugController.h"
@@ -62,7 +62,7 @@ constexpr size_t MAX_CONTROLLER_SIZE = MaxSize<
   RunController,
   MoveTestController,
   DispenseTestController,
-  ConfigController,
+  SettingsController,
   ProfileController,
   StartupController,
   DebugController
@@ -125,8 +125,8 @@ void start_next_controller(int nextControllerType) {
     case CONTROLLER_DISPENSE_TEST:
       controller = new (controllerBuffer.data) DispenseTestController(params);
       break;
-    case CONTROLLER_CONFIG:
-      controller = new (controllerBuffer.data) ConfigController(params);
+    case CONTROLLER_SETTINGS:
+      controller = new (controllerBuffer.data) SettingsController(params);
       break;
     case CONTROLLER_PROFILE:
       controller = new (controllerBuffer.data) ProfileController(params);

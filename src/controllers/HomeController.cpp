@@ -54,7 +54,7 @@ void HomeController::on_interaction(const Interaction& interaction) {
       }
 
       Dprint(F("HomeController::on_interaction: Transitioning to settings"));
-      start_next_controller(CONTROLLER_CONFIG);
+      start_next_controller(CONTROLLER_SETTINGS);
       return;
     
     default:

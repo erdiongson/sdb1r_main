@@ -1,7 +1,7 @@
 #include "BaseController.h"
 #include "../logic/TrayPositionHandler.h"
 
-class ConfigController : public BaseController {
+class SettingsController : public BaseController {
 private:
   Profile* currentProfile;
   bool simulating;
@@ -21,7 +21,7 @@ private:
   void step_simulation();
 
 public:
-  ConfigController(ControllerParams params);
+  SettingsController(ControllerParams params);
 
   void on_start(Profile& profile) override;
   void on_interaction(const Interaction& interaction) override;

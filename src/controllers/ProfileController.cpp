@@ -21,7 +21,7 @@ void ProfileController::on_interaction(const Interaction& interaction) {
   switch (interaction.key_pressed) {
 
     case TAG_PROFILE_BACK:
-      start_next_controller(CONTROLLER_CONFIG);
+      start_next_controller(CONTROLLER_SETTINGS);
       break;
 
     case TAG_PROFILE_LOAD: {
@@ -35,7 +35,7 @@ void ProfileController::on_interaction(const Interaction& interaction) {
       params.dialog_code = DIALOG_PROFILE_LOADED;
       draw_profile_screen(phost, params);
       delay(2000);
-      start_next_controller(CONTROLLER_CONFIG);
+      start_next_controller(CONTROLLER_SETTINGS);
       break;
     }
 
