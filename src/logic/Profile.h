@@ -85,6 +85,18 @@ void ReadPassEEPROM(char *pass);
 void WriteProfileEEPROM(int address); //try054 , Profile &profile);
 void ReadProfileEEPROM(int address);
 
+// Password verification result enum.
+enum PasswordVerificationResult {
+  PASSWORD_SUCCESS,
+  PASSWORD_INCORRECT,
+  PASSWORD_CANCELLED
+};
+
+// Verifies the password by prompting the user for input.
+// @param phost GPU context for displaying the keyboard.
+// @return PasswordVerificationResult indicating success, incorrect, or cancelled.
+PasswordVerificationResult verify_password(Gpu_Hal_Context_t *phost);
+
 #endif /*_PROFILE_H_*/
 
 extern Profile CurProf;

@@ -1,6 +1,6 @@
 #include "ReadyController.h"
 #include "../views/MainScreen.h"
-#include "../views/common/Keyboards.h"
+#include "../logic/Profile.h"
 #include "../Constants.h"
 #include "../../Config.h"
 #include "../Utils.h"
@@ -27,24 +27,14 @@ void ReadyController::on_interaction(const Interaction& interaction) {
     case SETTING:
       // Handle password protection if enabled
       if (CurProf.passwordEnabled) {
-        char currentPassword [PROFILE_NAME_MAX_LEN] = "";
-        char inputPassword [PROFILE_NAME_MAX_LEN] = "";
-
-        ReadPassEEPROM(currentPassword);
-        if (strcmp(currentPassword, "") == 0) strcpy(currentPassword, INITIAL_PASSWORD);
-        Serial.println("Current password:" + String(currentPassword));
-
-        get_keyboard_value(phost, inputPassword, "Enter Password", FALSE);
-
-        // Cancelled
-        if (strcmp(inputPassword, "") == 0) {
+        PasswordVerificationResult result = verify_password(phost);
+        
+        if (result == PASSWORD_CANCELLED) {
           draw_main_screen(phost, MAINMENU);
           return;
         }
-
-        // Attempted
-        bool passwordValid = (strcmp(currentPassword, inputPassword) == 0 || strcmp(SUPER_PASSWORD, inputPassword) == 0);
-        if (!passwordValid) {
+        
+        if (result == PASSWORD_INCORRECT) {
           MainScreenParams params = {0, 0, 0, 0, DIALOG_ERROR_WRONG_PASSWORD};
           draw_main_screen(phost, MAINMENU, &params);
           delay(2000);

@@ -13,6 +13,7 @@ Date created - 2022.12.14 - XentiQ version
 #include "../Utils.h"
 #include "../Constants.h"
 #include "../../Config.h"
+#include "../views/common/Keyboards.h"
 
 const int PROFILE_SIZE = sizeof(Profile);
 
@@ -209,4 +210,31 @@ void ReadProfileEEPROM(int index) {
 
   Dprint("Ending Address = ", (float)address);
   CheckProfile();
+}
+
+// Verifies the password by prompting the user for input.
+// @param phost GPU context for displaying the keyboard.
+// @return PasswordVerificationResult indicating success, incorrect, or cancelled.
+PasswordVerificationResult verify_password(Gpu_Hal_Context_t *phost) {
+  char currentPassword[PROFILE_NAME_MAX_LEN] = "";
+  char inputPassword[PROFILE_NAME_MAX_LEN] = "";
+
+  ReadPassEEPROM(currentPassword);
+  if (strcmp(currentPassword, "") == 0) strcpy(currentPassword, INITIAL_PASSWORD);
+  Serial.println("Current password:" + String(currentPassword));
+
+  get_keyboard_value(phost, inputPassword, "Enter Password", FALSE);
+
+  // Cancelled
+  if (strcmp(inputPassword, "") == 0) {
+    return PASSWORD_CANCELLED;
+  }
+
+  // Attempted
+  bool passwordValid = (strcmp(currentPassword, inputPassword) == 0 || strcmp(SUPER_PASSWORD, inputPassword) == 0);
+  if (!passwordValid) {
+    return PASSWORD_INCORRECT;
+  }
+
+  return PASSWORD_SUCCESS;
 }
