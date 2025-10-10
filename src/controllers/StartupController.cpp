@@ -11,15 +11,17 @@ StartupController::StartupController(ControllerParams params)
 void StartupController::on_start(Profile& profile) {
   Dprint(F("StartupController::on_start"));
   draw_logo_screen(phost, 0);
+
+  // Check if dispenser is online and responding
   dispenserHead.send_handshake();
 }
 
 void StartupController::on_interaction(const Interaction& interaction) {}
 
-ControllerStepResult StartupController::on_step() {
+ ControllerStepResult StartupController::on_step() {
   DispenserProcessResult result = dispenserHead.process();
 
-  // Handle errors
+  // Handle possible errors
   if (result.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
     draw_logo_screen(phost, DIALOG_ERROR_ACK_ERROR);
     stage = STAGE_ERROR;
@@ -35,39 +37,15 @@ ControllerStepResult StartupController::on_step() {
     stage = STAGE_ERROR;
     return ControllerStepResult(-1, -1);
   }
-  if (result.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
-    draw_logo_screen(phost, DIALOG_ERROR_LIMIT_SWITCH);
-    stage = STAGE_ERROR;
-    return ControllerStepResult(-1, -1);
-  }
 
   if (stage == STAGE_HANDSHAKE && result.dispenser == DISPENSER_STATE_IDLING) {
     Dprint(F("Handshake acknowledged 👍"));
-    if (dispenserHead.x().isAtMin()) dispenserHead.x().moveBy(STEPS_PER_UNIT_X * 10);
-    if (dispenserHead.y().isAtMin()) dispenserHead.y().moveBy(STEPS_PER_UNIT_Y * 10);
-    if (dispenserHead.z().isAtMin()) dispenserHead.z().moveBy(STEPS_PER_UNIT_Z * 10);
-    
-    stage = STAGE_CLEAR;
-    return ControllerStepResult(-1, -1);
+    start_next_controller(CONTROLLER_HOMING);
   }
   
-  if (stage == STAGE_CLEAR && result.steppers == AXIS_STATE_COMPLETE) {
-    Dprint(F("Axis cleared 👍"));
-    dispenserHead.x().moveToMin();
-    dispenserHead.y().moveToMin();
-    dispenserHead.z().moveToMin();
-    stage = STAGE_HOME;
-    return ControllerStepResult(-1, -1);
-  }
-
-  if (stage == STAGE_HOME && result.steppers == AXIS_STATE_COMPLETE) {
-    Dprint(F("Axis homed 👍"));
-    start_next_controller(CONTROLLER_HOME);
-  }
-    
   return ControllerStepResult(-1, -1);
 }
 
 int StartupController::get_mode_type() const {
-  return CONTROLLER_HOME;
+  return CONTROLLER_STARTUP;
 }

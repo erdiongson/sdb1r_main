@@ -144,6 +144,13 @@ public:
     return dispensing_state;
   }
 
+  // Clear axes if at limit positions by moving them away.
+  void clear_limits() {
+    if (xAxis.isAtMin()) xAxis.moveBy(STEPS_PER_UNIT_X * 10);
+    if (yAxis.isAtMin()) yAxis.moveBy(STEPS_PER_UNIT_Y * 10);
+    if (zAxis.isAtMin()) zAxis.moveBy(STEPS_PER_UNIT_Z * 10);
+  }
+
 private:
   Axis xAxis;
   Axis yAxis;

@@ -1,15 +1,15 @@
 #include "BaseController.h"
 
-class StartupController : public BaseController {
+class HomingController : public BaseController {
 private:
   enum {
-    STAGE_HANDSHAKE,
+    STAGE_CLEAR,
+    STAGE_HOME,
     STAGE_ERROR,
   };
-  int stage = STAGE_HANDSHAKE;
-  DispenserHead &dispenserHead;
+  int stage = STAGE_CLEAR;
 public:
-  StartupController(ControllerParams params);
+  HomingController(ControllerParams params);
 
   void on_start(Profile& profile) override;
   void on_interaction(const Interaction& interaction) override;
