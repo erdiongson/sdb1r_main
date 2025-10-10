@@ -69,57 +69,7 @@ void SettingsController::on_interaction(const Interaction& interaction) {
 
     case TAG_CONFIG_LOAD:  // Load (Config Screen)
       Serial.println(F("Button Pressed: LOAD"));
-      {
-        // int i;
-        // if (strcmp(currentProfile->profileName, "xqreset") == 0) {  //special mode to preload eeprom
-        //   Dprint("write preset data to eeprom");
-        //   if (CurProfNum == 0) {
-        //     for (i = 1; i < MAX_PROFILES; i++) {
-        //       sprintf(currentProfile->profileName, "%s %d", "Profile", i + 1);
-        //       WriteProfileEEPROM(i);
-        //     }
-        //   } else PreLoadEEPROM();
-        //   sprintf(currentProfile->profileName, "EEprom reseted");
-        //   draw_settings_screen(phost);
-        //   delay(3000);
-        //   sprintf(currentProfile->profileName, "Profile 1 ");
-        //   draw_settings_screen(phost);
-        // }
-        // if (strcmp(currentProfile->profileName, "xqver") == 0) {
-        //   Dprint("show version");
-        //   sprintf(currentProfile->profileName, "version : %s", FWVER);
-        //   draw_settings_screen(phost);
-        //   delay(3000);
-        //   sprintf(currentProfile->profileName, "xqver ");
-        //   draw_settings_screen(phost);
-        // }
-        // if (strcmp(currentProfile->profileName, "xqhome") == 0) {
-        //   Dprint("home");
-        //   // Homing();
-        //   draw_settings_screen(phost);
-        // }
-        // if (strcmp(currentProfile->profileName, "xqblank") == 0) {
-        //   Dprint("blankeeprom");
-        //   BlankEEPROM();
-        //   sprintf(currentProfile->profileName, "EEprom blank");
-        //   draw_settings_screen(phost);
-        //   delay(3000);
-        //   sprintf(currentProfile->profileName, "xqblank ");
-        //   draw_settings_screen(phost);
-        //   delay(3000);
-        // }
-        // if (strcmp(currentProfile->profileName, "xqsize-s") == 0) {
-        //   Dprint("Change the size to small.");
-        //   sprintf(currentProfile->profileName, "Size Change : SMALL");
-        //   currentProfile->sizeFlag = 0;
-        //   draw_settings_screen(phost);
-        //   delay(3000);
-        //   sprintf(currentProfile->profileName, "xqsize-s ");
-        //   draw_settings_screen(phost);
-        // }
-
-        start_next_controller(CONTROLLER_PROFILE);
-      }
+      start_next_controller(CONTROLLER_PROFILE);
       break;
 
     case TAG_CONFIG_SAVE: {
@@ -377,14 +327,6 @@ void SettingsController::on_interaction(const Interaction& interaction) {
         Serial.println(F("Button Pressed: ADVANCED"));
         draw_skip_screen(phost);
         break;
-
-      //case 246: // No button for Advanced Setting
-      // Config_Screen(phost);
-      // break;
-
-      //case 247: // Yes button for Advanced Setting
-      // Tray_Screen(phost, CurProf);
-      // break;
 
     default:
       break;
