@@ -1,10 +1,10 @@
 #ifndef PROFILE_SCREEN_H
 #define PROFILE_SCREEN_H
 
-#include "../gpu/App_Common.h"
-#include "../gpu/Platform.h"
-#include "../Constants.h"
-#include "common/Dialogs.h"
+#include "../../gpu/App_Common.h"
+#include "../../gpu/Platform.h"
+#include "../../Constants.h"
+#include "../common/Dialogs.h"
 
 // Parameters for Profile_Screen display.
 struct ProfileParams {

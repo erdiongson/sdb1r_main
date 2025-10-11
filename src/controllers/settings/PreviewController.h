@@ -1,5 +1,5 @@
-#include "BaseController.h"
-#include "../logic/TrayPositionHandler.h"
+#include "../BaseController.h"
+#include "../../logic/TrayPositionHandler.h"
 
 class PreviewController : public BaseController {
 private:

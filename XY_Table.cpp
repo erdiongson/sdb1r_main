@@ -23,13 +23,13 @@
 #include "src/controllers/BaseController.h"
 #include "src/controllers/ReadyController.h"
 #include "src/controllers/RunController.h"
-#include "src/controllers/SettingsController.h"
-#include "src/controllers/ProfileController.h"
 #include "src/controllers/StartupController.h"
 #include "src/controllers/debug/DebugController.h"
 #include "src/controllers/debug/MoveTestController.h"
 #include "src/controllers/debug/DispenseTestController.h"
-#include "src/controllers/PreviewController.h"
+#include "src/controllers/settings/PreviewController.h"
+#include "src/controllers/settings/SettingsController.h"
+#include "src/controllers/settings/ProfileController.h"
 
 // Define placement new operator for Arduino (if not already available).
 inline void* operator new(size_t size, void* ptr) { return ptr; }

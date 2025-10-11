@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseController.h"
+#include "../BaseController.h"
 
 class ProfileController : public BaseController {
 private:

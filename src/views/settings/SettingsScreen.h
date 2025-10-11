@@ -1,10 +1,10 @@
 #ifndef SETTINGS_SCREEN_H
 #define SETTINGS_SCREEN_H
 
-#include "../gpu/App_Common.h"
-#include "../Utils.h"
-#include "common/Keyboards.h"
-#include "common/Dialogs.h"
+#include "../../gpu/App_Common.h"
+#include "../../Utils.h"
+#include "../common/Keyboards.h"
+#include "../common/Dialogs.h"
 
 // Parameters for Config_Screen display.
 struct SettingsScreenParams {

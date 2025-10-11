@@ -1,9 +1,9 @@
 #include "ProfileController.h"
-#include "../views/ProfileScreen.h"
-#include "../views/common/Keyboards.h"
-#include "../logic/Profile.h"
-#include "../Constants.h"
-#include "../../Config.h"
+#include "../../views/settings/ProfileScreen.h"
+#include "../../views/common/Keyboards.h"
+#include "../../logic/Profile.h"
+#include "../../Constants.h"
+#include "../../../Config.h"
 
 ProfileController::ProfileController(ControllerParams params)
   : BaseController(params), selectedProfileNum(0) {}
