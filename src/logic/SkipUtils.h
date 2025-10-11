@@ -63,9 +63,9 @@ public:
 
   struct CleanResult {
     char cleaned[ROW_COL_MAX_LEN];
-    bool wasCleaned;
+    bool was_cleaned;
 
-    CleanResult() : wasCleaned(false) {
+    CleanResult() : was_cleaned(false) {
       cleaned[0] = '\0';
     }
   };
@@ -375,7 +375,7 @@ public:
     result.cleaned[ROW_COL_MAX_LEN - 1] = '\0';
 
     // Check if input was modified
-    result.wasCleaned = (strcmp(input, result.cleaned) != 0);
+    result.was_cleaned = (strcmp(input, result.cleaned) != 0);
 
     return result;
   }

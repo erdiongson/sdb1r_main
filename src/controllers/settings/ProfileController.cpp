@@ -31,7 +31,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
       
       // Show profile loaded dialog
       params.keypressed = 0;
-      params.curprofnum = selected_profile_num;
+      params.cur_prof_num = selected_profile_num;
       params.dialog_code = DIALOG_PROFILE_LOADED;
       drawProfileScreen(phost, params);
       delay(2000);
@@ -48,7 +48,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
 
       readProfileEEPROM(selected_profile_num);
       params.keypressed = interaction.key_pressed;
-      params.curprofnum = selected_profile_num;
+      params.cur_prof_num = selected_profile_num;
       params.dialog_code = 0;
       drawProfileScreen(phost, params);
       break;
@@ -62,7 +62,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
       }
       readProfileEEPROM(selected_profile_num);
       params.keypressed = interaction.key_pressed;
-      params.curprofnum = selected_profile_num;
+      params.cur_prof_num = selected_profile_num;
       params.dialog_code = 0;
       drawProfileScreen(phost, params);
       break;
@@ -75,7 +75,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
       getKeyboardValue(phost, new_password_1, "Enter New Password", FALSE);
       if (new_password_1[0] == 0) {
         params.keypressed = 0;
-        params.curprofnum = selected_profile_num;
+        params.cur_prof_num = selected_profile_num;
         params.dialog_code = 0;
         drawProfileScreen(phost, params);
         break;
@@ -85,7 +85,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
 
       if (new_password_2[0] == 0) {
         params.keypressed = 0;
-        params.curprofnum = selected_profile_num;
+        params.cur_prof_num = selected_profile_num;
         params.dialog_code = 0;
         drawProfileScreen(phost, params);
         break;
@@ -93,7 +93,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
 
       if (strcmp(new_password_1, new_password_2) != 0) {
         params.keypressed = 0;
-        params.curprofnum = selected_profile_num;
+        params.cur_prof_num = selected_profile_num;
         params.dialog_code = DIALOG_ERROR_PASSWORD_MISMATCH;
         drawProfileScreen(phost, params);
         delay(2000);
@@ -104,7 +104,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
 
       writePassEEPROM(new_password_1);
       params.keypressed = 0;
-      params.curprofnum = selected_profile_num;
+      params.cur_prof_num = selected_profile_num;
       params.dialog_code = DIALOG_PASSWORD_CHANGED;
       drawProfileScreen(phost, params);
       delay(2000);

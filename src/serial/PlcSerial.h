@@ -27,7 +27,7 @@ enum PLCMessageType {
 struct PLCMessage {
   PLCMessageType type;
   byte data[5];  // Raw message data
-  byte dataValue; // Extracted data value (for messages with data)
+  byte data_value; // Extracted data value (for messages with data)
 };
 
 // PlcSerial class for handling PLC communication.

@@ -17,7 +17,7 @@
 
 // Dispense test screen parameters
 struct DispenseTestScreenParams {
-  const char* statusMessage;
+  const char* status_message;
 };
 
 /**
@@ -170,7 +170,7 @@ void drawDispenseTestScreen(Gpu_Hal_Context_t *phost, const DispenseTestScreenPa
     // Status message display
     App_WrCoCmd_Buffer(phost, TAG_MASK(0));
     App_WrCoCmd_Buffer(phost, COLOR_RGB(200, 200, 200));
-    Gpu_CoCmd_Text(phost, DispWidth - 10, DispHeight - 15, 20, OPT_RIGHTX | OPT_FORMAT, params.statusMessage);
+    Gpu_CoCmd_Text(phost, DispWidth - 10, DispHeight - 15, 20, OPT_RIGHTX | OPT_FORMAT, params.status_message);
     App_WrCoCmd_Buffer(phost, TAG_MASK(0));
     
     // Finalize display

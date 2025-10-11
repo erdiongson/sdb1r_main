@@ -153,7 +153,7 @@ void PreviewController::stepSimulation() {
   // Get next position
   TrayHandler::PositionResult result = simulation_handler.goToNextValidPosition();
   
-  if (result.hasNext) {
+  if (result.has_next) {
     simulate_col = result.position.x;
     simulate_row = result.position.y;
   } else {

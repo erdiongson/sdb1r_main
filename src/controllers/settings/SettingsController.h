@@ -2,7 +2,7 @@
 
 class SettingsController : public BaseController {
 private:
-  Profile* currentProfile;
+  Profile* current_profile;
   
   void incrementVibrationLevel();
   void incrementVibrationTime();

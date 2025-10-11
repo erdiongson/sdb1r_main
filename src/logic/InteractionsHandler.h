@@ -15,7 +15,7 @@ public:
     InteractionsHandler() {}
     ~InteractionsHandler() {}
 
-    static inline int lastTouchState = 0; // Inline static member (C++17)
+    static inline int last_touch_state = 0; // Inline static member (C++17)
 
     static int waitForTouchRelease() {
         while (Gpu_Hal_Rd8(phost, REG_TOUCH_TAG) != 0) {
@@ -28,13 +28,13 @@ public:
         int latestTouchState = Gpu_Hal_Rd8(phost, REG_TOUCH_TAG);
        
         // Check if the state changed
-        if (lastTouchState != latestTouchState) {
-            lastTouchState = latestTouchState;
+        if (last_touch_state != latestTouchState) {
+            last_touch_state = latestTouchState;
             return latestTouchState;
         }
         
         // Update last button state for next check
-        lastTouchState = latestTouchState;
+        last_touch_state = latestTouchState;
         return -1;
     };
     
@@ -44,17 +44,17 @@ public:
         int touchButtonPressed = Gpu_Hal_Rd8(phost, REG_TOUCH_TAG);
         
         // Check for button release (the only case we care about)
-        if (lastTouchState == 0 && touchButtonPressed != 0) {
+        if (last_touch_state == 0 && touchButtonPressed != 0) {
             // Button was pressed and now released - register the press
             interaction.key_pressed = touchButtonPressed;
             interaction.plc_message_type = MSG_UNKNOWN;
             interaction.plc_message_data = 0;
-            lastTouchState = touchButtonPressed;
+            last_touch_state = touchButtonPressed;
             return true; // Interaction detected
         }
         
         // Update last button state
-        lastTouchState = touchButtonPressed;
+        last_touch_state = touchButtonPressed;
         
         // Check for PLC messages before early exit
         PLCMessage plcMessage = PlcSerial::process();
@@ -62,7 +62,7 @@ public:
             Serial.println("PLC message received: " + String(plcMessage.type));
             interaction.key_pressed = 0;
             interaction.plc_message_type = plcMessage.type;
-            interaction.plc_message_data = plcMessage.dataValue;
+            interaction.plc_message_data = plcMessage.data_value;
             return true; // PLC interaction detected
         }
         

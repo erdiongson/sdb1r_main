@@ -9,14 +9,14 @@
 // Parameters for Profile_Screen display.
 struct ProfileParams {
   uint8_t keypressed;
-  uint8_t curprofnum;
+  uint8_t cur_prof_num;
   Profile &profile;
   int dialog_code;
 };
 
 void drawProfileScreen(Gpu_Hal_Context_t *phost, ProfileParams params) {
 	uint8_t keypressed = params.keypressed;
-	uint8_t curprofnum = params.curprofnum;
+	uint8_t cur_prof_num = params.cur_prof_num;
 	Profile &profile = params.profile;
 	char buf[100]; // a buffer to format your text before printing.
 
@@ -68,7 +68,7 @@ void drawProfileScreen(Gpu_Hal_Context_t *phost, ProfileParams params) {
 	App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 127));    
 
     // Print profileId
-    sprintf(buf, "Profile ID:    %d", curprofnum+1);
+    sprintf(buf, "Profile ID:    %d", cur_prof_num+1);
     Gpu_CoCmd_Text(phost, 8, 65, 21, 0, buf);
 
     // // Print profileName

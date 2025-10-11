@@ -16,17 +16,17 @@ struct DispenserProcessResult {
 
 // Struct for all dispenser head parameters.
 struct DispenserHeadParams {
-  AxisParams xAxis;
-  AxisParams yAxis;
-  AxisParams zAxis;
+  AxisParams x_axis;
+  AxisParams y_axis;
+  AxisParams z_axis;
 
   DispenserHeadParams(
-    const AxisParams& xAxis,
-    const AxisParams& yAxis,
-    const AxisParams& zAxis)
-    : xAxis(xAxis),
-      yAxis(yAxis),
-      zAxis(zAxis) {}
+    const AxisParams& x_axis,
+    const AxisParams& y_axis,
+    const AxisParams& z_axis)
+    : x_axis(x_axis),
+      y_axis(y_axis),
+      z_axis(z_axis) {}
 };
 
 class DispenserHead {
@@ -35,13 +35,13 @@ public:
   // Constructor for DispenserHead using DispenserHeadParams.
   // @param params All parameters for the dispenser head.
   DispenserHead(const DispenserHeadParams& params)
-    : xAxis(params.xAxis),
-      yAxis(params.yAxis),
-      zAxis(params.zAxis) {}
+    : x_axis(params.x_axis),
+      y_axis(params.y_axis),
+      z_axis(params.z_axis) {}
 
-  Axis& x() { return xAxis; }
-  Axis& y() { return yAxis; }
-  Axis& z() { return zAxis; }
+  Axis& x() { return x_axis; }
+  Axis& y() { return y_axis; }
+  Axis& z() { return z_axis; }
 
   // Send a dispense command to the dispenser.
   void sendDispense() {
@@ -90,15 +90,15 @@ public:
     #endif
 
     // Process stepper motors
-    int x_result = this->xAxis.onStep();
+    int x_result = this->x_axis.onStep();
     if (x_result == AXIS_STATE_RUNNING) return DispenserProcessResult(AXIS_STATE_RUNNING, DISPENSER_STATE_BLOCKED);
     if (x_result == AXIS_STATE_ERROR_LIMIT_SWITCH) return DispenserProcessResult(AXIS_STATE_ERROR_LIMIT_SWITCH, DISPENSER_STATE_BLOCKED);
 
-    int y_result = this->yAxis.onStep();
+    int y_result = this->y_axis.onStep();
     if (y_result == AXIS_STATE_RUNNING) return DispenserProcessResult(AXIS_STATE_RUNNING, DISPENSER_STATE_BLOCKED);
     if (y_result == AXIS_STATE_ERROR_LIMIT_SWITCH) return DispenserProcessResult(AXIS_STATE_ERROR_LIMIT_SWITCH, DISPENSER_STATE_BLOCKED);
 
-    int z_result = this->zAxis.onStep();
+    int z_result = this->z_axis.onStep();
     if (z_result == AXIS_STATE_RUNNING) return DispenserProcessResult(AXIS_STATE_RUNNING, DISPENSER_STATE_BLOCKED);
     if (z_result == AXIS_STATE_ERROR_LIMIT_SWITCH) return DispenserProcessResult(AXIS_STATE_ERROR_LIMIT_SWITCH, DISPENSER_STATE_BLOCKED);
 
@@ -146,15 +146,15 @@ public:
 
   // Clear axes if at limit positions by moving them away.
   void clearLimits() {
-    if (xAxis.isAtMin()) xAxis.moveBy(STEPS_PER_UNIT_X * 10);
-    if (yAxis.isAtMin()) yAxis.moveBy(STEPS_PER_UNIT_Y * 10);
-    if (zAxis.isAtMin()) zAxis.moveBy(STEPS_PER_UNIT_Z * 10);
+    if (x_axis.isAtMin()) x_axis.moveBy(STEPS_PER_UNIT_X * 10);
+    if (y_axis.isAtMin()) y_axis.moveBy(STEPS_PER_UNIT_Y * 10);
+    if (z_axis.isAtMin()) z_axis.moveBy(STEPS_PER_UNIT_Z * 10);
   }
 
 private:
-  Axis xAxis;
-  Axis yAxis;
-  Axis zAxis;
+  Axis x_axis;
+  Axis y_axis;
+  Axis z_axis;
   int dispensing_state = DISPENSER_STATE_IDLING;
 };
 

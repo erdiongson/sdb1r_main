@@ -39,9 +39,9 @@ struct Position {
 namespace TrayHandler {
 
 struct PositionResult {
-  bool hasNext;  // Whether all valid positions have been exhausted
+  bool has_next;  // Whether all valid positions have been exhausted
 
-  // These fields are only valid when hasNext is true
+  // These fields are only valid when has_next is true
   Position position;  // The next position
   int direction;      // The direction to move in
 
@@ -57,14 +57,14 @@ struct PositionResult {
 
 private:
   // Private constructor used by the static factory methods
-  PositionResult(Position pos, bool hasNext, int dir)
-    : position(pos), hasNext(hasNext), direction(dir) {}
+  PositionResult(Position pos, bool has_next, int dir)
+    : position(pos), has_next(has_next), direction(dir) {}
 };
 
 class TrayPositionHandler {
 private:
   Dimensions dimensions;
-  Position currentPosition = Position(1, 1);
+  Position current_position = Position(1, 1);
   int direction = 1;
   bool staggered = false;
   bool flipped = false;
@@ -146,15 +146,15 @@ private:
   // @return PositionResult.
   PositionResult getNext() {
     // Check in current row
-    PositionResult result = getNextInRow(currentPosition, direction);
-    if (result.hasNext)
+    PositionResult result = getNextInRow(current_position, direction);
+    if (result.has_next)
       return result;
 
     // Find the next row with a valid position
-    for (int y = currentPosition.y + 1; y <= dimensions.rows; y++) {
+    for (int y = current_position.y + 1; y <= dimensions.rows; y++) {
       // Find a valid position in the new row
-      PositionResult result = getNextInNewRow(Position(currentPosition.x, y));
-      if (result.hasNext)
+      PositionResult result = getNextInNewRow(Position(current_position.x, y));
+      if (result.has_next)
         return result;
     }
     return PositionResult::Done();
@@ -260,15 +260,15 @@ public:
   // @return PositionResult containing the new position
   PositionResult goToNextValidPosition() {
     // Store the previous position before updating
-    Position previousPosition = currentPosition;
+    Position previousPosition = current_position;
     Position previousPositionTransformed = flipped ? flipPosition(previousPosition) : previousPosition;
 
     PositionResult result = getNext();
 
     // If we have a valid next position, update the current position and transform if needed
-    if (result.hasNext) {
+    if (result.has_next) {
       // Update the current position to the new position
-      currentPosition = result.position;
+      current_position = result.position;
       direction = result.direction;
 
       // Increment tubes dispensed counter
@@ -291,11 +291,11 @@ public:
   // Reset the current position to the bottom-left corner.
   // @return The reset position in the original coordinate system.
   Position reset() {
-    currentPosition = Position(1, 1); 
+    current_position = Position(1, 1); 
     direction = 1;
 
-    if (isInvalidPosition(currentPosition)) {
-      currentPosition = getNext().position;
+    if (isInvalidPosition(current_position)) {
+      current_position = getNext().position;
     }
 
     tubesDispensed = 0;
@@ -345,20 +345,20 @@ public:
     
     totalValidTubes = totalTubes - skipCount;
     
-    return currentPosition;
+    return current_position;
   }
 
   // Get the current row (1-indexed).
   // @return Current row position.
   int getCurrentRow() const {
-    Position pos = flipped ? flipPosition(currentPosition) : currentPosition;
+    Position pos = flipped ? flipPosition(current_position) : current_position;
     return pos.y;
   }
 
   // Get the current column (1-indexed).
   // @return Current column position.
   int getCurrentColumn() const {
-    Position pos = flipped ? flipPosition(currentPosition) : currentPosition;
+    Position pos = flipped ? flipPosition(current_position) : current_position;
     return pos.x;
   }
 

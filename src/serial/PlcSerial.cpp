@@ -11,7 +11,7 @@
 PLCMessage PlcSerial::process() {
   PLCMessage result;
   result.type = MSG_UNKNOWN;
-  result.dataValue = 0;
+  result.data_value = 0;
   
   if (Serial3.available() == 0) return result;
   
@@ -43,7 +43,7 @@ PLCMessage PlcSerial::process() {
   }
   
   // Store data value
-  result.dataValue = response[2];
+  result.data_value = response[2];
   
   // Determine message type based on command byte [1]
   switch (response[1]) {

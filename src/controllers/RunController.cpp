@@ -236,10 +236,10 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
     case STAGE_RAISE_HEAD: {
       if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
       TrayHandler::PositionResult result = trayHandler.goToNextValidPosition();
-      Serial.println("Has next: " + String(result.hasNext));
+      Serial.println("Has next: " + String(result.has_next));
       Serial.println("Next position: " + String(result.position.x) + ", " + String(result.position.y));
 
-      if (result.hasNext) {
+      if (result.has_next) {
         Serial.println("Next position: " + String(result.position.x) + ", " + String(result.position.y));
 
         target_x = (profile.trayOriginX + ((result.position.x - 1 + ((profile.staggered && result.position.y % 2 == 0) ? 0.5: 0)) * profile.pitch_x)) * -STEPS_PER_UNIT_X;
