@@ -8,12 +8,12 @@
 ProfileController::ProfileController(ControllerParams params)
   : BaseController(params), selectedProfileNum(0) {}
 
-void ProfileController::on_start(Profile& profile) {
+void ProfileController::onStart(Profile& profile) {
   ProfileParams params = {0, 0, CurProf, 0};
   draw_profile_screen(phost, params);
 }
 
-void ProfileController::on_interaction(const Interaction& interaction) {
+void ProfileController::onInteraction(const Interaction& interaction) {
   if (interaction.key_pressed == 0) return;
 
   static ProfileParams params = {0, 0, CurProf, 0};
@@ -21,7 +21,7 @@ void ProfileController::on_interaction(const Interaction& interaction) {
   switch (interaction.key_pressed) {
 
     case TAG_PROFILE_BACK:
-      start_next_controller(CONTROLLER_SETTINGS);
+      startNextController(CONTROLLER_SETTINGS);
       break;
 
     case TAG_PROFILE_LOAD: {
@@ -35,7 +35,7 @@ void ProfileController::on_interaction(const Interaction& interaction) {
       params.dialog_code = DIALOG_PROFILE_LOADED;
       draw_profile_screen(phost, params);
       delay(2000);
-      start_next_controller(CONTROLLER_SETTINGS);
+      startNextController(CONTROLLER_SETTINGS);
       break;
     }
 
@@ -118,10 +118,10 @@ void ProfileController::on_interaction(const Interaction& interaction) {
   }
 }
 
-ControllerStepResult ProfileController::on_step() {
+ControllerStepResult ProfileController::onStep() {
   return ControllerStepResult(-1, -1);
 }
 
-int ProfileController::get_mode_type() const {
+int ProfileController::getModeType() const {
   return CONTROLLER_PROFILE;
 }

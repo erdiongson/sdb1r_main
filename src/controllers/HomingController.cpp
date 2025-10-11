@@ -7,7 +7,7 @@
 HomingController::HomingController(ControllerParams params)
   : BaseController(params) {}
 
-void HomingController::on_start(Profile& profile) {
+void HomingController::onStart(Profile& profile) {
   Dprint(F("HomingController::on_start"));
 
   // If the dispenser head is at the limit switches, clear them before
@@ -16,7 +16,7 @@ void HomingController::on_start(Profile& profile) {
   dispenserHead.clear_limits();
 }
 
-void HomingController::on_interaction(const Interaction& interaction) {
+void HomingController::onInteraction(const Interaction& interaction) {
   if (interaction.key_pressed == TAG_CONTINUE) {
     stage = STAGE_CLEAR;
     draw_main_screen(phost, HOMINGMENU);
@@ -24,7 +24,7 @@ void HomingController::on_interaction(const Interaction& interaction) {
   }
 }
 
-ControllerStepResult HomingController::on_step() {
+ControllerStepResult HomingController::onStep() {
   DispenserProcessResult result = dispenserHead.process();
 
   // Handle possible errors
@@ -46,12 +46,12 @@ ControllerStepResult HomingController::on_step() {
 
   if (stage == STAGE_HOME && result.steppers == AXIS_STATE_COMPLETE) {
     Dprint(F("Axis homed 👍"));
-    start_next_controller(CONTROLLER_READY);
+    startNextController(CONTROLLER_READY);
   }
 
   return ControllerStepResult(-1, -1);
 }
 
-int HomingController::get_mode_type() const {
+int HomingController::getModeType() const {
   return CONTROLLER_HOMING;
 }

@@ -6,19 +6,19 @@
 DispenseTestController::DispenseTestController(ControllerParams params)
   : BaseController(params) {}
 
-void DispenseTestController::on_start(Profile& profile) {
+void DispenseTestController::onStart(Profile& profile) {
   Dprint(F("DispenseTestController::on_start"));
   
   DispenseTestScreenParams params = {"Ready"};
   draw_dispense_test_screen(phost, params);
 }
 
-void DispenseTestController::on_interaction(const Interaction& interaction) {
+void DispenseTestController::onInteraction(const Interaction& interaction) {
   int button = interaction.key_pressed;
   
   switch (button) {
     case TAG_DISPENSE_BACK:
-      start_next_controller(CONTROLLER_DEBUG);
+      startNextController(CONTROLLER_DEBUG);
       break;
     
     case TAG_DISPENSE: {
@@ -127,7 +127,7 @@ void DispenseTestController::on_interaction(const Interaction& interaction) {
   }
 }
 
-ControllerStepResult DispenseTestController::on_step() {
+ControllerStepResult DispenseTestController::onStep() {
   DispenserProcessResult result = dispenserHead.process();
 
   if (state == WAITING_FOR_RESPONSE && result.dispenser == DISPENSER_STATE_IDLING) {
@@ -139,6 +139,6 @@ ControllerStepResult DispenseTestController::on_step() {
   return ControllerStepResult(result.steppers, result.dispenser);
 }
 
-int DispenseTestController::get_mode_type() const {
+int DispenseTestController::getModeType() const {
   return CONTROLLER_DISPENSE_TEST;
 }

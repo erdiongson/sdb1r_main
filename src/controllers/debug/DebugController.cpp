@@ -7,24 +7,24 @@
 DebugController::DebugController(ControllerParams params)
   : BaseController(params) {}
 
-void DebugController::on_start(Profile& profile) {
+void DebugController::onStart(Profile& profile) {
   Dprint(F("DebugController::on_start"));
   DebugScreenParams params = {CurProf.sizeFlag, false, false};
   draw_debug_screen(phost, params);
 }
 
-void DebugController::on_interaction(const Interaction& interaction) {
+void DebugController::onInteraction(const Interaction& interaction) {
   // Handle key presses
   switch (interaction.key_pressed) {
 
     case TAG_DEBUG_MOVE_TEST:
       Dprint(F("Debug: Move Test button pressed"));
-      start_next_controller(CONTROLLER_MOVE_TEST);
+      startNextController(CONTROLLER_MOVE_TEST);
       break;
 
     case TAG_DEBUG_DISPENSER_TEST:
       Dprint(F("Debug: Dispenser Test button pressed"));
-      start_next_controller(CONTROLLER_DISPENSE_TEST);
+      startNextController(CONTROLLER_DISPENSE_TEST);
       break;
 
     case TAG_DEBUG_BLANK_EEPROM: {
@@ -53,7 +53,7 @@ void DebugController::on_interaction(const Interaction& interaction) {
 
     case TAG_DEBUG_BACK:
       Dprint(F("Debug: Back button pressed"));
-      start_next_controller(CONTROLLER_READY);
+      startNextController(CONTROLLER_READY);
       break;
 
     default:
@@ -61,11 +61,11 @@ void DebugController::on_interaction(const Interaction& interaction) {
   }
 }
 
-ControllerStepResult DebugController::on_step() {
+ControllerStepResult DebugController::onStep() {
   DispenserProcessResult result = dispenserHead.process();
   return ControllerStepResult(result.steppers, result.dispenser);
 }
 
-int DebugController::get_mode_type() const {
+int DebugController::getModeType() const {
   return CONTROLLER_DEBUG;
 }

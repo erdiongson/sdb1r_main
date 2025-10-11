@@ -8,20 +8,20 @@
 ReadyController::ReadyController(ControllerParams params)
   : BaseController(params) {}
 
-void ReadyController::on_start(Profile& profile) {
+void ReadyController::onStart(Profile& profile) {
   Dprint(F("ReadyController::on_start"));
   draw_main_screen(phost, MAINMENU);
 
   // Home the dispenser head
 }
 
-void ReadyController::on_interaction(const Interaction& interaction) {
+void ReadyController::onInteraction(const Interaction& interaction) {
   // Handle key presses
   switch (interaction.key_pressed) {
 
     case START:
       Dprint(F("ReadyController::on_interaction: Transitioning to start"));
-      start_next_controller(CONTROLLER_RUN);
+      startNextController(CONTROLLER_RUN);
       return;
 
     case SETTING:
@@ -44,7 +44,7 @@ void ReadyController::on_interaction(const Interaction& interaction) {
       }
 
       Dprint(F("ReadyController::on_interaction: Transitioning to settings"));
-      start_next_controller(CONTROLLER_SETTINGS);
+      startNextController(CONTROLLER_SETTINGS);
       return;
     
     default:
@@ -55,7 +55,7 @@ void ReadyController::on_interaction(const Interaction& interaction) {
   switch (interaction.plc_message_type) {
     case MSG_START:
       Dprint(F("ReadyController::on_interaction: Transitioning to start"));
-      start_next_controller(CONTROLLER_RUN);
+      startNextController(CONTROLLER_RUN);
       break;
     
     case MSG_RAISE_Z:
@@ -73,11 +73,11 @@ void ReadyController::on_interaction(const Interaction& interaction) {
   }
 }
 
-ControllerStepResult ReadyController::on_step() {
+ControllerStepResult ReadyController::onStep() {
   DispenserProcessResult result = dispenserHead.process();
   return ControllerStepResult(result.steppers, result.dispenser);
 }
 
-int ReadyController::get_mode_type() const {
+int ReadyController::getModeType() const {
   return CONTROLLER_READY;
 }

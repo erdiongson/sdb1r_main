@@ -57,16 +57,16 @@ public:
   virtual ~BaseController() = default;
 
   // Pure virtual methods that must be implemented by derived classes
-  virtual void on_start(Profile& profile) = 0;
-  virtual void on_interaction(const Interaction& interaction) = 0;
-  virtual ControllerStepResult on_step() = 0;  // Returns ControllerStepResult with stepper and dispenser state
+  virtual void onStart(Profile& profile) = 0;
+  virtual void onInteraction(const Interaction& interaction) = 0;
+  virtual ControllerStepResult onStep() = 0;  // Returns ControllerStepResult with stepper and dispenser state
   
   // Virtual method to get mode type
-  virtual int get_mode_type() const = 0;
+  virtual int getModeType() const = 0;
 
 protected:
   // Helper method for modes to complete and transition to next mode
-  void start_next_controller(int nextModeType) {
+  void startNextController(int nextModeType) {
     if (completionCallback) {
       completionCallback(nextModeType);
     }

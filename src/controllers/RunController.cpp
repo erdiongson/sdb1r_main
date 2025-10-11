@@ -5,14 +5,14 @@
 RunController::RunController(ControllerParams params)
   : BaseController(params) {}
 
-void RunController::on_start(Profile& profile) {
+void RunController::onStart(Profile& profile) {
   this->profile = profile;
   trayHandler.load_profile(profile);
   TrayHandler::Position firstPosition = trayHandler.reset();
 
   if (firstPosition.x == -1 || firstPosition.y == -1) {
     Serial.println(F("MODE: No valid positions found, ending run mode"));
-    start_next_controller(CONTROLLER_READY);
+    startNextController(CONTROLLER_READY);
     return;
   }
 
@@ -24,7 +24,7 @@ void RunController::on_start(Profile& profile) {
   start();
 }
 
-void RunController::on_interaction(const Interaction& interaction) {
+void RunController::onInteraction(const Interaction& interaction) {
   int button = interaction.key_pressed;
 
   if (button == PAUSE || interaction.plc_message_type == MSG_PAUSE) {
@@ -62,7 +62,7 @@ void RunController::stop() {
     dispenserHead.process();
   }
 
-  start_next_controller(CONTROLLER_HOMING);
+  startNextController(CONTROLLER_HOMING);
 }
 
 // Resumes the run from a paused state.
@@ -256,7 +256,7 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
         draw_main_screen(phost, RUNMENU, &params);
         start_stage(STAGE_MOVE);
       } else {
-        start_next_controller(CONTROLLER_HOMING);
+        startNextController(CONTROLLER_HOMING);
       }
       break;
     }
@@ -266,7 +266,7 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
   }
 }
 
-ControllerStepResult RunController::on_step() {
+ ControllerStepResult RunController::onStep() {
   if (paused) return ControllerStepResult(-1, -1);
 
   DispenserProcessResult dispenserProcessResult = dispenserHead.process();
@@ -321,6 +321,6 @@ ControllerStepResult RunController::on_step() {
   return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
 }
 
-int RunController::get_mode_type() const {
+int RunController::getModeType() const {
   return CONTROLLER_RUN;
 }

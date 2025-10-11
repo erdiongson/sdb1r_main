@@ -11,9 +11,9 @@ private:
   State state;
 public:
   DispenseTestController(ControllerParams params);
-  void on_start(Profile& profile) override;
-  void on_interaction(const Interaction& interaction) override;
-  ControllerStepResult on_step() override;
+  void onStart(Profile& profile) override;
+  void onInteraction(const Interaction& interaction) override;
+  ControllerStepResult onStep() override;
 
-  int get_mode_type() const override;
+  int getModeType() const override;
 };

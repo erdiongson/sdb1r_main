@@ -7,12 +7,12 @@
 MoveTestController::MoveTestController(ControllerParams params)
   : BaseController(params) {}
 
-void MoveTestController::on_start(Profile& profile) {
+void MoveTestController::onStart(Profile& profile) {
   Dprint(F("MoveTestController::on_start"));
   draw_move_test_screen(phost, {});  
 }
 
-void MoveTestController::on_interaction(const Interaction& interaction) {
+void MoveTestController::onInteraction(const Interaction& interaction) {
   int button = interaction.key_pressed;
   
   switch (button) {
@@ -48,7 +48,7 @@ void MoveTestController::on_interaction(const Interaction& interaction) {
     
     case TAG_MOVE_BACK:
       Dprint(F("MoveTestController::on_interaction: Move back"));
-      start_next_controller(CONTROLLER_DEBUG);
+      startNextController(CONTROLLER_DEBUG);
       break;
     
     default:
@@ -56,7 +56,7 @@ void MoveTestController::on_interaction(const Interaction& interaction) {
   }
 }
 
-ControllerStepResult MoveTestController::on_step() {
+ControllerStepResult MoveTestController::onStep() {
   DispenserProcessResult result = dispenserHead.process();
   
   if (result.steppers == AXIS_STATE_COMPLETE) {
@@ -73,6 +73,6 @@ ControllerStepResult MoveTestController::on_step() {
   return ControllerStepResult(result.steppers, result.dispenser);
 }
 
-int MoveTestController::get_mode_type() const {
+int MoveTestController::getModeType() const {
   return CONTROLLER_MOVE_TEST;
 }

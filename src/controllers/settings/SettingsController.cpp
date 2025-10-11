@@ -10,7 +10,7 @@
 SettingsController::SettingsController(ControllerParams params)
   : BaseController(params), currentProfile(nullptr) {}
 
-void SettingsController::on_start(Profile& profile) {
+void SettingsController::onStart(Profile& profile) {
   Serial.println(F("MODE: Config mode"));
 
   // Store reference to the current profile
@@ -20,7 +20,7 @@ void SettingsController::on_start(Profile& profile) {
   draw_settings_screen(phost);
 }
 
-void SettingsController::on_interaction(const Interaction& interaction) {
+void SettingsController::onInteraction(const Interaction& interaction) {
   if (interaction.key_pressed == 0) return;
 
   switch (interaction.key_pressed) {
@@ -51,14 +51,14 @@ void SettingsController::on_interaction(const Interaction& interaction) {
           draw_settings_screen(phost);
           delay(3000);
         } else {
-          start_next_controller(CONTROLLER_READY);
+          startNextController(CONTROLLER_READY);
         }
       }
       break;
 
     case TAG_CONFIG_LOAD:  // Load (Config Screen)
       Serial.println(F("Button Pressed: LOAD"));
-      start_next_controller(CONTROLLER_PROFILE);
+      startNextController(CONTROLLER_PROFILE);
       break;
 
     case TAG_CONFIG_SAVE: {
@@ -83,7 +83,7 @@ void SettingsController::on_interaction(const Interaction& interaction) {
         get_keyboard_value(phost, buf, "Enter Profile Name", FALSE);
         
         if (strcmp(buf, "debug") == 0) {
-          start_next_controller(CONTROLLER_DEBUG);
+          startNextController(CONTROLLER_DEBUG);
           return;
         }
 
@@ -267,7 +267,7 @@ void SettingsController::on_interaction(const Interaction& interaction) {
 
     case TAG_CONFIG_PREVIEW:
       Serial.println(F("Button Pressed: PREVIEW"));
-      start_next_controller(CONTROLLER_PREVIEW);
+      startNextController(CONTROLLER_PREVIEW);
       break;
 
       case TAG_ADVANCED:
@@ -280,12 +280,12 @@ void SettingsController::on_interaction(const Interaction& interaction) {
   }
 }
 
-ControllerStepResult SettingsController::on_step() {
+ControllerStepResult SettingsController::onStep() {
   DispenserProcessResult result = dispenserHead.process();
   return ControllerStepResult(result.steppers, result.dispenser);
 }
 
-int SettingsController::get_mode_type() const {
+int SettingsController::getModeType() const {
   return CONTROLLER_SETTINGS;
 }
 

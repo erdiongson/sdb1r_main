@@ -8,7 +8,7 @@ PreviewController::PreviewController(ControllerParams params)
   : BaseController(params), currentProfile(nullptr), 
     simulating(false), lastSimulationTime(0), simulateCol(0), simulateRow(0) {}
 
-void PreviewController::on_start(Profile& profile) {
+void PreviewController::onStart(Profile& profile) {
   Dprint(F("PreviewController::on_start"));
   
   // Store reference to the current profile
@@ -44,7 +44,7 @@ void PreviewController::on_start(Profile& profile) {
   draw_preview_screen(phost, skipPositions, params);
 }
 
-void PreviewController::on_interaction(const Interaction& interaction) {
+void PreviewController::onInteraction(const Interaction& interaction) {
   switch (interaction.key_pressed) {
     case TAG_CONFIG_PREVIEW_BACK:
       Serial.println(F("Button Pressed: PREVIEW BACK"));
@@ -52,7 +52,7 @@ void PreviewController::on_interaction(const Interaction& interaction) {
       simulating = false;
       simulateCol = 0;
       simulateRow = 0;
-      start_next_controller(CONTROLLER_SETTINGS);
+      startNextController(CONTROLLER_SETTINGS);
       break;
 
     case TAG_PREVIEW_SIMULATE:
@@ -64,13 +64,12 @@ void PreviewController::on_interaction(const Interaction& interaction) {
       Serial.println(F("Button Pressed: STOP"));
       end_simulation();
       break;
-
     default:
       break;
   }
 }
 
-ControllerStepResult PreviewController::on_step() {
+ControllerStepResult PreviewController::onStep() {
   // Handle simulation updates every 600 ms
   if (simulating) {
     unsigned long currentTime = millis();
@@ -84,7 +83,7 @@ ControllerStepResult PreviewController::on_step() {
   return ControllerStepResult(result.steppers, result.dispenser);
 }
 
-int PreviewController::get_mode_type() const {
+int PreviewController::getModeType() const {
   return CONTROLLER_PREVIEW;
 }
 

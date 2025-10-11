@@ -8,7 +8,7 @@ StartupController::StartupController(ControllerParams params)
   : BaseController(params), dispenserHead(params.head) {
   }
 
-void StartupController::on_start(Profile& profile) {
+void StartupController::onStart(Profile& profile) {
   Dprint(F("StartupController::on_start"));
   draw_logo_screen(phost, 0);
 
@@ -16,9 +16,9 @@ void StartupController::on_start(Profile& profile) {
   dispenserHead.send_handshake();
 }
 
-void StartupController::on_interaction(const Interaction& interaction) {}
+void StartupController::onInteraction(const Interaction& interaction) {}
 
- ControllerStepResult StartupController::on_step() {
+ ControllerStepResult StartupController::onStep() {
   DispenserProcessResult result = dispenserHead.process();
 
   // Handle possible errors
@@ -40,12 +40,12 @@ void StartupController::on_interaction(const Interaction& interaction) {}
 
   if (stage == STAGE_HANDSHAKE && result.dispenser == DISPENSER_STATE_IDLING) {
     Dprint(F("Handshake acknowledged 👍"));
-    start_next_controller(CONTROLLER_HOMING);
+    startNextController(CONTROLLER_HOMING);
   }
   
   return ControllerStepResult(-1, -1);
 }
 
-int StartupController::get_mode_type() const {
+int StartupController::getModeType() const {
   return CONTROLLER_STARTUP;
 }

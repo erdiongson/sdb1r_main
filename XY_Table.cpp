@@ -149,7 +149,7 @@ void start_next_controller(int nextControllerType) {
 
   // Start the new controller
   if (controller != nullptr) {
-    controller->on_start(CurProf);
+    controller->onStart(CurProf);
   }
 }
 
@@ -195,9 +195,9 @@ Interaction interaction;
 void loop() {
   unsigned long currentTime = millis();
 
-  // Call the mode's on_step() function
+  // Call the mode's onStep() function
   // Responsible for stepper runs, and dispenser serial processing
-  ControllerStepResult result = controller->on_step();
+  ControllerStepResult result = controller->onStep();
 
   // Check for interactions only periodically
   // Includes touch screen presses, and PLC commands
@@ -207,7 +207,7 @@ void loop() {
     lastInteractionCheck = currentTime;
 
     if (InteractionsHandler::getAllInteractions(interaction)) {
-      controller->on_interaction(interaction);
+      controller->onInteraction(interaction);
     }
   }
 
