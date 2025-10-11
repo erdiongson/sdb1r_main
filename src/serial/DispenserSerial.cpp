@@ -6,7 +6,7 @@ unsigned long DispenserSerial::timeout_at = 0;
 // Send a message to the dispenser with command and data bytes.
 // @param command Command byte to send.
 // @param data Data byte to send.
-void DispenserSerial::send_message(byte command, byte data) {
+void DispenserSerial::sendMessage(byte command, byte data) {
   // Clear serial buffer
   while (Serial2.available()) Serial2.read();
 
@@ -30,24 +30,24 @@ void DispenserSerial::send_message(byte command, byte data) {
 }
 
 // Send a dispense command to the dispenser.
-void DispenserSerial::send_dispense() { send_message(SDB_DISPENSE_START, 0x01); }
+void DispenserSerial::sendDispense() { sendMessage(SDB_DISPENSE_START, 0x01); }
 
 // Send a handshake command to the dispenser.
-void DispenserSerial::send_handshake() { send_message(SDB_HANDSHAKE, 0x01); }
+void DispenserSerial::sendHandshake() { sendMessage(SDB_HANDSHAKE, 0x01); }
 
 // Set the vibration level for the dispenser.
-void DispenserSerial::send_vibration_level(uint8_t level) {
+void DispenserSerial::sendVibrationLevel(uint8_t level) {
   if (level < 0) level = 0;
   if (level > 4) level = 4;
-  send_message(SDB_VIBRATE_LEVEL, VIBMODE_U0 + level);
+  sendMessage(SDB_VIBRATE_LEVEL, VIBMODE_U0 + level);
 }
 
 // Set the vibration time for the dispenser.
 // @param seconds Vibration time in seconds (1-5).
-void DispenserSerial::send_vibration_time(uint8_t seconds) {
+void DispenserSerial::sendVibrationTime(uint8_t seconds) {
   if (seconds < 1) seconds = 1;
   if (seconds > 5) seconds = 5;
-  send_message(SDB_VIBRATE_TIME, VIBDUR_1 + seconds - 1);
+  sendMessage(SDB_VIBRATE_TIME, VIBDUR_1 + seconds - 1);
 }
 
 // Process incoming data from the dispenser.

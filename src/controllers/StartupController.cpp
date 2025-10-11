@@ -13,7 +13,7 @@ void StartupController::onStart(Profile& profile) {
   draw_logo_screen(phost, 0);
 
   // Check if dispenser is online and responding
-  dispenserHead.send_handshake();
+  dispenserHead.sendHandshake();
 }
 
 void StartupController::onInteraction(const Interaction& interaction) {}

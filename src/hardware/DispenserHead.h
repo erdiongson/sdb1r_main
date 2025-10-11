@@ -44,40 +44,40 @@ public:
   Axis& z() { return zAxis; }
 
   // Send a dispense command to the dispenser.
-  void send_dispense() {
+  void sendDispense() {
     // Don't send a new command if we're still processing the previous one
     if (dispensing_state != DISPENSER_STATE_IDLING) return;
 
     // Use the serial handler to send the dispense command
-    DispenserSerial::send_dispense();
+    DispenserSerial::sendDispense();
     dispensing_state = DISPENSER_STATE_SENT;
   }
 
-  // Send a dispense command to the dispenser.
-  void send_handshake() {
+  // Send a handshake command to the dispenser.
+  void sendHandshake() {
     // Don't send a new command if we're still processing the previous one
     if (dispensing_state != DISPENSER_STATE_IDLING) return;
 
-    // Use the serial handler to send the dispense command
-    DispenserSerial::send_handshake();
+    // Use the serial handler to send the handshake command
+    DispenserSerial::sendHandshake();
     dispensing_state = DISPENSER_STATE_SENT;
   }
 
   // Set vibration level and wait for response.
   // @param level Vibration level (0-4).
-  void set_vibration_level(uint8_t level) {
+  void setVibrationLevel(uint8_t level) {
     if (dispensing_state != DISPENSER_STATE_IDLING) return;
 
-    DispenserSerial::send_vibration_level(level);
+    DispenserSerial::sendVibrationLevel(level);
     dispensing_state = DISPENSER_STATE_SENT;
   }
 
   // Set vibration time and wait for response.
   // @param seconds Vibration duration in seconds (1-5).
-  void set_vibration_time(uint8_t seconds) {
+  void setVibrationTime(uint8_t seconds) {
     if (dispensing_state != DISPENSER_STATE_IDLING) return;
 
-    DispenserSerial::send_vibration_time(seconds);
+    DispenserSerial::sendVibrationTime(seconds);
     dispensing_state = DISPENSER_STATE_SENT;
   }
 
@@ -140,12 +140,12 @@ public:
   }
 
   // Get the current dispensing state
-  int get_state() const {
+  int getState() const {
     return dispensing_state;
   }
 
   // Clear axes if at limit positions by moving them away.
-  void clear_limits() {
+  void clearLimits() {
     if (xAxis.isAtMin()) xAxis.moveBy(STEPS_PER_UNIT_X * 10);
     if (yAxis.isAtMin()) yAxis.moveBy(STEPS_PER_UNIT_Y * 10);
     if (zAxis.isAtMin()) zAxis.moveBy(STEPS_PER_UNIT_Z * 10);

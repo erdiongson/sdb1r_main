@@ -58,7 +58,7 @@ void RunController::stop() {
   dispenserHead.z().stopRunning();
 
   // Wait until dispenser is finished with any ongoing action
-  while (dispenserHead.get_state() != DISPENSER_STATE_IDLING) {
+  while (dispenserHead.getState() != DISPENSER_STATE_IDLING) {
     dispenserHead.process();
   }
 
@@ -86,14 +86,14 @@ void RunController::start_stage(Stage newStage) {
     case STAGE_SET_VIB_LEVEL:
       Serial.println(F("STAGE: Setting vibration level"));
       this->stage = STAGE_SET_VIB_LEVEL;
-      dispenserHead.set_vibration_level(profile.vibrationEnabled);
+      dispenserHead.setVibrationLevel(profile.vibrationEnabled);
       break;
 
     case STAGE_SET_VIB_DURATION:
       Serial.print(F("STAGE: Setting vibration duration to "));
       Serial.println(profile.vibrationDuration);
       this->stage = STAGE_SET_VIB_DURATION;
-      dispenserHead.set_vibration_time(profile.vibrationDuration);
+      dispenserHead.setVibrationTime(profile.vibrationDuration);
       break;
 
     case STAGE_ZERO:
@@ -107,7 +107,7 @@ void RunController::start_stage(Stage newStage) {
     case STAGE_START_PRIME:
       Serial.println(F("STAGE: Starting prime"));
       this->stage = STAGE_START_PRIME;
-      dispenserHead.send_dispense();
+      dispenserHead.sendDispense();
 
       // Immediately move to wait stage
       start_stage(STAGE_WAIT_PRIME);
@@ -138,7 +138,7 @@ void RunController::start_stage(Stage newStage) {
     case STAGE_START_DISPENSE:
       Serial.println(F("STAGE: Starting dispensing"));
       this->stage = STAGE_START_DISPENSE;
-      dispenserHead.send_dispense();
+      dispenserHead.sendDispense();
 
       // Immediately move to wait stage
       start_stage(STAGE_WAIT_DISPENSE);

@@ -13,14 +13,14 @@ void HomingController::onStart(Profile& profile) {
   // If the dispenser head is at the limit switches, clear them before
   // proceeding with the homing process
   draw_main_screen(phost, HOMINGMENU);
-  dispenserHead.clear_limits();
+  dispenserHead.clearLimits();
 }
 
 void HomingController::onInteraction(const Interaction& interaction) {
   if (interaction.key_pressed == TAG_CONTINUE) {
     stage = STAGE_CLEAR;
     draw_main_screen(phost, HOMINGMENU);
-    dispenserHead.clear_limits();
+    dispenserHead.clearLimits();
   }
 }
 
