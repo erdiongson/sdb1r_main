@@ -9,14 +9,14 @@ ProfileController::ProfileController(ControllerParams params)
   : BaseController(params), selected_profile_num(0) {}
 
 void ProfileController::onStart() {
-  ProfileParams params = {0, 0, profileManager.getCurrentProfile(), 0};
+  ProfileParams params = {0, 0, profile_manager.getCurrentProfile(), 0};
   drawProfileScreen(phost, params);
 }
 
 void ProfileController::onInteraction(const Interaction& interaction) {
   if (interaction.key_pressed == 0) return;
 
-  static ProfileParams params = {0, 0, profileManager.getCurrentProfile(), 0};
+  static ProfileParams params = {0, 0, profile_manager.getCurrentProfile(), 0};
 
   switch (interaction.key_pressed) {
 
@@ -25,9 +25,9 @@ void ProfileController::onInteraction(const Interaction& interaction) {
       break;
 
     case TAG_PROFILE_LOAD: {
-      profileManager.setCurrentProfileNum(selected_profile_num);
-      profileManager.writeCurIDEEPROM(selected_profile_num);
-      profileManager.readProfileEEPROM(selected_profile_num);
+      profile_manager.setCurrentProfileNum(selected_profile_num);
+      profile_manager.writeCurIDEEPROM(selected_profile_num);
+      profile_manager.readProfileEEPROM(selected_profile_num);
       
       // Show profile loaded dialog
       params.keypressed = 0;
@@ -46,7 +46,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
         selected_profile_num = 0;
       }
 
-      profileManager.readProfileEEPROM(selected_profile_num);
+      profile_manager.readProfileEEPROM(selected_profile_num);
       params.keypressed = interaction.key_pressed;
       params.cur_prof_num = selected_profile_num;
       params.dialog_code = 0;
@@ -60,7 +60,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
       } else {
         selected_profile_num = MAX_PROFILES - 1;
       }
-      profileManager.readProfileEEPROM(selected_profile_num);
+      profile_manager.readProfileEEPROM(selected_profile_num);
       params.keypressed = interaction.key_pressed;
       params.cur_prof_num = selected_profile_num;
       params.dialog_code = 0;
@@ -102,7 +102,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
         break;
       }
 
-      profileManager.writePassEEPROM(new_password_1);
+      profile_manager.writePassEEPROM(new_password_1);
       params.keypressed = 0;
       params.cur_prof_num = selected_profile_num;
       params.dialog_code = DIALOG_PASSWORD_CHANGED;

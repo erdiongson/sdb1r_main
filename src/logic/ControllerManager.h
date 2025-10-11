@@ -45,24 +45,24 @@ private:
   // References to dependencies
   DispenserHead& dispenserHead;
   Gpu_Hal_Context_t* phost;
-  ProfileManager& profileManager;
+  ProfileManager& profile_manager;
   ControllerCompletionCallback callback;
 
 public:
   // Constructor that initializes the controller manager with required dependencies.
   // @param dispenserHead Reference to the dispenser head hardware.
   // @param phost Pointer to the GPU HAL context.
-  // @param profileManager Reference to the profile manager.
+  // @param profile_manager Reference to the profile manager.
   // @param callback Callback function to handle controller transitions.
   ControllerManager(
     DispenserHead& dispenserHead,
     Gpu_Hal_Context_t* phost,
-    ProfileManager& profileManager,
+    ProfileManager& profile_manager,
     ControllerCompletionCallback callback
   ) : controller(nullptr),
       dispenserHead(dispenserHead),
       phost(phost),
-      profileManager(profileManager),
+      profile_manager(profile_manager),
       callback(callback) {}
 
   // Destructor that cleans up the current controller.
@@ -83,7 +83,7 @@ public:
     }
 
     // Create controller parameters
-    ControllerParams params = { dispenserHead, phost, callback, profileManager };
+    ControllerParams params = { dispenserHead, phost, callback, profile_manager };
 
     // Create the new controller in the static buffer using placement new
     switch(nextControllerType) {

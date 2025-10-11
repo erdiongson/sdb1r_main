@@ -14,7 +14,7 @@ void SettingsController::onStart() {
   Serial.println(F("MODE: Config mode"));
 
   // Store reference to the current profile
-  current_profile = &profileManager.getCurrentProfile();
+  current_profile = &profile_manager.getCurrentProfile();
 
   // Display configuration screen
   drawSettingsScreen(phost, {*current_profile, 0});
@@ -63,10 +63,10 @@ void SettingsController::onInteraction(const Interaction& interaction) {
 
     case TAG_CONFIG_SAVE: {
       Serial.println("Button Pressed: SAVE");
-      uint8_t currentNum = profileManager.getCurrentProfileNum();
+      uint8_t currentNum = profile_manager.getCurrentProfileNum();
       Dprint("curprofnum=", currentNum);
-      profileManager.writeCurIDEEPROM(currentNum);
-      profileManager.writeProfileEEPROM(currentNum);
+      profile_manager.writeCurIDEEPROM(currentNum);
+      profile_manager.writeProfileEEPROM(currentNum);
       
       // Show profile saved dialog
       SettingsScreenParams params = {*current_profile, DIALOG_PROFILE_SAVED};

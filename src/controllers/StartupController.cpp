@@ -13,7 +13,7 @@ void StartupController::onStart() {
   
   // Load profile from EEPROM
   Serial.println("Loading profile..");
-  profileManager.loadProfile();
+  profile_manager.loadProfile();
   
   drawLogoScreen(phost, 0);
 

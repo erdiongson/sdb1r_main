@@ -6,8 +6,8 @@ RunController::RunController(ControllerParams params)
   : BaseController(params) {}
 
 void RunController::onStart() {
-  this->profile = profileManager.getCurrentProfile();
-  trayHandler.loadProfile(profileManager.getCurrentProfile());
+  this->profile = profile_manager.getCurrentProfile();
+  trayHandler.loadProfile(profile_manager.getCurrentProfile());
   TrayHandler::Position firstPosition = trayHandler.reset();
 
   if (firstPosition.x == -1 || firstPosition.y == -1) {

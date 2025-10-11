@@ -10,7 +10,7 @@ ReadyController::ReadyController(ControllerParams params)
 
 void ReadyController::onStart() {
   Dprint(F("ReadyController::on_start"));
-  Profile& profile = profileManager.getCurrentProfile();
+  Profile& profile = profile_manager.getCurrentProfile();
   MainScreenParams params = {profile, 1, 1, 0, 0, 0};
   drawMainScreen(phost, MAINMENU, &params);
 
@@ -28,10 +28,10 @@ void ReadyController::onInteraction(const Interaction& interaction) {
 
     case SETTING:
       // Handle password protection if enabled
-      if (profileManager.getCurrentProfile().password_enabled) {
-        PasswordVerificationResult result = profileManager.verifyPassword(phost);
+      if (profile_manager.getCurrentProfile().password_enabled) {
+        PasswordVerificationResult result = profile_manager.verifyPassword(phost);
         
-        Profile& profile = profileManager.getCurrentProfile();
+        Profile& profile = profile_manager.getCurrentProfile();
         if (result == PASSWORD_CANCELLED) {
           MainScreenParams params = {profile, 1, 1, 0, 0, 0};
           drawMainScreen(phost, MAINMENU, &params);

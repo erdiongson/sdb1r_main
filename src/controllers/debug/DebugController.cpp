@@ -9,7 +9,7 @@ DebugController::DebugController(ControllerParams params)
 
 void DebugController::onStart() {
   Dprint(F("DebugController::on_start"));
-  DebugScreenParams params = {profileManager.getCurrentProfile().size_flag, false, false};
+  DebugScreenParams params = {profile_manager.getCurrentProfile().size_flag, false, false};
   drawDebugScreen(phost, params);
 }
 
@@ -29,23 +29,23 @@ void DebugController::onInteraction(const Interaction& interaction) {
 
     case TAG_DEBUG_BLANK_EEPROM: {
       Dprint(F("Debug: Blank EEPROM button pressed"));
-      profileManager.blankEEPROM();
-      DebugScreenParams params = {profileManager.getCurrentProfile().size_flag, true, false};
+      profile_manager.blankEEPROM();
+      DebugScreenParams params = {profile_manager.getCurrentProfile().size_flag, true, false};
       drawDebugScreen(phost, params);
       break;
     }
 
     case TAG_DEBUG_RESET_PROFILES: {
       Dprint(F("Debug: Reset Profiles button pressed"));
-      profileManager.preLoadEEPROM();
-      DebugScreenParams params = {profileManager.getCurrentProfile().size_flag, false, true};
+      profile_manager.preLoadEEPROM();
+      DebugScreenParams params = {profile_manager.getCurrentProfile().size_flag, false, true};
       drawDebugScreen(phost, params);
       break;
     }
 
     case TAG_DEBUG_TOGGLE_SIZE: {
       Dprint(F("Debug: Toggle Size button pressed"));
-      Profile& profile = profileManager.getCurrentProfile();
+      Profile& profile = profile_manager.getCurrentProfile();
       profile.size_flag = profile.size_flag == 0 ? 1 : 0;
       DebugScreenParams params = {profile.size_flag, false, false};
       drawDebugScreen(phost, params);

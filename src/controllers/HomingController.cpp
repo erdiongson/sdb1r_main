@@ -12,7 +12,7 @@ void HomingController::onStart() {
 
   // If the dispenser head is at the limit switches, clear them before
   // proceeding with the homing process
-  Profile& profile = profileManager.getCurrentProfile();
+  Profile& profile = profile_manager.getCurrentProfile();
   MainScreenParams params = { profile, 0, 0, 0, 0, 0 };
   drawMainScreen(phost, HOMINGMENU, &params);
   dispenserHead.clearLimits();
@@ -20,7 +20,7 @@ void HomingController::onStart() {
 
 void HomingController::onInteraction(const Interaction& interaction) {
   if (interaction.key_pressed == TAG_CONTINUE) {
-    Profile& profile = profileManager.getCurrentProfile();
+    Profile& profile = profile_manager.getCurrentProfile();
     MainScreenParams params = { profile, 0, 0, 0, 0, 0 };
     drawMainScreen(phost, HOMINGMENU, &params);
     dispenserHead.clearLimits();
@@ -32,7 +32,7 @@ ControllerStepResult HomingController::onStep() {
 
   // Handle possible errors
   if (result.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
-    Profile& profile = profileManager.getCurrentProfile();
+    Profile& profile = profile_manager.getCurrentProfile();
     MainScreenParams params = { profile, 0, 0, 0, 0, DIALOG_ERROR_LIMIT_SWITCH };
     drawMainScreen(phost, HOMINGMENU, &params);
     stage = STAGE_ERROR;

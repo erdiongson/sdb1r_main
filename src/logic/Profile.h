@@ -143,7 +143,7 @@ public:
   void setCurrentProfileNum(uint8_t profileNum);
 };
 
-// Global profileManager instance (defined in XY_Table.cpp).
-extern ProfileManager profileManager;
+// Global profile_manager instance (defined in sdb1r_main.ino).
+extern ProfileManager profile_manager;
 
 #endif /*_PROFILE_H_*/
