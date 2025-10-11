@@ -2,10 +2,6 @@
 #include "../../logic/InteractionsHandler.h"
 
 uint8_t font = 27;
-uint8_t Line = 0;
-uint16_t line2disp = 0;
-
-const int STARTPOS = 270;  // GUI screen coordinates
 
 inline int32_t minimum(int32_t a, int32_t b) {
   return a < b ? a : b;
