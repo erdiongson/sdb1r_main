@@ -52,21 +52,17 @@ void RunController::stop() {
   draw_main_screen(phost, STOPPINGMENU);
   paused = false;
 
+  // Stop all stepper movements
   dispenserHead.x().stopRunning();
   dispenserHead.y().stopRunning();
   dispenserHead.z().stopRunning();
-
-  // Ensure the Z axis is back at 0;
-  dispenserHead.z().moveTo(0);
-  dispenserHead.z().runUntilCompleteBlocking();
 
   // Wait until dispenser is finished with any ongoing action
   while (dispenserHead.get_state() != DISPENSER_STATE_IDLING) {
     dispenserHead.process();
   }
 
-  draw_main_screen(phost, HOMINGMENU);
-  start_stage(HOME_STAGE);
+  start_next_controller(CONTROLLER_HOMING);
 }
 
 // Resumes the run from a paused state.
@@ -141,14 +137,6 @@ void RunController::start_stage(Stage newStage) {
       Serial.println(F("STAGE: Raising head"));
       this->stage = RAISE_HEAD_STAGE;
       dispenserHead.z().moveTo(0);
-      break;
-
-    case HOME_STAGE:
-      Serial.println(F("STAGE: Returning to home position"));
-      this->stage = HOME_STAGE;
-      dispenserHead.x().moveToMin();
-      dispenserHead.y().moveToMin();
-      dispenserHead.z().moveToMin();
       break;
 
     default:
@@ -253,16 +241,10 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
         draw_main_screen(phost, RUNMENU, &params);
         start_stage(MOVE_STAGE);
       } else {
-        draw_main_screen(phost, HOMINGMENU);
-        start_stage(HOME_STAGE);
+        start_next_controller(CONTROLLER_HOMING);
       }
       break;
     }
-
-    case HOME_STAGE:
-      if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
-      start_next_controller(CONTROLLER_READY);
-      break;
 
     default:
       break;

@@ -17,7 +17,6 @@ private:
     DISPENSE_STAGE,
     RAISE_HEAD_STAGE,
     MOVE_STAGE,
-    HOME_STAGE
   };
 
   int stage = IDLE_STAGE;
