@@ -87,7 +87,7 @@ void drawDialog(Gpu_Hal_Context_t *phost, int dialog_code) {
   switch (dialog_code) {
     case DIALOG_ERROR_IR_SENSOR:
       params.title = "IR Sensor Error";
-      params.subtitle = "IR Sensor Detection Failed. Please Restart.";
+      params.subtitle = "Could not detect the dispenser head. Please restart the device.";
       params.left_btn = nullptr;
       params.right_btn = nullptr;
       params.left_tag = 0;
@@ -95,8 +95,8 @@ void drawDialog(Gpu_Hal_Context_t *phost, int dialog_code) {
       break;
       
     case DIALOG_ERROR_MARKER_NOT_DETECTED:
-      params.title = "Dispenser Head Stuck";
-      params.subtitle = "Please check the head and restart.";
+      params.title = "IR Marker Error";
+      params.subtitle = "Could not detect the dispenser head. Please restart the device.";
       params.left_btn = nullptr;
       params.right_btn = nullptr;
       params.left_tag = 0;
@@ -104,17 +104,26 @@ void drawDialog(Gpu_Hal_Context_t *phost, int dialog_code) {
       break;
       
     case DIALOG_ERROR_LIMIT_SWITCH:
-      params.title = "Limit Switch Error";
-      params.subtitle = "Limit switch triggered unexpectedly. Please check the head and restart.";
+      params.title = "Limit Switch Triggered";
+      params.subtitle = "Possible movement boundary collision. Please check the head position and resume.";
       params.left_btn = "Resume";
       params.right_btn = "Stop";
       params.left_tag = START;
       params.right_tag = STOP;
       break;
+
+    case DIALOG_ERROR_LIMIT_SWITCH_HOMING:
+      params.title = "Limit Switch Triggered";
+      params.subtitle = "Possible movement boundary collision. Please check the head position.";
+      params.left_btn = "Continue";
+      params.right_btn = nullptr;
+      params.left_tag = TAG_CONTINUE;
+      params.right_tag = 0;
+      break;
       
     case DIALOG_ERROR_ACK_ERROR:
       params.title = "Dispenser Error";
-      params.subtitle = "Please restart the device.";
+      params.subtitle = "Could not detect the dispenser head. Please restart the device.";
       params.left_btn = nullptr;
       params.right_btn = nullptr;
       params.left_tag = 0;

@@ -1,7 +1,6 @@
 #include "HomingController.h"
 #include "../Constants.h"
 #include "../../Config.h"
-#include "../Utils.h"
 #include "../views/MainScreen.h"
 
 HomingController::HomingController(ControllerParams params)
@@ -33,7 +32,7 @@ ControllerStepResult HomingController::onStep() {
   // Handle possible errors
   if (result.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
     Profile& profile = profile_manager.getCurrentProfile();
-    MainScreenParams params = { profile, 0, 0, 0, 0, DIALOG_ERROR_LIMIT_SWITCH };
+    MainScreenParams params = { profile, 0, 0, 0, 0, DIALOG_ERROR_LIMIT_SWITCH_HOMING };
     drawMainScreen(phost, HOMINGMENU, &params);
     stage = STAGE_ERROR;
     return ControllerStepResult(-1, -1);
