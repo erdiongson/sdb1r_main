@@ -1,36 +1,36 @@
-#define Limit_S_x_MIN 46 // 32
-#define Limit_S_y_MIN 32 // 33
-#define Limit_S_z_MIN 36
+#define LIMIT_S_X_MIN 46 // 32
+#define LIMIT_S_Y_MIN 32 // 33
+#define LIMIT_S_Z_MIN 36
 
-//#define Limit_S_x_MAX 18
-//#define Limit_S_y_MAX 19
-#define Limit_S_x_MAX 22 //johari 20240610
-#define Limit_S_y_MAX 44 //johari 20240610
-#define Limit_S_z_MAX 38
+//#define LIMIT_S_X_MAX 18
+//#define LIMIT_S_Y_MAX 19
+#define LIMIT_S_X_MAX 22 //johari 20240610
+#define LIMIT_S_Y_MAX 44 //johari 20240610
+#define LIMIT_S_Z_MAX 38
 
 
-#define Motor_x_CW 27
-#define Motor_x_CLK 25
+#define MOTOR_X_CW 27
+#define MOTOR_X_CLK 25
 
-#define Motor_y_CW 29
-#define Motor_y_CLK 31
+#define MOTOR_Y_CW 29
+#define MOTOR_Y_CLK 31
 
-#define Motor_z_CW 35
-#define Motor_z_CLK 37
+#define MOTOR_z_CW 35
+#define MOTOR_Z_CLK 37
 
-//#define motor_x_speed 8000//, 2000
-//#define motor_y_speed 4800//, 1000
+//#define MOTOR_X_SPEED 8000//, 2000
+//#define MOTOR_Y_SPEED 4800//, 1000
 
-//#define motor_x_Acceleration 8000 // 4800, 3200
-//#define motor_y_Acceleration 4000 // 2400 1600 // 3200
+//#define MOTOR_X_ACCELERATION 8000 // 4800, 3200
+//#define MOTOR_Y_ACCELERATION 4000 // 2400 1600 // 3200
 
-#define motor_x_speed 80000 // 8000, 2000
-#define motor_y_speed 800  // 4800, 1000
-#define motor_z_speed 80000  // 4800, 1000
+#define MOTOR_X_SPEED 80000 // 8000, 2000
+#define MOTOR_Y_SPEED 800  // 4800, 1000
+#define MOTOR_Z_SPEED 80000  // 4800, 1000
 
-#define motor_x_Acceleration 100000//8000 // 4800, 3200
-#define motor_y_Acceleration 1000 //4000 // 2400 1600 // 3200
-#define motor_z_Acceleration 100000//4000 // 2400 1600 // 3200
+#define MOTOR_X_ACCELERATION 100000//8000 // 4800, 3200
+#define MOTOR_Y_ACCELERATION 1000 //4000 // 2400 1600 // 3200
+#define MOTOR_Z_ACCELERATION 100000//4000 // 2400 1600 // 3200
 
 
 #define MAXXMM 400 //190 (S) //max x/col dimension in mm

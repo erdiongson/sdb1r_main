@@ -40,19 +40,19 @@ Profile CurProf;        //current profile
 uint8_t CurProfNum;  //current profile id
 
 AxisParams xAxis(
-  Motor_x_CLK, Motor_x_CW,
-  Limit_S_x_MIN, Limit_S_x_MAX,
-  motor_x_speed, motor_x_Acceleration);
+  MOTOR_X_CLK, MOTOR_X_CW,
+  LIMIT_S_X_MIN, LIMIT_S_X_MAX,
+  MOTOR_X_SPEED, MOTOR_X_ACCELERATION);
 
 AxisParams yAxis(
-  Motor_y_CLK, Motor_y_CW,
-  Limit_S_y_MIN, Limit_S_y_MAX,
-  motor_y_speed, motor_y_Acceleration);
+  MOTOR_Y_CLK, MOTOR_Y_CW,
+  LIMIT_S_Y_MIN, LIMIT_S_Y_MAX,
+  MOTOR_Y_SPEED, MOTOR_Y_ACCELERATION);
 
 AxisParams zAxis(
-  Motor_z_CLK, Motor_z_CW,
-  Limit_S_z_MIN, Limit_S_z_MAX,
-  motor_y_speed, motor_y_Acceleration);
+  MOTOR_Z_CLK, MOTOR_z_CW,
+  LIMIT_S_Z_MIN, LIMIT_S_Z_MAX,
+  MOTOR_Y_SPEED, MOTOR_Y_ACCELERATION);
 
 DispenserHeadParams params = { xAxis, yAxis, zAxis };
 DispenserHead dispenserHead(params);
