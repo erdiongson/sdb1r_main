@@ -64,7 +64,6 @@ void SettingsController::onInteraction(const Interaction& interaction) {
     case TAG_CONFIG_SAVE: {
       Serial.println("Button Pressed: SAVE");
       uint8_t currentNum = profile_manager.getCurrentProfileNum();
-      Dprint("curprofnum=", currentNum);
       profile_manager.writeCurIDEEPROM(currentNum);
       profile_manager.writeProfileEEPROM(currentNum);
       
@@ -161,7 +160,6 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         if (current_profile->tube_no_x == 0) maxval = MAXXMM - current_profile->tray_origin_x;
         else maxval = (MAXXMM - current_profile->tray_origin_x) / (current_profile->tube_no_x - 1);
         roundOneDecimal(&maxval);
-        Dprint("max val=", maxval);
         if (maxval > MAXPITCHX) maxval = MAXPITCHX;
         current_profile->pitch_x = getKeypadValue(&host, current_profile->pitch_x, MINPITCHX, MAXPITCHX, TRUE);
         drawSettingsScreen(phost, {*current_profile, 0});
@@ -175,7 +173,6 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         else maxval = (MAXYMM - current_profile->tray_origin_y) / (current_profile->tube_no_y - 1);
         roundOneDecimal(&maxval);
         if (maxval > MAXPITCHY) maxval = MAXPITCHY;
-        Dprint("max val=", maxval);
         current_profile->pitch_y = getKeypadValue(&host, current_profile->pitch_y, MINPITCHY, MAXPITCHY, TRUE);
         drawSettingsScreen(phost, {*current_profile, 0});
       }
@@ -188,7 +185,6 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         else maxval = MAXXMM - (current_profile->pitch_x * (current_profile->tube_no_x - 1));
         roundOneDecimal(&maxval);
         if (maxval > MAXORGX) maxval = MAXORGX;
-        Dprint("max val=", maxval);
 
         current_profile->tray_origin_x = getKeypadValue(&host, current_profile->tray_origin_x, 0, MAXORGX, TRUE);
         drawSettingsScreen(phost, {*current_profile, 0});
@@ -202,7 +198,6 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         else maxval = MAXYMM - (current_profile->pitch_y * (current_profile->tube_no_y - 1));
         roundOneDecimal(&maxval);
         if (maxval > MAXORGY) maxval = MAXORGY;
-        Dprint("max val=", maxval);
         current_profile->tray_origin_y = getKeypadValue(&host, current_profile->tray_origin_y, 0, MAXORGY, TRUE);
         drawSettingsScreen(phost, {*current_profile, 0});
       }

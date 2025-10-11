@@ -146,7 +146,6 @@ void drawSettingsScreen(Gpu_Hal_Context_t *phost, SettingsScreenParams params) {
   if (profile.tube_no_x == 0) maxval = MAXXMM - profile.tray_origin_x;
   else maxval = (MAXXMM - profile.tray_origin_x) / (profile.tube_no_x - 1);
   roundOneDecimal(&maxval);
-  Dprint("max val Pitch X =", maxval);
   if (maxval < profile.pitch_x)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
   else
@@ -161,7 +160,6 @@ void drawSettingsScreen(Gpu_Hal_Context_t *phost, SettingsScreenParams params) {
   if (profile.tube_no_y == 0) maxval = MAXYMM - profile.tray_origin_y;
   else maxval = (MAXYMM - profile.tray_origin_y) / (profile.tube_no_y - 1);
   roundOneDecimal(&maxval);
-  Dprint("max val Pitch Y =", maxval);
   if (maxval < profile.pitch_y)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
   else
@@ -176,7 +174,6 @@ void drawSettingsScreen(Gpu_Hal_Context_t *phost, SettingsScreenParams params) {
   if (profile.tube_no_x == 0) maxval = MAXXMM;
   else maxval = MAXXMM - (profile.pitch_x * (profile.tube_no_x - 1));
   roundOneDecimal(&maxval);
-  Dprint("max val Org X =", maxval);
   if (maxval < profile.tray_origin_x)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
   else
@@ -191,7 +188,6 @@ void drawSettingsScreen(Gpu_Hal_Context_t *phost, SettingsScreenParams params) {
   if (profile.tube_no_y == 0) maxval = MAXYMM;
   else maxval = MAXYMM - (profile.pitch_y * (profile.tube_no_y - 1));
   roundOneDecimal(&maxval);
-  Dprint("max val Org Y =", maxval);
   if (maxval < profile.tray_origin_y)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
   else
@@ -207,9 +203,7 @@ void drawSettingsScreen(Gpu_Hal_Context_t *phost, SettingsScreenParams params) {
   Gpu_CoCmd_Text(phost, 255, 95, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 
   //Text - Z Dip
-
   sprintf(buf, "%f", profile.z_dip);
-  Dprint("ZDip =", profile.z_dip);
   dtostrf(profile.z_dip, 4, 1, buf);
   Gpu_CoCmd_Text(phost, 255, 133, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 

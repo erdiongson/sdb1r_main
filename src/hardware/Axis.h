@@ -172,7 +172,6 @@ public:
         return AXIS_STATE_COMPLETE;
       } else {
         // Not expected, error
-        Serial.println("Hit min!!!");
         return AXIS_STATE_ERROR_LIMIT_SWITCH;
       }
     }
@@ -183,7 +182,6 @@ public:
         return AXIS_STATE_COMPLETE;
       } else {
         // Not expected, error
-        Serial.println("Hit max!!!");
         return AXIS_STATE_ERROR_LIMIT_SWITCH;
       }
     }

@@ -231,8 +231,6 @@ public:
     // Create dimensions from profile
     Dimensions dimensions(profile.tube_no_x, profile.tube_no_y);
 
-    Serial.println("Staggered: " + String(profile.staggered));
-
     // Load the dimensions and skip positions
     load(dimensions, positions, profile.staggered);
   }
