@@ -11,9 +11,9 @@ private:
   int simulateRow;
   char previewInfoText[50];
   
-  void start_simulation();
-  void end_simulation();
-  void step_simulation();
+  void startSimulation();
+  void endSimulation();
+  void stepSimulation();
 
 public:
   PreviewController(ControllerParams params);

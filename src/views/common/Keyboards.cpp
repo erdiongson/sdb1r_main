@@ -116,7 +116,7 @@ void drawKeyboard(Gpu_Hal_Context_t *phost, uint8_t keypressed, char *displaytex
   Disp_End(phost);
 }
 
-void get_keyboard_value(Gpu_Hal_Context_t *phost, char *curtext, char *curtitle, bool password) {
+void getKeyboardValue(Gpu_Hal_Context_t *phost, char *curtext, char *curtitle, bool password) {
   delay(200); // Added to create smooth transition between screen
   uint8_t font = 27;
   char buf[PROFILE_NAME_MAX_LEN] = "";
@@ -196,7 +196,7 @@ void get_keyboard_value(Gpu_Hal_Context_t *phost, char *curtext, char *curtitle,
   }
 }
 
-void round_1_decimal(float *x) {
+void roundOneDecimal(float *x) {
   char buf[PROFILE_NAME_MAX_LEN];
 
   dtostrf(*x, 3, 1, buf);
@@ -253,7 +253,7 @@ void drawKeypad(Gpu_Hal_Context_t *phost, int32_t keypressed, char *displaynum, 
   App_Flush_Co_Buffer(phost);
 }
 
-float get_keypad_value(Gpu_Hal_Context_t *phost, float curval, float minval, float maxval, bool isfloat) {
+float getKeypadValue(Gpu_Hal_Context_t *phost, float curval, float minval, float maxval, bool isfloat) {
   phost = &host;
   char buf[KEYPAD_MAX_LEN] = "";
   int8_t curpos;

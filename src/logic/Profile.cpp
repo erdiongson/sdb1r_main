@@ -223,7 +223,7 @@ PasswordVerificationResult verifyPassword(Gpu_Hal_Context_t *phost) {
   if (strcmp(currentPassword, "") == 0) strcpy(currentPassword, INITIAL_PASSWORD);
   Serial.println("Current password:" + String(currentPassword));
 
-  get_keyboard_value(phost, inputPassword, "Enter Password", FALSE);
+  getKeyboardValue(phost, inputPassword, "Enter Password", FALSE);
 
   // Cancelled
   if (strcmp(inputPassword, "") == 0) {

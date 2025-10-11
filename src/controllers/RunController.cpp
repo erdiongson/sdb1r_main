@@ -7,7 +7,7 @@ RunController::RunController(ControllerParams params)
 
 void RunController::onStart(Profile& profile) {
   this->profile = profile;
-  trayHandler.load_profile(profile);
+  trayHandler.loadProfile(profile);
   TrayHandler::Position firstPosition = trayHandler.reset();
 
   if (firstPosition.x == -1 || firstPosition.y == -1) {
@@ -70,12 +70,12 @@ void RunController::start() {
   Serial.println(F("MODE: Resumed"));
   paused = false;
   drawMainScreen(phost, RUNMENU);
-  start_stage(stage);
+  startStage(stage);
 }
 
 // Starts a new stage of the run
 // The funcitonality must be idempotent, since it may be called again after a "pause"
-void RunController::start_stage(Stage newStage) {
+void RunController::startStage(Stage newStage) {
   switch (newStage) {
     case STAGE_IDLE:
       dispenserHead.x().stopRunning();
@@ -110,7 +110,7 @@ void RunController::start_stage(Stage newStage) {
       dispenserHead.sendDispense();
 
       // Immediately move to wait stage
-      start_stage(STAGE_WAIT_PRIME);
+      startStage(STAGE_WAIT_PRIME);
       break;
 
     case STAGE_WAIT_PRIME:
@@ -141,7 +141,7 @@ void RunController::start_stage(Stage newStage) {
       dispenserHead.sendDispense();
 
       // Immediately move to wait stage
-      start_stage(STAGE_WAIT_DISPENSE);
+      startStage(STAGE_WAIT_DISPENSE);
       break;
 
     case STAGE_WAIT_DISPENSE:
@@ -161,20 +161,20 @@ void RunController::start_stage(Stage newStage) {
 }
 
 // Check if the current stage is complete, and move to the next stage if required
-void RunController::process_stage_logic(DispenserProcessResult& dispenserProcessResult) {
+void RunController::processStageLogic(DispenserProcessResult& dispenserProcessResult) {
   switch (stage) {
     case STAGE_IDLE:
-      start_stage(STAGE_SET_VIB_LEVEL);
+      startStage(STAGE_SET_VIB_LEVEL);
       break;
 
     case STAGE_SET_VIB_LEVEL:
       if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING) break;
-      start_stage(STAGE_SET_VIB_DURATION);
+      startStage(STAGE_SET_VIB_DURATION);
       break;
 
     case STAGE_SET_VIB_DURATION:
       if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING) break;
-      start_stage(STAGE_ZERO);
+      startStage(STAGE_ZERO);
       break;
 
     case STAGE_ZERO: {
@@ -186,7 +186,7 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
       dispenserHead.z().reset();
 
       cycle = 0;
-      start_stage(STAGE_START_PRIME);
+      startStage(STAGE_START_PRIME);
       break;
     }
 
@@ -200,22 +200,22 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
         TrayHandler::Position firstPosition = trayHandler.reset();
         target_x = (profile.trayOriginX + ((firstPosition.x - 1 + ((profile.staggered && firstPosition.y % 2 == 0) ? 0.5 : 0)) * profile.pitch_x)) * -STEPS_PER_UNIT_X;
         target_y = (profile.trayOriginY + ((firstPosition.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
-        start_stage(STAGE_MOVE);
+        startStage(STAGE_MOVE);
       } else {
-        start_stage(STAGE_START_PRIME);
+        startStage(STAGE_START_PRIME);
       }
       break;
     }
 
     case STAGE_MOVE:
       if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
-      start_stage(STAGE_LOWER_HEAD);
+      startStage(STAGE_LOWER_HEAD);
       break;
 
     case STAGE_LOWER_HEAD: {
       if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
       cycle = 0;
-      start_stage(STAGE_START_DISPENSE);
+      startStage(STAGE_START_DISPENSE);
       break;
     }
 
@@ -226,9 +226,9 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
       // Check if dispensing should end
       if (cycle >= profile.Cycles) {
         dispenserHead.z().moveTo(0);
-        start_stage(STAGE_RAISE_HEAD);
+        startStage(STAGE_RAISE_HEAD);
       } else {
-        start_stage(STAGE_START_DISPENSE);
+        startStage(STAGE_START_DISPENSE);
       }
       break;
     }
@@ -254,7 +254,7 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
           0
         };
         drawMainScreen(phost, RUNMENU, &params);
-        start_stage(STAGE_MOVE);
+        startStage(STAGE_MOVE);
       } else {
         startNextController(CONTROLLER_HOMING);
       }
@@ -316,7 +316,7 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
   }
 
   // Perform logic after all axis are idle (all movement is completed)
-  process_stage_logic(dispenserProcessResult);
+  processStageLogic(dispenserProcessResult);
 
   return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
 }

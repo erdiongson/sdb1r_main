@@ -27,8 +27,8 @@ private:
   int32_t target_y = 0;
   int cycle = 0;
 
-  void process_stage_logic(DispenserProcessResult& dispenserProcessResult);
-  void start_stage(Stage newStage);
+  void processStageLogic(DispenserProcessResult& dispenserProcessResult);
+  void startStage(Stage newStage);
   void pause();
   void stop();
   void start();

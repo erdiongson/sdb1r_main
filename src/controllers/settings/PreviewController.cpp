@@ -21,7 +21,7 @@ void PreviewController::onStart(Profile& profile) {
   lastSimulationTime = 0;
   
   // Load profile into simulation handler
-  simulationHandler.load_profile(*currentProfile);
+  simulationHandler.loadProfile(*currentProfile);
   simulationHandler.reset();
 
   // Parse skip positions from the current profile
@@ -57,12 +57,12 @@ void PreviewController::onInteraction(const Interaction& interaction) {
 
     case TAG_PREVIEW_SIMULATE:
       Serial.println(F("Button Pressed: SIMULATE"));
-      start_simulation();
+      startSimulation();
       break;
 
     case TAG_PREVIEW_STOP:
       Serial.println(F("Button Pressed: STOP"));
-      end_simulation();
+      endSimulation();
       break;
     default:
       break;
@@ -75,7 +75,7 @@ ControllerStepResult PreviewController::onStep() {
     unsigned long currentTime = millis();
     if (currentTime - lastSimulationTime >= 600) {
       lastSimulationTime = currentTime;
-      step_simulation();
+      stepSimulation();
     }
   }
   
@@ -87,18 +87,18 @@ int PreviewController::getModeType() const {
   return CONTROLLER_PREVIEW;
 }
 
-void PreviewController::start_simulation() {
+void PreviewController::startSimulation() {
   // Start simulation
   simulating = true;
   lastSimulationTime = millis();
   
   // Reset handler and get first position
-  simulationHandler.load_profile(*currentProfile);
+  simulationHandler.loadProfile(*currentProfile);
   TrayHandler::Position firstPosition = simulationHandler.reset();
 
   if (firstPosition.x == -1 || firstPosition.y == -1) {
     Serial.println(F("No valid positions found, ending simulation"));
-    end_simulation();
+    endSimulation();
     return;
   }
 
@@ -124,7 +124,7 @@ void PreviewController::start_simulation() {
   drawPreviewScreen(phost, skipPositions, params);
 }
 
-void PreviewController::end_simulation() {
+void PreviewController::endSimulation() {
   // Stop simulation
   simulating = false;
   simulateCol = 0;
@@ -149,7 +149,7 @@ void PreviewController::end_simulation() {
   drawPreviewScreen(phost, skipPositions, params);
 }
 
-void PreviewController::step_simulation() {
+void PreviewController::stepSimulation() {
   // Get next position
   TrayHandler::PositionResult result = simulationHandler.goToNextValidPosition();
   
@@ -157,7 +157,7 @@ void PreviewController::step_simulation() {
     simulateCol = result.position.x;
     simulateRow = result.position.y;
   } else {
-    end_simulation();
+    endSimulation();
     return;
   }
   

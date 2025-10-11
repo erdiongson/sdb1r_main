@@ -102,7 +102,7 @@ void printFreeMemory() {
 
 // Transitions to the next controller based on the controller type.
 // @param nextControllerType The type of controller to transition to.
-void start_next_controller(int nextControllerType) {
+void startNextController(int nextControllerType) {
   // Destroy the current controller if it exists (call destructor)
   if (controller != nullptr) {
     controller->~BaseController();
@@ -110,7 +110,7 @@ void start_next_controller(int nextControllerType) {
   }
 
   // Create controller parameters
-  ControllerParams params = { dispenserHead, phost, start_next_controller };
+  ControllerParams params = { dispenserHead, phost, startNextController };
 
   // Create the new controller in the static buffer using placement new
   switch(nextControllerType) {
@@ -187,7 +187,7 @@ void setup() {
   Serial.println(" bytes");
   
   Serial.println("Starting first controller..");
-  start_next_controller(CONTROLLER_STARTUP);
+  startNextController(CONTROLLER_STARTUP);
 }
 
 Interaction interaction;

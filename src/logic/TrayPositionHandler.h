@@ -223,7 +223,7 @@ public:
   TrayPositionHandler() = default;
   ~TrayPositionHandler() = default;
 
-  void load_profile(Profile &profile) {
+  void loadProfile(Profile &profile) {
     // Use SkipUtils to parse skip positions from profile
     Position positions[MAX_POSITIONS];
     SkipUtils::convert(profile, positions);

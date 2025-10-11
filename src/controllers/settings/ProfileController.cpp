@@ -72,7 +72,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
       char new_password_1[PASSWORD_MAX_LEN] = "";
       char new_password_2[PASSWORD_MAX_LEN] = "";
       
-      get_keyboard_value(phost, new_password_1, "Enter New Password", FALSE);
+      getKeyboardValue(phost, new_password_1, "Enter New Password", FALSE);
       if (new_password_1[0] == 0) {
         params.keypressed = 0;
         params.curprofnum = selectedProfileNum;
@@ -81,7 +81,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
         break;
       }
 
-      get_keyboard_value(phost, new_password_2, "Enter New Password again", FALSE);
+      getKeyboardValue(phost, new_password_2, "Enter New Password again", FALSE);
 
       if (new_password_2[0] == 0) {
         params.keypressed = 0;
