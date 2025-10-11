@@ -229,7 +229,7 @@ public:
     SkipUtils::convert(profile, positions);
 
     // Create dimensions from profile
-    Dimensions dimensions(profile.Tube_No_x, profile.Tube_No_y);
+    Dimensions dimensions(profile.tube_no_x, profile.tube_no_y);
 
     Serial.println("Staggered: " + String(profile.staggered));
 

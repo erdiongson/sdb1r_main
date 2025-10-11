@@ -64,7 +64,7 @@ void drawProfileScreen(Gpu_Hal_Context_t *phost, ProfileParams params) {
 	
 	App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));
 	
-	Gpu_CoCmd_Text(phost, 160, 54, 27, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, (const char *)profile.profileName);
+	Gpu_CoCmd_Text(phost, 160, 54, 27, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, (const char *)profile.profile_name);
 	App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 127));    
 
     // Print profileId
@@ -72,15 +72,15 @@ void drawProfileScreen(Gpu_Hal_Context_t *phost, ProfileParams params) {
     Gpu_CoCmd_Text(phost, 8, 65, 21, 0, buf);
 
     // // Print profileName
-    // sprintf(buffer, "Profile Name: %s", curprof.profileName);
+    // sprintf(buffer, "Profile Name: %s", curprof.profile_name);
     // Gpu_CoCmd_Text(phost, 84, 56, 27, 0, buffer);
 
     // Print Tube_No_x
-    sprintf(buf, "Columns:     %d", profile.Tube_No_x);
+    sprintf(buf, "Columns:     %d", profile.tube_no_x);
     Gpu_CoCmd_Text(phost, 8, 80, 21, 0, buf);
 
     // Print Tube_No_y
-    sprintf(buf, "Rows:         %d", profile.Tube_No_y);
+    sprintf(buf, "Rows:         %d", profile.tube_no_y);
     Gpu_CoCmd_Text(phost, 8, 95, 21, 0, buf);
 
     // Print pitch_x
@@ -94,32 +94,32 @@ void drawProfileScreen(Gpu_Hal_Context_t *phost, ProfileParams params) {
     Gpu_CoCmd_Text(phost, 83, 125, 21, 0, buf);
 
     // Print trayOriginX
-    dtostrf(profile.trayOriginX, 4, 1, buf);
+    dtostrf(profile.tray_origin_x, 4, 1, buf);
     Gpu_CoCmd_Text(phost, 8, 140, 21, 0, "OriginX:");
     Gpu_CoCmd_Text(phost, 80, 140, 21, 0, buf);
 
     // Print trayOriginY
-    dtostrf(profile.trayOriginY, 4, 1, buf);
+    dtostrf(profile.tray_origin_y, 4, 1, buf);
     Gpu_CoCmd_Text(phost, 8, 155, 21, 0, "OriginY:");
     Gpu_CoCmd_Text(phost, 80, 155, 21, 0, buf);
 
     // Print Cycles
-    sprintf(buf, "Cycles:       %d" , profile.Cycles);
+    sprintf(buf, "Cycles:       %d" , profile.cycles);
     Gpu_CoCmd_Text(phost, 8, 170, 21, 0, buf);
 
     // Print vibrationEnabled
-    //sprintf(buf, "Vibration:    %s", curprof.vibrationEnabled ? "True" : "False");
+    //sprintf(buf, "Vibration:    %s", curprof.vibration_enabled ? "True" : "False");
     //20240903 - erdiongson: Change in Vibration Level
-    sprintf(buf, "Vibration Level:    %d", profile.vibrationEnabled);
+    sprintf(buf, "Vibration Level:    %d", profile.vibration_enabled);
     Gpu_CoCmd_Text(phost, 8, 185, 21, 0, buf);
 
     // Print passwordEnabled
-    sprintf(buf, "Password: %s" , profile.passwordEnabled ? "True" : "False");
+    sprintf(buf, "Password: %s" , profile.password_enabled ? "True" : "False");
     Gpu_CoCmd_Text(phost, 150, 65, 21, 0, buf);
 
     // Print vibrationDuration
     //20241001 - erdiongson: Change in Vibration Duration
-    sprintf(buf, "Vibration Time: %d", profile.vibrationDuration);
+    sprintf(buf, "Vibration Time: %d", profile.vibration_duration);
     Gpu_CoCmd_Text(phost, 150, 80, 21, 0, buf);
 	
 	

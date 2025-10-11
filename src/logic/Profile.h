@@ -49,25 +49,25 @@ Date created - 2022.12.14 - XentiQ version
 
 typedef struct
 {
-    char profileName[PROFILE_NAME_MAX_LEN];
-    int8_t profileId = 0;
-    int8_t Tube_No_x = 0; //represent the number of columns
-    int8_t Tube_No_y = 0; //represent the number of rows
+    char profile_name[PROFILE_NAME_MAX_LEN];
+    int8_t profile_id = 0;
+    int8_t tube_no_x = 0; //represent the number of columns
+    int8_t tube_no_y = 0; //represent the number of rows
     float pitch_x = 0.0;
     float pitch_y = 0.0;
-    float trayOriginX = 0.0;
-    float trayOriginY = 0.0;
-    int16_t Cycles = 1;
-    int16_t CurrentCycle = 0; //New field for storing the current cycle
-    int16_t vibrationEnabled = 0;
-    bool dispenseEnabled = false;
-    int16_t passwordEnabled = 0;
-    int16_t vibrationDuration = 2;
-    int16_t sizeFlag = 1; //small = 0; large = 1;
-    float ZDip = 0.0;
-    char skipCol[ROW_COL_MAX_LEN];
-    char skipRow[ROW_COL_MAX_LEN];
-    char skipSinglePos[ROW_COL_MAX_LEN];
+    float tray_origin_x = 0.0;
+    float tray_origin_y = 0.0;
+    int16_t cycles = 1;
+    int16_t current_cycle = 0; //New field for storing the current cycle
+    int16_t vibration_enabled = 0;
+    bool dispense_enabled = false;
+    int16_t password_enabled = 0;
+    int16_t vibration_duration = 2;
+    int16_t size_flag = 1; //small = 0; large = 1;
+    float z_dip = 0.0;
+    char skip_col[ROW_COL_MAX_LEN];
+    char skip_row[ROW_COL_MAX_LEN];
+    char skip_single_pos[ROW_COL_MAX_LEN];
     bool staggered = false;
 } Profile;
 

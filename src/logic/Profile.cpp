@@ -26,23 +26,23 @@ void preLoadEEPROM(void) {
 
   for (int i = 0; i < MAX_PROFILES; i++) {
     sprintf(buf, "profile %d", i + 1);
-    strcpy(CurProf.profileName, buf);
+    strcpy(CurProf.profile_name, buf);
 
-    CurProf.Tube_No_x = MAX_BUTTONS_X;
-    CurProf.Tube_No_y = MAX_BUTTONS_Y;
+    CurProf.tube_no_x = MAX_BUTTONS_X;
+    CurProf.tube_no_y = MAX_BUTTONS_Y;
     CurProf.pitch_x = 9;
     CurProf.pitch_y = 9;
-    CurProf.trayOriginX = 10;
-    CurProf.trayOriginY = 10;
-    CurProf.Cycles = 2;
-    CurProf.vibrationEnabled = 0;
-    CurProf.passwordEnabled = TRUE;
-    CurProf.vibrationDuration = 2;
-    CurProf.sizeFlag = 1;
-    CurProf.ZDip = 0.0;
-    CurProf.skipCol[0] = '\0';
-    CurProf.skipRow[0] = '\0';
-    CurProf.skipSinglePos[0] = '\0';
+    CurProf.tray_origin_x = 10;
+    CurProf.tray_origin_y = 10;
+    CurProf.cycles = 2;
+    CurProf.vibration_enabled = 0;
+    CurProf.password_enabled = TRUE;
+    CurProf.vibration_duration = 2;
+    CurProf.size_flag = 1;
+    CurProf.z_dip = 0.0;
+    CurProf.skip_col[0] = '\0';
+    CurProf.skip_row[0] = '\0';
+    CurProf.skip_single_pos[0] = '\0';
     CurProf.staggered = false;
 
     writeProfileEEPROM(i);
@@ -52,22 +52,22 @@ void preLoadEEPROM(void) {
 }
 
 void checkProfile(void) {
-  if (CurProf.Cycles > MAXCYCLE) CurProf.Cycles = MAXCYCLE;
-  if (CurProf.Cycles < 0) CurProf.Cycles = 0;
+  if (CurProf.cycles > MAXCYCLE) CurProf.cycles = MAXCYCLE;
+  if (CurProf.cycles < 0) CurProf.cycles = 0;
   if (CurProf.pitch_x > MAXPITCHX) CurProf.pitch_x = MAXPITCHX;
   if (CurProf.pitch_x < 0) CurProf.pitch_x = 0;
   if (CurProf.pitch_y > MAXPITCHY) CurProf.pitch_y = MAXPITCHY;
   if (CurProf.pitch_y < 0) CurProf.pitch_y = 0;
-  if (CurProf.trayOriginX > MAXORGX) CurProf.trayOriginX = MAXORGX;
-  if (CurProf.trayOriginX < 0) CurProf.trayOriginX = 0;
-  if (CurProf.trayOriginY > MAXORGY) CurProf.trayOriginY = MAXORGY;
-  if (CurProf.trayOriginY < 0) CurProf.trayOriginY = 0;
-  if (CurProf.Tube_No_x > MAX_TUBES_X) CurProf.Tube_No_x = MAX_TUBES_X;
-  if (CurProf.Tube_No_x < 0) CurProf.Tube_No_x = 0;
-  if (CurProf.Tube_No_y > MAX_TUBES_Y) CurProf.Tube_No_y = MAX_TUBES_Y;
-  if (CurProf.Tube_No_y < 0) CurProf.Tube_No_y = 0;
-  if (CurProf.ZDip < 0) CurProf.ZDip = 0;
-  if (CurProf.ZDip > MAX_ZDIP) CurProf.ZDip = MAX_ZDIP;
+  if (CurProf.tray_origin_x > MAXORGX) CurProf.tray_origin_x = MAXORGX;
+  if (CurProf.tray_origin_x < 0) CurProf.tray_origin_x = 0;
+  if (CurProf.tray_origin_y > MAXORGY) CurProf.tray_origin_y = MAXORGY;
+  if (CurProf.tray_origin_y < 0) CurProf.tray_origin_y = 0;
+  if (CurProf.tube_no_x > MAX_TUBES_X) CurProf.tube_no_x = MAX_TUBES_X;
+  if (CurProf.tube_no_x < 0) CurProf.tube_no_x = 0;
+  if (CurProf.tube_no_y > MAX_TUBES_Y) CurProf.tube_no_y = MAX_TUBES_Y;
+  if (CurProf.tube_no_y < 0) CurProf.tube_no_y = 0;
+  if (CurProf.z_dip < 0) CurProf.z_dip = 0;
+  if (CurProf.z_dip > MAX_ZDIP) CurProf.z_dip = MAX_ZDIP;
 }
 
 uint8_t loadProfile(void) {
@@ -76,15 +76,15 @@ uint8_t loadProfile(void) {
   if (currentProfileIndex >= MAX_PROFILES) currentProfileIndex = 0;  // if corrcupt data from eeprom, set id=0
 
   readProfileEEPROM(currentProfileIndex);  //reread as it is not profile id 0
-  if (CurProf.Cycles > MAXCYCLE) CurProf.Cycles = MAXCYCLE;
+  if (CurProf.cycles > MAXCYCLE) CurProf.cycles = MAXCYCLE;
   if (CurProf.pitch_x > MAXPITCHX) CurProf.pitch_x = MAXPITCHX;
   if (CurProf.pitch_y > MAXPITCHY) CurProf.pitch_y = MAXPITCHY;
-  if (CurProf.trayOriginX > MAXORGX) CurProf.trayOriginX = MAXORGX;
-  if (CurProf.trayOriginY > MAXORGY) CurProf.trayOriginY = MAXORGY;
-  if (CurProf.Tube_No_x > MAX_TUBES_X) CurProf.Tube_No_x = MAX_TUBES_X;
-  if (CurProf.Tube_No_y > MAX_TUBES_Y) CurProf.Tube_No_y = MAX_TUBES_Y;
-  if (CurProf.ZDip < 0) CurProf.ZDip = 0;
-  if (CurProf.ZDip > MAX_ZDIP) CurProf.ZDip = MAX_ZDIP;
+  if (CurProf.tray_origin_x > MAXORGX) CurProf.tray_origin_x = MAXORGX;
+  if (CurProf.tray_origin_y > MAXORGY) CurProf.tray_origin_y = MAXORGY;
+  if (CurProf.tube_no_x > MAX_TUBES_X) CurProf.tube_no_x = MAX_TUBES_X;
+  if (CurProf.tube_no_y > MAX_TUBES_Y) CurProf.tube_no_y = MAX_TUBES_Y;
+  if (CurProf.z_dip < 0) CurProf.z_dip = 0;
+  if (CurProf.z_dip > MAX_ZDIP) CurProf.z_dip = MAX_ZDIP;
 
   return currentProfileIndex;
 }
@@ -125,40 +125,40 @@ void writeProfileEEPROM(int index) {
   int address = (index * 300) + sizeof(uint8_t);
   Dprint("Starting Address = ", (float)address);
 
-  EEPROM.put(address, CurProf.profileName);
-  address += sizeof(CurProf.profileName);
-  EEPROM.put(address, CurProf.Tube_No_x);
-  address += sizeof(CurProf.Tube_No_x);
-  EEPROM.put(address, CurProf.Tube_No_y);
-  address += sizeof(CurProf.Tube_No_y);
+  EEPROM.put(address, CurProf.profile_name);
+  address += sizeof(CurProf.profile_name);
+  EEPROM.put(address, CurProf.tube_no_x);
+  address += sizeof(CurProf.tube_no_x);
+  EEPROM.put(address, CurProf.tube_no_y);
+  address += sizeof(CurProf.tube_no_y);
   EEPROM.put(address, CurProf.pitch_x);
   address += sizeof(CurProf.pitch_x);
   EEPROM.put(address, CurProf.pitch_y);
   address += sizeof(CurProf.pitch_y);
-  EEPROM.put(address, CurProf.trayOriginX);
-  address += sizeof(CurProf.trayOriginX);
-  EEPROM.put(address, CurProf.trayOriginY);
-  address += sizeof(CurProf.trayOriginY);
-  EEPROM.put(address, CurProf.Cycles);
-  address += sizeof(CurProf.Cycles);
-  EEPROM.put(address, CurProf.vibrationEnabled);
-  address += sizeof(CurProf.vibrationEnabled);
-  EEPROM.put(address, CurProf.passwordEnabled);
-  address += sizeof(CurProf.passwordEnabled);
-  EEPROM.put(address, CurProf.vibrationDuration);
-  address += sizeof(CurProf.vibrationDuration);
-  EEPROM.put(address, CurProf.dispenseEnabled);
-  address += sizeof(CurProf.dispenseEnabled);
-  EEPROM.put(address, CurProf.sizeFlag);
-  address += sizeof(CurProf.sizeFlag);
-  EEPROM.put(address, CurProf.ZDip);
-  address += sizeof(CurProf.ZDip);
-  EEPROM.put(address, CurProf.skipCol);
-  address += sizeof(CurProf.skipCol);
-  EEPROM.put(address, CurProf.skipRow);
-  address += sizeof(CurProf.skipRow);
-  EEPROM.put(address, CurProf.skipSinglePos);
-  address += sizeof(CurProf.skipSinglePos);
+  EEPROM.put(address, CurProf.tray_origin_x);
+  address += sizeof(CurProf.tray_origin_x);
+  EEPROM.put(address, CurProf.tray_origin_y);
+  address += sizeof(CurProf.tray_origin_y);
+  EEPROM.put(address, CurProf.cycles);
+  address += sizeof(CurProf.cycles);
+  EEPROM.put(address, CurProf.vibration_enabled);
+  address += sizeof(CurProf.vibration_enabled);
+  EEPROM.put(address, CurProf.password_enabled);
+  address += sizeof(CurProf.password_enabled);
+  EEPROM.put(address, CurProf.vibration_duration);
+  address += sizeof(CurProf.vibration_duration);
+  EEPROM.put(address, CurProf.dispense_enabled);
+  address += sizeof(CurProf.dispense_enabled);
+  EEPROM.put(address, CurProf.size_flag);
+  address += sizeof(CurProf.size_flag);
+  EEPROM.put(address, CurProf.z_dip);
+  address += sizeof(CurProf.z_dip);
+  EEPROM.put(address, CurProf.skip_col);
+  address += sizeof(CurProf.skip_col);
+  EEPROM.put(address, CurProf.skip_row);
+  address += sizeof(CurProf.skip_row);
+  EEPROM.put(address, CurProf.skip_single_pos);
+  address += sizeof(CurProf.skip_single_pos);
   EEPROM.put(address, CurProf.staggered);
   address += sizeof(CurProf.staggered);
 
@@ -171,40 +171,40 @@ void readProfileEEPROM(int index) {
   int address = (index * 300) + sizeof(uint8_t);
   Dprint("Starting Address = ", (float)address);
 
-  EEPROM.get(address, CurProf.profileName);
-  address += sizeof(CurProf.profileName);
-  EEPROM.get(address, CurProf.Tube_No_x);
-  address += sizeof(CurProf.Tube_No_x);
-  EEPROM.get(address, CurProf.Tube_No_y);
-  address += sizeof(CurProf.Tube_No_y);
+  EEPROM.get(address, CurProf.profile_name);
+  address += sizeof(CurProf.profile_name);
+  EEPROM.get(address, CurProf.tube_no_x);
+  address += sizeof(CurProf.tube_no_x);
+  EEPROM.get(address, CurProf.tube_no_y);
+  address += sizeof(CurProf.tube_no_y);
   EEPROM.get(address, CurProf.pitch_x);
   address += sizeof(CurProf.pitch_x);
   EEPROM.get(address, CurProf.pitch_y);
   address += sizeof(CurProf.pitch_y);
-  EEPROM.get(address, CurProf.trayOriginX);
-  address += sizeof(CurProf.trayOriginX);
-  EEPROM.get(address, CurProf.trayOriginY);
-  address += sizeof(CurProf.trayOriginY);
-  EEPROM.get(address, CurProf.Cycles);
-  address += sizeof(CurProf.Cycles);
-  EEPROM.get(address, CurProf.vibrationEnabled);
-  address += sizeof(CurProf.vibrationEnabled);
-  EEPROM.get(address, CurProf.passwordEnabled);
-  address += sizeof(CurProf.passwordEnabled);
-  EEPROM.get(address, CurProf.vibrationDuration);
-  address += sizeof(CurProf.vibrationDuration);
-  EEPROM.get(address, CurProf.dispenseEnabled);
-  address += sizeof(CurProf.dispenseEnabled);
-  EEPROM.get(address, CurProf.sizeFlag);
-  address += sizeof(CurProf.sizeFlag);
-  EEPROM.get(address, CurProf.ZDip);
-  address += sizeof(CurProf.ZDip);
-  EEPROM.get(address, CurProf.skipCol);
-  address += sizeof(CurProf.skipCol);
-  EEPROM.get(address, CurProf.skipRow);
-  address += sizeof(CurProf.skipRow);
-  EEPROM.get(address, CurProf.skipSinglePos);
-  address += sizeof(CurProf.skipSinglePos);
+  EEPROM.get(address, CurProf.tray_origin_x);
+  address += sizeof(CurProf.tray_origin_x);
+  EEPROM.get(address, CurProf.tray_origin_y);
+  address += sizeof(CurProf.tray_origin_y);
+  EEPROM.get(address, CurProf.cycles);
+  address += sizeof(CurProf.cycles);
+  EEPROM.get(address, CurProf.vibration_enabled);
+  address += sizeof(CurProf.vibration_enabled);
+  EEPROM.get(address, CurProf.password_enabled);
+  address += sizeof(CurProf.password_enabled);
+  EEPROM.get(address, CurProf.vibration_duration);
+  address += sizeof(CurProf.vibration_duration);
+  EEPROM.get(address, CurProf.dispense_enabled);
+  address += sizeof(CurProf.dispense_enabled);
+  EEPROM.get(address, CurProf.size_flag);
+  address += sizeof(CurProf.size_flag);
+  EEPROM.get(address, CurProf.z_dip);
+  address += sizeof(CurProf.z_dip);
+  EEPROM.get(address, CurProf.skip_col);
+  address += sizeof(CurProf.skip_col);
+  EEPROM.get(address, CurProf.skip_row);
+  address += sizeof(CurProf.skip_row);
+  EEPROM.get(address, CurProf.skip_single_pos);
+  address += sizeof(CurProf.skip_single_pos);
   EEPROM.get(address, CurProf.staggered);
   address += sizeof(CurProf.staggered);
 

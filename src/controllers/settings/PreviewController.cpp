@@ -30,8 +30,8 @@ void PreviewController::onStart(Profile& profile) {
  
   // Create preview screen parameters
   PreviewScreenParams params;
-  params.grid_cols = current_profile->Tube_No_x;
-  params.grid_rows = current_profile->Tube_No_y;
+  params.grid_cols = current_profile->tube_no_x;
+  params.grid_rows = current_profile->tube_no_y;
   params.staggered = current_profile->staggered;
   params.simulating = false;
   params.simulate_col = 0;
@@ -110,8 +110,8 @@ void PreviewController::startSimulation() {
   simulation_handler.getSkipPositions(skipPositions);
   
   PreviewScreenParams params;
-  params.grid_cols = current_profile->Tube_No_x;
-  params.grid_rows = current_profile->Tube_No_y;
+  params.grid_cols = current_profile->tube_no_x;
+  params.grid_rows = current_profile->tube_no_y;
   params.simulating = simulating;
   params.simulate_col = simulate_col;
   params.simulate_row = simulate_row;
@@ -135,8 +135,8 @@ void PreviewController::endSimulation() {
   simulation_handler.getSkipPositions(skipPositions);
   
   PreviewScreenParams params;
-  params.grid_cols = current_profile->Tube_No_x;
-  params.grid_rows = current_profile->Tube_No_y;
+  params.grid_cols = current_profile->tube_no_x;
+  params.grid_rows = current_profile->tube_no_y;
   params.simulating = simulating;
   params.simulate_col = simulate_col;
   params.simulate_row = simulate_row;
@@ -166,8 +166,8 @@ void PreviewController::stepSimulation() {
   simulation_handler.getSkipPositions(skipPositions);
   
   PreviewScreenParams params;
-  params.grid_cols = current_profile->Tube_No_x;
-  params.grid_rows = current_profile->Tube_No_y;
+  params.grid_cols = current_profile->tube_no_x;
+  params.grid_rows = current_profile->tube_no_y;
   params.simulating = simulating;
   params.simulate_col = simulate_col;
   params.simulate_row = simulate_row;

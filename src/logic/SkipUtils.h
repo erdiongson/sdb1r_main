@@ -83,9 +83,9 @@ public:
     int posIndex = 0;
 
     // Parse skipCol string (format: "C1,C9,...")
-    if (profile.skipCol[0] != '\0') {
+    if (profile.skip_col[0] != '\0') {
       char tempCol[ROW_COL_MAX_LEN];
-      strncpy(tempCol, profile.skipCol, ROW_COL_MAX_LEN - 1);
+      strncpy(tempCol, profile.skip_col, ROW_COL_MAX_LEN - 1);
       tempCol[ROW_COL_MAX_LEN - 1] = '\0';
 
       char *token = strtok(tempCol, ",");
@@ -103,9 +103,9 @@ public:
     }
 
     // Parse skipRow string (format: "R1,R9,...")
-    if (profile.skipRow[0] != '\0') {
+    if (profile.skip_row[0] != '\0') {
       char tempRow[ROW_COL_MAX_LEN];
-      strncpy(tempRow, profile.skipRow, ROW_COL_MAX_LEN - 1);
+      strncpy(tempRow, profile.skip_row, ROW_COL_MAX_LEN - 1);
       tempRow[ROW_COL_MAX_LEN - 1] = '\0';
 
       char *token = strtok(tempRow, ",");
@@ -123,9 +123,9 @@ public:
     }
 
     // Parse skipSinglePos string (format: "C2R4,C3R4,...")
-    if (profile.skipSinglePos[0] != '\0') {
+    if (profile.skip_single_pos[0] != '\0') {
       char tempPos[ROW_COL_MAX_LEN];
-      strncpy(tempPos, profile.skipSinglePos, ROW_COL_MAX_LEN - 1);
+      strncpy(tempPos, profile.skip_single_pos, ROW_COL_MAX_LEN - 1);
       tempPos[ROW_COL_MAX_LEN - 1] = '\0';
 
       char *token = strtok(tempPos, ",");

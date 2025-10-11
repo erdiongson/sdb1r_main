@@ -26,7 +26,7 @@ void ReadyController::onInteraction(const Interaction& interaction) {
 
     case SETTING:
       // Handle password protection if enabled
-      if (CurProf.passwordEnabled) {
+      if (CurProf.password_enabled) {
         PasswordVerificationResult result = verifyPassword(phost);
         
         if (result == PASSWORD_CANCELLED) {

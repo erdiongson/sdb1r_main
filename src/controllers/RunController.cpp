@@ -24,19 +24,6 @@ void RunController::onStart(Profile& profile) {
   start();
 }
 
-void RunController::onInteraction(const Interaction& interaction) {
-  int button = interaction.key_pressed;
-
-  if (button == PAUSE || interaction.plc_message_type == MSG_PAUSE) {
-    drawMainScreen(phost, PAUSEMENU);
-    pause();
-  } else if (button == STOP || interaction.plc_message_type == MSG_STOP) {
-    stop();
-  } else if (button == START) {
-    start();
-  }
-}
-
 // Pauses the run by stopping all axis movements immediately.
 void RunController::pause() {
   Serial.println(F("MODE: Paused"));
@@ -65,14 +52,6 @@ void RunController::stop() {
   startNextController(CONTROLLER_HOMING);
 }
 
-// Resumes the run from a paused state.
-void RunController::start() {
-  Serial.println(F("MODE: Resumed"));
-  paused = false;
-  drawMainScreen(phost, RUNMENU);
-  startStage(stage);
-}
-
 // Starts a new stage of the run
 // The funcitonality must be idempotent, since it may be called again after a "pause"
 void RunController::startStage(Stage newStage) {
@@ -86,14 +65,14 @@ void RunController::startStage(Stage newStage) {
     case STAGE_SET_VIB_LEVEL:
       Serial.println(F("STAGE: Setting vibration level"));
       this->stage = STAGE_SET_VIB_LEVEL;
-      dispenserHead.setVibrationLevel(profile.vibrationEnabled);
+      dispenserHead.setVibrationLevel(profile.vibration_enabled);
       break;
 
     case STAGE_SET_VIB_DURATION:
       Serial.print(F("STAGE: Setting vibration duration to "));
-      Serial.println(profile.vibrationDuration);
+      Serial.println(profile.vibration_duration);
       this->stage = STAGE_SET_VIB_DURATION;
-      dispenserHead.setVibrationTime(profile.vibrationDuration);
+      dispenserHead.setVibrationTime(profile.vibration_duration);
       break;
 
     case STAGE_ZERO:
@@ -130,9 +109,9 @@ void RunController::startStage(Stage newStage) {
 
     case STAGE_LOWER_HEAD:
       Serial.print(F("STAGE: Lowering head to Z="));
-      Serial.println(STEPS_PER_UNIT_Z * profile.ZDip);
+      Serial.println(STEPS_PER_UNIT_Z * profile.z_dip);
       this->stage = STAGE_LOWER_HEAD;
-      dispenserHead.z().moveTo(STEPS_PER_UNIT_Z * profile.ZDip);
+      dispenserHead.z().moveTo(STEPS_PER_UNIT_Z * profile.z_dip);
       break;
 
     case STAGE_START_DISPENSE:
@@ -160,113 +139,7 @@ void RunController::startStage(Stage newStage) {
   }
 }
 
-// Check if the current stage is complete, and move to the next stage if required
-void RunController::processStageLogic(DispenserProcessResult& dispenserProcessResult) {
-  switch (stage) {
-    case STAGE_IDLE:
-      startStage(STAGE_SET_VIB_LEVEL);
-      break;
-
-    case STAGE_SET_VIB_LEVEL:
-      if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING) break;
-      startStage(STAGE_SET_VIB_DURATION);
-      break;
-
-    case STAGE_SET_VIB_DURATION:
-      if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING) break;
-      startStage(STAGE_ZERO);
-      break;
-
-    case STAGE_ZERO: {
-      if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
-
-      // Set the current Axes positions as 0
-      dispenserHead.x().reset();
-      dispenserHead.y().reset();
-      dispenserHead.z().reset();
-
-      cycle = 0;
-      startStage(STAGE_START_PRIME);
-      break;
-    }
-
-    case STAGE_WAIT_PRIME: {
-      if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING) break;
-      cycle++;
-
-      // Check if priming should end
-      if (cycle >= PRIME_DISPENSE_NUM) {
-        // Calculate the first position and move to it
-        TrayHandler::Position firstPosition = trayHandler.reset();
-        target_x = (profile.trayOriginX + ((firstPosition.x - 1 + ((profile.staggered && firstPosition.y % 2 == 0) ? 0.5 : 0)) * profile.pitch_x)) * -STEPS_PER_UNIT_X;
-        target_y = (profile.trayOriginY + ((firstPosition.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
-        startStage(STAGE_MOVE);
-      } else {
-        startStage(STAGE_START_PRIME);
-      }
-      break;
-    }
-
-    case STAGE_MOVE:
-      if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
-      startStage(STAGE_LOWER_HEAD);
-      break;
-
-    case STAGE_LOWER_HEAD: {
-      if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
-      cycle = 0;
-      startStage(STAGE_START_DISPENSE);
-      break;
-    }
-
-    case STAGE_WAIT_DISPENSE: {
-      if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING)  break;
-      cycle++;
-
-      // Check if dispensing should end
-      if (cycle >= profile.Cycles) {
-        dispenserHead.z().moveTo(0);
-        startStage(STAGE_RAISE_HEAD);
-      } else {
-        startStage(STAGE_START_DISPENSE);
-      }
-      break;
-    }
-
-    case STAGE_RAISE_HEAD: {
-      if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
-      TrayHandler::PositionResult result = trayHandler.goToNextValidPosition();
-      Serial.println("Has next: " + String(result.has_next));
-      Serial.println("Next position: " + String(result.position.x) + ", " + String(result.position.y));
-
-      if (result.has_next) {
-        Serial.println("Next position: " + String(result.position.x) + ", " + String(result.position.y));
-
-        target_x = (profile.trayOriginX + ((result.position.x - 1 + ((profile.staggered && result.position.y % 2 == 0) ? 0.5: 0)) * profile.pitch_x)) * -STEPS_PER_UNIT_X;
-        target_y = (profile.trayOriginY + ((result.position.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
-
-        // Update Home_Screen
-        MainScreenParams params = {
-          (uint16_t)trayHandler.getCurrentRow(),
-          (uint16_t)trayHandler.getCurrentColumn(),
-          (uint16_t)trayHandler.getTubesLeft(),
-          (uint16_t)trayHandler.getTubesDispensed() + 1,
-          0
-        };
-        drawMainScreen(phost, RUNMENU, &params);
-        startStage(STAGE_MOVE);
-      } else {
-        startNextController(CONTROLLER_HOMING);
-      }
-      break;
-    }
-
-    default:
-      break;
-  }
-}
-
- ControllerStepResult RunController::onStep() {
+ControllerStepResult RunController::onStep() {
   if (paused) return ControllerStepResult(-1, -1);
 
   DispenserProcessResult dispenserProcessResult = dispenserHead.process();
@@ -323,4 +196,128 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
 
 int RunController::getModeType() const {
   return CONTROLLER_RUN;
+}
+
+// Starts the run sequence
+void RunController::start() {
+  Serial.println(F("MODE: Starting run"));
+  paused = false;
+  cycle = 0;
+  drawMainScreen(phost, RUNMENU);
+  startStage(STAGE_SET_VIB_LEVEL);
+}
+
+// Handles user interactions during run mode
+void RunController::onInteraction(const Interaction& interaction) {
+  if (interaction.plc_message_type == MSG_STOP || interaction.key_pressed == STOP) {
+    stop();
+    return;
+  }
+
+  if (interaction.plc_message_type == MSG_PAUSE || interaction.key_pressed == PAUSE) {
+    if (paused) {
+      start();
+    } else {
+      pause();
+    }
+    return;
+  }
+}
+
+// Processes the stage logic based on current stage and dispenser state
+void RunController::processStageLogic(DispenserProcessResult& dispenserProcessResult) {
+  switch (stage) {
+    case STAGE_SET_VIB_LEVEL:
+      if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING) break;
+      startStage(STAGE_SET_VIB_DURATION);
+      break;
+
+    case STAGE_SET_VIB_DURATION:
+      if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING) break;
+      startStage(STAGE_ZERO);
+      break;
+
+    case STAGE_ZERO:
+      if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
+      cycle = 0;
+      startStage(STAGE_START_PRIME);
+      break;
+
+    case STAGE_WAIT_PRIME: {
+      if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING) break;
+      cycle++;
+
+      // Check if priming should end
+      if (cycle >= PRIME_DISPENSE_NUM) {
+        // Calculate the first position and move to it
+        TrayHandler::Position firstPosition = trayHandler.reset();
+        target_x = (profile.tray_origin_x + ((firstPosition.x - 1 + ((profile.staggered && firstPosition.y % 2 == 0) ? 0.5 : 0)) * profile.pitch_x)) * -STEPS_PER_UNIT_X;
+        target_y = (profile.tray_origin_y + ((firstPosition.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
+        startStage(STAGE_MOVE);
+      } else {
+        startStage(STAGE_START_PRIME);
+      }
+      break;
+    }
+
+    case STAGE_MOVE:
+      if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
+      startStage(STAGE_LOWER_HEAD);
+      break;
+
+    case STAGE_LOWER_HEAD: {
+      if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
+      cycle = 0;
+      startStage(STAGE_START_DISPENSE);
+      break;
+    }
+
+    case STAGE_WAIT_DISPENSE: {
+      if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING)  break;
+      cycle++;
+
+      // Check if dispensing should end
+      if (cycle >= profile.cycles) {
+        dispenserHead.z().moveTo(0);
+        startStage(STAGE_RAISE_HEAD);
+      } else {
+        startStage(STAGE_START_DISPENSE);
+      }
+      break;
+    }
+
+    case STAGE_RAISE_HEAD: {
+      if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
+      TrayHandler::PositionResult result = trayHandler.goToNextValidPosition();
+      Serial.println("Has next: " + String(result.has_next));
+      Serial.println("Next position: " + String(result.position.x) + ", " + String(result.position.y));
+
+      if (result.has_next) {
+        Serial.println("Next position: " + String(result.position.x) + ", " + String(result.position.y));
+
+        target_x = (profile.tray_origin_x + ((result.position.x - 1 + ((profile.staggered && result.position.y % 2 == 0) ? 0.5: 0)) * profile.pitch_x)) * -STEPS_PER_UNIT_X;
+        target_y = (profile.tray_origin_y + ((result.position.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
+
+        // Update Home_Screen
+        MainScreenParams params = {
+          (uint16_t)trayHandler.getCurrentRow(),
+          (uint16_t)trayHandler.getCurrentColumn(),
+          (uint16_t)trayHandler.getTubesLeft(),
+          (uint16_t)trayHandler.getTubesDispensed() + 1,
+          0
+        };
+        drawMainScreen(phost, RUNMENU, &params);
+
+        cycle = 0;
+        startStage(STAGE_MOVE);
+      } else {
+        Serial.println(F("MODE: Run complete"));
+        startNextController(CONTROLLER_READY);
+      }
+      break;
+    }
+
+    default:
+      break;
+  }
 }

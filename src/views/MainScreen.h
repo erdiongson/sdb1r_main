@@ -100,9 +100,9 @@ inline void drawMainScreen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const Ma
 
   drawMenuButtons(whichmenu);
 
-  sprintf(buf, "Profile Name: %s", CurProf.profileName);
+  sprintf(buf, "Profile Name: %s", CurProf.profile_name);
   Gpu_CoCmd_Text(phost, 25, 195, 20, OPT_FORMAT, buf);  //OPT_CENTER | OPT_RIGHTX |
-  sprintf(buf, "No. of Cycles: %d", CurProf.Cycles);
+  sprintf(buf, "No. of Cycles: %d", CurProf.cycles);
   Gpu_CoCmd_Text(phost, 25, 208, 20, OPT_FORMAT, buf);
 
   sprintf(buf, "Filling tube: %d", params ? params->filling_tube : 0);
