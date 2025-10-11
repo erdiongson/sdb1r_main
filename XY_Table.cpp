@@ -180,7 +180,7 @@ void setup() {
   Gpu_Hal_Wr8(phost, REG_TOUCH_SETTLE, 3);
 
   Serial.println("Loading profile..");
-  CurProfNum = LoadProfile();
+  CurProfNum = loadProfile();
 
   Serial.print("Controller buffer size: ");
   Serial.print(MAX_CONTROLLER_SIZE);

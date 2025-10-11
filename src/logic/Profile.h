@@ -71,19 +71,19 @@ typedef struct
     bool staggered = false;
 } Profile;
 
-uint8_t LoadProfile(void);
+uint8_t loadProfile(void);
 
-void PreLoadEEPROM(void);
-void BlankEEPROM(void);
+void preLoadEEPROM(void);
+void blankEEPROM(void);
 
-void WriteCurIDEEPROM(uint8_t curprofid);
-uint8_t ReadCurIDEEPROM(void);
-void WritePassEEPROM(char *pass);
+void writeCurIDEEPROM(uint8_t curprofid);
+uint8_t readCurIDEEPROM(void);
+void writePassEEPROM(char *pass);
 
-void ReadPassEEPROM(char *pass);
+void readPassEEPROM(char *pass);
 
-void WriteProfileEEPROM(int address); //try054 , Profile &profile);
-void ReadProfileEEPROM(int address);
+void writeProfileEEPROM(int address); //try054 , Profile &profile);
+void readProfileEEPROM(int address);
 
 // Password verification result enum.
 enum PasswordVerificationResult {
@@ -95,7 +95,7 @@ enum PasswordVerificationResult {
 // Verifies the password by prompting the user for input.
 // @param phost GPU context for displaying the keyboard.
 // @return PasswordVerificationResult indicating success, incorrect, or cancelled.
-PasswordVerificationResult verify_password(Gpu_Hal_Context_t *phost);
+PasswordVerificationResult verifyPassword(Gpu_Hal_Context_t *phost);
 
 #endif /*_PROFILE_H_*/
 

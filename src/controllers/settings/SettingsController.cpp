@@ -64,8 +64,8 @@ void SettingsController::onInteraction(const Interaction& interaction) {
     case TAG_CONFIG_SAVE: {
       Serial.println("Button Pressed: SAVE");
       Dprint("curprofnum=", CurProfNum);
-      WriteCurIDEEPROM(CurProfNum);
-      WriteProfileEEPROM(CurProfNum);
+      writeCurIDEEPROM(CurProfNum);
+      writeProfileEEPROM(CurProfNum);
       
       // Show profile saved dialog
       SettingsScreenParams params = {DIALOG_PROFILE_SAVED};
