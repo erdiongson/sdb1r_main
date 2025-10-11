@@ -73,6 +73,8 @@ void RunController::start() {
   start_stage(stage);
 }
 
+// Starts a new stage of the run
+// The funcitonality must be idempotent, since it may be called again after a "pause"
 void RunController::start_stage(Stage newStage) {
   switch (newStage) {
     case IDLE_STAGE:
@@ -102,12 +104,18 @@ void RunController::start_stage(Stage newStage) {
       dispenserHead.z().moveToMin();
       break;
 
-    case PRIME_STAGE:
-      Serial.println(F("STAGE: Priming dispenser"));
-      this->stage = PRIME_STAGE;
-      if (cycle < PRIME_DISPENSE_NUM) {
-        dispenserHead.send_dispense();
-      }
+    case START_PRIME_STAGE:
+      Serial.println(F("STAGE: Starting prime"));
+      this->stage = START_PRIME_STAGE;
+      dispenserHead.send_dispense();
+
+      // Immediately move to wait stage
+      start_stage(WAIT_PRIME_STAGE);
+      break;
+
+    case WAIT_PRIME_STAGE:
+      Serial.println(F("STAGE: Waiting for prime to complete"));
+      this->stage = WAIT_PRIME_STAGE;
       break;
 
     case MOVE_STAGE:
@@ -127,10 +135,18 @@ void RunController::start_stage(Stage newStage) {
       dispenserHead.z().moveTo(STEPS_PER_UNIT_Z * profile.ZDip);
       break;
 
-    case DISPENSE_STAGE:
-      Serial.println(F("STAGE: Dispensing"));
-      this->stage = DISPENSE_STAGE;
+    case START_DISPENSE_STAGE:
+      Serial.println(F("STAGE: Starting dispensing"));
+      this->stage = START_DISPENSE_STAGE;
       dispenserHead.send_dispense();
+
+      // Immediately move to wait stage
+      start_stage(WAIT_DISPENSE_STAGE);
+      break;
+
+    case WAIT_DISPENSE_STAGE:
+      Serial.println(F("STAGE: Waiting for dispensing to complete"));
+      this->stage = WAIT_DISPENSE_STAGE;
       break;
 
     case RAISE_HEAD_STAGE:
@@ -169,11 +185,11 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
       dispenserHead.z().reset();
 
       cycle = 0;
-      start_stage(PRIME_STAGE);
+      start_stage(START_PRIME_STAGE);
       break;
     }
 
-    case PRIME_STAGE: {
+    case WAIT_PRIME_STAGE: {
       if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING) break;
       cycle++;
 
@@ -185,8 +201,7 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
         target_y = (profile.trayOriginY + ((firstPosition.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
         start_stage(MOVE_STAGE);
       } else {
-        dispenserHead.send_dispense();
-        start_stage(PRIME_STAGE);
+        start_stage(START_PRIME_STAGE);
       }
       break;
     }
@@ -199,11 +214,11 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
     case LOWER_HEAD_STAGE: {
       if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
       cycle = 0;
-      start_stage(DISPENSE_STAGE);
+      start_stage(START_DISPENSE_STAGE);
       break;
     }
 
-    case DISPENSE_STAGE: {
+    case WAIT_DISPENSE_STAGE: {
       if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING)  break;
       cycle++;
 
@@ -212,8 +227,7 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
         dispenserHead.z().moveTo(0);
         start_stage(RAISE_HEAD_STAGE);
       } else {
-        dispenserHead.send_dispense();
-        start_stage(DISPENSE_STAGE);
+        start_stage(START_DISPENSE_STAGE);
       }
       break;
     }
