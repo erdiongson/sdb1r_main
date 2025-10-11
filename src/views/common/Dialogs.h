@@ -8,10 +8,10 @@
 typedef struct {
   const char *title;
   const char *subtitle;
-  const char *leftBtn;
-  const char *rightBtn;
-  uint8_t leftTag;
-  uint8_t rightTag;
+  const char *left_btn;
+  const char *right_btn;
+  uint8_t left_tag;
+  uint8_t right_tag;
 } DialogParams;
 
 // Dialog codes

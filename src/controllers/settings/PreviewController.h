@@ -3,13 +3,13 @@
 
 class PreviewController : public BaseController {
 private:
-  Profile* currentProfile;
+  Profile* current_profile;
   bool simulating;
-  unsigned long lastSimulationTime;
-  TrayHandler::TrayPositionHandler simulationHandler;
-  int simulateCol;
-  int simulateRow;
-  char previewInfoText[50];
+  unsigned long last_simulation_time;
+  TrayHandler::TrayPositionHandler simulation_handler;
+  int simulate_col;
+  int simulate_row;
+  char preview_info_text[50];
   
   void startSimulation();
   void endSimulation();

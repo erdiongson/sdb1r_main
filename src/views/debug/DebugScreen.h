@@ -6,9 +6,9 @@
 
 // Parameters for Debug Screen display.
 struct DebugScreenParams {
-  uint8_t currentSize;  // 0 = small, 1 = large
-  bool blankedEeprom;   // true = show (Done) on Blank EEPROM button
-  bool profilesReset;   // true = show (Done) on Reset Profiles button
+  uint8_t current_size;  // 0 = small, 1 = large
+  bool blanked_eeprom;   // true = show (Done) on Blank EEPROM button
+  bool profiles_reset;   // true = show (Done) on Reset Profiles button
 };
 
 // Draws the debug screen with test and utility buttons.
@@ -61,7 +61,7 @@ inline void drawDebugScreen(Gpu_Hal_Context_t *phost, DebugScreenParams params) 
   // Blank EEPROM button
   App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_BLANK_EEPROM));
   Gpu_CoCmd_FgColor(phost, 0xFF6600);
-  if (params.blankedEeprom) {
+  if (params.blanked_eeprom) {
     Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, "Blank EEPROM (Done)");
   } else {
     Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, "Blank EEPROM");
@@ -71,7 +71,7 @@ inline void drawDebugScreen(Gpu_Hal_Context_t *phost, DebugScreenParams params) 
   // Reset Profiles button
   App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_RESET_PROFILES));
   Gpu_CoCmd_FgColor(phost, 0xFF6600);
-  if (params.profilesReset) {
+  if (params.profiles_reset) {
     Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, "Reset Profiles (Done)");
   } else {
     Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, "Reset Profiles");
@@ -81,7 +81,7 @@ inline void drawDebugScreen(Gpu_Hal_Context_t *phost, DebugScreenParams params) 
   // Toggle Size button
   App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_TOGGLE_SIZE));
   Gpu_CoCmd_FgColor(phost, 0x9370DB);
-  sprintf(buf, "Toggle Size (Current: %s)", params.currentSize == 1 ? "L" : "S");
+  sprintf(buf, "Toggle Size (Current: %s)", params.current_size == 1 ? "L" : "S");
   Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, buf);
 
   // Back button at bottom left (smaller, similar to PreviewScreen)

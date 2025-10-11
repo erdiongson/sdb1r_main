@@ -47,32 +47,32 @@ void drawBaseDialog(Gpu_Hal_Context_t *phost, const DialogParams& params) {
   Gpu_CoCmd_FillWidth(phost, 0);  // Reset fill width
   
   // Determine button rendering based on what's provided
-  bool hasLeftBtn = (params.leftBtn != nullptr && params.leftBtn[0] != '\0');
-  bool hasRightBtn = (params.rightBtn != nullptr && params.rightBtn[0] != '\0');
+  bool has_left_btn = (params.left_btn != nullptr && params.left_btn[0] != '\0');
+  bool has_right_btn = (params.right_btn != nullptr && params.right_btn[0] != '\0');
   
-  if (hasLeftBtn && hasRightBtn) {
+  if (has_left_btn && has_right_btn) {
     // Both buttons - each takes half width with padding
     App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-    App_WrCoCmd_Buffer(phost, TAG(params.leftTag));
+    App_WrCoCmd_Buffer(phost, TAG(params.left_tag));
     Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-    Gpu_CoCmd_Button(phost, 40, 145, 115, 30, 21, 0, params.leftBtn);
+    Gpu_CoCmd_Button(phost, 40, 145, 115, 30, 21, 0, params.left_btn);
     
-    App_WrCoCmd_Buffer(phost, TAG(params.rightTag));
-    Gpu_CoCmd_Button(phost, 165, 145, 115, 30, 21, 0, params.rightBtn);
+    App_WrCoCmd_Buffer(phost, TAG(params.right_tag));
+    Gpu_CoCmd_Button(phost, 165, 145, 115, 30, 21, 0, params.right_btn);
     App_WrCoCmd_Buffer(phost, TAG_MASK(0));
-  } else if (hasLeftBtn) {
+  } else if (has_left_btn) {
     // Only left button - full width with padding
     App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-    App_WrCoCmd_Buffer(phost, TAG(params.leftTag));
+    App_WrCoCmd_Buffer(phost, TAG(params.left_tag));
     Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-    Gpu_CoCmd_Button(phost, 40, 145, 240, 30, 21, 0, params.leftBtn);
+    Gpu_CoCmd_Button(phost, 40, 145, 240, 30, 21, 0, params.left_btn);
     App_WrCoCmd_Buffer(phost, TAG_MASK(0));
-  } else if (hasRightBtn) {
+  } else if (has_right_btn) {
     // Only right button - full width with padding
     App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-    App_WrCoCmd_Buffer(phost, TAG(params.rightTag));
+    App_WrCoCmd_Buffer(phost, TAG(params.right_tag));
     Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-    Gpu_CoCmd_Button(phost, 40, 145, 240, 30, 21, 0, params.rightBtn);
+    Gpu_CoCmd_Button(phost, 40, 145, 240, 30, 21, 0, params.right_btn);
     App_WrCoCmd_Buffer(phost, TAG_MASK(0));
   }
   // If neither button is provided, don't render any buttons
@@ -88,91 +88,91 @@ void drawDialog(Gpu_Hal_Context_t *phost, int dialog_code) {
     case DIALOG_ERROR_IR_SENSOR:
       params.title = "IR Sensor Error";
       params.subtitle = "IR Sensor Detection Failed. Please Restart.";
-      params.leftBtn = nullptr;
-      params.rightBtn = nullptr;
-      params.leftTag = 0;
-      params.rightTag = 0;
+      params.left_btn = nullptr;
+      params.right_btn = nullptr;
+      params.left_tag = 0;
+      params.right_tag = 0;
       break;
       
     case DIALOG_ERROR_MARKER_NOT_DETECTED:
       params.title = "Dispenser Head Stuck";
       params.subtitle = "Please check the head and restart.";
-      params.leftBtn = nullptr;
-      params.rightBtn = nullptr;
-      params.leftTag = 0;
-      params.rightTag = 0;
+      params.left_btn = nullptr;
+      params.right_btn = nullptr;
+      params.left_tag = 0;
+      params.right_tag = 0;
       break;
       
     case DIALOG_ERROR_LIMIT_SWITCH:
       params.title = "Limit Switch Error";
       params.subtitle = "Limit switch triggered unexpectedly. Please check the head and restart.";
-      params.leftBtn = "Resume";
-      params.rightBtn = "Stop";
-      params.leftTag = START;
-      params.rightTag = STOP;
+      params.left_btn = "Resume";
+      params.right_btn = "Stop";
+      params.left_tag = START;
+      params.right_tag = STOP;
       break;
       
     case DIALOG_ERROR_ACK_ERROR:
       params.title = "Dispenser Error";
       params.subtitle = "Please restart the device.";
-      params.leftBtn = nullptr;
-      params.rightBtn = nullptr;
-      params.leftTag = 0;
-      params.rightTag = 0;
+      params.left_btn = nullptr;
+      params.right_btn = nullptr;
+      params.left_tag = 0;
+      params.right_tag = 0;
       break;
       
     case DIALOG_PROFILE_SAVED:
       params.title = "Profile Saved";
       params.subtitle = "Profile has been saved successfully.";
-      params.leftBtn = nullptr;
-      params.rightBtn = nullptr;
-      params.leftTag = 0;
-      params.rightTag = 0;
+      params.left_btn = nullptr;
+      params.right_btn = nullptr;
+      params.left_tag = 0;
+      params.right_tag = 0;
       break;
       
     case DIALOG_PROFILE_LOADED:
       params.title = "Profile Loaded";
       params.subtitle = "Profile has been loaded successfully!";
-      params.leftBtn = nullptr;
-      params.rightBtn = nullptr;
-      params.leftTag = 0;
-      params.rightTag = 0;
+      params.left_btn = nullptr;
+      params.right_btn = nullptr;
+      params.left_tag = 0;
+      params.right_tag = 0;
       break;
       
     case DIALOG_ERROR_PASSWORD_MISMATCH:
       params.title = "Password Mismatch";
       params.subtitle = "Different passwords were entered, please try again.";
-      params.leftBtn = nullptr;
-      params.rightBtn = nullptr;
-      params.leftTag = 0;
-      params.rightTag = 0;
+      params.left_btn = nullptr;
+      params.right_btn = nullptr;
+      params.left_tag = 0;
+      params.right_tag = 0;
       break;
       
     case DIALOG_PASSWORD_CHANGED:
       params.title = "Password Changed";
       params.subtitle = "Password has been changed successfully!";
-      params.leftBtn = nullptr;
-      params.rightBtn = nullptr;
-      params.leftTag = 0;
-      params.rightTag = 0;
+      params.left_btn = nullptr;
+      params.right_btn = nullptr;
+      params.left_tag = 0;
+      params.right_tag = 0;
       break;
       
     case DIALOG_ERROR_WRONG_PASSWORD:
       params.title = "Incorrect Password";
       params.subtitle = "The password you entered is incorrect. Please try again.";
-      params.leftBtn = nullptr;
-      params.rightBtn = nullptr;
-      params.leftTag = 0;
-      params.rightTag = 0;
+      params.left_btn = nullptr;
+      params.right_btn = nullptr;
+      params.left_tag = 0;
+      params.right_tag = 0;
       break;
       
     default:
       params.title = "Unknown Error";
       params.subtitle = "An unknown error occurred.";
-      params.leftBtn = nullptr;
-      params.rightBtn = nullptr;
-      params.leftTag = 0;
-      params.rightTag = 0;
+      params.left_btn = nullptr;
+      params.right_btn = nullptr;
+      params.left_tag = 0;
+      params.right_tag = 0;
       break;
   }
   

@@ -7,12 +7,12 @@
 
 // Parameters for Preview_Screen display
 struct PreviewScreenParams {
-  int gridCols;      // Number of columns in the grid
-  int gridRows;      // Number of rows in the grid
+  int grid_cols;      // Number of columns in the grid
+  int grid_rows;      // Number of rows in the grid
   bool simulating;   // Whether simulation mode is active
-  int simulateCol;   // Column being simulated (0 = none)
-  int simulateRow;   // Row being simulated (0 = none)
-  const char* infoText; // Text to display in bottom right (e.g., "Preview (Grid 10x10)" or "Position = 5x3")
+  int simulate_col;   // Column being simulated (0 = none)
+  int simulate_row;   // Row being simulated (0 = none)
+  const char* info_text; // Text to display in bottom right (e.g., "Preview (Grid 10x10)" or "Position = 5x3")
   bool staggered;    // If true, even rows are shifted right by half a step with last cell removed
 };
 
@@ -35,8 +35,8 @@ void drawPreviewScreen(Gpu_Hal_Context_t *phost,
                    const TrayHandler::Position skipPositions[MAX_POSITIONS],
                    const PreviewScreenParams& params) {
   
-  int gridCols = params.gridCols;
-  int gridRows = params.gridRows;
+  int grid_cols = params.grid_cols;
+  int grid_rows = params.grid_rows;
   
   // Display dimensions (320x240)
   const int SCREEN_WIDTH = 320;
@@ -60,8 +60,8 @@ void drawPreviewScreen(Gpu_Hal_Context_t *phost,
   int maxDotSpacingX = minDotSpacingX * 2;
   int maxDotSpacingY = minDotSpacingY * 2;
   
-  int dotSpacingX = AVAILABLE_WIDTH / (gridCols + 1);
-  int dotSpacingY = AVAILABLE_HEIGHT / (gridRows + 1);
+  int dotSpacingX = AVAILABLE_WIDTH / (grid_cols + 1);
+  int dotSpacingY = AVAILABLE_HEIGHT / (grid_rows + 1);
 
   if (dotSpacingX > maxDotSpacingX) dotSpacingX = maxDotSpacingX;
   if (dotSpacingY > maxDotSpacingY) dotSpacingY = maxDotSpacingY;
@@ -75,8 +75,8 @@ void drawPreviewScreen(Gpu_Hal_Context_t *phost,
   if (dotRadius > 6) dotRadius = 6;  // Maximum radius for visibility
   
   // Calculate grid dimensions
-  int gridWidth = gridCols * dotSpacing;
-  int gridHeight = gridRows * dotSpacing;
+  int gridWidth = grid_cols * dotSpacing;
+  int gridHeight = grid_rows * dotSpacing;
   
   // Center the grid
   int gridStartX = (SCREEN_WIDTH - gridWidth) / 2;
@@ -99,8 +99,8 @@ void drawPreviewScreen(Gpu_Hal_Context_t *phost,
   
   // Helper lambda to check if position is being simulated
   auto isSimulatedPosition = [&](int x, int y) -> bool {
-    return params.simulateCol != 0 && params.simulateRow != 0 &&
-           x == params.simulateCol && y == params.simulateRow;
+    return params.simulate_col != 0 && params.simulate_row != 0 &&
+           x == params.simulate_col && y == params.simulate_row;
   };
   
   // Start drawing
@@ -120,16 +120,16 @@ void drawPreviewScreen(Gpu_Hal_Context_t *phost,
   App_WrCoCmd_Buffer(phost, BEGIN(POINTS));
   
   int enabledCount = 0;
-  for (int row = 1; row <= gridRows; row++) {
+  for (int row = 1; row <= grid_rows; row++) {
     // Check if this is an even row and staggered mode is enabled
     bool isEvenRow = (row % 2 == 0);
     int xOffset = (params.staggered && isEvenRow) ? (dotSpacing / 2) : 0;
-    int maxCol = (params.staggered && isEvenRow) ? (gridCols - 1) : gridCols;
+    int maxCol = (params.staggered && isEvenRow) ? (grid_cols - 1) : grid_cols;
     
     for (int col = 1; col <= maxCol; col++) {
       if (!isSkipPosition(col, row)) {
         int centerX = gridStartX + (col * dotSpacing) + xOffset;
-        int centerY = gridStartY + (gridRows - row + 1) * dotSpacing;
+        int centerY = gridStartY + (grid_rows - row + 1) * dotSpacing;
         App_WrCoCmd_Buffer(phost, VERTEX2F(centerX * 16, centerY * 16));
         enabledCount++;
       }
@@ -138,17 +138,17 @@ void drawPreviewScreen(Gpu_Hal_Context_t *phost,
   App_WrCoCmd_Buffer(phost, END());
   
   // Draw simulated position (green dot)
-  if (params.simulateCol != 0 && params.simulateRow != 0) {
+  if (params.simulate_col != 0 && params.simulate_row != 0) {
     App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 255, 0));
     App_WrCoCmd_Buffer(phost, POINT_SIZE(dotRadius * 16));
     App_WrCoCmd_Buffer(phost, BEGIN(POINTS));
     
     // Apply stagger offset for even rows
-    bool isEvenRow = (params.simulateRow % 2 == 0);
+    bool isEvenRow = (params.simulate_row % 2 == 0);
     int xOffset = (params.staggered && isEvenRow) ? (dotSpacing / 2) : 0;
     
-    int centerX = gridStartX + (params.simulateCol * dotSpacing) + xOffset;
-    int centerY = gridStartY + ((gridRows - params.simulateRow + 1) * dotSpacing);
+    int centerX = gridStartX + (params.simulate_col * dotSpacing) + xOffset;
+    int centerY = gridStartY + ((grid_rows - params.simulate_row + 1) * dotSpacing);
     App_WrCoCmd_Buffer(phost, VERTEX2F(centerX * 16, centerY * 16));
     App_WrCoCmd_Buffer(phost, END());
   }
@@ -159,16 +159,16 @@ void drawPreviewScreen(Gpu_Hal_Context_t *phost,
   App_WrCoCmd_Buffer(phost, BEGIN(POINTS));
   
   int skippedCount = 0;
-  for (int row = 1; row <= gridRows; row++) {
+  for (int row = 1; row <= grid_rows; row++) {
     // Check if this is an even row and staggered mode is enabled
     bool isEvenRow = (row % 2 == 0);
     int xOffset = (params.staggered && isEvenRow) ? (dotSpacing / 2) : 0;
-    int maxCol = (params.staggered && isEvenRow) ? (gridCols - 1) : gridCols;
+    int maxCol = (params.staggered && isEvenRow) ? (grid_cols - 1) : grid_cols;
     
     for (int col = 1; col <= maxCol; col++) {
       if (isSkipPosition(col, row)) {
         int centerX = gridStartX + (col * dotSpacing) + xOffset;
-        int centerY = gridStartY + (gridRows - row + 1) * dotSpacing;
+        int centerY = gridStartY + (grid_rows - row + 1) * dotSpacing;
         App_WrCoCmd_Buffer(phost, VERTEX2F(centerX * 16, centerY * 16));
         skippedCount++;
       }
@@ -197,7 +197,7 @@ void drawPreviewScreen(Gpu_Hal_Context_t *phost,
   
   // Draw grid info (bottom right, aligned with button)
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
-  Gpu_CoCmd_Text(phost, SCREEN_WIDTH - 10, SCREEN_HEIGHT - 25, 21, OPT_RIGHTX, params.infoText);
+  Gpu_CoCmd_Text(phost, SCREEN_WIDTH - 10, SCREEN_HEIGHT - 25, 21, OPT_RIGHTX, params.info_text);
   
   Disp_End(phost);
 }

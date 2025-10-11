@@ -9,39 +9,39 @@
  * Struct for complete axis configuration parameters
  */
 struct AxisParams {
-  int stepPin;
-  int dirPin;
-  int minPin;
-  int maxPin;
-  float maxSpeed;
+  int step_pin;
+  int dir_pin;
+  int min_pin;
+  int max_pin;
+  float max_speed;
   float acceleration;
 
   AxisParams(
-    int stepPin,
-    int dirPin,
-    int minPin,
-    int maxPin,
-    float maxSpeed = 1000.0,
+    int step_pin,
+    int dir_pin,
+    int min_pin,
+    int max_pin,
+    float max_speed = 1000.0,
     float acceleration = 500.0)
-    : stepPin(stepPin),
-      dirPin(dirPin),
-      minPin(minPin),
-      maxPin(maxPin),
-      maxSpeed(maxSpeed),
+    : step_pin(step_pin),
+      dir_pin(dir_pin),
+      min_pin(min_pin),
+      max_pin(max_pin),
+      max_speed(max_speed),
       acceleration(acceleration) {}
 };
 
 class Axis {
 private:
   AccelStepper stepper;
-  int minLimitPin;
-  int maxLimitPin;
-  bool movingPositive;  // true if moving in positive direction, false if negative
+  int min_limit_pin;
+  int max_limit_pin;
+  bool moving_positive;  // true if moving in positive direction, false if negative
   bool enabled;         // true if axis is enabled, false if disabled
   bool running = false;
   bool to_limit = false;
-  bool prevMinState = false;  // Previous state of min limit switch (true = hit)
-  bool prevMaxState = false;  // Previous state of max limit switch (true = hit)
+  bool prev_min_state = false;  // Previous state of min limit switch (true = hit)
+  bool prev_max_state = false;  // Previous state of max limit switch (true = hit)
 
 public:
   /**
@@ -50,18 +50,18 @@ public:
      * @param params Struct containing all axis configuration parameters
      */
   Axis(const AxisParams& params)
-    : stepper(1, params.stepPin, params.dirPin),  // 1 = DRIVER interface (step/dir)
-      minLimitPin(params.minPin),
-      maxLimitPin(params.maxPin),
-      movingPositive(false),
+    : stepper(1, params.step_pin, params.dir_pin),  // 1 = DRIVER interface (step/dir)
+      min_limit_pin(params.min_pin),
+      max_limit_pin(params.max_pin),
+      moving_positive(false),
       enabled(true) {
 
     // Configure limit switch pins as inputs with pull-up resistors
-    pinMode(minLimitPin, INPUT_PULLUP);
-    pinMode(maxLimitPin, INPUT_PULLUP);
+    pinMode(min_limit_pin, INPUT_PULLUP);
+    pinMode(max_limit_pin, INPUT_PULLUP);
 
     // Configure stepper motor parameters
-    stepper.setMaxSpeed(params.maxSpeed);
+    stepper.setMaxSpeed(params.max_speed);
     stepper.setAcceleration(params.acceleration);
   }
 
@@ -80,10 +80,10 @@ public:
     running = true;
     to_limit = true;
     stepper.move(999999999);
-    movingPositive = true;
+    moving_positive = true;
 
-    prevMinState = isAtMin();
-    prevMaxState = isAtMax();
+    prev_min_state = isAtMin();
+    prev_max_state = isAtMax();
   }
 
   void moveToMin() {
@@ -92,10 +92,10 @@ public:
     running = true;
     to_limit = true;
     stepper.move(-999999999);
-    movingPositive = false;
+    moving_positive = false;
 
-    prevMinState = isAtMin();
-    prevMaxState = isAtMax();
+    prev_min_state = isAtMin();
+    prev_max_state = isAtMax();
   }
 
   void moveBy(long position) {
@@ -105,10 +105,10 @@ public:
     running = true;
     to_limit = false;
     stepper.move(position);
-    movingPositive = (position > 0);
+    moving_positive = (position > 0);
 
-    prevMinState = isAtMin();
-    prevMaxState = isAtMax();
+    prev_min_state = isAtMin();
+    prev_max_state = isAtMax();
   }
 
   void moveTo(long position) {
@@ -119,10 +119,10 @@ public:
     running = true;
     to_limit = false;
     stepper.moveTo(position);
-    movingPositive = wouldMovePositive;
+    moving_positive = wouldMovePositive;
 
-    prevMinState = isAtMin();
-    prevMaxState = isAtMax();
+    prev_min_state = isAtMin();
+    prev_max_state = isAtMax();
   }
 
   void stop() {
@@ -131,11 +131,11 @@ public:
   }
 
   bool isAtMin() {
-    return digitalRead(minLimitPin) == LOW;
+    return digitalRead(min_limit_pin) == LOW;
   }
 
   bool isAtMax() {
-    return digitalRead(maxLimitPin) == LOW;
+    return digitalRead(max_limit_pin) == LOW;
   }
 
   // Returns true if the min limit switch transitioned from not-hit to hit.
@@ -143,8 +143,8 @@ public:
   // @return True if switch just got hit, false otherwise.
   bool didHitMin() {
     bool currentState = isAtMin();
-    bool justHit = !prevMinState && currentState;
-    prevMinState = currentState;
+    bool justHit = !prev_min_state && currentState;
+    prev_min_state = currentState;
     return justHit;
   }
 
@@ -153,8 +153,8 @@ public:
   // @return True if switch just got hit, false otherwise.
   bool didHitMax() {
     bool currentState = isAtMax();
-    bool justHit = !prevMaxState && currentState;
-    prevMaxState = currentState;
+    bool justHit = !prev_max_state && currentState;
+    prev_max_state = currentState;
     return justHit;
   }
 
@@ -167,7 +167,7 @@ public:
     // Check limit switches and prevent movement in that direction if triggered
     if (didHitMin()) {
       stopRunning();
-      if (to_limit && !movingPositive) {
+      if (to_limit && !moving_positive) {
         // Expected, should stop
         return AXIS_STATE_COMPLETE;
       } else {
@@ -178,7 +178,7 @@ public:
     }
     if (didHitMax()) {
       stopRunning();
-      if (to_limit && movingPositive) {
+      if (to_limit && moving_positive) {
         // Expected, should stop
         return AXIS_STATE_COMPLETE;
       } else {

@@ -6,7 +6,7 @@
 #include "../../../Config.h"
 
 ProfileController::ProfileController(ControllerParams params)
-  : BaseController(params), selectedProfileNum(0) {}
+  : BaseController(params), selected_profile_num(0) {}
 
 void ProfileController::onStart(Profile& profile) {
   ProfileParams params = {0, 0, CurProf, 0};
@@ -25,13 +25,13 @@ void ProfileController::onInteraction(const Interaction& interaction) {
       break;
 
     case TAG_PROFILE_LOAD: {
-      CurProfNum = selectedProfileNum;
-      writeCurIDEEPROM(selectedProfileNum);
-      readProfileEEPROM(selectedProfileNum);
+      CurProfNum = selected_profile_num;
+      writeCurIDEEPROM(selected_profile_num);
+      readProfileEEPROM(selected_profile_num);
       
       // Show profile loaded dialog
       params.keypressed = 0;
-      params.curprofnum = selectedProfileNum;
+      params.curprofnum = selected_profile_num;
       params.dialog_code = DIALOG_PROFILE_LOADED;
       drawProfileScreen(phost, params);
       delay(2000);
@@ -40,29 +40,29 @@ void ProfileController::onInteraction(const Interaction& interaction) {
     }
 
     case TAG_PROFILE_UP: {
-      if (selectedProfileNum < MAX_PROFILES - 1) {
-        ++selectedProfileNum;
+      if (selected_profile_num < MAX_PROFILES - 1) {
+        ++selected_profile_num;
       } else {
-        selectedProfileNum = 0;
+        selected_profile_num = 0;
       }
 
-      readProfileEEPROM(selectedProfileNum);
+      readProfileEEPROM(selected_profile_num);
       params.keypressed = interaction.key_pressed;
-      params.curprofnum = selectedProfileNum;
+      params.curprofnum = selected_profile_num;
       params.dialog_code = 0;
       drawProfileScreen(phost, params);
       break;
     }
 
     case TAG_PROFILE_DOWN: {
-      if (selectedProfileNum > 0) {
-        --selectedProfileNum;
+      if (selected_profile_num > 0) {
+        --selected_profile_num;
       } else {
-        selectedProfileNum = MAX_PROFILES - 1;
+        selected_profile_num = MAX_PROFILES - 1;
       }
-      readProfileEEPROM(selectedProfileNum);
+      readProfileEEPROM(selected_profile_num);
       params.keypressed = interaction.key_pressed;
-      params.curprofnum = selectedProfileNum;
+      params.curprofnum = selected_profile_num;
       params.dialog_code = 0;
       drawProfileScreen(phost, params);
       break;
@@ -75,7 +75,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
       getKeyboardValue(phost, new_password_1, "Enter New Password", FALSE);
       if (new_password_1[0] == 0) {
         params.keypressed = 0;
-        params.curprofnum = selectedProfileNum;
+        params.curprofnum = selected_profile_num;
         params.dialog_code = 0;
         drawProfileScreen(phost, params);
         break;
@@ -85,7 +85,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
 
       if (new_password_2[0] == 0) {
         params.keypressed = 0;
-        params.curprofnum = selectedProfileNum;
+        params.curprofnum = selected_profile_num;
         params.dialog_code = 0;
         drawProfileScreen(phost, params);
         break;
@@ -93,7 +93,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
 
       if (strcmp(new_password_1, new_password_2) != 0) {
         params.keypressed = 0;
-        params.curprofnum = selectedProfileNum;
+        params.curprofnum = selected_profile_num;
         params.dialog_code = DIALOG_ERROR_PASSWORD_MISMATCH;
         drawProfileScreen(phost, params);
         delay(2000);
@@ -104,7 +104,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
 
       writePassEEPROM(new_password_1);
       params.keypressed = 0;
-      params.curprofnum = selectedProfileNum;
+      params.curprofnum = selected_profile_num;
       params.dialog_code = DIALOG_PASSWORD_CHANGED;
       drawProfileScreen(phost, params);
       delay(2000);

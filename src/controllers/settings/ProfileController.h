@@ -4,7 +4,7 @@
 
 class ProfileController : public BaseController {
 private:
-  int8_t selectedProfileNum;
+  int8_t selected_profile_num;
 
 public:
   ProfileController(ControllerParams params);
