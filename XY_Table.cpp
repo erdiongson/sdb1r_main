@@ -23,49 +23,49 @@
 #include "src/logic/ControllerManager.h"
 
 Gpu_Hal_Context_t host, *phost;
-ProfileManager profileManager;
+ProfileManager profile_manager;
 
-AxisParams xAxis(
+AxisParams axis_x(
   MOTOR_X_CLK, MOTOR_X_CW,
   LIMIT_S_X_MIN, LIMIT_S_X_MAX,
   MOTOR_X_SPEED, MOTOR_X_ACCELERATION);
 
-AxisParams yAxis(
+AxisParams axis_y(
   MOTOR_Y_CLK, MOTOR_Y_CW,
   LIMIT_S_Y_MIN, LIMIT_S_Y_MAX,
   MOTOR_Y_SPEED, MOTOR_Y_ACCELERATION);
 
-AxisParams zAxis(
+AxisParams axis_z(
   MOTOR_Z_CLK, MOTOR_z_CW,
   LIMIT_S_Z_MIN, LIMIT_S_Z_MAX,
   MOTOR_Y_SPEED, MOTOR_Y_ACCELERATION);
 
-DispenserHeadParams params = { xAxis, yAxis, zAxis };
-DispenserHead dispenserHead(params);
+DispenserHeadParams params = { axis_x, axis_y, axis_z };
+DispenserHead dispenser_head(params);
 
 // Forward declaration of startNextController for callback
 void startNextController(int nextControllerType);
 
 // Controller manager instance
-static uint8_t controllerManagerBuffer[sizeof(ControllerManager)];
-ControllerManager& controllerManager = *(new (controllerManagerBuffer) ControllerManager(
-  dispenserHead, &host, profileManager, startNextController
+static uint8_t controller_manager_buffer[sizeof(ControllerManager)];
+ControllerManager& controller_manager = *(new (controller_manager_buffer) ControllerManager(
+  dispenser_head, &host, profile_manager, startNextController
 ));
 
 // To track when to check for interactions
-unsigned long lastInteractionCheck = 0;
+unsigned long last_interaction_check = 0;
 
 // To track when to print memory stats
-unsigned long lastMemoryPrint = 0;
+unsigned long last_memory_print = 0;
 
 // Prints the free memory available on the Arduino.
 void printFreeMemory() {
   extern int __heap_start, *__brkval;
   int v;
-  int freeMemory = (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
+  int free_memory = (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
   
   Serial.print("Free memory: ");
-  Serial.print(freeMemory);
+  Serial.print(free_memory);
   Serial.print(" bytes | Stack: 0x");
   Serial.print((int)&v, HEX);
   Serial.print(" | Heap: 0x");
@@ -78,7 +78,7 @@ void printFreeMemory() {
 // Transitions to the next controller based on the controller type.
 // @param nextControllerType The type of controller to transition to.
 void startNextController(int nextControllerType) {
-  controllerManager.startNextController(nextControllerType);
+  controller_manager.startNextController(nextControllerType);
 }
 
 
@@ -118,27 +118,27 @@ void setup() {
 Interaction interaction;
 
 void loop() {
-  unsigned long currentTime = millis();
+  unsigned long current_time = millis();
 
   // Call the mode's onStep() function
   // Responsible for stepper runs, and dispenser serial processing
-  ControllerStepResult result = controllerManager.onStep();
+  ControllerStepResult result = controller_manager.onStep();
 
   // Check for interactions only periodically
   // Includes touch screen presses, and PLC commands
-  int checkInterval = result.steppers == AXIS_STATE_RUNNING ? INTERACT_INTERVAL_AXIS_RUNNING : INTERACT_INTERVAL_AXIS_IDLE;
+  int check_interval = result.steppers == AXIS_STATE_RUNNING ? INTERACT_INTERVAL_AXIS_RUNNING : INTERACT_INTERVAL_AXIS_IDLE;
 
-  if (currentTime - lastInteractionCheck >= checkInterval) {
-    lastInteractionCheck = currentTime;
+  if (current_time - last_interaction_check >= check_interval) {
+    last_interaction_check = current_time;
 
     if (InteractionsHandler::getAllInteractions(interaction)) {
-      controllerManager.onInteraction(interaction);
+      controller_manager.onInteraction(interaction);
     }
   }
 
   // Print free memory every 10 seconds
-  if (currentTime - lastMemoryPrint >= 10000) {
-    lastMemoryPrint = currentTime;
+  if (current_time - last_memory_print >= 10000) {
+    last_memory_print = current_time;
     printFreeMemory();
   }
 }
