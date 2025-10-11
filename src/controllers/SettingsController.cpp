@@ -1,31 +1,20 @@
 #include "../gpu/Platform.h"
 #include "../../Config.h"
 #include "../views/SettingsScreen.h"
-#include "../views/PreviewScreen.h"
 #include "../views/common/Keyboards.h"
+#include "../logic/TrayPositionHandler.h"
 #include "../logic/SkipUtils.h"
 #include "SettingsController.h"
 #include "../Utils.h"
 
 SettingsController::SettingsController(ControllerParams params)
-  : BaseController(params), currentProfile(nullptr), 
-    simulating(false), lastSimulationTime(0), simulateCol(0), simulateRow(0) {}
+  : BaseController(params), currentProfile(nullptr) {}
 
 void SettingsController::on_start(Profile& profile) {
   Serial.println(F("MODE: Config mode"));
 
   // Store reference to the current profile
   currentProfile = &profile;
-
-  // Initialize simulation state
-  simulating = false;
-  simulateCol = 0;
-  simulateRow = 0;
-  lastSimulationTime = 0;
-  
-  // Load profile into simulation handler
-  simulationHandler.load_profile(*currentProfile);
-  simulationHandler.reset();
 
   // Display configuration screen
   draw_settings_screen(phost);
@@ -278,49 +267,7 @@ void SettingsController::on_interaction(const Interaction& interaction) {
 
     case TAG_CONFIG_PREVIEW:
       Serial.println(F("Button Pressed: PREVIEW"));
-      {
-        // Parse skip positions from the current profile
-        TrayHandler::TrayPositionHandler tempHandler;
-        tempHandler.load_profile(*currentProfile);
-        
-        // Get the skip positions
-        TrayHandler::Position skipPositions[MAX_POSITIONS];
-        tempHandler.getSkipPositions(skipPositions);
-       
-        // Create preview screen parameters
-        PreviewScreenParams params;
-        params.gridCols = currentProfile->Tube_No_x;
-        params.gridRows = currentProfile->Tube_No_y;
-        params.staggered = currentProfile->staggered;
-        params.simulating = false;
-        params.simulateCol = 0;
-        params.simulateRow = 0;
-
-        snprintf(previewInfoText, sizeof(previewInfoText), "Preview (Grid %dx%d)", params.gridCols, params.gridRows);
-        params.infoText = previewInfoText;
-        
-        // Display the preview screen
-        draw_preview_screen(phost, skipPositions, params);
-      }
-      break;
-
-    case TAG_CONFIG_PREVIEW_BACK:
-      Serial.println(F("Button Pressed: PREVIEW BACK"));
-      // Stop simulation when leaving preview
-      simulating = false;
-      simulateCol = 0;
-      simulateRow = 0;
-      draw_skip_screen(phost);
-      break;
-
-    case TAG_PREVIEW_SIMULATE:
-      Serial.println(F("Button Pressed: SIMULATE"));
-      start_simulation();
-      break;
-
-    case TAG_PREVIEW_STOP:
-      Serial.println(F("Button Pressed: STOP"));
-      end_simulation();
+      start_next_controller(CONTROLLER_PREVIEW);
       break;
 
       case TAG_ADVANCED:
@@ -334,15 +281,6 @@ void SettingsController::on_interaction(const Interaction& interaction) {
 }
 
 ControllerStepResult SettingsController::on_step() {
-  // Handle simulation updates every 600 ms
-  if (simulating) {
-    unsigned long currentTime = millis();
-    if (currentTime - lastSimulationTime >= 600) {
-      lastSimulationTime = currentTime;
-      step_simulation();
-    }
-  }
-  
   DispenserProcessResult result = dispenserHead.process();
   return ControllerStepResult(result.steppers, result.dispenser);
 }
@@ -354,7 +292,6 @@ int SettingsController::get_mode_type() const {
 void SettingsController::increment_vibration_level() {
   int next_level = currentProfile->vibrationEnabled + 1;
   if (next_level > 4) next_level = 0;
-
   currentProfile->vibrationEnabled = next_level;
 }
 
@@ -435,98 +372,5 @@ void SettingsController::editSkipIndividual(Gpu_Hal_Context_t* phost) {
       break;
     }
   }
-}
-
-void SettingsController::start_simulation() {
-  // Start simulation
-  simulating = true;
-  lastSimulationTime = millis();
-  
-  // Reset handler and get first position
-  simulationHandler.load_profile(*currentProfile);
-  TrayHandler::Position firstPosition = simulationHandler.reset();
-
-  if (firstPosition.x == -1 || firstPosition.y == -1) {
-    Serial.println(F("No valid positions found, ending simulation"));
-    end_simulation();
-    return;
-  }
-
-  simulateCol = firstPosition.x;
-  simulateRow = firstPosition.y;
-  
-  // Redraw preview screen
-  TrayHandler::Position skipPositions[MAX_POSITIONS];
-  simulationHandler.getSkipPositions(skipPositions);
-  
-  PreviewScreenParams params;
-  params.gridCols = currentProfile->Tube_No_x;
-  params.gridRows = currentProfile->Tube_No_y;
-  params.simulating = simulating;
-  params.simulateCol = simulateCol;
-  params.simulateRow = simulateRow;
-  params.staggered = currentProfile->staggered;
-  
-  // Set info text for simulation
-  snprintf(previewInfoText, sizeof(previewInfoText), "Position = %dx%d", simulateCol, simulateRow);
-  params.infoText = previewInfoText;
-  
-  draw_preview_screen(phost, skipPositions, params);
-}
-
-void SettingsController::end_simulation() {
-  // Stop simulation
-  simulating = false;
-  simulateCol = 0;
-  simulateRow = 0;
-  
-  // Redraw preview screen
-  TrayHandler::Position skipPositions[MAX_POSITIONS];
-  simulationHandler.getSkipPositions(skipPositions);
-  
-  PreviewScreenParams params;
-  params.gridCols = currentProfile->Tube_No_x;
-  params.gridRows = currentProfile->Tube_No_y;
-  params.simulating = simulating;
-  params.simulateCol = simulateCol;
-  params.simulateRow = simulateRow;
-  params.staggered = currentProfile->staggered;
-  
-  // Set info text for non-simulation
-  snprintf(previewInfoText, sizeof(previewInfoText), "Preview (Grid %dx%d)", params.gridCols, params.gridRows);
-  params.infoText = previewInfoText;
-  
-  draw_preview_screen(phost, skipPositions, params);
-}
-
-void SettingsController::step_simulation() {
-  // Get next position
-  TrayHandler::PositionResult result = simulationHandler.goToNextValidPosition();
-  
-  if (result.hasNext) {
-    simulateCol = result.position.x;
-    simulateRow = result.position.y;
-  } else {
-    end_simulation();
-    return;
-  }
-  
-  // Redraw preview screen with updated position
-  TrayHandler::Position skipPositions[MAX_POSITIONS];
-  simulationHandler.getSkipPositions(skipPositions);
-  
-  PreviewScreenParams params;
-  params.gridCols = currentProfile->Tube_No_x;
-  params.gridRows = currentProfile->Tube_No_y;
-  params.simulating = simulating;
-  params.simulateCol = simulateCol;
-  params.simulateRow = simulateRow;
-  params.staggered = currentProfile->staggered;
-  
-  // Set info text for simulation
-  snprintf(previewInfoText, sizeof(previewInfoText), "Position = %dx%d", simulateCol, simulateRow);
-  params.infoText = previewInfoText;
-  
-  draw_preview_screen(phost, skipPositions, params);
 }
 

@@ -29,6 +29,7 @@
 #include "src/controllers/debug/DebugController.h"
 #include "src/controllers/debug/MoveTestController.h"
 #include "src/controllers/debug/DispenseTestController.h"
+#include "src/controllers/PreviewController.h"
 
 // Define placement new operator for Arduino (if not already available).
 inline void* operator new(size_t size, void* ptr) { return ptr; }
@@ -136,6 +137,9 @@ void start_next_controller(int nextControllerType) {
       break;
     case CONTROLLER_DEBUG:
       controller = new (controllerBuffer.data) DebugController(params);
+      break;
+    case CONTROLLER_PREVIEW:
+      controller = new (controllerBuffer.data) PreviewController(params);
       break;
     default:
       Serial.print("Unknown controller type: ");
