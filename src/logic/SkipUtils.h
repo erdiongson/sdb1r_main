@@ -3,11 +3,7 @@
 
 #include <Arduino.h>
 #include "../logic/Profile.h"
-
-// Define MAX_POSITIONS if not already defined
-#ifndef MAX_POSITIONS
-#define MAX_POSITIONS 100
-#endif
+#include "../Constants.h"
 
 // Forward declaration - Position must be defined before including this header
 namespace TrayHandler {

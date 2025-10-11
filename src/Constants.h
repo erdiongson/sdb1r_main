@@ -102,3 +102,53 @@
 
 #define INTERACT_INTERVAL_AXIS_RUNNING 200
 #define INTERACT_INTERVAL_AXIS_IDLE 20
+
+// Dispenser Serial Protocol Constants
+#define MSG_SOT     0  // Start of Transmission position
+#define MSG_COMMAND 1  // Command/status byte position
+#define MSG_DATA1   2  // Data byte 1 position
+#define MSG_DATA2   3  // Data byte 2 (checksum) position
+#define MSG_EOT     4  // End of Transmission position
+#define MSG_LENGTH  5  // Total message length
+
+#define DISPENSER_START_BYTE 0xEF
+#define DISPENSER_END_BYTE 0xFE
+
+// Dispenser command values
+#define SDB_HANDSHAKE 0x06       // Handshake command
+#define SDB_VIBRATE_LEVEL 0x54     // Command to set vibration mode ON
+#define SDB_VIBRATE_TIME 0x65  // Command to set vibration time
+#define SDB_DISPENSE_START 0x46  // Command to start dispensing
+
+// Dispenser response command values
+#define ACKNOWLEDGE 0x46          // Acknowledgment response
+#define DISPENSE_DONE 0xF9        // Dispense operation completed
+#define IR_SENSOR_FAILURE 0xE1    // Error: IR sensor failure
+#define MARKER_NOT_DETECTED 0xE2  // Error: Marker not detected
+#define ACK_ERROR 0xE0            // Error: Acknowledgment error
+
+// Vibration Mode Commands
+#define VIBMODE_U0 0x71  //former 0xC2, changed for 1RC
+
+// Vibration Duration/Time Commands
+#define VIBDUR_1 0x81  //1 second/s
+
+// PLC Serial Protocol Constants
+#define PLC_START_BYTE 0xEF
+#define PLC_END_BYTE 0xFE
+#define PLC_MESSAGE_LENGTH 5
+
+// Dialog codes
+#define DIALOG_ERROR_IR_SENSOR 2
+#define DIALOG_ERROR_MARKER_NOT_DETECTED 3
+#define DIALOG_ERROR_LIMIT_SWITCH 4
+#define DIALOG_ERROR_LIMIT_SWITCH_HOMING 5
+#define DIALOG_ERROR_ACK_ERROR 6
+#define DIALOG_PROFILE_SAVED 7
+#define DIALOG_PROFILE_LOADED 8
+#define DIALOG_ERROR_PASSWORD_MISMATCH 9
+#define DIALOG_PASSWORD_CHANGED 10
+#define DIALOG_ERROR_WRONG_PASSWORD 11
+
+// Skip and Tray Position Constants
+#define MAX_POSITIONS 100

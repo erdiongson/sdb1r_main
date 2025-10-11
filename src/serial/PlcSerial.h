@@ -7,12 +7,11 @@
 #pragma once
 
 #include <Arduino.h>
+#include "../Constants.h"
 
-
-
-#define START_BYTE 0xEF
-#define END_BYTE 0xFE
-#define PLC_MESSAGE_LENGTH 5
+// Rename constants to match Constants.h
+#define START_BYTE PLC_START_BYTE
+#define END_BYTE PLC_END_BYTE
 
 enum PLCMessageType {
   MSG_UNKNOWN = 0,

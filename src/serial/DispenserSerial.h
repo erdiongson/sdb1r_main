@@ -2,36 +2,11 @@
 #define DISPENSER_SERIAL_H
 
 #include <Arduino.h>
+#include "../Constants.h"
 
-// Message format position constants
-#define MSG_SOT     0  // Start of Transmission position
-#define MSG_COMMAND 1  // Command/status byte position
-#define MSG_DATA1   2  // Data byte 1 position
-#define MSG_DATA2   3  // Data byte 2 (checksum) position
-#define MSG_EOT     4  // End of Transmission position
-#define MSG_LENGTH  5  // Total message length
-
-#define START_BYTE 0xEF
-#define END_BYTE 0xFE
-
-// Command values
-#define SDB_HANDSHAKE 0x06       // Handshake command
-#define SDB_VIBRATE_LEVEL 0x54     // Command to set vibration mode ON
-#define SDB_VIBRATE_TIME 0x65  // Command to set vibration time
-#define SDB_DISPENSE_START 0x46  // Command to start dispensing
-
-// Response command values
-#define ACKNOWLEDGE 0x46          // Acknowledgment response
-#define DISPENSE_DONE 0xF9        // Dispense operation completed
-#define IR_SENSOR_FAILURE 0xE1    // Error: IR sensor failure
-#define MARKER_NOT_DETECTED 0xE2  // Error: Marker not detected
-#define ACK_ERROR 0xE0            // Error: Acknowledgment error
-
-//Vibration Mode Commands
-#define VIBMODE_U0 0x71  //former 0xC2, changed for 1RC
-
-//Vibration Duration/Time Commands
-#define VIBDUR_1 0x81  //1 second/s
+// Rename constants to match Constants.h
+#define START_BYTE DISPENSER_START_BYTE
+#define END_BYTE DISPENSER_END_BYTE
 
 // DispenserSerial class for handling dispenser communication.
 class DispenserSerial {

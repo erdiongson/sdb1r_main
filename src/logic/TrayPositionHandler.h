@@ -3,9 +3,7 @@
 
 #include <Arduino.h>
 #include "../../Config.h"
-
-
-#define MAX_POSITIONS 100
+#include "../Constants.h"
 
 namespace TrayHandler {
 
