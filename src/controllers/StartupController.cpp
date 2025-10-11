@@ -9,10 +9,10 @@ StartupController::StartupController(ControllerParams params)
   }
 
 void StartupController::onStart() {
-  Dprint(F("StartupController::on_start"));
+  Logger::log(F("StartupController::on_start"));
   
   // Load profile from EEPROM
-  Serial.println("Loading profile..");
+  Logger::log("Loading profile..");
   profile_manager.loadProfile();
   
   drawLogoScreen(phost, 0);
@@ -44,7 +44,7 @@ void StartupController::onInteraction(const Interaction& interaction) {}
   }
 
   if (stage == STAGE_HANDSHAKE && result.dispenser == DISPENSER_STATE_IDLING) {
-    Dprint(F("Handshake acknowledged 👍"));
+    Logger::log(F("Handshake acknowledged 👍"));
     startNextController(CONTROLLER_HOMING);
   }
   

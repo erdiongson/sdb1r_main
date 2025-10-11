@@ -1,26 +1,60 @@
 #pragma once
 #include "../Config.h"
 
-void inline Dprint(char x) { Serial.println(x, HEX); }
-void inline Dprint(String x) { Serial.println(x); }
-void inline Dprint(String x, String y) {
-  Serial.print(x);
-  Serial.print(y);
-}
-void inline Dprint(String x, float y) {
-  char buf[20];
 
-  dtostrf(y, 3, 5, buf);
-  Serial.print(x);
-  Serial.println(buf);
-}
-void inline Dprint(String x, uint8_t y) {
-  char buf[20];
+// Static class for simple logging via Serial.
+class Logger {
+public:
+  // Logs a message to Serial output.
+  // @param x The message string to log.
+  static void log(String x) {
+    Serial.println(x);
+  }
 
-  sprintf(buf, "%d", y);
-  Serial.print(x);
-  Serial.println(buf);
-}
+  // Logs two strings concatenated.
+  // @param x The first string.
+  // @param y The second string.
+  static void log(String x, String y) {
+    Serial.print(x);
+    Serial.println(y);
+  }
+
+  // Logs a string followed by a float value.
+  // @param x The string prefix.
+  // @param y The float value to log.
+  static void log(String x, float y) {
+    char buf[20];
+    dtostrf(y, 3, 5, buf);
+    Serial.print(x);
+    Serial.println(buf);
+  }
+
+  // Logs a string followed by an unsigned 8-bit integer.
+  // @param x The string prefix.
+  // @param y The uint8_t value to log.
+  static void log(String x, uint8_t y) {
+    char buf[20];
+    sprintf(buf, "%d", y);
+    Serial.print(x);
+    Serial.println(buf);
+  }
+
+  // Logs a string followed by a byte array in hexadecimal format.
+  // @param prefix The string prefix.
+  // @param data Pointer to the byte array.
+  // @param length Number of bytes to log.
+  static void log(String prefix, const uint8_t* data, size_t length) {
+    Serial.print(prefix);
+    for (size_t i = 0; i < length; i++) {
+      Serial.print(data[i], HEX);
+      if (i < length - 1) {
+        Serial.print(" ");
+      }
+    }
+    Serial.println();
+  }
+};
+
 
 // Static class for monitoring and printing memory statistics.
 class MemoryMonitor {
@@ -55,13 +89,3 @@ public:
     }
   }
 };
-
-// #else
-
-//   void inline Dprint(char x) {}
-//   void inline Dprint(String x) {}
-//   void inline Dprint(String x, String y) {}
-//   void inline Dprint(String x, uint8_t y) {}
-//   void inline Dprint(String x, float y) {}
-
-// #endif

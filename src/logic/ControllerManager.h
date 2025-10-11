@@ -115,8 +115,7 @@ public:
         controller = new (controllerBuffer.data) PreviewController(params);
         break;
       default:
-        Serial.print("Unknown controller type: ");
-        Serial.println(nextControllerType);
+        Logger::log("Unknown controller type: ", (uint8_t)nextControllerType);
         return;
     }
 

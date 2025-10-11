@@ -123,7 +123,7 @@ uint8_t ProfileManager::readCurIDEEPROM(void) {
 
 void ProfileManager::writeProfileEEPROM(int index) {
   int address = (index * 300) + sizeof(uint8_t);
-  Dprint("Starting Address = ", (float)address);
+  Logger::log("Starting Address = ", (float)address);
 
   EEPROM.put(address, currentProfile.profile_name);
   address += sizeof(currentProfile.profile_name);
@@ -162,14 +162,14 @@ void ProfileManager::writeProfileEEPROM(int index) {
   EEPROM.put(address, currentProfile.staggered);
   address += sizeof(currentProfile.staggered);
 
-  Dprint("Ending Address = ", (float)address);
+  Logger::log("Ending Address = ", (float)address);
 }
 
 void ProfileManager::readProfileEEPROM(int index) {
   char buf[10];
 
   int address = (index * 300) + sizeof(uint8_t);
-  Dprint("Starting Address = ", (float)address);
+  Logger::log("Starting Address = ", (float)address);
 
   EEPROM.get(address, currentProfile.profile_name);
   address += sizeof(currentProfile.profile_name);
@@ -208,7 +208,7 @@ void ProfileManager::readProfileEEPROM(int index) {
   EEPROM.get(address, currentProfile.staggered);
   address += sizeof(currentProfile.staggered);
 
-  Dprint("Ending Address = ", (float)address);
+  Logger::log("Ending Address = ", (float)address);
   checkProfile();
 }
 

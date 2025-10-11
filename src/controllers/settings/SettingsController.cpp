@@ -11,7 +11,7 @@ SettingsController::SettingsController(ControllerParams params)
   : BaseController(params), current_profile(nullptr) {}
 
 void SettingsController::onStart() {
-  Serial.println(F("MODE: Config mode"));
+  Logger::log(F("MODE: Config mode"));
 
   // Store reference to the current profile
   current_profile = &profile_manager.getCurrentProfile();
@@ -25,7 +25,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
 
   switch (interaction.key_pressed) {
     case TAG_CONFIG_HOME:  // Home button
-      Serial.println(F("Button Pressed: HOME"));
+      Logger::log(F("Button Pressed: HOME"));
       {
         char buf[PROFILE_NAME_MAX_LEN];
         float maxval = 0;
@@ -57,12 +57,12 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       break;
 
     case TAG_CONFIG_LOAD:  // Load (Config Screen)
-      Serial.println(F("Button Pressed: LOAD"));
+      Logger::log(F("Button Pressed: LOAD"));
       startNextController(CONTROLLER_PROFILE);
       break;
 
     case TAG_CONFIG_SAVE: {
-      Serial.println("Button Pressed: SAVE");
+      Logger::log("Button Pressed: SAVE");
       uint8_t currentNum = profile_manager.getCurrentProfileNum();
       profile_manager.writeCurIDEEPROM(currentNum);
       profile_manager.writeProfileEEPROM(currentNum);
@@ -77,7 +77,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
     }
 
     case TAG_CONFIG_PROFILE_NAME: {
-      Serial.println(F("Button Pressed: PROFILE"));
+      Logger::log(F("Button Pressed: PROFILE"));
         char buf[PROFILE_NAME_MAX_LEN];
         strcpy(buf, current_profile->profile_name);
         getKeyboardValue(phost, buf, "Enter Profile Name", FALSE);
@@ -209,65 +209,65 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       break;
 
     case TAG_Z_DIP:
-      Serial.println(F("Incrementing Z Dip"));
+      Logger::log(F("Incrementing Z Dip"));
       current_profile->z_dip = getKeypadValue(phost, current_profile->z_dip, MINZDIP, MAXZDIP, TRUE);
       drawSettingsScreen(phost, {*current_profile, 0});
       break;
 
     case TAG_VIBRATION_LEVEL:
-      Serial.println(F("Incrementing vibration level"));
+      Logger::log(F("Incrementing vibration level"));
       incrementVibrationLevel();
       drawSettingsScreen(phost, {*current_profile, 0});
       break;
 
     case TAG_VIBRATION_DURATION:
-      Serial.println(F("Incrementing vibration duration"));
+      Logger::log(F("Incrementing vibration duration"));
       incrementVibrationTime();
       drawSettingsScreen(phost, {*current_profile, 0});
       break;
 
     case TAG_PASSWORD_ENABLED:
-      Serial.println(F("Toggle password enable"));
+      Logger::log(F("Toggle password enable"));
       current_profile->password_enabled = !current_profile->password_enabled;
       drawSettingsScreen(phost, {*current_profile, 0});
       break;
 
     case TAG_STAGGERED_TOGGLE:
-      Serial.println(F("Toggle staggered mode"));
+      Logger::log(F("Toggle staggered mode"));
       current_profile->staggered = !current_profile->staggered;
       drawSkipScreen(phost, *current_profile);
       break;
 
     case TAG_SKIP_COLUMNS:
-      Serial.println(F("Button Pressed: SKIP COLUMNS"));
+      Logger::log(F("Button Pressed: SKIP COLUMNS"));
       editSkipColumn(phost);
       drawSkipScreen(phost, *current_profile);
       break;
 
     case TAG_SKIP_ROWS:
-      Serial.println(F("Button Pressed: SKIP ROWS"));
+      Logger::log(F("Button Pressed: SKIP ROWS"));
       editSkipRow(phost);
       drawSkipScreen(phost, *current_profile);
       break;
 
     case TAG_SKIP_SINGLE_POS:
-      Serial.println(F("Button Pressed: SKIP SINGLE POSITION"));
+      Logger::log(F("Button Pressed: SKIP SINGLE POSITION"));
       editSkipIndividual(phost);
       drawSkipScreen(phost, *current_profile);
       break;
 
     case TAG_ADV_PROF_BACK:  // Back button
-      Serial.println(F("Button Pressed: BACK"));
+      Logger::log(F("Button Pressed: BACK"));
       drawSettingsScreen(phost, {*current_profile, 0});
       break;
 
     case TAG_CONFIG_PREVIEW:
-      Serial.println(F("Button Pressed: PREVIEW"));
+      Logger::log(F("Button Pressed: PREVIEW"));
       startNextController(CONTROLLER_PREVIEW);
       break;
 
       case TAG_ADVANCED:
-        Serial.println(F("Button Pressed: ADVANCED"));
+        Logger::log(F("Button Pressed: ADVANCED"));
         drawSkipScreen(phost, *current_profile);
         break;
 
@@ -312,10 +312,10 @@ void SettingsController::editSkipColumn(Gpu_Hal_Context_t* phost) {
     if (result.was_cleaned) {
       strncpy(current_profile->skip_col, result.cleaned, ROW_COL_MAX_LEN - 1);
       current_profile->skip_col[ROW_COL_MAX_LEN - 1] = '\0';
-      Serial.println(F("Input was cleaned, showing keyboard again"));
+      Logger::log(F("Input was cleaned, showing keyboard again"));
     } else {
       // Input is clean, exit loop
-      Serial.println(F("Input is clean"));
+      Logger::log(F("Input is clean"));
       break;
     }
   }
@@ -335,10 +335,10 @@ void SettingsController::editSkipRow(Gpu_Hal_Context_t* phost) {
     if (result.was_cleaned) {
       strncpy(current_profile->skip_row, result.cleaned, ROW_COL_MAX_LEN - 1);
       current_profile->skip_row[ROW_COL_MAX_LEN - 1] = '\0';
-      Serial.println(F("Input was cleaned, showing keyboard again"));
+      Logger::log(F("Input was cleaned, showing keyboard again"));
     } else {
       // Input is clean, exit loop
-      Serial.println(F("Input is clean"));
+      Logger::log(F("Input is clean"));
       break;
     }
   }
@@ -352,19 +352,19 @@ void SettingsController::editSkipIndividual(Gpu_Hal_Context_t* phost) {
     getKeyboardValue(phost, current_profile->skip_single_pos, "Enter positions to skip", FALSE);
     
     // Clean the input with bounds checking
-    Serial.println(F("Cleaning!"));
+    Logger::log(F("Cleaning!"));
     SkipUtils::CleanResult result = SkipUtils::clean(current_profile->skip_single_pos, SkipUtils::INDIVIDUAL, dimensions);
-    Serial.println(F("Cleaned!"));
+    Logger::log(F("Cleaned!"));
     
     // If input was cleaned, update and loop again
     if (result.was_cleaned) {
-      Serial.println(F("Actually cleaned!"));
+      Logger::log(F("Actually cleaned!"));
       strncpy(current_profile->skip_single_pos, result.cleaned, ROW_COL_MAX_LEN - 1);
       current_profile->skip_single_pos[ROW_COL_MAX_LEN - 1] = '\0';
-      Serial.println(F("Input was cleaned, showing keyboard again"));
+      Logger::log(F("Input was cleaned, showing keyboard again"));
     } else {
       // Input is clean, exit loop
-      Serial.println(F("Nothing changed!"));
+      Logger::log(F("Nothing changed!"));
       break;
     }
   }

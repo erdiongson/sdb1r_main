@@ -8,7 +8,7 @@ HomingController::HomingController(ControllerParams params)
   : BaseController(params) {}
 
 void HomingController::onStart() {
-  Dprint(F("HomingController::on_start"));
+  Logger::log(F("HomingController::on_start"));
 
   // If the dispenser head is at the limit switches, clear them before
   // proceeding with the homing process
@@ -40,7 +40,7 @@ ControllerStepResult HomingController::onStep() {
   }
 
   if (stage == STAGE_CLEAR && result.steppers == AXIS_STATE_COMPLETE) {
-    Dprint(F("Axis cleared 👍"));
+    Logger::log(F("Axis cleared 👍"));
     dispenserHead.x().moveToMin();
     dispenserHead.y().moveToMin();
     dispenserHead.z().moveToMin();
@@ -49,7 +49,7 @@ ControllerStepResult HomingController::onStep() {
   }
 
   if (stage == STAGE_HOME && result.steppers == AXIS_STATE_COMPLETE) {
-    Dprint(F("Axis homed 👍"));
+    Logger::log(F("Axis homed 👍"));
     startNextController(CONTROLLER_READY);
   }
 

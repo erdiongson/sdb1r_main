@@ -3,6 +3,7 @@
 #include "../serial/PlcSerial.h"
 #include "../gpu/Platform.h"
 #include "../gpu/App_Common.h"
+#include "../Utils.h"
 
 struct Interaction {
     int key_pressed;            // Key code if a key was pressed, 0 otherwise
@@ -59,7 +60,7 @@ public:
         // Check for PLC messages before early exit
         PLCMessage plcMessage = PlcSerial::process();
         if (plcMessage.type != MSG_UNKNOWN) {
-            Serial.println("PLC message received: " + String(plcMessage.type));
+            Logger::log("PLC message received: " + String(plcMessage.type));
             interaction.key_pressed = 0;
             interaction.plc_message_type = plcMessage.type;
             interaction.plc_message_data = plcMessage.data_value;

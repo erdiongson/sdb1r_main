@@ -9,7 +9,7 @@ ReadyController::ReadyController(ControllerParams params)
   : BaseController(params) {}
 
 void ReadyController::onStart() {
-  Dprint(F("ReadyController::on_start"));
+  Logger::log(F("ReadyController::on_start"));
   Profile& profile = profile_manager.getCurrentProfile();
   MainScreenParams params = {profile, 1, 1, 0, 0, 0};
   drawMainScreen(phost, MAINMENU, &params);
@@ -22,7 +22,7 @@ void ReadyController::onInteraction(const Interaction& interaction) {
   switch (interaction.key_pressed) {
 
     case START:
-      Dprint(F("ReadyController::on_interaction: Transitioning to start"));
+      Logger::log(F("ReadyController::on_interaction: Transitioning to start"));
       startNextController(CONTROLLER_RUN);
       return;
 
@@ -48,7 +48,7 @@ void ReadyController::onInteraction(const Interaction& interaction) {
         }
       }
 
-      Dprint(F("ReadyController::on_interaction: Transitioning to settings"));
+      Logger::log(F("ReadyController::on_interaction: Transitioning to settings"));
       startNextController(CONTROLLER_SETTINGS);
       return;
     
@@ -59,17 +59,17 @@ void ReadyController::onInteraction(const Interaction& interaction) {
   // Handle PLC messages
   switch (interaction.plc_message_type) {
     case MSG_START:
-      Dprint(F("ReadyController::on_interaction: Transitioning to start"));
+      Logger::log(F("ReadyController::on_interaction: Transitioning to start"));
       startNextController(CONTROLLER_RUN);
       break;
     
     case MSG_RAISE_Z:
-      Dprint(F("ReadyController::on_interaction: Raising Z"));
+      Logger::log(F("ReadyController::on_interaction: Raising Z"));
       dispenserHead.z().moveBy(-interaction.plc_message_data * STEPS_PER_UNIT_Z);
       break;
     
     case MSG_LOWER_Z:
-      Dprint(F("ReadyController::on_interaction: Lowering Z"));
+      Logger::log(F("ReadyController::on_interaction: Lowering Z"));
       dispenserHead.z().moveBy(interaction.plc_message_data * STEPS_PER_UNIT_Z);
       break;
     

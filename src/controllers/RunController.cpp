@@ -1,6 +1,7 @@
 #include "RunController.h"
 #include "../views/MainScreen.h"
 #include "../views/common/Dialogs.h"
+#include "../Utils.h"
 
 RunController::RunController(ControllerParams params)
   : BaseController(params) {}
@@ -11,7 +12,7 @@ void RunController::onStart() {
   TrayHandler::Position firstPosition = trayHandler.reset();
 
   if (firstPosition.x == -1 || firstPosition.y == -1) {
-    Serial.println(F("MODE: No valid positions found, ending run mode"));
+    Logger::log(F("MODE: No valid positions found, ending run mode"));
     startNextController(CONTROLLER_READY);
     return;
   }
@@ -26,7 +27,7 @@ void RunController::onStart() {
 
 // Pauses the run by stopping all axis movements immediately.
 void RunController::pause() {
-  Serial.println(F("MODE: Paused"));
+  Logger::log(F("MODE: Paused"));
   paused = true;
   dispenserHead.x().stop();
   dispenserHead.y().stop();
@@ -35,7 +36,7 @@ void RunController::pause() {
 
 // Stops the run and returns to home position.
 void RunController::stop() {
-  Serial.println(F("MODE: Stopped"));
+  Logger::log(F("MODE: Stopped"));
   MainScreenParams params = {profile, 0, 0, 0, 0, 0};
   drawMainScreen(phost, STOPPINGMENU, &params);
   paused = false;
@@ -64,20 +65,19 @@ void RunController::startStage(Stage newStage) {
       break;
 
     case STAGE_SET_VIB_LEVEL:
-      Serial.println(F("STAGE: Setting vibration level"));
+      Logger::log(F("STAGE: Setting vibration level"));
       this->stage = STAGE_SET_VIB_LEVEL;
       dispenserHead.setVibrationLevel(profile.vibration_enabled);
       break;
 
     case STAGE_SET_VIB_DURATION:
-      Serial.print(F("STAGE: Setting vibration duration to "));
-      Serial.println(profile.vibration_duration);
+      Logger::log(F("STAGE: Setting vibration duration to "), (uint8_t)profile.vibration_duration);
       this->stage = STAGE_SET_VIB_DURATION;
       dispenserHead.setVibrationTime(profile.vibration_duration);
       break;
 
     case STAGE_ZERO:
-      Serial.println(F("STAGE: Moving to zero position"));
+      Logger::log(F("STAGE: Moving to zero position"));
       this->stage = STAGE_ZERO;
       dispenserHead.x().moveToMax();
       dispenserHead.y().moveToMin();
@@ -85,7 +85,7 @@ void RunController::startStage(Stage newStage) {
       break;
 
     case STAGE_START_PRIME:
-      Serial.println(F("STAGE: Starting prime"));
+      Logger::log(F("STAGE: Starting prime"));
       this->stage = STAGE_START_PRIME;
       dispenserHead.sendDispense();
 
@@ -94,29 +94,25 @@ void RunController::startStage(Stage newStage) {
       break;
 
     case STAGE_WAIT_PRIME:
-      Serial.println(F("STAGE: Waiting for prime to complete"));
+      Logger::log(F("STAGE: Waiting for prime to complete"));
       this->stage = STAGE_WAIT_PRIME;
       break;
 
     case STAGE_MOVE:
-      Serial.print(F("STAGE: Moving to position X="));
-      Serial.print(target_x);
-      Serial.print(F(", Y="));
-      Serial.println(target_y);
+      Logger::log("STAGE: Moving to position X=" + String(target_x) + ", Y=" + String(target_y));
       this->stage = STAGE_MOVE;
       dispenserHead.x().moveTo(target_x);
       dispenserHead.y().moveTo(target_y);
       break;
 
     case STAGE_LOWER_HEAD:
-      Serial.print(F("STAGE: Lowering head to Z="));
-      Serial.println(STEPS_PER_UNIT_Z * profile.z_dip);
+      Logger::log("STAGE: Lowering head to Z=" + String(STEPS_PER_UNIT_Z * profile.z_dip));
       this->stage = STAGE_LOWER_HEAD;
       dispenserHead.z().moveTo(STEPS_PER_UNIT_Z * profile.z_dip);
       break;
 
     case STAGE_START_DISPENSE:
-      Serial.println(F("STAGE: Starting dispensing"));
+      Logger::log(F("STAGE: Starting dispensing"));
       this->stage = STAGE_START_DISPENSE;
       dispenserHead.sendDispense();
 
@@ -125,12 +121,12 @@ void RunController::startStage(Stage newStage) {
       break;
 
     case STAGE_WAIT_DISPENSE:
-      Serial.println(F("STAGE: Waiting for dispensing to complete"));
+      Logger::log(F("STAGE: Waiting for dispensing to complete"));
       this->stage = STAGE_WAIT_DISPENSE;
       break;
 
     case STAGE_RAISE_HEAD:
-      Serial.println(F("STAGE: Raising head"));
+      Logger::log(F("STAGE: Raising head"));
       this->stage = STAGE_RAISE_HEAD;
       dispenserHead.z().moveTo(0);
       break;
@@ -158,7 +154,7 @@ ControllerStepResult RunController::onStep() {
   };
 
   if (dispenserProcessResult.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
-    Serial.println(F("MODE: Stepper error - limit switch triggered"));
+    Logger::log(F("MODE: Stepper error - limit switch triggered"));
     params.error_code = DIALOG_ERROR_LIMIT_SWITCH;
     drawMainScreen(phost, RUNMENU, &params);
     pause();
@@ -166,7 +162,7 @@ ControllerStepResult RunController::onStep() {
   }
 
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE) {
-    Serial.println(F("MODE: Dispenser error - IR sensor failure"));
+    Logger::log(F("MODE: Dispenser error - IR sensor failure"));
     params.error_code = DIALOG_ERROR_IR_SENSOR;
     drawMainScreen(phost, RUNMENU, &params);
     pause();
@@ -174,7 +170,7 @@ ControllerStepResult RunController::onStep() {
   }
 
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
-    Serial.println(F("MODE: Dispenser error - Acknowledgment error"));
+    Logger::log(F("MODE: Dispenser error - Acknowledgment error"));
     params.error_code = DIALOG_ERROR_ACK_ERROR;
     drawMainScreen(phost, RUNMENU, &params);
     pause();
@@ -182,7 +178,7 @@ ControllerStepResult RunController::onStep() {
   }
 
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
-    Serial.println(F("MODE: Dispenser error - marker not detected"));
+    Logger::log(F("MODE: Dispenser error - marker not detected"));
     params.error_code = DIALOG_ERROR_MARKER_NOT_DETECTED;
     drawMainScreen(phost, RUNMENU, &params);
     pause();
@@ -202,7 +198,7 @@ int RunController::getModeType() const {
 
 // Starts the run sequence
 void RunController::start() {
-  Serial.println(F("MODE: Starting run"));
+  Logger::log(F("MODE: Starting run"));
   paused = false;
   cycle = 0;
   MainScreenParams params = {profile, 0, 0, 0, 0, 0};
@@ -292,11 +288,11 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
     case STAGE_RAISE_HEAD: {
       if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
       TrayHandler::PositionResult result = trayHandler.goToNextValidPosition();
-      Serial.println("Has next: " + String(result.has_next));
-      Serial.println("Next position: " + String(result.position.x) + ", " + String(result.position.y));
+      Logger::log("Has next: " + String(result.has_next));
+      Logger::log("Next position: " + String(result.position.x) + ", " + String(result.position.y));
 
       if (result.has_next) {
-        Serial.println("Next position: " + String(result.position.x) + ", " + String(result.position.y));
+        Logger::log("Next position: " + String(result.position.x) + ", " + String(result.position.y));
 
         target_x = (profile.tray_origin_x + ((result.position.x - 1 + ((profile.staggered && result.position.y % 2 == 0) ? 0.5: 0)) * profile.pitch_x)) * -STEPS_PER_UNIT_X;
         target_y = (profile.tray_origin_y + ((result.position.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
@@ -315,7 +311,7 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
         cycle = 0;
         startStage(STAGE_MOVE);
       } else {
-        Serial.println(F("MODE: Run complete"));
+        Logger::log(F("MODE: Run complete"));
         startNextController(CONTROLLER_READY);
       }
       break;

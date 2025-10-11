@@ -1,4 +1,5 @@
 #include "DispenserSerial.h"
+#include "../Utils.h"
 
 // Initialize static member.
 unsigned long DispenserSerial::timeout_at = 0;
@@ -12,16 +13,7 @@ void DispenserSerial::sendMessage(byte command, byte data) {
 
   uint8_t checksum = command + data;
   uint8_t msg[] = {START_BYTE, command, data, checksum, END_BYTE};
-  Serial.print("DispenserSerial - Sending Message: ");
-  Serial.print(msg[0], HEX);
-  Serial.print(" ");
-  Serial.print(msg[1], HEX);
-  Serial.print(" ");
-  Serial.print(msg[2], HEX);
-  Serial.print(" ");
-  Serial.print(msg[3], HEX);
-  Serial.print(" ");
-  Serial.println(msg[4], HEX);
+  Logger::log("DispenserSerial - Sending Message: ", msg, 5);
 
   Serial2.write(msg, 5);
   

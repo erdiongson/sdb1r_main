@@ -9,7 +9,7 @@ PreviewController::PreviewController(ControllerParams params)
     simulating(false), last_simulation_time(0), simulate_col(0), simulate_row(0) {}
 
 void PreviewController::onStart() {
-  Dprint(F("PreviewController::on_start"));
+  Logger::log(F("PreviewController::on_start"));
   
   // Store reference to the current profile
   current_profile = &profile_manager.getCurrentProfile();
@@ -47,7 +47,7 @@ void PreviewController::onStart() {
 void PreviewController::onInteraction(const Interaction& interaction) {
   switch (interaction.key_pressed) {
     case TAG_CONFIG_PREVIEW_BACK:
-      Serial.println(F("Button Pressed: PREVIEW BACK"));
+      Logger::log(F("Button Pressed: PREVIEW BACK"));
       // Stop simulation when leaving preview
       simulating = false;
       simulate_col = 0;
@@ -56,12 +56,12 @@ void PreviewController::onInteraction(const Interaction& interaction) {
       break;
 
     case TAG_PREVIEW_SIMULATE:
-      Serial.println(F("Button Pressed: SIMULATE"));
+      Logger::log(F("Button Pressed: SIMULATE"));
       startSimulation();
       break;
 
     case TAG_PREVIEW_STOP:
-      Serial.println(F("Button Pressed: STOP"));
+      Logger::log(F("Button Pressed: STOP"));
       endSimulation();
       break;
     default:
@@ -97,7 +97,7 @@ void PreviewController::startSimulation() {
   TrayHandler::Position firstPosition = simulation_handler.reset();
 
   if (firstPosition.x == -1 || firstPosition.y == -1) {
-    Serial.println(F("No valid positions found, ending simulation"));
+    Logger::log(F("No valid positions found, ending simulation"));
     endSimulation();
     return;
   }
