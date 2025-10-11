@@ -55,26 +55,6 @@ ControllerManager& controller_manager = *(new (controller_manager_buffer) Contro
 // To track when to check for interactions
 unsigned long last_interaction_check = 0;
 
-// To track when to print memory stats
-unsigned long last_memory_print = 0;
-
-// Prints the free memory available on the Arduino.
-void printFreeMemory() {
-  extern int __heap_start, *__brkval;
-  int v;
-  int free_memory = (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
-  
-  Serial.print("Free memory: ");
-  Serial.print(free_memory);
-  Serial.print(" bytes | Stack: 0x");
-  Serial.print((int)&v, HEX);
-  Serial.print(" | Heap: 0x");
-  Serial.print(__brkval == 0 ? (int)&__heap_start : (int)__brkval, HEX);
-  Serial.print(" | Uptime: ");
-  Serial.print(millis() / 1000);
-  Serial.println("s");
-}
-
 // Transitions to the next controller based on the controller type.
 // @param nextControllerType The type of controller to transition to.
 void startNextController(int nextControllerType) {
@@ -137,8 +117,5 @@ void loop() {
   }
 
   // Print free memory every 10 seconds
-  if (current_time - last_memory_print >= 10000) {
-    last_memory_print = current_time;
-    printFreeMemory();
-  }
+  MemoryMonitor::printPeriodically(10000);
 }
