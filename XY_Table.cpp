@@ -20,19 +20,7 @@
 
 #include "src/hardware/Axis.h"
 #include "src/hardware/DispenserHead.h"
-#include "src/controllers/BaseController.h"
-#include "src/controllers/ReadyController.h"
-#include "src/controllers/RunController.h"
-#include "src/controllers/StartupController.h"
-#include "src/controllers/debug/DebugController.h"
-#include "src/controllers/debug/MoveTestController.h"
-#include "src/controllers/debug/DispenseTestController.h"
-#include "src/controllers/settings/PreviewController.h"
-#include "src/controllers/settings/SettingsController.h"
-#include "src/controllers/settings/ProfileController.h"
-
-// Define placement new operator for Arduino (if not already available).
-inline void* operator new(size_t size, void* ptr) { return ptr; }
+#include "src/logic/ControllerManager.h"
 
 Gpu_Hal_Context_t host, *phost;
 ProfileManager profileManager;
@@ -55,25 +43,14 @@ AxisParams zAxis(
 DispenserHeadParams params = { xAxis, yAxis, zAxis };
 DispenserHead dispenserHead(params);
 
-// Calculate the maximum controller size at compile time.
-constexpr size_t MAX_CONTROLLER_SIZE = MaxSize<
-  ReadyController,
-  RunController,
-  MoveTestController,
-  DispenseTestController,
-  SettingsController,
-  ProfileController,
-  StartupController,
-  DebugController
->::value;
+// Forward declaration of startNextController for callback
+void startNextController(int nextControllerType);
 
-// Static buffer to hold any controller (aligned for proper object construction).
-struct alignas(BaseController) ControllerBuffer {
-  uint8_t data[MAX_CONTROLLER_SIZE];
-} controllerBuffer;
-
-// Pointer to the current controller being used.
-BaseController* controller = nullptr;
+// Controller manager instance
+static uint8_t controllerManagerBuffer[sizeof(ControllerManager)];
+ControllerManager& controllerManager = *(new (controllerManagerBuffer) ControllerManager(
+  dispenserHead, &host, profileManager, startNextController
+));
 
 // To track when to check for interactions
 unsigned long lastInteractionCheck = 0;
@@ -101,54 +78,7 @@ void printFreeMemory() {
 // Transitions to the next controller based on the controller type.
 // @param nextControllerType The type of controller to transition to.
 void startNextController(int nextControllerType) {
-  // Destroy the current controller if it exists (call destructor)
-  if (controller != nullptr) {
-    controller->~BaseController();
-    controller = nullptr;
-  }
-
-  // Create controller parameters
-  ControllerParams params = { dispenserHead, phost, startNextController, profileManager };
-
-  // Create the new controller in the static buffer using placement new
-  switch(nextControllerType) {
-    case CONTROLLER_READY:
-      controller = new (controllerBuffer.data) ReadyController(params);
-      break;
-    case CONTROLLER_RUN:
-      controller = new (controllerBuffer.data) RunController(params);
-      break;
-    case CONTROLLER_MOVE_TEST:
-      controller = new (controllerBuffer.data) MoveTestController(params);
-      break;
-    case CONTROLLER_DISPENSE_TEST:
-      controller = new (controllerBuffer.data) DispenseTestController(params);
-      break;
-    case CONTROLLER_SETTINGS:
-      controller = new (controllerBuffer.data) SettingsController(params);
-      break;
-    case CONTROLLER_PROFILE:
-      controller = new (controllerBuffer.data) ProfileController(params);
-      break;
-    case CONTROLLER_STARTUP:
-      controller = new (controllerBuffer.data) StartupController(params);
-      break;
-    case CONTROLLER_DEBUG:
-      controller = new (controllerBuffer.data) DebugController(params);
-      break;
-    case CONTROLLER_PREVIEW:
-      controller = new (controllerBuffer.data) PreviewController(params);
-      break;
-    default:
-      Serial.print("Unknown controller type: ");
-      Serial.println(nextControllerType);
-      return;
-  }
-
-  // Start the new controller
-  if (controller != nullptr) {
-    controller->onStart();
-  }
+  controllerManager.startNextController(nextControllerType);
 }
 
 
@@ -178,7 +108,7 @@ void setup() {
   Gpu_Hal_Wr8(phost, REG_TOUCH_SETTLE, 3);
 
   Serial.print("Controller buffer size: ");
-  Serial.print(MAX_CONTROLLER_SIZE);
+  Serial.print(ControllerManager::getMaxControllerSize());
   Serial.println(" bytes");
   
   Serial.println("Starting first controller..");
@@ -192,7 +122,7 @@ void loop() {
 
   // Call the mode's onStep() function
   // Responsible for stepper runs, and dispenser serial processing
-  ControllerStepResult result = controller->onStep();
+  ControllerStepResult result = controllerManager.onStep();
 
   // Check for interactions only periodically
   // Includes touch screen presses, and PLC commands
@@ -202,7 +132,7 @@ void loop() {
     lastInteractionCheck = currentTime;
 
     if (InteractionsHandler::getAllInteractions(interaction)) {
-      controller->onInteraction(interaction);
+      controllerManager.onInteraction(interaction);
     }
   }
 
