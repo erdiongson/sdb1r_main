@@ -77,81 +77,81 @@ void RunController::start() {
 // The funcitonality must be idempotent, since it may be called again after a "pause"
 void RunController::start_stage(Stage newStage) {
   switch (newStage) {
-    case IDLE_STAGE:
+    case STAGE_IDLE:
       dispenserHead.x().stopRunning();
       dispenserHead.y().stopRunning();
       dispenserHead.z().stopRunning();
       break;
 
-    case SET_VIB_LEVEL_STAGE:
+    case STAGE_SET_VIB_LEVEL:
       Serial.println(F("STAGE: Setting vibration level"));
-      this->stage = SET_VIB_LEVEL_STAGE;
+      this->stage = STAGE_SET_VIB_LEVEL;
       dispenserHead.set_vibration_level(profile.vibrationEnabled);
       break;
 
-    case SET_VIB_DURATION_STAGE:
+    case STAGE_SET_VIB_DURATION:
       Serial.print(F("STAGE: Setting vibration duration to "));
       Serial.println(profile.vibrationDuration);
-      this->stage = SET_VIB_DURATION_STAGE;
+      this->stage = STAGE_SET_VIB_DURATION;
       dispenserHead.set_vibration_time(profile.vibrationDuration);
       break;
 
-    case ZERO_STAGE:
+    case STAGE_ZERO:
       Serial.println(F("STAGE: Moving to zero position"));
-      this->stage = ZERO_STAGE;
+      this->stage = STAGE_ZERO;
       dispenserHead.x().moveToMax();
       dispenserHead.y().moveToMin();
       dispenserHead.z().moveToMin();
       break;
 
-    case START_PRIME_STAGE:
+    case STAGE_START_PRIME:
       Serial.println(F("STAGE: Starting prime"));
-      this->stage = START_PRIME_STAGE;
+      this->stage = STAGE_START_PRIME;
       dispenserHead.send_dispense();
 
       // Immediately move to wait stage
-      start_stage(WAIT_PRIME_STAGE);
+      start_stage(STAGE_WAIT_PRIME);
       break;
 
-    case WAIT_PRIME_STAGE:
+    case STAGE_WAIT_PRIME:
       Serial.println(F("STAGE: Waiting for prime to complete"));
-      this->stage = WAIT_PRIME_STAGE;
+      this->stage = STAGE_WAIT_PRIME;
       break;
 
-    case MOVE_STAGE:
+    case STAGE_MOVE:
       Serial.print(F("STAGE: Moving to position X="));
       Serial.print(target_x);
       Serial.print(F(", Y="));
       Serial.println(target_y);
-      this->stage = MOVE_STAGE;
+      this->stage = STAGE_MOVE;
       dispenserHead.x().moveTo(target_x);
       dispenserHead.y().moveTo(target_y);
       break;
 
-    case LOWER_HEAD_STAGE:
+    case STAGE_LOWER_HEAD:
       Serial.print(F("STAGE: Lowering head to Z="));
       Serial.println(STEPS_PER_UNIT_Z * profile.ZDip);
-      this->stage = LOWER_HEAD_STAGE;
+      this->stage = STAGE_LOWER_HEAD;
       dispenserHead.z().moveTo(STEPS_PER_UNIT_Z * profile.ZDip);
       break;
 
-    case START_DISPENSE_STAGE:
+    case STAGE_START_DISPENSE:
       Serial.println(F("STAGE: Starting dispensing"));
-      this->stage = START_DISPENSE_STAGE;
+      this->stage = STAGE_START_DISPENSE;
       dispenserHead.send_dispense();
 
       // Immediately move to wait stage
-      start_stage(WAIT_DISPENSE_STAGE);
+      start_stage(STAGE_WAIT_DISPENSE);
       break;
 
-    case WAIT_DISPENSE_STAGE:
+    case STAGE_WAIT_DISPENSE:
       Serial.println(F("STAGE: Waiting for dispensing to complete"));
-      this->stage = WAIT_DISPENSE_STAGE;
+      this->stage = STAGE_WAIT_DISPENSE;
       break;
 
-    case RAISE_HEAD_STAGE:
+    case STAGE_RAISE_HEAD:
       Serial.println(F("STAGE: Raising head"));
-      this->stage = RAISE_HEAD_STAGE;
+      this->stage = STAGE_RAISE_HEAD;
       dispenserHead.z().moveTo(0);
       break;
 
@@ -160,23 +160,24 @@ void RunController::start_stage(Stage newStage) {
   }
 }
 
+// Check if the current stage is complete, and move to the next stage if required
 void RunController::process_stage_logic(DispenserProcessResult& dispenserProcessResult) {
   switch (stage) {
-    case IDLE_STAGE:
-      start_stage(SET_VIB_LEVEL_STAGE);
+    case STAGE_IDLE:
+      start_stage(STAGE_SET_VIB_LEVEL);
       break;
 
-    case SET_VIB_LEVEL_STAGE:
+    case STAGE_SET_VIB_LEVEL:
       if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING) break;
-      start_stage(SET_VIB_DURATION_STAGE);
+      start_stage(STAGE_SET_VIB_DURATION);
       break;
 
-    case SET_VIB_DURATION_STAGE:
+    case STAGE_SET_VIB_DURATION:
       if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING) break;
-      start_stage(ZERO_STAGE);
+      start_stage(STAGE_ZERO);
       break;
 
-    case ZERO_STAGE: {
+    case STAGE_ZERO: {
       if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
 
       // Set the current Axes positions as 0
@@ -185,11 +186,11 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
       dispenserHead.z().reset();
 
       cycle = 0;
-      start_stage(START_PRIME_STAGE);
+      start_stage(STAGE_START_PRIME);
       break;
     }
 
-    case WAIT_PRIME_STAGE: {
+    case STAGE_WAIT_PRIME: {
       if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING) break;
       cycle++;
 
@@ -199,40 +200,40 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
         TrayHandler::Position firstPosition = trayHandler.reset();
         target_x = (profile.trayOriginX + ((firstPosition.x - 1 + ((profile.staggered && firstPosition.y % 2 == 0) ? 0.5 : 0)) * profile.pitch_x)) * -STEPS_PER_UNIT_X;
         target_y = (profile.trayOriginY + ((firstPosition.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
-        start_stage(MOVE_STAGE);
+        start_stage(STAGE_MOVE);
       } else {
-        start_stage(START_PRIME_STAGE);
+        start_stage(STAGE_START_PRIME);
       }
       break;
     }
 
-    case MOVE_STAGE:
+    case STAGE_MOVE:
       if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
-      start_stage(LOWER_HEAD_STAGE);
+      start_stage(STAGE_LOWER_HEAD);
       break;
 
-    case LOWER_HEAD_STAGE: {
+    case STAGE_LOWER_HEAD: {
       if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
       cycle = 0;
-      start_stage(START_DISPENSE_STAGE);
+      start_stage(STAGE_START_DISPENSE);
       break;
     }
 
-    case WAIT_DISPENSE_STAGE: {
+    case STAGE_WAIT_DISPENSE: {
       if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING)  break;
       cycle++;
 
       // Check if dispensing should end
       if (cycle >= profile.Cycles) {
         dispenserHead.z().moveTo(0);
-        start_stage(RAISE_HEAD_STAGE);
+        start_stage(STAGE_RAISE_HEAD);
       } else {
-        start_stage(START_DISPENSE_STAGE);
+        start_stage(STAGE_START_DISPENSE);
       }
       break;
     }
 
-    case RAISE_HEAD_STAGE: {
+    case STAGE_RAISE_HEAD: {
       if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
       TrayHandler::PositionResult result = trayHandler.goToNextValidPosition();
       Serial.println("Has next: " + String(result.hasNext));
@@ -253,7 +254,7 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
           0
         };
         draw_main_screen(phost, RUNMENU, &params);
-        start_stage(MOVE_STAGE);
+        start_stage(STAGE_MOVE);
       } else {
         start_next_controller(CONTROLLER_HOMING);
       }

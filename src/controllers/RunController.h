@@ -7,20 +7,20 @@ private:
   bool paused = false;
 
   enum Stage {
-    IDLE_STAGE,
-    SET_VIB_LEVEL_STAGE,
-    SET_VIB_DURATION_STAGE,
-    ZERO_STAGE,
-    START_PRIME_STAGE,
-    WAIT_PRIME_STAGE,
-    LOWER_HEAD_STAGE,
-    START_DISPENSE_STAGE,
-    WAIT_DISPENSE_STAGE,
-    RAISE_HEAD_STAGE,
-    MOVE_STAGE,
+    STAGE_IDLE,
+    STAGE_SET_VIB_LEVEL,
+    STAGE_SET_VIB_DURATION,
+    STAGE_ZERO,
+    STAGE_START_PRIME,
+    STAGE_WAIT_PRIME,
+    STAGE_LOWER_HEAD,
+    STAGE_START_DISPENSE,
+    STAGE_WAIT_DISPENSE,
+    STAGE_RAISE_HEAD,
+    STAGE_MOVE,
   };
 
-  int stage = IDLE_STAGE;
+  int stage = STAGE_IDLE;
   Profile profile;
   TrayHandler::TrayPositionHandler trayHandler;
   int32_t target_x = 0;
