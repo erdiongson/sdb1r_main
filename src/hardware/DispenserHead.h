@@ -85,7 +85,7 @@ public:
   // @return DispenserProcessResult containing the updated state and any error code.
   DispenserProcessResult process() {
 
-    #if DEBUG
+    #if DEBUG_ONLY_SCREEN
       return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_IDLING);
     #endif
 

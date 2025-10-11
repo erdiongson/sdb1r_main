@@ -8,35 +8,43 @@ public:
   // Logs a message to Serial output.
   // @param x The message string to log.
   static void log(String x) {
-    Serial.println(x);
+    #if DEBUG_NO_LOG == 0
+      Serial.println(x);
+    #endif
   }
 
   // Logs two strings concatenated.
   // @param x The first string.
   // @param y The second string.
   static void log(String x, String y) {
-    Serial.print(x);
-    Serial.println(y);
+    #if DEBUG_NO_LOG == 0
+      Serial.print(x);
+      Serial.println(y);
+    #endif
   }
 
   // Logs a string followed by a float value.
   // @param x The string prefix.
   // @param y The float value to log.
   static void log(String x, float y) {
-    char buf[20];
-    dtostrf(y, 3, 5, buf);
-    Serial.print(x);
-    Serial.println(buf);
+    #if DEBUG_NO_LOG == 0
+      char buf[20];
+      dtostrf(y, 3, 5, buf);
+      Serial.print(x);
+      Serial.println(buf);
+    #endif
   }
 
   // Logs a string followed by an unsigned 8-bit integer.
   // @param x The string prefix.
   // @param y The uint8_t value to log.
   static void log(String x, uint8_t y) {
-    char buf[20];
-    sprintf(buf, "%d", y);
-    Serial.print(x);
-    Serial.println(buf);
+    #if DEBUG_NO_LOG == 0
+      char buf[20];
+      sprintf(buf, "%d", y);
+      Serial.print(x);
+      Serial.println(buf);
+    #endif
   }
 
   // Logs a string followed by a byte array in hexadecimal format.
@@ -44,14 +52,16 @@ public:
   // @param data Pointer to the byte array.
   // @param length Number of bytes to log.
   static void log(String prefix, const uint8_t* data, size_t length) {
-    Serial.print(prefix);
-    for (size_t i = 0; i < length; i++) {
-      Serial.print(data[i], HEX);
-      if (i < length - 1) {
-        Serial.print(" ");
+    #if DEBUG_NO_LOG == 0
+      Serial.print(prefix);
+      for (size_t i = 0; i < length; i++) {
+        Serial.print(data[i], HEX);
+        if (i < length - 1) {
+          Serial.print(" ");
+        }
       }
-    }
-    Serial.println();
+      Serial.println();
+    #endif
   }
 };
 
@@ -68,15 +78,15 @@ public:
     int v;
     int free_memory = (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
     
-    Serial.print("Free memory: ");
-    Serial.print(free_memory);
-    Serial.print(" bytes | Stack: 0x");
-    Serial.print((int)&v, HEX);
-    Serial.print(" | Heap: 0x");
-    Serial.print(__brkval == 0 ? (int)&__heap_start : (int)__brkval, HEX);
-    Serial.print(" | Uptime: ");
-    Serial.print(millis() / 1000);
-    Serial.println("s");
+    #if DEBUG_NO_LOG == 0
+      char buf[128];
+      sprintf(buf, "Free memory: %d bytes | Stack: 0x%X | Heap: 0x%X | Uptime: %lus",
+              free_memory,
+              (int)&v,
+              __brkval == 0 ? (int)&__heap_start : (int)__brkval,
+              millis() / 1000);
+      Logger::log(String(buf));
+    #endif
   }
 
   // Prints memory stats periodically based on the specified interval.

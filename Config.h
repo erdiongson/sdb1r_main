@@ -74,6 +74,7 @@
 // Defines if the dispenser should respond to Z-movement requests via PLC commands
 #define EXPERIMENTAL_Z_AXIS_MOVEMENT_API true 
 
-#define DEBUG 0
+#define DEBUG_NO_LOG 0
+#define DEBUG_ONLY_SCREEN 0
 
 #define FWVER "4.0"
