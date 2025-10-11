@@ -71,14 +71,6 @@ void setup() {
   Serial2.begin(19200);  // UART for Arduino-PIC18 communications
   Serial3.begin(19200);  // UART for PLC communication
 
-  //20240906: erdiongson - Enable interrupt for UART 3 receive complete
-  Logger::log("Setup Serial 3 as interrupt");
-  UCSR3B |= (1 << RXCIE3);
-
-  // Enable global interrupts
-  Logger::log("Enable Global Interrupt");
-  sei();
-
   // Gpu_Hal_Wr8(phost, REG_PWM_DUTY, 10); //brightness control
 
   Logger::log("Firmware version :", FWVER);
