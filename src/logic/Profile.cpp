@@ -17,11 +17,11 @@ Date created - 2022.12.14 - XentiQ version
 
 const int PROFILE_SIZE = sizeof(Profile);
 
-void blankEEPROM(void) {
+void ProfileManager::blankEEPROM(void) {
   for (int i = 0; i < 4096; i++) EEPROM.put(i, 0);
 }
 
-void preLoadEEPROM(void) {
+void ProfileManager::preLoadEEPROM(void) {
   char buf[20];
 
   for (int i = 0; i < MAX_PROFILES; i++) {
@@ -51,7 +51,7 @@ void preLoadEEPROM(void) {
   writeCurIDEEPROM(0);  //reset current profile in eeprom to 0
 }
 
-void checkProfile(void) {
+void ProfileManager::checkProfile(void) {
   if (CurProf.cycles > MAXCYCLE) CurProf.cycles = MAXCYCLE;
   if (CurProf.cycles < 0) CurProf.cycles = 0;
   if (CurProf.pitch_x > MAXPITCHX) CurProf.pitch_x = MAXPITCHX;
@@ -70,7 +70,7 @@ void checkProfile(void) {
   if (CurProf.z_dip > MAX_ZDIP) CurProf.z_dip = MAX_ZDIP;
 }
 
-uint8_t loadProfile(void) {
+uint8_t ProfileManager::loadProfile(void) {
 
   int currentProfileIndex = readCurIDEEPROM();
   if (currentProfileIndex >= MAX_PROFILES) currentProfileIndex = 0;  // if corrcupt data from eeprom, set id=0
@@ -89,7 +89,7 @@ uint8_t loadProfile(void) {
   return currentProfileIndex;
 }
 
-void readPassEEPROM(char *pass) {
+void ProfileManager::readPassEEPROM(char *pass) {
   int addr = 4000;
   char c;
   int i = 0;
@@ -99,7 +99,7 @@ void readPassEEPROM(char *pass) {
   } while (c != '\0');      // Repeat until null terminator is encountered
 }
 
-void writePassEEPROM(char *pass) {
+void ProfileManager::writePassEEPROM(char *pass) {
   int addr = 4000;
   int i = 0;
   char c;
@@ -109,11 +109,11 @@ void writePassEEPROM(char *pass) {
   } while (c != '\0');      // Repeat until null terminator is encountered
 }
 
-void writeCurIDEEPROM(uint8_t curprofid) {
+void ProfileManager::writeCurIDEEPROM(uint8_t curprofid) {
   EEPROM.put(0, curprofid);
 }
 
-uint8_t readCurIDEEPROM(void) {
+uint8_t ProfileManager::readCurIDEEPROM(void) {
   uint8_t temp;
 
   EEPROM.get(0, temp);
@@ -121,7 +121,7 @@ uint8_t readCurIDEEPROM(void) {
   return temp;
 }
 
-void writeProfileEEPROM(int index) {
+void ProfileManager::writeProfileEEPROM(int index) {
   int address = (index * 300) + sizeof(uint8_t);
   Dprint("Starting Address = ", (float)address);
 
@@ -165,7 +165,7 @@ void writeProfileEEPROM(int index) {
   Dprint("Ending Address = ", (float)address);
 }
 
-void readProfileEEPROM(int index) {
+void ProfileManager::readProfileEEPROM(int index) {
   char buf[10];
 
   int address = (index * 300) + sizeof(uint8_t);
@@ -215,7 +215,7 @@ void readProfileEEPROM(int index) {
 // Verifies the password by prompting the user for input.
 // @param phost GPU context for displaying the keyboard.
 // @return PasswordVerificationResult indicating success, incorrect, or cancelled.
-PasswordVerificationResult verifyPassword(Gpu_Hal_Context_t *phost) {
+PasswordVerificationResult ProfileManager::verifyPassword(Gpu_Hal_Context_t *phost) {
   char currentPassword[PROFILE_NAME_MAX_LEN] = "";
   char inputPassword[PROFILE_NAME_MAX_LEN] = "";
 

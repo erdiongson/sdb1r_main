@@ -7,7 +7,7 @@
 HomingController::HomingController(ControllerParams params)
   : BaseController(params) {}
 
-void HomingController::onStart(Profile& profile) {
+void HomingController::onStart() {
   Dprint(F("HomingController::on_start"));
 
   // If the dispenser head is at the limit switches, clear them before

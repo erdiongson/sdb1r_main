@@ -5,9 +5,9 @@
 RunController::RunController(ControllerParams params)
   : BaseController(params) {}
 
-void RunController::onStart(Profile& profile) {
-  this->profile = profile;
-  trayHandler.loadProfile(profile);
+void RunController::onStart() {
+  this->profile = CurProf;
+  trayHandler.loadProfile(CurProf);
   TrayHandler::Position firstPosition = trayHandler.reset();
 
   if (firstPosition.x == -1 || firstPosition.y == -1) {

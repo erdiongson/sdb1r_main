@@ -71,20 +71,6 @@ typedef struct
     bool staggered = false;
 } Profile;
 
-uint8_t loadProfile(void);
-
-void preLoadEEPROM(void);
-void blankEEPROM(void);
-
-void writeCurIDEEPROM(uint8_t curprofid);
-uint8_t readCurIDEEPROM(void);
-void writePassEEPROM(char *pass);
-
-void readPassEEPROM(char *pass);
-
-void writeProfileEEPROM(int address); //try054 , Profile &profile);
-void readProfileEEPROM(int address);
-
 // Password verification result enum.
 enum PasswordVerificationResult {
   PASSWORD_SUCCESS,
@@ -92,10 +78,51 @@ enum PasswordVerificationResult {
   PASSWORD_CANCELLED
 };
 
-// Verifies the password by prompting the user for input.
-// @param phost GPU context for displaying the keyboard.
-// @return PasswordVerificationResult indicating success, incorrect, or cancelled.
-PasswordVerificationResult verifyPassword(Gpu_Hal_Context_t *phost);
+// Manages profile operations including EEPROM storage and password verification.
+class ProfileManager {
+public:
+  // Loads the current profile from EEPROM.
+  // @return The index of the loaded profile.
+  uint8_t loadProfile(void);
+
+  // Preloads EEPROM with default profile data.
+  void preLoadEEPROM(void);
+  
+  // Blanks the entire EEPROM.
+  void blankEEPROM(void);
+
+  // Writes the current profile ID to EEPROM.
+  // @param curprofid The profile ID to write.
+  void writeCurIDEEPROM(uint8_t curprofid);
+  
+  // Reads the current profile ID from EEPROM.
+  // @return The current profile ID.
+  uint8_t readCurIDEEPROM(void);
+  
+  // Writes the password to EEPROM.
+  // @param pass The password string to write.
+  void writePassEEPROM(char *pass);
+
+  // Reads the password from EEPROM.
+  // @param pass Buffer to store the password.
+  void readPassEEPROM(char *pass);
+
+  // Writes a profile to EEPROM at the specified index.
+  // @param index The profile index.
+  void writeProfileEEPROM(int index);
+  
+  // Reads a profile from EEPROM at the specified index.
+  // @param index The profile index.
+  void readProfileEEPROM(int index);
+
+  // Verifies the password by prompting the user for input.
+  // @param phost GPU context for displaying the keyboard.
+  // @return PasswordVerificationResult indicating success, incorrect, or cancelled.
+  PasswordVerificationResult verifyPassword(Gpu_Hal_Context_t *phost);
+
+  // Checks and validates profile parameters.
+  void checkProfile(void);
+};
 
 #endif /*_PROFILE_H_*/
 

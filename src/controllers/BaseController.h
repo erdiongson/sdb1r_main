@@ -38,26 +38,28 @@ struct ControllerParams {
   DispenserHead& head;
   Gpu_Hal_Context_t *host;
   ControllerCompletionCallback callback;
+  ProfileManager& profileManager;
 };
 
 class BaseController {
 public:
   DispenserHead& dispenserHead;
   Gpu_Hal_Context_t *phost;
+  ProfileManager& profileManager;
 
 protected:
   ControllerCompletionCallback completionCallback;
 
 public:
-  // Constructor that accepts a dispenser head reference, GPU HAL context, and callback
+  // Constructor that accepts a dispenser head reference, GPU HAL context, callback, and profile manager
   BaseController(ControllerParams params)
-    : dispenserHead(params.head), phost(params.host), completionCallback(params.callback) {}
+    : dispenserHead(params.head), phost(params.host), completionCallback(params.callback), profileManager(params.profileManager) {}
 
   // Virtual destructor for proper cleanup in derived classes
   virtual ~BaseController() = default;
 
   // Pure virtual methods that must be implemented by derived classes
-  virtual void onStart(Profile& profile) = 0;
+  virtual void onStart() = 0;
   virtual void onInteraction(const Interaction& interaction) = 0;
   virtual ControllerStepResult onStep() = 0;  // Returns ControllerStepResult with stepper and dispenser state
   

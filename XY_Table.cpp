@@ -35,8 +35,9 @@
 inline void* operator new(size_t size, void* ptr) { return ptr; }
 
 Gpu_Hal_Context_t host, *phost;
-Profile CurProf;        //current profile
+ProfileManager profileManager;
 
+Profile CurProf;        //current profile
 uint8_t CurProfNum;  //current profile id
 
 AxisParams xAxis(
@@ -110,7 +111,7 @@ void startNextController(int nextControllerType) {
   }
 
   // Create controller parameters
-  ControllerParams params = { dispenserHead, phost, startNextController };
+  ControllerParams params = { dispenserHead, phost, startNextController, profileManager };
 
   // Create the new controller in the static buffer using placement new
   switch(nextControllerType) {
@@ -149,7 +150,7 @@ void startNextController(int nextControllerType) {
 
   // Start the new controller
   if (controller != nullptr) {
-    controller->onStart(CurProf);
+    controller->onStart();
   }
 }
 
@@ -180,7 +181,7 @@ void setup() {
   Gpu_Hal_Wr8(phost, REG_TOUCH_SETTLE, 3);
 
   Serial.println("Loading profile..");
-  CurProfNum = loadProfile();
+  CurProfNum = profileManager.loadProfile();
 
   Serial.print("Controller buffer size: ");
   Serial.print(MAX_CONTROLLER_SIZE);

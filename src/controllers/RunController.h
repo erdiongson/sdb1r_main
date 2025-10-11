@@ -36,7 +36,7 @@ private:
 public:
   RunController(ControllerParams params);
 
-  void onStart(Profile& profile) override;
+  void onStart() override;
   void onInteraction(const Interaction& interaction) override;
   ControllerStepResult onStep() override;
 

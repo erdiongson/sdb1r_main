@@ -8,7 +8,7 @@
 ReadyController::ReadyController(ControllerParams params)
   : BaseController(params) {}
 
-void ReadyController::onStart(Profile& profile) {
+void ReadyController::onStart() {
   Dprint(F("ReadyController::on_start"));
   drawMainScreen(phost, MAINMENU);
 
@@ -27,7 +27,7 @@ void ReadyController::onInteraction(const Interaction& interaction) {
     case SETTING:
       // Handle password protection if enabled
       if (CurProf.password_enabled) {
-        PasswordVerificationResult result = verifyPassword(phost);
+        PasswordVerificationResult result = profileManager.verifyPassword(phost);
         
         if (result == PASSWORD_CANCELLED) {
           drawMainScreen(phost, MAINMENU);

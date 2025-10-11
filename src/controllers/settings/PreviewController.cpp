@@ -8,11 +8,11 @@ PreviewController::PreviewController(ControllerParams params)
   : BaseController(params), current_profile(nullptr), 
     simulating(false), last_simulation_time(0), simulate_col(0), simulate_row(0) {}
 
-void PreviewController::onStart(Profile& profile) {
+void PreviewController::onStart() {
   Dprint(F("PreviewController::on_start"));
   
   // Store reference to the current profile
-  current_profile = &profile;
+  current_profile = &CurProf;
 
   // Initialize simulation state
   simulating = false;

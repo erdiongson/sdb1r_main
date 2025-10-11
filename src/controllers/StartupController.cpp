@@ -8,7 +8,7 @@ StartupController::StartupController(ControllerParams params)
   : BaseController(params), dispenserHead(params.head) {
   }
 
-void StartupController::onStart(Profile& profile) {
+void StartupController::onStart() {
   Dprint(F("StartupController::on_start"));
   drawLogoScreen(phost, 0);
 

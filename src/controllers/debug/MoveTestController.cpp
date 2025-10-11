@@ -7,7 +7,7 @@
 MoveTestController::MoveTestController(ControllerParams params)
   : BaseController(params) {}
 
-void MoveTestController::onStart(Profile& profile) {
+void MoveTestController::onStart() {
   Dprint(F("MoveTestController::on_start"));
   drawMoveTestScreen(phost, {});  
 }

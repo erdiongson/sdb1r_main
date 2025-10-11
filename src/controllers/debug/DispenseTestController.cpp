@@ -6,7 +6,7 @@
 DispenseTestController::DispenseTestController(ControllerParams params)
   : BaseController(params) {}
 
-void DispenseTestController::onStart(Profile& profile) {
+void DispenseTestController::onStart() {
   Dprint(F("DispenseTestController::on_start"));
   
   DispenseTestScreenParams params = {"Ready"};
