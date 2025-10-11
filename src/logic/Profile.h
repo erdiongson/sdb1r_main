@@ -80,6 +80,10 @@ enum PasswordVerificationResult {
 
 // Manages profile operations including EEPROM storage and password verification.
 class ProfileManager {
+private:
+  Profile currentProfile;
+  uint8_t currentProfileIndex;
+
 public:
   // Loads the current profile from EEPROM.
   // @return The index of the loaded profile.
@@ -122,9 +126,25 @@ public:
 
   // Checks and validates profile parameters.
   void checkProfile(void);
+
+  // Gets a reference to the current profile.
+  // @return Reference to the current profile.
+  Profile& getCurrentProfile(void);
+
+  // Sets the current profile.
+  // @param profile The profile to set as current.
+  void setCurrentProfile(const Profile& profile);
+
+  // Gets the current profile number/ID.
+  // @return The current profile ID.
+  uint8_t getCurrentProfileNum(void);
+
+  // Sets the current profile number/ID.
+  // @param profileNum The profile number to set as current.
+  void setCurrentProfileNum(uint8_t profileNum);
 };
 
-#endif /*_PROFILE_H_*/
+// Global profileManager instance (defined in XY_Table.cpp).
+extern ProfileManager profileManager;
 
-extern Profile CurProf;
-extern uint8_t CurProfNum;
+#endif /*_PROFILE_H_*/

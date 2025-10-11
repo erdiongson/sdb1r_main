@@ -10,7 +10,9 @@ ReadyController::ReadyController(ControllerParams params)
 
 void ReadyController::onStart() {
   Dprint(F("ReadyController::on_start"));
-  drawMainScreen(phost, MAINMENU);
+  Profile& profile = profileManager.getCurrentProfile();
+  MainScreenParams params = {profile, 1, 1, 0, 0, 0};
+  drawMainScreen(phost, MAINMENU, &params);
 
   // Home the dispenser head
 }
@@ -26,19 +28,22 @@ void ReadyController::onInteraction(const Interaction& interaction) {
 
     case SETTING:
       // Handle password protection if enabled
-      if (CurProf.password_enabled) {
+      if (profileManager.getCurrentProfile().password_enabled) {
         PasswordVerificationResult result = profileManager.verifyPassword(phost);
         
+        Profile& profile = profileManager.getCurrentProfile();
         if (result == PASSWORD_CANCELLED) {
-          drawMainScreen(phost, MAINMENU);
+          MainScreenParams params = {profile, 1, 1, 0, 0, 0};
+          drawMainScreen(phost, MAINMENU, &params);
           return;
         }
         
         if (result == PASSWORD_INCORRECT) {
-          MainScreenParams params = {0, 0, 0, 0, DIALOG_ERROR_WRONG_PASSWORD};
+          MainScreenParams params = {profile, 0, 0, 0, 0, DIALOG_ERROR_WRONG_PASSWORD};
           drawMainScreen(phost, MAINMENU, &params);
           delay(2000);
-          drawMainScreen(phost, MAINMENU);
+          MainScreenParams params2 = {profile, 1, 1, 0, 0, 0};
+          drawMainScreen(phost, MAINMENU, &params2);
           return;
         }
       }

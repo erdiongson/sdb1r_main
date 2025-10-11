@@ -6,6 +6,7 @@
 
 // Parameters for Home_Screen display.
 struct MainScreenParams {
+  Profile& profile;
   uint16_t current_row;
   uint16_t current_column;
   uint16_t tubes_left;
@@ -100,9 +101,15 @@ inline void drawMainScreen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const Ma
 
   drawMenuButtons(whichmenu);
 
-  sprintf(buf, "Profile Name: %s", CurProf.profile_name);
+  if (!params) {
+    Disp_End(phost);
+    return;
+  }
+  
+  Profile& profile = params->profile;
+  sprintf(buf, "Profile Name: %s", profile.profile_name);
   Gpu_CoCmd_Text(phost, 25, 195, 20, OPT_FORMAT, buf);  //OPT_CENTER | OPT_RIGHTX |
-  sprintf(buf, "No. of Cycles: %d", CurProf.cycles);
+  sprintf(buf, "No. of Cycles: %d", profile.cycles);
   Gpu_CoCmd_Text(phost, 25, 208, 20, OPT_FORMAT, buf);
 
   sprintf(buf, "Filling tube: %d", params ? params->filling_tube : 0);

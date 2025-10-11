@@ -9,14 +9,14 @@ ProfileController::ProfileController(ControllerParams params)
   : BaseController(params), selected_profile_num(0) {}
 
 void ProfileController::onStart() {
-  ProfileParams params = {0, 0, CurProf, 0};
+  ProfileParams params = {0, 0, profileManager.getCurrentProfile(), 0};
   drawProfileScreen(phost, params);
 }
 
 void ProfileController::onInteraction(const Interaction& interaction) {
   if (interaction.key_pressed == 0) return;
 
-  static ProfileParams params = {0, 0, CurProf, 0};
+  static ProfileParams params = {0, 0, profileManager.getCurrentProfile(), 0};
 
   switch (interaction.key_pressed) {
 
@@ -25,7 +25,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
       break;
 
     case TAG_PROFILE_LOAD: {
-      CurProfNum = selected_profile_num;
+      profileManager.setCurrentProfileNum(selected_profile_num);
       profileManager.writeCurIDEEPROM(selected_profile_num);
       profileManager.readProfileEEPROM(selected_profile_num);
       

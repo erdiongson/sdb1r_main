@@ -37,9 +37,6 @@ inline void* operator new(size_t size, void* ptr) { return ptr; }
 Gpu_Hal_Context_t host, *phost;
 ProfileManager profileManager;
 
-Profile CurProf;        //current profile
-uint8_t CurProfNum;  //current profile id
-
 AxisParams xAxis(
   MOTOR_X_CLK, MOTOR_X_CW,
   LIMIT_S_X_MIN, LIMIT_S_X_MAX,
@@ -179,9 +176,6 @@ void setup() {
   Serial.println("");
 
   Gpu_Hal_Wr8(phost, REG_TOUCH_SETTLE, 3);
-
-  Serial.println("Loading profile..");
-  CurProfNum = profileManager.loadProfile();
 
   Serial.print("Controller buffer size: ");
   Serial.print(MAX_CONTROLLER_SIZE);

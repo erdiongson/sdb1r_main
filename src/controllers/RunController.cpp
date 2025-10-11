@@ -6,8 +6,8 @@ RunController::RunController(ControllerParams params)
   : BaseController(params) {}
 
 void RunController::onStart() {
-  this->profile = CurProf;
-  trayHandler.loadProfile(CurProf);
+  this->profile = profileManager.getCurrentProfile();
+  trayHandler.loadProfile(profileManager.getCurrentProfile());
   TrayHandler::Position firstPosition = trayHandler.reset();
 
   if (firstPosition.x == -1 || firstPosition.y == -1) {
@@ -36,7 +36,8 @@ void RunController::pause() {
 // Stops the run and returns to home position.
 void RunController::stop() {
   Serial.println(F("MODE: Stopped"));
-  drawMainScreen(phost, STOPPINGMENU);
+  MainScreenParams params = {profile, 0, 0, 0, 0, 0};
+  drawMainScreen(phost, STOPPINGMENU, &params);
   paused = false;
 
   // Stop all stepper movements
@@ -148,6 +149,7 @@ ControllerStepResult RunController::onStep() {
   }
 
   MainScreenParams params = {
+    profile,
     (uint16_t)trayHandler.getCurrentRow(),
     (uint16_t)trayHandler.getCurrentColumn(),
     (uint16_t)trayHandler.getTubesLeft(),
@@ -203,7 +205,8 @@ void RunController::start() {
   Serial.println(F("MODE: Starting run"));
   paused = false;
   cycle = 0;
-  drawMainScreen(phost, RUNMENU);
+  MainScreenParams params = {profile, 0, 0, 0, 0, 0};
+  drawMainScreen(phost, RUNMENU, &params);
   startStage(STAGE_SET_VIB_LEVEL);
 }
 
@@ -300,6 +303,7 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
 
         // Update Home_Screen
         MainScreenParams params = {
+          profile,
           (uint16_t)trayHandler.getCurrentRow(),
           (uint16_t)trayHandler.getCurrentColumn(),
           (uint16_t)trayHandler.getTubesLeft(),

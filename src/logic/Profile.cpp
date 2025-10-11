@@ -26,24 +26,24 @@ void ProfileManager::preLoadEEPROM(void) {
 
   for (int i = 0; i < MAX_PROFILES; i++) {
     sprintf(buf, "profile %d", i + 1);
-    strcpy(CurProf.profile_name, buf);
+    strcpy(currentProfile.profile_name, buf);
 
-    CurProf.tube_no_x = MAX_BUTTONS_X;
-    CurProf.tube_no_y = MAX_BUTTONS_Y;
-    CurProf.pitch_x = 9;
-    CurProf.pitch_y = 9;
-    CurProf.tray_origin_x = 10;
-    CurProf.tray_origin_y = 10;
-    CurProf.cycles = 2;
-    CurProf.vibration_enabled = 0;
-    CurProf.password_enabled = TRUE;
-    CurProf.vibration_duration = 2;
-    CurProf.size_flag = 1;
-    CurProf.z_dip = 0.0;
-    CurProf.skip_col[0] = '\0';
-    CurProf.skip_row[0] = '\0';
-    CurProf.skip_single_pos[0] = '\0';
-    CurProf.staggered = false;
+    currentProfile.tube_no_x = MAX_BUTTONS_X;
+    currentProfile.tube_no_y = MAX_BUTTONS_Y;
+    currentProfile.pitch_x = 9;
+    currentProfile.pitch_y = 9;
+    currentProfile.tray_origin_x = 10;
+    currentProfile.tray_origin_y = 10;
+    currentProfile.cycles = 2;
+    currentProfile.vibration_enabled = 0;
+    currentProfile.password_enabled = TRUE;
+    currentProfile.vibration_duration = 2;
+    currentProfile.size_flag = 1;
+    currentProfile.z_dip = 0.0;
+    currentProfile.skip_col[0] = '\0';
+    currentProfile.skip_row[0] = '\0';
+    currentProfile.skip_single_pos[0] = '\0';
+    currentProfile.staggered = false;
 
     writeProfileEEPROM(i);
   }
@@ -52,41 +52,41 @@ void ProfileManager::preLoadEEPROM(void) {
 }
 
 void ProfileManager::checkProfile(void) {
-  if (CurProf.cycles > MAXCYCLE) CurProf.cycles = MAXCYCLE;
-  if (CurProf.cycles < 0) CurProf.cycles = 0;
-  if (CurProf.pitch_x > MAXPITCHX) CurProf.pitch_x = MAXPITCHX;
-  if (CurProf.pitch_x < 0) CurProf.pitch_x = 0;
-  if (CurProf.pitch_y > MAXPITCHY) CurProf.pitch_y = MAXPITCHY;
-  if (CurProf.pitch_y < 0) CurProf.pitch_y = 0;
-  if (CurProf.tray_origin_x > MAXORGX) CurProf.tray_origin_x = MAXORGX;
-  if (CurProf.tray_origin_x < 0) CurProf.tray_origin_x = 0;
-  if (CurProf.tray_origin_y > MAXORGY) CurProf.tray_origin_y = MAXORGY;
-  if (CurProf.tray_origin_y < 0) CurProf.tray_origin_y = 0;
-  if (CurProf.tube_no_x > MAX_TUBES_X) CurProf.tube_no_x = MAX_TUBES_X;
-  if (CurProf.tube_no_x < 0) CurProf.tube_no_x = 0;
-  if (CurProf.tube_no_y > MAX_TUBES_Y) CurProf.tube_no_y = MAX_TUBES_Y;
-  if (CurProf.tube_no_y < 0) CurProf.tube_no_y = 0;
-  if (CurProf.z_dip < 0) CurProf.z_dip = 0;
-  if (CurProf.z_dip > MAX_ZDIP) CurProf.z_dip = MAX_ZDIP;
+  if (currentProfile.cycles > MAXCYCLE) currentProfile.cycles = MAXCYCLE;
+  if (currentProfile.cycles < 0) currentProfile.cycles = 0;
+  if (currentProfile.pitch_x > MAXPITCHX) currentProfile.pitch_x = MAXPITCHX;
+  if (currentProfile.pitch_x < 0) currentProfile.pitch_x = 0;
+  if (currentProfile.pitch_y > MAXPITCHY) currentProfile.pitch_y = MAXPITCHY;
+  if (currentProfile.pitch_y < 0) currentProfile.pitch_y = 0;
+  if (currentProfile.tray_origin_x > MAXORGX) currentProfile.tray_origin_x = MAXORGX;
+  if (currentProfile.tray_origin_x < 0) currentProfile.tray_origin_x = 0;
+  if (currentProfile.tray_origin_y > MAXORGY) currentProfile.tray_origin_y = MAXORGY;
+  if (currentProfile.tray_origin_y < 0) currentProfile.tray_origin_y = 0;
+  if (currentProfile.tube_no_x > MAX_TUBES_X) currentProfile.tube_no_x = MAX_TUBES_X;
+  if (currentProfile.tube_no_x < 0) currentProfile.tube_no_x = 0;
+  if (currentProfile.tube_no_y > MAX_TUBES_Y) currentProfile.tube_no_y = MAX_TUBES_Y;
+  if (currentProfile.tube_no_y < 0) currentProfile.tube_no_y = 0;
+  if (currentProfile.z_dip < 0) currentProfile.z_dip = 0;
+  if (currentProfile.z_dip > MAX_ZDIP) currentProfile.z_dip = MAX_ZDIP;
 }
 
 uint8_t ProfileManager::loadProfile(void) {
 
-  int currentProfileIndex = readCurIDEEPROM();
-  if (currentProfileIndex >= MAX_PROFILES) currentProfileIndex = 0;  // if corrcupt data from eeprom, set id=0
+  this->currentProfileIndex = readCurIDEEPROM();
+  if (this->currentProfileIndex >= MAX_PROFILES) this->currentProfileIndex = 0;  // if corrcupt data from eeprom, set id=0
 
-  readProfileEEPROM(currentProfileIndex);  //reread as it is not profile id 0
-  if (CurProf.cycles > MAXCYCLE) CurProf.cycles = MAXCYCLE;
-  if (CurProf.pitch_x > MAXPITCHX) CurProf.pitch_x = MAXPITCHX;
-  if (CurProf.pitch_y > MAXPITCHY) CurProf.pitch_y = MAXPITCHY;
-  if (CurProf.tray_origin_x > MAXORGX) CurProf.tray_origin_x = MAXORGX;
-  if (CurProf.tray_origin_y > MAXORGY) CurProf.tray_origin_y = MAXORGY;
-  if (CurProf.tube_no_x > MAX_TUBES_X) CurProf.tube_no_x = MAX_TUBES_X;
-  if (CurProf.tube_no_y > MAX_TUBES_Y) CurProf.tube_no_y = MAX_TUBES_Y;
-  if (CurProf.z_dip < 0) CurProf.z_dip = 0;
-  if (CurProf.z_dip > MAX_ZDIP) CurProf.z_dip = MAX_ZDIP;
+  readProfileEEPROM(this->currentProfileIndex);  //reread as it is not profile id 0
+  if (currentProfile.cycles > MAXCYCLE) currentProfile.cycles = MAXCYCLE;
+  if (currentProfile.pitch_x > MAXPITCHX) currentProfile.pitch_x = MAXPITCHX;
+  if (currentProfile.pitch_y > MAXPITCHY) currentProfile.pitch_y = MAXPITCHY;
+  if (currentProfile.tray_origin_x > MAXORGX) currentProfile.tray_origin_x = MAXORGX;
+  if (currentProfile.tray_origin_y > MAXORGY) currentProfile.tray_origin_y = MAXORGY;
+  if (currentProfile.tube_no_x > MAX_TUBES_X) currentProfile.tube_no_x = MAX_TUBES_X;
+  if (currentProfile.tube_no_y > MAX_TUBES_Y) currentProfile.tube_no_y = MAX_TUBES_Y;
+  if (currentProfile.z_dip < 0) currentProfile.z_dip = 0;
+  if (currentProfile.z_dip > MAX_ZDIP) currentProfile.z_dip = MAX_ZDIP;
 
-  return currentProfileIndex;
+  return this->currentProfileIndex;
 }
 
 void ProfileManager::readPassEEPROM(char *pass) {
@@ -125,42 +125,42 @@ void ProfileManager::writeProfileEEPROM(int index) {
   int address = (index * 300) + sizeof(uint8_t);
   Dprint("Starting Address = ", (float)address);
 
-  EEPROM.put(address, CurProf.profile_name);
-  address += sizeof(CurProf.profile_name);
-  EEPROM.put(address, CurProf.tube_no_x);
-  address += sizeof(CurProf.tube_no_x);
-  EEPROM.put(address, CurProf.tube_no_y);
-  address += sizeof(CurProf.tube_no_y);
-  EEPROM.put(address, CurProf.pitch_x);
-  address += sizeof(CurProf.pitch_x);
-  EEPROM.put(address, CurProf.pitch_y);
-  address += sizeof(CurProf.pitch_y);
-  EEPROM.put(address, CurProf.tray_origin_x);
-  address += sizeof(CurProf.tray_origin_x);
-  EEPROM.put(address, CurProf.tray_origin_y);
-  address += sizeof(CurProf.tray_origin_y);
-  EEPROM.put(address, CurProf.cycles);
-  address += sizeof(CurProf.cycles);
-  EEPROM.put(address, CurProf.vibration_enabled);
-  address += sizeof(CurProf.vibration_enabled);
-  EEPROM.put(address, CurProf.password_enabled);
-  address += sizeof(CurProf.password_enabled);
-  EEPROM.put(address, CurProf.vibration_duration);
-  address += sizeof(CurProf.vibration_duration);
-  EEPROM.put(address, CurProf.dispense_enabled);
-  address += sizeof(CurProf.dispense_enabled);
-  EEPROM.put(address, CurProf.size_flag);
-  address += sizeof(CurProf.size_flag);
-  EEPROM.put(address, CurProf.z_dip);
-  address += sizeof(CurProf.z_dip);
-  EEPROM.put(address, CurProf.skip_col);
-  address += sizeof(CurProf.skip_col);
-  EEPROM.put(address, CurProf.skip_row);
-  address += sizeof(CurProf.skip_row);
-  EEPROM.put(address, CurProf.skip_single_pos);
-  address += sizeof(CurProf.skip_single_pos);
-  EEPROM.put(address, CurProf.staggered);
-  address += sizeof(CurProf.staggered);
+  EEPROM.put(address, currentProfile.profile_name);
+  address += sizeof(currentProfile.profile_name);
+  EEPROM.put(address, currentProfile.tube_no_x);
+  address += sizeof(currentProfile.tube_no_x);
+  EEPROM.put(address, currentProfile.tube_no_y);
+  address += sizeof(currentProfile.tube_no_y);
+  EEPROM.put(address, currentProfile.pitch_x);
+  address += sizeof(currentProfile.pitch_x);
+  EEPROM.put(address, currentProfile.pitch_y);
+  address += sizeof(currentProfile.pitch_y);
+  EEPROM.put(address, currentProfile.tray_origin_x);
+  address += sizeof(currentProfile.tray_origin_x);
+  EEPROM.put(address, currentProfile.tray_origin_y);
+  address += sizeof(currentProfile.tray_origin_y);
+  EEPROM.put(address, currentProfile.cycles);
+  address += sizeof(currentProfile.cycles);
+  EEPROM.put(address, currentProfile.vibration_enabled);
+  address += sizeof(currentProfile.vibration_enabled);
+  EEPROM.put(address, currentProfile.password_enabled);
+  address += sizeof(currentProfile.password_enabled);
+  EEPROM.put(address, currentProfile.vibration_duration);
+  address += sizeof(currentProfile.vibration_duration);
+  EEPROM.put(address, currentProfile.dispense_enabled);
+  address += sizeof(currentProfile.dispense_enabled);
+  EEPROM.put(address, currentProfile.size_flag);
+  address += sizeof(currentProfile.size_flag);
+  EEPROM.put(address, currentProfile.z_dip);
+  address += sizeof(currentProfile.z_dip);
+  EEPROM.put(address, currentProfile.skip_col);
+  address += sizeof(currentProfile.skip_col);
+  EEPROM.put(address, currentProfile.skip_row);
+  address += sizeof(currentProfile.skip_row);
+  EEPROM.put(address, currentProfile.skip_single_pos);
+  address += sizeof(currentProfile.skip_single_pos);
+  EEPROM.put(address, currentProfile.staggered);
+  address += sizeof(currentProfile.staggered);
 
   Dprint("Ending Address = ", (float)address);
 }
@@ -171,42 +171,42 @@ void ProfileManager::readProfileEEPROM(int index) {
   int address = (index * 300) + sizeof(uint8_t);
   Dprint("Starting Address = ", (float)address);
 
-  EEPROM.get(address, CurProf.profile_name);
-  address += sizeof(CurProf.profile_name);
-  EEPROM.get(address, CurProf.tube_no_x);
-  address += sizeof(CurProf.tube_no_x);
-  EEPROM.get(address, CurProf.tube_no_y);
-  address += sizeof(CurProf.tube_no_y);
-  EEPROM.get(address, CurProf.pitch_x);
-  address += sizeof(CurProf.pitch_x);
-  EEPROM.get(address, CurProf.pitch_y);
-  address += sizeof(CurProf.pitch_y);
-  EEPROM.get(address, CurProf.tray_origin_x);
-  address += sizeof(CurProf.tray_origin_x);
-  EEPROM.get(address, CurProf.tray_origin_y);
-  address += sizeof(CurProf.tray_origin_y);
-  EEPROM.get(address, CurProf.cycles);
-  address += sizeof(CurProf.cycles);
-  EEPROM.get(address, CurProf.vibration_enabled);
-  address += sizeof(CurProf.vibration_enabled);
-  EEPROM.get(address, CurProf.password_enabled);
-  address += sizeof(CurProf.password_enabled);
-  EEPROM.get(address, CurProf.vibration_duration);
-  address += sizeof(CurProf.vibration_duration);
-  EEPROM.get(address, CurProf.dispense_enabled);
-  address += sizeof(CurProf.dispense_enabled);
-  EEPROM.get(address, CurProf.size_flag);
-  address += sizeof(CurProf.size_flag);
-  EEPROM.get(address, CurProf.z_dip);
-  address += sizeof(CurProf.z_dip);
-  EEPROM.get(address, CurProf.skip_col);
-  address += sizeof(CurProf.skip_col);
-  EEPROM.get(address, CurProf.skip_row);
-  address += sizeof(CurProf.skip_row);
-  EEPROM.get(address, CurProf.skip_single_pos);
-  address += sizeof(CurProf.skip_single_pos);
-  EEPROM.get(address, CurProf.staggered);
-  address += sizeof(CurProf.staggered);
+  EEPROM.get(address, currentProfile.profile_name);
+  address += sizeof(currentProfile.profile_name);
+  EEPROM.get(address, currentProfile.tube_no_x);
+  address += sizeof(currentProfile.tube_no_x);
+  EEPROM.get(address, currentProfile.tube_no_y);
+  address += sizeof(currentProfile.tube_no_y);
+  EEPROM.get(address, currentProfile.pitch_x);
+  address += sizeof(currentProfile.pitch_x);
+  EEPROM.get(address, currentProfile.pitch_y);
+  address += sizeof(currentProfile.pitch_y);
+  EEPROM.get(address, currentProfile.tray_origin_x);
+  address += sizeof(currentProfile.tray_origin_x);
+  EEPROM.get(address, currentProfile.tray_origin_y);
+  address += sizeof(currentProfile.tray_origin_y);
+  EEPROM.get(address, currentProfile.cycles);
+  address += sizeof(currentProfile.cycles);
+  EEPROM.get(address, currentProfile.vibration_enabled);
+  address += sizeof(currentProfile.vibration_enabled);
+  EEPROM.get(address, currentProfile.password_enabled);
+  address += sizeof(currentProfile.password_enabled);
+  EEPROM.get(address, currentProfile.vibration_duration);
+  address += sizeof(currentProfile.vibration_duration);
+  EEPROM.get(address, currentProfile.dispense_enabled);
+  address += sizeof(currentProfile.dispense_enabled);
+  EEPROM.get(address, currentProfile.size_flag);
+  address += sizeof(currentProfile.size_flag);
+  EEPROM.get(address, currentProfile.z_dip);
+  address += sizeof(currentProfile.z_dip);
+  EEPROM.get(address, currentProfile.skip_col);
+  address += sizeof(currentProfile.skip_col);
+  EEPROM.get(address, currentProfile.skip_row);
+  address += sizeof(currentProfile.skip_row);
+  EEPROM.get(address, currentProfile.skip_single_pos);
+  address += sizeof(currentProfile.skip_single_pos);
+  EEPROM.get(address, currentProfile.staggered);
+  address += sizeof(currentProfile.staggered);
 
   Dprint("Ending Address = ", (float)address);
   checkProfile();
@@ -237,4 +237,31 @@ PasswordVerificationResult ProfileManager::verifyPassword(Gpu_Hal_Context_t *pho
   }
 
   return PASSWORD_SUCCESS;
+}
+
+// Gets a reference to the current profile.
+// @return Reference to the current profile.
+Profile& ProfileManager::getCurrentProfile(void) {
+  return currentProfile;
+}
+
+// Sets the current profile.
+// @param profile The profile to set as current.
+void ProfileManager::setCurrentProfile(const Profile& profile) {
+  currentProfile = profile;
+  checkProfile();  // Validate after setting
+}
+
+// Gets the current profile number/ID.
+// @return The current profile ID.
+uint8_t ProfileManager::getCurrentProfileNum(void) {
+  return currentProfileIndex;
+}
+
+// Sets the current profile number/ID.
+// @param profileNum The profile number to set as current.
+void ProfileManager::setCurrentProfileNum(uint8_t profileNum) {
+  if (profileNum < MAX_PROFILES) {
+    currentProfileIndex = profileNum;
+  }
 }

@@ -10,6 +10,11 @@ StartupController::StartupController(ControllerParams params)
 
 void StartupController::onStart() {
   Dprint(F("StartupController::on_start"));
+  
+  // Load profile from EEPROM
+  Serial.println("Loading profile..");
+  profileManager.loadProfile();
+  
   drawLogoScreen(phost, 0);
 
   // Check if dispenser is online and responding

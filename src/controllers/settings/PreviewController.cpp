@@ -12,7 +12,7 @@ void PreviewController::onStart() {
   Dprint(F("PreviewController::on_start"));
   
   // Store reference to the current profile
-  current_profile = &CurProf;
+  current_profile = &profileManager.getCurrentProfile();
 
   // Initialize simulation state
   simulating = false;

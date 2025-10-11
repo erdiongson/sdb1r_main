@@ -14,10 +14,10 @@ void SettingsController::onStart() {
   Serial.println(F("MODE: Config mode"));
 
   // Store reference to the current profile
-  current_profile = &CurProf;
+  current_profile = &profileManager.getCurrentProfile();
 
   // Display configuration screen
-  drawSettingsScreen(phost);
+  drawSettingsScreen(phost, {*current_profile, 0});
 }
 
 void SettingsController::onInteraction(const Interaction& interaction) {
@@ -45,10 +45,10 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         if (error) {
           strcpy(buf, current_profile->profile_name);
           sprintf(current_profile->profile_name, "Error in entry");
-          drawSettingsScreen(phost);
+          drawSettingsScreen(phost, {*current_profile, 0});
           delay(3000);
           strcpy(current_profile->profile_name, buf);
-          drawSettingsScreen(phost);
+          drawSettingsScreen(phost, {*current_profile, 0});
           delay(3000);
         } else {
           startNextController(CONTROLLER_READY);
@@ -63,12 +63,13 @@ void SettingsController::onInteraction(const Interaction& interaction) {
 
     case TAG_CONFIG_SAVE: {
       Serial.println("Button Pressed: SAVE");
-      Dprint("curprofnum=", CurProfNum);
-      profileManager.writeCurIDEEPROM(CurProfNum);
-      profileManager.writeProfileEEPROM(CurProfNum);
+      uint8_t currentNum = profileManager.getCurrentProfileNum();
+      Dprint("curprofnum=", currentNum);
+      profileManager.writeCurIDEEPROM(currentNum);
+      profileManager.writeProfileEEPROM(currentNum);
       
       // Show profile saved dialog
-      SettingsScreenParams params = {DIALOG_PROFILE_SAVED};
+      SettingsScreenParams params = {*current_profile, DIALOG_PROFILE_SAVED};
       drawSettingsScreen(phost, params);
       delay(2000);
       params.dialog_code = 0;
@@ -88,7 +89,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         }
 
         strcpy(current_profile->profile_name, buf);
-        drawSettingsScreen(phost);
+        drawSettingsScreen(phost, {*current_profile, 0});
       break;
     }
 
@@ -119,7 +120,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
           }
         }
         
-        drawSettingsScreen(phost);
+        drawSettingsScreen(phost, {*current_profile, 0});
       }
       break;
 
@@ -150,7 +151,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
           }
         }
         
-        drawSettingsScreen(phost);
+        drawSettingsScreen(phost, {*current_profile, 0});
       }
       break;
 
@@ -163,7 +164,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         Dprint("max val=", maxval);
         if (maxval > MAXPITCHX) maxval = MAXPITCHX;
         current_profile->pitch_x = getKeypadValue(&host, current_profile->pitch_x, MINPITCHX, MAXPITCHX, TRUE);
-        drawSettingsScreen(phost);
+        drawSettingsScreen(phost, {*current_profile, 0});
       }
       break;
 
@@ -176,7 +177,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         if (maxval > MAXPITCHY) maxval = MAXPITCHY;
         Dprint("max val=", maxval);
         current_profile->pitch_y = getKeypadValue(&host, current_profile->pitch_y, MINPITCHY, MAXPITCHY, TRUE);
-        drawSettingsScreen(phost);
+        drawSettingsScreen(phost, {*current_profile, 0});
       }
       break;
 
@@ -190,7 +191,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         Dprint("max val=", maxval);
 
         current_profile->tray_origin_x = getKeypadValue(&host, current_profile->tray_origin_x, 0, MAXORGX, TRUE);
-        drawSettingsScreen(phost);
+        drawSettingsScreen(phost, {*current_profile, 0});
       }
       break;
 
@@ -203,66 +204,66 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         if (maxval > MAXORGY) maxval = MAXORGY;
         Dprint("max val=", maxval);
         current_profile->tray_origin_y = getKeypadValue(&host, current_profile->tray_origin_y, 0, MAXORGY, TRUE);
-        drawSettingsScreen(phost);
+        drawSettingsScreen(phost, {*current_profile, 0});
       }
       break;
 
     case TAG_NUM_CYCLE:
       current_profile->cycles = getKeypadValue(phost, current_profile->cycles, MINCYCLE, MAXCYCLE, FALSE);
-      drawSettingsScreen(phost);
+      drawSettingsScreen(phost, {*current_profile, 0});
       break;
 
     case TAG_Z_DIP:
       Serial.println(F("Incrementing Z Dip"));
       current_profile->z_dip = getKeypadValue(phost, current_profile->z_dip, MINZDIP, MAXZDIP, TRUE);
-      drawSettingsScreen(phost);
+      drawSettingsScreen(phost, {*current_profile, 0});
       break;
 
     case TAG_VIBRATION_LEVEL:
       Serial.println(F("Incrementing vibration level"));
       incrementVibrationLevel();
-      drawSettingsScreen(phost);
+      drawSettingsScreen(phost, {*current_profile, 0});
       break;
 
     case TAG_VIBRATION_DURATION:
       Serial.println(F("Incrementing vibration duration"));
       incrementVibrationTime();
-      drawSettingsScreen(phost);
+      drawSettingsScreen(phost, {*current_profile, 0});
       break;
 
     case TAG_PASSWORD_ENABLED:
       Serial.println(F("Toggle password enable"));
       current_profile->password_enabled = !current_profile->password_enabled;
-      drawSettingsScreen(phost);
+      drawSettingsScreen(phost, {*current_profile, 0});
       break;
 
     case TAG_STAGGERED_TOGGLE:
       Serial.println(F("Toggle staggered mode"));
       current_profile->staggered = !current_profile->staggered;
-      drawSkipScreen(phost);
+      drawSkipScreen(phost, *current_profile);
       break;
 
     case TAG_SKIP_COLUMNS:
       Serial.println(F("Button Pressed: SKIP COLUMNS"));
       editSkipColumn(phost);
-      drawSkipScreen(phost);
+      drawSkipScreen(phost, *current_profile);
       break;
 
     case TAG_SKIP_ROWS:
       Serial.println(F("Button Pressed: SKIP ROWS"));
       editSkipRow(phost);
-      drawSkipScreen(phost);
+      drawSkipScreen(phost, *current_profile);
       break;
 
     case TAG_SKIP_SINGLE_POS:
       Serial.println(F("Button Pressed: SKIP SINGLE POSITION"));
       editSkipIndividual(phost);
-      drawSkipScreen(phost);
+      drawSkipScreen(phost, *current_profile);
       break;
 
     case TAG_ADV_PROF_BACK:  // Back button
       Serial.println(F("Button Pressed: BACK"));
-      drawSettingsScreen(phost);
+      drawSettingsScreen(phost, {*current_profile, 0});
       break;
 
     case TAG_CONFIG_PREVIEW:
@@ -272,7 +273,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
 
       case TAG_ADVANCED:
         Serial.println(F("Button Pressed: ADVANCED"));
-        drawSkipScreen(phost);
+        drawSkipScreen(phost, *current_profile);
         break;
 
     default:

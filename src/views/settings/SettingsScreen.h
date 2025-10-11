@@ -8,11 +8,13 @@
 
 // Parameters for Config_Screen display.
 struct SettingsScreenParams {
+  Profile& profile;
   int dialog_code;
 };
 
-void drawSettingsScreen(Gpu_Hal_Context_t *phost, SettingsScreenParams params = {0}) {
+void drawSettingsScreen(Gpu_Hal_Context_t *phost, SettingsScreenParams params) {
 
+  Profile& profile = params.profile;
   int16_t vibstatus;
   int16_t passwordStatus;
   int16_t vibtime_status;
@@ -116,99 +118,99 @@ void drawSettingsScreen(Gpu_Hal_Context_t *phost, SettingsScreenParams params = 
 
   //Text - Profile Name
   App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));
-  Gpu_CoCmd_Text(phost, 150, 53, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, (const char *)CurProf.profile_name);
+  Gpu_CoCmd_Text(phost, 150, 53, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, (const char *)profile.profile_name);
 
   // Password Enable/Disable
-  Toggle_Button(phost, CurProf.password_enabled, TAG_PASSWORD_ENABLED, 242, 180, "On", "Off");
+  Toggle_Button(phost, profile.password_enabled, TAG_PASSWORD_ENABLED, 242, 180, "On", "Off");
 
-  if (CurProf.tube_no_x > MAXNUMX)
+  if (profile.tube_no_x > MAXNUMX)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
   else
     App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));  // Change the color back to black
   //v204
   //Text - Tube Number Row
-  sprintf(buf, "%d", CurProf.tube_no_x);
+  sprintf(buf, "%d", profile.tube_no_x);
   Gpu_CoCmd_Text(phost, 180, 95, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 
   //v204
   //Text - Tube Number Column
-  if (CurProf.tube_no_y > MAXNUMY)
+  if (profile.tube_no_y > MAXNUMY)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
   else
     App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));  // Change the color back to black
   //v204
-  sprintf(buf, "%d", CurProf.tube_no_y);
+  sprintf(buf, "%d", profile.tube_no_y);
   Gpu_CoCmd_Text(phost, 122, 95, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
   //v204
   //Text - Pitch Row
-  if (CurProf.tube_no_x == 0) maxval = MAXXMM - CurProf.tray_origin_x;
-  else maxval = (MAXXMM - CurProf.tray_origin_x) / (CurProf.tube_no_x - 1);
+  if (profile.tube_no_x == 0) maxval = MAXXMM - profile.tray_origin_x;
+  else maxval = (MAXXMM - profile.tray_origin_x) / (profile.tube_no_x - 1);
   roundOneDecimal(&maxval);
   Dprint("max val Pitch X =", maxval);
-  if (maxval < CurProf.pitch_x)
+  if (maxval < profile.pitch_x)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
   else
     App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));  // Change the color back to black
                                                     //v204
 
-  dtostrf(CurProf.pitch_x, 4, 1, buf);
+  dtostrf(profile.pitch_x, 4, 1, buf);
   Gpu_CoCmd_Text(phost, 180, 119, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 
   //v204
   //Text - Pitch Column
-  if (CurProf.tube_no_y == 0) maxval = MAXYMM - CurProf.tray_origin_y;
-  else maxval = (MAXYMM - CurProf.tray_origin_y) / (CurProf.tube_no_y - 1);
+  if (profile.tube_no_y == 0) maxval = MAXYMM - profile.tray_origin_y;
+  else maxval = (MAXYMM - profile.tray_origin_y) / (profile.tube_no_y - 1);
   roundOneDecimal(&maxval);
   Dprint("max val Pitch Y =", maxval);
-  if (maxval < CurProf.pitch_y)
+  if (maxval < profile.pitch_y)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
   else
     App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));  // Change the color back to black
                                                     //v204
 
-  dtostrf(CurProf.pitch_y, 4, 1, buf);
+  dtostrf(profile.pitch_y, 4, 1, buf);
   Gpu_CoCmd_Text(phost, 122, 119, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 
   //v204
   //Text - Origin X
-  if (CurProf.tube_no_x == 0) maxval = MAXXMM;
-  else maxval = MAXXMM - (CurProf.pitch_x * (CurProf.tube_no_x - 1));
+  if (profile.tube_no_x == 0) maxval = MAXXMM;
+  else maxval = MAXXMM - (profile.pitch_x * (profile.tube_no_x - 1));
   roundOneDecimal(&maxval);
   Dprint("max val Org X =", maxval);
-  if (maxval < CurProf.tray_origin_x)
+  if (maxval < profile.tray_origin_x)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
   else
     App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));  // Change the color back to black
                                                     //v204
 
-  dtostrf(CurProf.tray_origin_x, 4, 1, buf);
+  dtostrf(profile.tray_origin_x, 4, 1, buf);
   Gpu_CoCmd_Text(phost, 180, 143, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 
   //v204
   //Text - Origin Y
-  if (CurProf.tube_no_y == 0) maxval = MAXYMM;
-  else maxval = MAXYMM - (CurProf.pitch_y * (CurProf.tube_no_y - 1));
+  if (profile.tube_no_y == 0) maxval = MAXYMM;
+  else maxval = MAXYMM - (profile.pitch_y * (profile.tube_no_y - 1));
   roundOneDecimal(&maxval);
   Dprint("max val Org Y =", maxval);
-  if (maxval < CurProf.tray_origin_y)
+  if (maxval < profile.tray_origin_y)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
   else
     App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));  // Change the color back to black
                                                     //v204
 
-  dtostrf(CurProf.tray_origin_y, 4, 1, buf);
+  dtostrf(profile.tray_origin_y, 4, 1, buf);
   Gpu_CoCmd_Text(phost, 122, 143, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 
   App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));  // Change the color back to black
                                                   //Text - Cycles
-  sprintf(buf, "%d", CurProf.cycles);
+  sprintf(buf, "%d", profile.cycles);
   Gpu_CoCmd_Text(phost, 255, 95, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 
   //Text - Z Dip
 
-  sprintf(buf, "%f", CurProf.z_dip);
-  Dprint("ZDip =", CurProf.z_dip);
-  dtostrf(CurProf.z_dip, 4, 1, buf);
+  sprintf(buf, "%f", profile.z_dip);
+  Dprint("ZDip =", profile.z_dip);
+  dtostrf(profile.z_dip, 4, 1, buf);
   Gpu_CoCmd_Text(phost, 255, 133, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
@@ -231,7 +233,7 @@ void drawSettingsScreen(Gpu_Hal_Context_t *phost, SettingsScreenParams params = 
   Gpu_CoCmd_Button(phost, 233, 205, 76, 26, 21, 0, "Advanced");
 
   //20240903: erdiongson - add the variation of vibration U1 - U4
-  vibstatus = CurProf.vibration_enabled;
+  vibstatus = profile.vibration_enabled;
   if (vibstatus == 1) {
     App_WrCoCmd_Buffer(phost, TAG(TAG_VIBRATION_LEVEL));  //U1 Button
     Gpu_CoCmd_Button(phost, 101, 175, 44, 20, 27, 0, "1");
@@ -252,7 +254,7 @@ void drawSettingsScreen(Gpu_Hal_Context_t *phost, SettingsScreenParams params = 
   }
 
   //20241001: erdiongson - add the variation of Vibration Duration (1-5)s
-  vibtime_status = CurProf.vibration_duration;
+  vibtime_status = profile.vibration_duration;
   if (vibtime_status == 3) {
     App_WrCoCmd_Buffer(phost, TAG(TAG_VIBRATION_DURATION));  //3 Seconds Vibration
     Gpu_CoCmd_Button(phost, 159, 175, 44, 20, 27, 0, "3s");
@@ -280,7 +282,7 @@ void drawSettingsScreen(Gpu_Hal_Context_t *phost, SettingsScreenParams params = 
   Disp_End(phost);
 }
 
-void drawSkipScreen(Gpu_Hal_Context_t *phost) {
+void drawSkipScreen(Gpu_Hal_Context_t *phost, Profile& profile) {
   char rowBuf[ROW_COL_MAX_LEN];        // a buffer for skip row entry
   char colBuf[ROW_COL_MAX_LEN];        // a buffer for skip column entry
   char singlePosBuf[ROW_COL_MAX_LEN];  // a buffer for skip single position entry
@@ -327,15 +329,15 @@ void drawSkipScreen(Gpu_Hal_Context_t *phost) {
 
   // Text - Skip Columns
   App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));
-  Gpu_CoCmd_Text(phost, 15, 36, 21, 0, (const char *)CurProf.skip_col);
+  Gpu_CoCmd_Text(phost, 15, 36, 21, 0, (const char *)profile.skip_col);
 
   // Text - Skip Rowa
   App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));
-  Gpu_CoCmd_Text(phost, 15, 84, 21, 0, (const char *)CurProf.skip_row);
+  Gpu_CoCmd_Text(phost, 15, 84, 21, 0, (const char *)profile.skip_row);
 
   // Text - Skip Columns
   App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));
-  Gpu_CoCmd_Text(phost, 15, 132, 21, 0, (const char *)CurProf.skip_single_pos);
+  Gpu_CoCmd_Text(phost, 15, 132, 21, 0, (const char *)profile.skip_single_pos);
 
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
@@ -352,7 +354,7 @@ void drawSkipScreen(Gpu_Hal_Context_t *phost) {
   // Staggered Mode Toggle
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   Gpu_CoCmd_Text(phost, 10, 165, 21, 0, "Staggered:");
-  Toggle_Button(phost, CurProf.staggered, TAG_STAGGERED_TOGGLE, 92, 168, "On", "Off");
+  Toggle_Button(phost, profile.staggered, TAG_STAGGERED_TOGGLE, 92, 168, "On", "Off");
 
   Disp_End(phost);
 }
