@@ -19,7 +19,7 @@ struct
   uint8_t Exit : 1;
 } Flag;
 
-void draw_keyboard(Gpu_Hal_Context_t *phost, uint8_t keypressed, char *displaytext, char *displaytitle, bool numlock, bool caplock, bool errorcode) {
+void drawKeyboard(Gpu_Hal_Context_t *phost, uint8_t keypressed, char *displaytext, char *displaytitle, bool numlock, bool caplock, bool errorcode) {
   char buf[PROFILE_NAME_MAX_LEN + 8];
 
   // Display List start
@@ -131,7 +131,7 @@ void get_keyboard_value(Gpu_Hal_Context_t *phost, char *curtext, char *curtitle,
   buf[curpos] = 0;
   Flag.Numeric = OFF;  // Disable the numbers and spcial charaters
 
-  draw_keyboard(phost, 0, buf, curtitle, numlock, caplock, 0);
+  drawKeyboard(phost, 0, buf, curtitle, numlock, caplock, 0);
   InteractionsHandler::waitForTouchRelease();
 
   while (true) {
@@ -140,12 +140,12 @@ void get_keyboard_value(Gpu_Hal_Context_t *phost, char *curtext, char *curtitle,
     // Only update the keyboard if a key was pressed
     if (keypressed == -1) continue;
 
-    draw_keyboard(phost, keypressed, buf, curtitle, numlock, caplock, 0);
+    drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, 0);
 
     switch (keypressed) {
       // No key
       case 0:
-        draw_keyboard(phost, 0, buf, curtitle, numlock, caplock, false);
+        drawKeyboard(phost, 0, buf, curtitle, numlock, caplock, false);
         break;
 
       case BACK_SPACE:
@@ -185,11 +185,11 @@ void get_keyboard_value(Gpu_Hal_Context_t *phost, char *curtext, char *curtitle,
             curtext[curpos + 1] = 0;
           }
           buf[++curpos] = 0;
-          draw_keyboard(phost, keypressed, buf, curtitle, numlock, caplock, false);
+          drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, false);
         } else {
-          draw_keyboard(phost, keypressed, buf, curtitle, numlock, caplock, TRUE);
+          drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, TRUE);
           delay(1000);
-          draw_keyboard(phost, keypressed, buf, curtitle, numlock, caplock, false);
+          drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, false);
         }
         break;
     }
@@ -203,7 +203,7 @@ void round_1_decimal(float *x) {
   *x = atof(buf);
 }
 
-void draw_keypad(Gpu_Hal_Context_t *phost, int32_t keypressed, char *displaynum, int8_t errorcode) {
+void drawKeypad(Gpu_Hal_Context_t *phost, int32_t keypressed, char *displaynum, int8_t errorcode) {
   char buf[KEYPAD_MAX_LEN];
 
   Gpu_CoCmd_Dlstart(phost);
@@ -265,7 +265,7 @@ float get_keypad_value(Gpu_Hal_Context_t *phost, float curval, float minval, flo
 
   InteractionsHandler::waitForTouchRelease();
 
-  draw_keypad(phost, 0, buf, 0);
+  drawKeypad(phost, 0, buf, 0);
 
   while(true) {
     int keypressed = InteractionsHandler::getTouchStateChanged();
@@ -276,7 +276,7 @@ float get_keypad_value(Gpu_Hal_Context_t *phost, float curval, float minval, flo
     switch (keypressed) {
       // No key
       case 0:
-        draw_keypad(phost, 0, buf, 0);
+        drawKeypad(phost, 0, buf, 0);
         break;
 
       case BACK_SPACE:
@@ -308,9 +308,9 @@ float get_keypad_value(Gpu_Hal_Context_t *phost, float curval, float minval, flo
         if (curpos < KEYPAD_MAX_LEN - 1) {
           buf[curpos] = keypressed;
           buf[++curpos] = 0;
-          draw_keypad(phost, keypressed, buf, 0);
+          drawKeypad(phost, keypressed, buf, 0);
         } else { //max entry
-          draw_keypad(phost, keypressed, buf, 1);
+          drawKeypad(phost, keypressed, buf, 1);
         }
         break;
     }

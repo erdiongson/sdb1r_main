@@ -41,7 +41,7 @@ void PreviewController::onStart(Profile& profile) {
   params.infoText = previewInfoText;
   
   // Display the preview screen
-  draw_preview_screen(phost, skipPositions, params);
+  drawPreviewScreen(phost, skipPositions, params);
 }
 
 void PreviewController::onInteraction(const Interaction& interaction) {
@@ -121,7 +121,7 @@ void PreviewController::start_simulation() {
   snprintf(previewInfoText, sizeof(previewInfoText), "Position = %dx%d", simulateCol, simulateRow);
   params.infoText = previewInfoText;
   
-  draw_preview_screen(phost, skipPositions, params);
+  drawPreviewScreen(phost, skipPositions, params);
 }
 
 void PreviewController::end_simulation() {
@@ -146,7 +146,7 @@ void PreviewController::end_simulation() {
   snprintf(previewInfoText, sizeof(previewInfoText), "Preview (Grid %dx%d)", params.gridCols, params.gridRows);
   params.infoText = previewInfoText;
   
-  draw_preview_screen(phost, skipPositions, params);
+  drawPreviewScreen(phost, skipPositions, params);
 }
 
 void PreviewController::step_simulation() {
@@ -177,5 +177,5 @@ void PreviewController::step_simulation() {
   snprintf(previewInfoText, sizeof(previewInfoText), "Position = %dx%d", simulateCol, simulateRow);
   params.infoText = previewInfoText;
   
-  draw_preview_screen(phost, skipPositions, params);
+  drawPreviewScreen(phost, skipPositions, params);
 }

@@ -32,7 +32,7 @@ struct DispenseTestScreenParams {
  * @param phost Pointer to GPU HAL context
  * @param params Screen parameters including status message
  */
-void draw_dispense_test_screen(Gpu_Hal_Context_t *phost, const DispenseTestScreenParams& params);
+void drawDispenseTestScreen(Gpu_Hal_Context_t *phost, const DispenseTestScreenParams& params);
 
 #endif /* _DISPENSE_TEST_SCREEN_H_ */
 
@@ -44,7 +44,7 @@ void draw_dispense_test_screen(Gpu_Hal_Context_t *phost, const DispenseTestScree
  * @param phost Pointer to GPU HAL context
  * @param params Screen parameters including status message
  */
-void draw_dispense_test_screen(Gpu_Hal_Context_t *phost, const DispenseTestScreenParams& params)
+void drawDispenseTestScreen(Gpu_Hal_Context_t *phost, const DispenseTestScreenParams& params)
 {
     char buf[100];
     

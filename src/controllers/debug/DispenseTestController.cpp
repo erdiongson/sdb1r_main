@@ -10,7 +10,7 @@ void DispenseTestController::onStart(Profile& profile) {
   Dprint(F("DispenseTestController::on_start"));
   
   DispenseTestScreenParams params = {"Ready"};
-  draw_dispense_test_screen(phost, params);
+  drawDispenseTestScreen(phost, params);
 }
 
 void DispenseTestController::onInteraction(const Interaction& interaction) {
@@ -24,7 +24,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
     case TAG_DISPENSE: {
       Dprint(F("DispenseTestController: Sending Dispense Command"));
       DispenseTestScreenParams params = {"SENT DISPENSE COMMAND"};
-      draw_dispense_test_screen(phost, params);
+      drawDispenseTestScreen(phost, params);
       dispenserHead.sendDispense();
       state = WAITING_FOR_RESPONSE;
       break;
@@ -34,7 +34,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
     case TAG_VIB_U0: {
       Dprint(F("DispenseTestController: Vibration level set to U0"));
       DispenseTestScreenParams params = {"SETTING VIB LEVEL U0"};
-      draw_dispense_test_screen(phost, params);
+      drawDispenseTestScreen(phost, params);
       dispenserHead.setVibrationLevel(0);
       state = WAITING_FOR_RESPONSE;
       break;
@@ -43,7 +43,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
     case TAG_VIB_U1: {
       Dprint(F("DispenseTestController: Vibration level set to U1"));
       DispenseTestScreenParams params = {"SETTING VIB LEVEL U1"};
-      draw_dispense_test_screen(phost, params);
+      drawDispenseTestScreen(phost, params);
       dispenserHead.setVibrationLevel(1);
       state = WAITING_FOR_RESPONSE;
       break;
@@ -52,7 +52,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
     case TAG_VIB_U2: {
       Dprint(F("DispenseTestController: Vibration level set to U2"));
       DispenseTestScreenParams params = {"SETTING VIB LEVEL U2"};
-      draw_dispense_test_screen(phost, params);
+      drawDispenseTestScreen(phost, params);
       dispenserHead.setVibrationLevel(2);
       state = WAITING_FOR_RESPONSE;
       break;
@@ -61,7 +61,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
     case TAG_VIB_U3: {
       Dprint(F("DispenseTestController: Vibration level set to U3"));
       DispenseTestScreenParams params = {"SETTING VIB LEVEL U3"};
-      draw_dispense_test_screen(phost, params);
+      drawDispenseTestScreen(phost, params);
       dispenserHead.setVibrationLevel(3);
       state = WAITING_FOR_RESPONSE;
       break;
@@ -70,7 +70,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
     case TAG_VIB_U4: {
       Dprint(F("DispenseTestController: Vibration level set to U4"));
       DispenseTestScreenParams params = {"SETTING VIB LEVEL U4"};
-      draw_dispense_test_screen(phost, params);
+      drawDispenseTestScreen(phost, params);
       dispenserHead.setVibrationLevel(4);
       state = WAITING_FOR_RESPONSE;
       break;
@@ -80,7 +80,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
     case TAG_VIB_TIME_1: {
       Dprint(F("DispenseTestController: Vibration time set to 1s"));
       DispenseTestScreenParams params = {"SETTING VIB TIME 1s"};
-      draw_dispense_test_screen(phost, params);
+      drawDispenseTestScreen(phost, params);
       dispenserHead.setVibrationTime(1);
       state = WAITING_FOR_RESPONSE;
       break;
@@ -89,7 +89,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
     case TAG_VIB_TIME_2: {
       Dprint(F("DispenseTestController: Vibration time set to 2s"));
       DispenseTestScreenParams params = {"SETTING VIB TIME 2s"};
-      draw_dispense_test_screen(phost, params);
+      drawDispenseTestScreen(phost, params);
       dispenserHead.setVibrationTime(2);
       state = WAITING_FOR_RESPONSE;
       break;
@@ -98,7 +98,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
     case TAG_VIB_TIME_3: {
       Dprint(F("DispenseTestController: Vibration time set to 3s"));
       DispenseTestScreenParams params = {"SETTING VIB TIME 3s"};
-      draw_dispense_test_screen(phost, params);
+      drawDispenseTestScreen(phost, params);
       dispenserHead.setVibrationTime(3);
       state = WAITING_FOR_RESPONSE;
       break;
@@ -107,7 +107,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
     case TAG_VIB_TIME_4: {
       Dprint(F("DispenseTestController: Vibration time set to 4s"));
       DispenseTestScreenParams params = {"SETTING VIB TIME 4s"};
-      draw_dispense_test_screen(phost, params);
+      drawDispenseTestScreen(phost, params);
       dispenserHead.setVibrationTime(4);
       state = WAITING_FOR_RESPONSE;
       break;
@@ -116,7 +116,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
     case TAG_VIB_TIME_5: {
       Dprint(F("DispenseTestController: Vibration time set to 5s"));
       DispenseTestScreenParams params = {"SETTING VIB TIME 5s"};
-      draw_dispense_test_screen(phost, params);
+      drawDispenseTestScreen(phost, params);
       dispenserHead.setVibrationTime(5);
       state = WAITING_FOR_RESPONSE;
       break;
@@ -132,7 +132,7 @@ ControllerStepResult DispenseTestController::onStep() {
 
   if (state == WAITING_FOR_RESPONSE && result.dispenser == DISPENSER_STATE_IDLING) {
     DispenseTestScreenParams params = {"Response Received"};
-    draw_dispense_test_screen(phost, params);
+    drawDispenseTestScreen(phost, params);
     state = RECEIVED_RESPONSE;
   }
 

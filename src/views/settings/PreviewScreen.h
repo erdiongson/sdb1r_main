@@ -31,7 +31,7 @@ struct PreviewScreenParams {
  * The grid is automatically centered on the screen and scaled to fit
  * the maximum grid size (MAX_TUBES_X x MAX_TUBES_Y)
  */
-void draw_preview_screen(Gpu_Hal_Context_t *phost, 
+void drawPreviewScreen(Gpu_Hal_Context_t *phost, 
                    const TrayHandler::Position skipPositions[MAX_POSITIONS],
                    const PreviewScreenParams& params) {
   

@@ -14,7 +14,7 @@ struct DebugScreenParams {
 // Draws the debug screen with test and utility buttons.
 // @param phost Pointer to the GPU HAL context.
 // @param params Debug screen parameters.
-inline void draw_debug_screen(Gpu_Hal_Context_t *phost, DebugScreenParams params) {
+inline void drawDebugScreen(Gpu_Hal_Context_t *phost, DebugScreenParams params) {
   char buf[100];
 
   Gpu_CoCmd_FlashFast(phost, 0);

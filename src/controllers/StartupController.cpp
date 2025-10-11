@@ -10,7 +10,7 @@ StartupController::StartupController(ControllerParams params)
 
 void StartupController::onStart(Profile& profile) {
   Dprint(F("StartupController::on_start"));
-  draw_logo_screen(phost, 0);
+  drawLogoScreen(phost, 0);
 
   // Check if dispenser is online and responding
   dispenserHead.sendHandshake();
@@ -23,17 +23,17 @@ void StartupController::onInteraction(const Interaction& interaction) {}
 
   // Handle possible errors
   if (result.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
-    draw_logo_screen(phost, DIALOG_ERROR_ACK_ERROR);
+    drawLogoScreen(phost, DIALOG_ERROR_ACK_ERROR);
     stage = STAGE_ERROR;
     return ControllerStepResult(-1, -1);
   }
   if (result.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
-    draw_logo_screen(phost, DIALOG_ERROR_MARKER_NOT_DETECTED);
+    drawLogoScreen(phost, DIALOG_ERROR_MARKER_NOT_DETECTED);
     stage = STAGE_ERROR;
     return ControllerStepResult(-1, -1);
   }
   if (result.dispenser == DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE) {
-    draw_logo_screen(phost, DIALOG_ERROR_IR_SENSOR);
+    drawLogoScreen(phost, DIALOG_ERROR_IR_SENSOR);
     stage = STAGE_ERROR;
     return ControllerStepResult(-1, -1);
   }

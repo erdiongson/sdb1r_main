@@ -3,7 +3,7 @@
 // Displays a dialog with a black box, white outline, title, subtitle, and optional buttons.
 // @param phost GPU context.
 // @param params DialogParams structure containing title, subtitle, button labels and tags.
-void draw_base_dialog(Gpu_Hal_Context_t *phost, const DialogParams& params) {
+void drawBaseDialog(Gpu_Hal_Context_t *phost, const DialogParams& params) {
   // Don't clear the screen - draw on top of existing content
 
   // Draw an invisible rectangle covering the entire screen to block touches
@@ -81,7 +81,7 @@ void draw_base_dialog(Gpu_Hal_Context_t *phost, const DialogParams& params) {
 // Displays a dialog based on dialog code.
 // @param phost GPU context.
 // @param dialog_code The dialog code to display.
-void draw_dialog(Gpu_Hal_Context_t *phost, int dialog_code) {
+void drawDialog(Gpu_Hal_Context_t *phost, int dialog_code) {
   DialogParams params;
   
   switch (dialog_code) {
@@ -176,5 +176,5 @@ void draw_dialog(Gpu_Hal_Context_t *phost, int dialog_code) {
       break;
   }
   
-  draw_base_dialog(phost, params);
+  drawBaseDialog(phost, params);
 }

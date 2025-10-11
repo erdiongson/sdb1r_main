@@ -28,11 +28,11 @@ typedef struct {
 // Displays a dialog with a black box, white outline, title, subtitle, and optional buttons.
 // @param phost GPU context.
 // @param params DialogParams structure containing title, subtitle, button labels and tags.
-void draw_base_dialog(Gpu_Hal_Context_t *phost, const DialogParams& params);
+void drawBaseDialog(Gpu_Hal_Context_t *phost, const DialogParams& params);
 
 // Displays a dialog based on dialog code.
 // @param phost GPU context.
 // @param dialog_code The dialog code to display.
-void draw_dialog(Gpu_Hal_Context_t *phost, int dialog_code);
+void drawDialog(Gpu_Hal_Context_t *phost, int dialog_code);
 
 #endif /* DIALOGS_H */

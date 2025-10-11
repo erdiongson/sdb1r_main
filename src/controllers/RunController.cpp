@@ -28,7 +28,7 @@ void RunController::onInteraction(const Interaction& interaction) {
   int button = interaction.key_pressed;
 
   if (button == PAUSE || interaction.plc_message_type == MSG_PAUSE) {
-    draw_main_screen(phost, PAUSEMENU);
+    drawMainScreen(phost, PAUSEMENU);
     pause();
   } else if (button == STOP || interaction.plc_message_type == MSG_STOP) {
     stop();
@@ -49,7 +49,7 @@ void RunController::pause() {
 // Stops the run and returns to home position.
 void RunController::stop() {
   Serial.println(F("MODE: Stopped"));
-  draw_main_screen(phost, STOPPINGMENU);
+  drawMainScreen(phost, STOPPINGMENU);
   paused = false;
 
   // Stop all stepper movements
@@ -69,7 +69,7 @@ void RunController::stop() {
 void RunController::start() {
   Serial.println(F("MODE: Resumed"));
   paused = false;
-  draw_main_screen(phost, RUNMENU);
+  drawMainScreen(phost, RUNMENU);
   start_stage(stage);
 }
 
@@ -253,7 +253,7 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
           (uint16_t)trayHandler.getTubesDispensed() + 1,
           0
         };
-        draw_main_screen(phost, RUNMENU, &params);
+        drawMainScreen(phost, RUNMENU, &params);
         start_stage(STAGE_MOVE);
       } else {
         startNextController(CONTROLLER_HOMING);
@@ -285,7 +285,7 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
   if (dispenserProcessResult.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
     Serial.println(F("MODE: Stepper error - limit switch triggered"));
     params.error_code = DIALOG_ERROR_LIMIT_SWITCH;
-    draw_main_screen(phost, RUNMENU, &params);
+    drawMainScreen(phost, RUNMENU, &params);
     pause();
     return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
   }
@@ -293,7 +293,7 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE) {
     Serial.println(F("MODE: Dispenser error - IR sensor failure"));
     params.error_code = DIALOG_ERROR_IR_SENSOR;
-    draw_main_screen(phost, RUNMENU, &params);
+    drawMainScreen(phost, RUNMENU, &params);
     pause();
     return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
   }
@@ -301,7 +301,7 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
     Serial.println(F("MODE: Dispenser error - Acknowledgment error"));
     params.error_code = DIALOG_ERROR_ACK_ERROR;
-    draw_main_screen(phost, RUNMENU, &params);
+    drawMainScreen(phost, RUNMENU, &params);
     pause();
     return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
   }
@@ -309,7 +309,7 @@ void RunController::process_stage_logic(DispenserProcessResult& dispenserProcess
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
     Serial.println(F("MODE: Dispenser error - marker not detected"));
     params.error_code = DIALOG_ERROR_MARKER_NOT_DETECTED;
-    draw_main_screen(phost, RUNMENU, &params);
+    drawMainScreen(phost, RUNMENU, &params);
     pause();
     
     return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);

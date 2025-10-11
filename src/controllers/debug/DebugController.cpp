@@ -10,7 +10,7 @@ DebugController::DebugController(ControllerParams params)
 void DebugController::onStart(Profile& profile) {
   Dprint(F("DebugController::on_start"));
   DebugScreenParams params = {CurProf.sizeFlag, false, false};
-  draw_debug_screen(phost, params);
+  drawDebugScreen(phost, params);
 }
 
 void DebugController::onInteraction(const Interaction& interaction) {
@@ -31,7 +31,7 @@ void DebugController::onInteraction(const Interaction& interaction) {
       Dprint(F("Debug: Blank EEPROM button pressed"));
       BlankEEPROM();
       DebugScreenParams params = {CurProf.sizeFlag, true, false};
-      draw_debug_screen(phost, params);
+      drawDebugScreen(phost, params);
       break;
     }
 
@@ -39,7 +39,7 @@ void DebugController::onInteraction(const Interaction& interaction) {
       Dprint(F("Debug: Reset Profiles button pressed"));
       PreLoadEEPROM();
       DebugScreenParams params = {CurProf.sizeFlag, false, true};
-      draw_debug_screen(phost, params);
+      drawDebugScreen(phost, params);
       break;
     }
 
@@ -47,7 +47,7 @@ void DebugController::onInteraction(const Interaction& interaction) {
       Dprint(F("Debug: Toggle Size button pressed"));
       CurProf.sizeFlag = CurProf.sizeFlag == 0 ? 1 : 0;
       DebugScreenParams params = {CurProf.sizeFlag, false, false};
-      draw_debug_screen(phost, params);
+      drawDebugScreen(phost, params);
       break;
     }
 

@@ -13,7 +13,7 @@ struct MainScreenParams {
   int error_code;
 };
 
-inline void draw_menu_buttons(uint8_t whichmenu) {
+inline void drawMenuButtons(uint8_t whichmenu) {
   //					 	 SETTING START PAUSE STOP
   bool_t act_but[][6] = {
     { 1, 1, 0, 0 }, // main menu
@@ -66,7 +66,7 @@ inline void draw_menu_buttons(uint8_t whichmenu) {
   }
 }
 
-inline void draw_main_screen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const MainScreenParams* params = nullptr) {
+inline void drawMainScreen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const MainScreenParams* params = nullptr) {
 
   char buf[100];
 
@@ -98,7 +98,7 @@ inline void draw_main_screen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const 
   App_WrCoCmd_Buffer(phost, TAG_MASK(255));
 
 
-  draw_menu_buttons(whichmenu);
+  drawMenuButtons(whichmenu);
 
   sprintf(buf, "Profile Name: %s", CurProf.profileName);
   Gpu_CoCmd_Text(phost, 25, 195, 20, OPT_FORMAT, buf);  //OPT_CENTER | OPT_RIGHTX |
@@ -116,7 +116,7 @@ inline void draw_main_screen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const 
 
   //INSERT DIALOG
   if (params && params->error_code > 0) {
-    draw_dialog(phost, params->error_code);
+    drawDialog(phost, params->error_code);
   }
   Disp_End(phost);
 }

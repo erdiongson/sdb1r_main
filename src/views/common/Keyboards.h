@@ -22,7 +22,7 @@
 // @param numlock Number lock state (true = numeric mode).
 // @param caplock Caps lock state (true = uppercase).
 // @param errorcode Error state flag.
-void draw_keyboard(Gpu_Hal_Context_t *phost, uint8_t keypressed, char *displaytext, char *displaytitle, bool numlock, bool caplock, bool errorcode);
+void drawKeyboard(Gpu_Hal_Context_t *phost, uint8_t keypressed, char *displaytext, char *displaytitle, bool numlock, bool caplock, bool errorcode);
 
 // Waits for the current key to be released.
 void wait_key_release(void);
@@ -43,7 +43,7 @@ void round_1_decimal(float *x);
 // @param keypressed Currently pressed key code.
 // @param displaynum Number string to display.
 // @param errorcode Error code (0 = no error).
-void draw_keypad(Gpu_Hal_Context_t *phost, int32_t keypressed, char *displaynum, int8_t errorcode);
+void drawKeypad(Gpu_Hal_Context_t *phost, int32_t keypressed, char *displaynum, int8_t errorcode);
 
 // Loads a float value into a string buffer.
 // @param buf Buffer to store the string.

@@ -14,7 +14,7 @@ struct ProfileParams {
   int dialog_code;
 };
 
-void draw_profile_screen(Gpu_Hal_Context_t *phost, ProfileParams params) {
+void drawProfileScreen(Gpu_Hal_Context_t *phost, ProfileParams params) {
 	uint8_t keypressed = params.keypressed;
 	uint8_t curprofnum = params.curprofnum;
 	Profile &profile = params.profile;
@@ -125,7 +125,7 @@ void draw_profile_screen(Gpu_Hal_Context_t *phost, ProfileParams params) {
 	
 	// Draw dialog if dialog_code is set
 	if (params.dialog_code > 0) {
-		draw_dialog(phost, params.dialog_code);
+		drawDialog(phost, params.dialog_code);
 	}
 	
 	Disp_End(phost);

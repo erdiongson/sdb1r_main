@@ -2,7 +2,7 @@
 #include "../gpu/App_Common.h"
 #include "common/Dialogs.h"
 
-void draw_logo_screen(Gpu_Hal_Context_t *phost, int error_code)
+void drawLogoScreen(Gpu_Hal_Context_t *phost, int error_code)
 {
     Gpu_CoCmd_FlashFast(phost, 0);
     Gpu_CoCmd_Dlstart(phost);
@@ -25,7 +25,7 @@ void draw_logo_screen(Gpu_Hal_Context_t *phost, int error_code)
     Gpu_CoCmd_Text(phost, 160, 220, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, "v" FWVER);
 
     if (error_code != 0) {
-        draw_dialog(phost, error_code);
+        drawDialog(phost, error_code);
     }
 
     Disp_End(phost);

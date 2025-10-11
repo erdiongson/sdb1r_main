@@ -10,7 +10,7 @@ ProfileController::ProfileController(ControllerParams params)
 
 void ProfileController::onStart(Profile& profile) {
   ProfileParams params = {0, 0, CurProf, 0};
-  draw_profile_screen(phost, params);
+  drawProfileScreen(phost, params);
 }
 
 void ProfileController::onInteraction(const Interaction& interaction) {
@@ -33,7 +33,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
       params.keypressed = 0;
       params.curprofnum = selectedProfileNum;
       params.dialog_code = DIALOG_PROFILE_LOADED;
-      draw_profile_screen(phost, params);
+      drawProfileScreen(phost, params);
       delay(2000);
       startNextController(CONTROLLER_SETTINGS);
       break;
@@ -50,7 +50,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
       params.keypressed = interaction.key_pressed;
       params.curprofnum = selectedProfileNum;
       params.dialog_code = 0;
-      draw_profile_screen(phost, params);
+      drawProfileScreen(phost, params);
       break;
     }
 
@@ -64,7 +64,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
       params.keypressed = interaction.key_pressed;
       params.curprofnum = selectedProfileNum;
       params.dialog_code = 0;
-      draw_profile_screen(phost, params);
+      drawProfileScreen(phost, params);
       break;
     }
 
@@ -77,7 +77,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
         params.keypressed = 0;
         params.curprofnum = selectedProfileNum;
         params.dialog_code = 0;
-        draw_profile_screen(phost, params);
+        drawProfileScreen(phost, params);
         break;
       }
 
@@ -87,7 +87,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
         params.keypressed = 0;
         params.curprofnum = selectedProfileNum;
         params.dialog_code = 0;
-        draw_profile_screen(phost, params);
+        drawProfileScreen(phost, params);
         break;
       }
 
@@ -95,10 +95,10 @@ void ProfileController::onInteraction(const Interaction& interaction) {
         params.keypressed = 0;
         params.curprofnum = selectedProfileNum;
         params.dialog_code = DIALOG_ERROR_PASSWORD_MISMATCH;
-        draw_profile_screen(phost, params);
+        drawProfileScreen(phost, params);
         delay(2000);
         params.dialog_code = 0;
-        draw_profile_screen(phost, params);
+        drawProfileScreen(phost, params);
         break;
       }
 
@@ -106,10 +106,10 @@ void ProfileController::onInteraction(const Interaction& interaction) {
       params.keypressed = 0;
       params.curprofnum = selectedProfileNum;
       params.dialog_code = DIALOG_PASSWORD_CHANGED;
-      draw_profile_screen(phost, params);
+      drawProfileScreen(phost, params);
       delay(2000);
       params.dialog_code = 0;
-      draw_profile_screen(phost, params);
+      drawProfileScreen(phost, params);
       break;
     }
 

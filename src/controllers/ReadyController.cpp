@@ -10,7 +10,7 @@ ReadyController::ReadyController(ControllerParams params)
 
 void ReadyController::onStart(Profile& profile) {
   Dprint(F("ReadyController::on_start"));
-  draw_main_screen(phost, MAINMENU);
+  drawMainScreen(phost, MAINMENU);
 
   // Home the dispenser head
 }
@@ -30,15 +30,15 @@ void ReadyController::onInteraction(const Interaction& interaction) {
         PasswordVerificationResult result = verify_password(phost);
         
         if (result == PASSWORD_CANCELLED) {
-          draw_main_screen(phost, MAINMENU);
+          drawMainScreen(phost, MAINMENU);
           return;
         }
         
         if (result == PASSWORD_INCORRECT) {
           MainScreenParams params = {0, 0, 0, 0, DIALOG_ERROR_WRONG_PASSWORD};
-          draw_main_screen(phost, MAINMENU, &params);
+          drawMainScreen(phost, MAINMENU, &params);
           delay(2000);
-          draw_main_screen(phost, MAINMENU);
+          drawMainScreen(phost, MAINMENU);
           return;
         }
       }

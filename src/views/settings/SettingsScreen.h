@@ -11,7 +11,7 @@ struct SettingsScreenParams {
   int dialog_code;
 };
 
-void draw_settings_screen(Gpu_Hal_Context_t *phost, SettingsScreenParams params = {0}) {
+void drawSettingsScreen(Gpu_Hal_Context_t *phost, SettingsScreenParams params = {0}) {
 
   int16_t vibstatus;
   int16_t passwordStatus;
@@ -274,13 +274,13 @@ void draw_settings_screen(Gpu_Hal_Context_t *phost, SettingsScreenParams params 
   
   // Draw dialog if dialog_code is set
   if (params.dialog_code > 0) {
-    draw_dialog(phost, params.dialog_code);
+    drawDialog(phost, params.dialog_code);
   }
   
   Disp_End(phost);
 }
 
-void draw_skip_screen(Gpu_Hal_Context_t *phost) {
+void drawSkipScreen(Gpu_Hal_Context_t *phost) {
   char rowBuf[ROW_COL_MAX_LEN];        // a buffer for skip row entry
   char colBuf[ROW_COL_MAX_LEN];        // a buffer for skip column entry
   char singlePosBuf[ROW_COL_MAX_LEN];  // a buffer for skip single position entry

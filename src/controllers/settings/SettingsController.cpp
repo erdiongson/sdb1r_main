@@ -17,7 +17,7 @@ void SettingsController::onStart(Profile& profile) {
   currentProfile = &profile;
 
   // Display configuration screen
-  draw_settings_screen(phost);
+  drawSettingsScreen(phost);
 }
 
 void SettingsController::onInteraction(const Interaction& interaction) {
@@ -45,10 +45,10 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         if (error) {
           strcpy(buf, currentProfile->profileName);
           sprintf(currentProfile->profileName, "Error in entry");
-          draw_settings_screen(phost);
+          drawSettingsScreen(phost);
           delay(3000);
           strcpy(currentProfile->profileName, buf);
-          draw_settings_screen(phost);
+          drawSettingsScreen(phost);
           delay(3000);
         } else {
           startNextController(CONTROLLER_READY);
@@ -69,10 +69,10 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       
       // Show profile saved dialog
       SettingsScreenParams params = {DIALOG_PROFILE_SAVED};
-      draw_settings_screen(phost, params);
+      drawSettingsScreen(phost, params);
       delay(2000);
       params.dialog_code = 0;
-      draw_settings_screen(phost, params);
+      drawSettingsScreen(phost, params);
       break;
     }
 
@@ -88,7 +88,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         }
 
         strcpy(currentProfile->profileName, buf);
-        draw_settings_screen(phost);
+        drawSettingsScreen(phost);
       break;
     }
 
@@ -119,7 +119,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
           }
         }
         
-        draw_settings_screen(phost);
+        drawSettingsScreen(phost);
       }
       break;
 
@@ -150,7 +150,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
           }
         }
         
-        draw_settings_screen(phost);
+        drawSettingsScreen(phost);
       }
       break;
 
@@ -163,7 +163,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         Dprint("max val=", maxval);
         if (maxval > MAXPITCHX) maxval = MAXPITCHX;
         currentProfile->pitch_x = get_keypad_value(&host, currentProfile->pitch_x, MINPITCHX, MAXPITCHX, TRUE);
-        draw_settings_screen(phost);
+        drawSettingsScreen(phost);
       }
       break;
 
@@ -176,7 +176,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         if (maxval > MAXPITCHY) maxval = MAXPITCHY;
         Dprint("max val=", maxval);
         currentProfile->pitch_y = get_keypad_value(&host, currentProfile->pitch_y, MINPITCHY, MAXPITCHY, TRUE);
-        draw_settings_screen(phost);
+        drawSettingsScreen(phost);
       }
       break;
 
@@ -190,7 +190,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         Dprint("max val=", maxval);
 
         currentProfile->trayOriginX = get_keypad_value(&host, currentProfile->trayOriginX, 0, MAXORGX, TRUE);
-        draw_settings_screen(phost);
+        drawSettingsScreen(phost);
       }
       break;
 
@@ -203,66 +203,66 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         if (maxval > MAXORGY) maxval = MAXORGY;
         Dprint("max val=", maxval);
         currentProfile->trayOriginY = get_keypad_value(&host, currentProfile->trayOriginY, 0, MAXORGY, TRUE);
-        draw_settings_screen(phost);
+        drawSettingsScreen(phost);
       }
       break;
 
     case TAG_NUM_CYCLE:
       currentProfile->Cycles = get_keypad_value(phost, currentProfile->Cycles, MINCYCLE, MAXCYCLE, FALSE);
-      draw_settings_screen(phost);
+      drawSettingsScreen(phost);
       break;
 
     case TAG_Z_DIP:
       Serial.println(F("Incrementing Z Dip"));
       currentProfile->ZDip = get_keypad_value(phost, currentProfile->ZDip, MINZDIP, MAXZDIP, TRUE);
-      draw_settings_screen(phost);
+      drawSettingsScreen(phost);
       break;
 
     case TAG_VIBRATION_LEVEL:
       Serial.println(F("Incrementing vibration level"));
       increment_vibration_level();
-      draw_settings_screen(phost);
+      drawSettingsScreen(phost);
       break;
 
     case TAG_VIBRATION_DURATION:
       Serial.println(F("Incrementing vibration duration"));
       increment_vibration_time();
-      draw_settings_screen(phost);
+      drawSettingsScreen(phost);
       break;
 
     case TAG_PASSWORD_ENABLED:
       Serial.println(F("Toggle password enable"));
       currentProfile->passwordEnabled = !currentProfile->passwordEnabled;
-      draw_settings_screen(phost);
+      drawSettingsScreen(phost);
       break;
 
     case TAG_STAGGERED_TOGGLE:
       Serial.println(F("Toggle staggered mode"));
       currentProfile->staggered = !currentProfile->staggered;
-      draw_skip_screen(phost);
+      drawSkipScreen(phost);
       break;
 
     case TAG_SKIP_COLUMNS:
       Serial.println(F("Button Pressed: SKIP COLUMNS"));
       editSkipColumn(phost);
-      draw_skip_screen(phost);
+      drawSkipScreen(phost);
       break;
 
     case TAG_SKIP_ROWS:
       Serial.println(F("Button Pressed: SKIP ROWS"));
       editSkipRow(phost);
-      draw_skip_screen(phost);
+      drawSkipScreen(phost);
       break;
 
     case TAG_SKIP_SINGLE_POS:
       Serial.println(F("Button Pressed: SKIP SINGLE POSITION"));
       editSkipIndividual(phost);
-      draw_skip_screen(phost);
+      drawSkipScreen(phost);
       break;
 
     case TAG_ADV_PROF_BACK:  // Back button
       Serial.println(F("Button Pressed: BACK"));
-      draw_settings_screen(phost);
+      drawSettingsScreen(phost);
       break;
 
     case TAG_CONFIG_PREVIEW:
@@ -272,7 +272,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
 
       case TAG_ADVANCED:
         Serial.println(F("Button Pressed: ADVANCED"));
-        draw_skip_screen(phost);
+        drawSkipScreen(phost);
         break;
 
     default:
