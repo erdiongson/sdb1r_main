@@ -9,7 +9,7 @@ DispenseTestController::DispenseTestController(ControllerParams params)
 void DispenseTestController::onStart() {
   Logger::log(F("DispenseTestController::on_start"));
   
-  DispenseTestScreenParams params = {"Ready"};
+  DispenseTestScreenParams params = {"READY"};
   drawDispenseTestScreen(phost, params);
 }
 
@@ -130,10 +130,33 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
 ControllerStepResult DispenseTestController::onStep() {
   DispenserProcessResult result = dispenserHead.process();
 
-  if (state == WAITING_FOR_RESPONSE && result.dispenser == DISPENSER_STATE_IDLING) {
-    DispenseTestScreenParams params = {"Response Received"};
+  if (state == WAITING_FOR_RESPONSE && result.dispenser == DISPENSER_STATE_ACKNOWLEDGED) {
+    DispenseTestScreenParams params = {"ACKNOWLEGED"};
     drawDispenseTestScreen(phost, params);
+  }
+
+  if (state == WAITING_FOR_RESPONSE) {
+    const char* message = "";
+    switch (result.dispenser) {
+      case DISPENSER_STATE_IDLING:
+        message = "RESPONSE RECEIVED";
+        break;
+      case DISPENSER_STATE_ERROR_ACK_ERROR:
+        message = "ACK ERROR";
+        break;
+      case DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE:
+        message = "IR SENSOR FAILURE";
+        break;
+      case DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED:
+        message = "MARKER NOT DETECTED";
+        break;
+      default:
+        break;
+    }
+    
+    DispenseTestScreenParams params = {message};
     state = RECEIVED_RESPONSE;
+    drawDispenseTestScreen(phost, params);
   }
 
   return ControllerStepResult(result.steppers == AXIS_STATE_RUNNING);
