@@ -6,7 +6,6 @@
 
 // Parameters for Debug Screen display.
 struct DebugScreenParams {
-  uint8_t current_size;  // 0 = small, 1 = large
   bool blanked_eeprom;   // true = show (Done) on Blank EEPROM button
   bool profiles_reset;   // true = show (Done) on Reset Profiles button
 };
@@ -77,12 +76,6 @@ inline void drawDebugScreen(Gpu_Hal_Context_t *phost, DebugScreenParams params) 
     Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, "Reset Profiles");
   }
   button_y += button_spacing;
-
-  // Toggle Size button
-  App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_TOGGLE_SIZE));
-  Gpu_CoCmd_FgColor(phost, 0x9370DB);
-  sprintf(buf, "Toggle Size (Current: %s)", params.current_size == 1 ? "L" : "S");
-  Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, buf);
 
   // Back button at bottom left (smaller, similar to PreviewScreen)
   App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_BACK));

@@ -50,7 +50,6 @@ Date created - 2022.12.14 - XentiQ version
 typedef struct
 {
     char profile_name[PROFILE_NAME_MAX_LEN];
-    int8_t profile_id = 0;
     int8_t tube_no_x = 0; //represent the number of columns
     int8_t tube_no_y = 0; //represent the number of rows
     float pitch_x = 0.0;
@@ -58,12 +57,10 @@ typedef struct
     float tray_origin_x = 0.0;
     float tray_origin_y = 0.0;
     int16_t cycles = 1;
-    int16_t current_cycle = 0; //New field for storing the current cycle
     int16_t vibration_enabled = 0;
     bool dispense_enabled = false;
     int16_t password_enabled = 0;
     int16_t vibration_duration = 2;
-    int16_t size_flag = 1; //small = 0; large = 1;
     float z_dip = 0.0;
     char skip_col[ROW_COL_MAX_LEN];
     char skip_row[ROW_COL_MAX_LEN];

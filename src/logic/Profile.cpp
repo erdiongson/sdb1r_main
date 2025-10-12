@@ -40,7 +40,6 @@ void ProfileManager::preLoadEEPROM(void) {
     currentProfile.vibration_enabled = 0;
     currentProfile.password_enabled = TRUE;
     currentProfile.vibration_duration = 2;
-    currentProfile.size_flag = 1;
     currentProfile.z_dip = 0.0;
     currentProfile.skip_col[0] = '\0';
     currentProfile.skip_row[0] = '\0';
@@ -151,8 +150,6 @@ void ProfileManager::writeProfileEEPROM(int index) {
   address += sizeof(currentProfile.vibration_duration);
   EEPROM.put(address, currentProfile.dispense_enabled);
   address += sizeof(currentProfile.dispense_enabled);
-  EEPROM.put(address, currentProfile.size_flag);
-  address += sizeof(currentProfile.size_flag);
   EEPROM.put(address, currentProfile.z_dip);
   address += sizeof(currentProfile.z_dip);
   EEPROM.put(address, currentProfile.skip_col);
@@ -197,8 +194,6 @@ void ProfileManager::readProfileEEPROM(int index) {
   address += sizeof(currentProfile.vibration_duration);
   EEPROM.get(address, currentProfile.dispense_enabled);
   address += sizeof(currentProfile.dispense_enabled);
-  EEPROM.get(address, currentProfile.size_flag);
-  address += sizeof(currentProfile.size_flag);
   EEPROM.get(address, currentProfile.z_dip);
   address += sizeof(currentProfile.z_dip);
   EEPROM.get(address, currentProfile.skip_col);
