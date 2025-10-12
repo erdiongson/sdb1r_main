@@ -137,11 +137,11 @@ void RunController::startStage(Stage newStage) {
 }
 
 ControllerStepResult RunController::onStep() {
-  if (paused) return ControllerStepResult(-1, -1);
+  if (paused) return ControllerStepResult(false);
 
   DispenserProcessResult dispenserProcessResult = dispenserHead.process();
   if (dispenserProcessResult.steppers == AXIS_STATE_RUNNING) {
-    return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
+    return ControllerStepResult(true);
   }
 
   MainScreenParams params = {
@@ -158,7 +158,7 @@ ControllerStepResult RunController::onStep() {
     params.dialog_code = DIALOG_ERROR_LIMIT_SWITCH;
     drawMainScreen(phost, RUNMENU, &params);
     pause();
-    return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
+    return ControllerStepResult(false);
   }
 
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE) {
@@ -166,7 +166,7 @@ ControllerStepResult RunController::onStep() {
     params.dialog_code = DIALOG_ERROR_IR_SENSOR;
     drawMainScreen(phost, RUNMENU, &params);
     pause();
-    return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
+    return ControllerStepResult(false);
   }
 
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
@@ -174,7 +174,7 @@ ControllerStepResult RunController::onStep() {
     params.dialog_code = DIALOG_ERROR_ACK_ERROR;
     drawMainScreen(phost, RUNMENU, &params);
     pause();
-    return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
+    return ControllerStepResult(false);
   }
 
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
@@ -183,13 +183,13 @@ ControllerStepResult RunController::onStep() {
     drawMainScreen(phost, RUNMENU, &params);
     pause();
     
-    return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
+    return ControllerStepResult(false);
   }
 
   // Perform logic after all axis are idle (all movement is completed)
   processStageLogic(dispenserProcessResult);
 
-  return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
+  return ControllerStepResult(false);
 }
 
 int RunController::getModeType() const {

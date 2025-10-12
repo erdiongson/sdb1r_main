@@ -119,7 +119,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
 }
 
 ControllerStepResult ProfileController::onStep() {
-  return ControllerStepResult(-1, -1);
+  return ControllerStepResult(false);
 }
 
 int ProfileController::getModeType() const {

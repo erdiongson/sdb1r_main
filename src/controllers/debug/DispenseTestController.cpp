@@ -136,7 +136,7 @@ ControllerStepResult DispenseTestController::onStep() {
     state = RECEIVED_RESPONSE;
   }
 
-  return ControllerStepResult(result.steppers, result.dispenser);
+  return ControllerStepResult(result.steppers == AXIS_STATE_RUNNING);
 }
 
 int DispenseTestController::getModeType() const {

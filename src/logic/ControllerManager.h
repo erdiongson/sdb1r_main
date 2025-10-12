@@ -131,7 +131,7 @@ public:
     if (controller != nullptr) {
       return controller->onStep();
     }
-    return ControllerStepResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_IDLING);
+    return ControllerStepResult(false);
   }
 
   // Handles an interaction event by delegating to the current controller.

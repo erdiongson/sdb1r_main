@@ -35,7 +35,7 @@ ControllerStepResult HomingController::onStep() {
     MainScreenParams params = { profile, 0, 0, 0, 0, DIALOG_ERROR_LIMIT_SWITCH_HOMING };
     drawMainScreen(phost, HOMINGMENU, &params);
     stage = STAGE_ERROR;
-    return ControllerStepResult(-1, -1);
+    return ControllerStepResult(false);
   }
 
   if (stage == STAGE_CLEAR && result.steppers == AXIS_STATE_COMPLETE) {
@@ -44,7 +44,7 @@ ControllerStepResult HomingController::onStep() {
     dispenserHead.y().moveToMin();
     dispenserHead.z().moveToMin();
     stage = STAGE_HOME;
-    return ControllerStepResult(-1, -1);
+    return ControllerStepResult(true);
   }
 
   if (stage == STAGE_HOME && result.steppers == AXIS_STATE_COMPLETE) {
@@ -52,7 +52,7 @@ ControllerStepResult HomingController::onStep() {
     startNextController(CONTROLLER_READY);
   }
 
-  return ControllerStepResult(-1, -1);
+  return ControllerStepResult(result.steppers == AXIS_STATE_RUNNING);
 }
 
 int HomingController::getModeType() const {

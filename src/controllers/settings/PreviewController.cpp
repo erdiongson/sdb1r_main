@@ -80,7 +80,7 @@ ControllerStepResult PreviewController::onStep() {
   }
   
   DispenserProcessResult result = dispenserHead.process();
-  return ControllerStepResult(result.steppers, result.dispenser);
+  return ControllerStepResult(result.steppers == AXIS_STATE_RUNNING);
 }
 
 int PreviewController::getModeType() const {

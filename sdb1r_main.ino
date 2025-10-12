@@ -95,7 +95,7 @@ void loop() {
 
   // Check for interactions only periodically
   // Includes touch screen presses, and PLC commands
-  int check_interval = result.steppers == AXIS_STATE_RUNNING ? INTERACT_INTERVAL_AXIS_RUNNING : INTERACT_INTERVAL_AXIS_IDLE;
+  int check_interval = result.stepper_moved ? INTERACT_INTERVAL_AXIS_RUNNING : INTERACT_INTERVAL_AXIS_IDLE;
 
   if (current_time - last_interaction_check >= check_interval) {
     last_interaction_check = current_time;

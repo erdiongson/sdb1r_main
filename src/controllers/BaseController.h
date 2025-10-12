@@ -24,13 +24,12 @@ struct MaxSize<T> {
 // @param nextModeType The mode type to transition to.
 typedef void (*ControllerCompletionCallback)(int nextModeType);
 
-// Struct for mode step result containing state and error information.
+// Struct for mode step result indicating if steppers moved.
 struct ControllerStepResult {
-  int steppers;
-  int dispenser;
+  bool stepper_moved;
 
-  ControllerStepResult(int steppers, int dispenser)
-    : steppers(steppers), dispenser(dispenser) {}
+  ControllerStepResult(bool stepper_moved)
+    : stepper_moved(stepper_moved) {}
 };
 
 // Struct for controller parameters.
@@ -61,7 +60,7 @@ public:
   // Pure virtual methods that must be implemented by derived classes
   virtual void onStart() = 0;
   virtual void onInteraction(const Interaction& interaction) = 0;
-  virtual ControllerStepResult onStep() = 0;  // Returns ControllerStepResult with stepper and dispenser state
+  virtual ControllerStepResult onStep() = 0;  // Returns ControllerStepResult indicating if steppers moved
   
   // Virtual method to get mode type
   virtual int getModeType() const = 0;

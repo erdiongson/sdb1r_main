@@ -23,24 +23,24 @@ void StartupController::onStart() {
 
 void StartupController::onInteraction(const Interaction& interaction) {}
 
- ControllerStepResult StartupController::onStep() {
+ControllerStepResult StartupController::onStep() {
   DispenserProcessResult result = dispenserHead.process();
 
   // Handle possible errors
   if (result.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
     drawLogoScreen(phost, DIALOG_ERROR_ACK_ERROR);
     stage = STAGE_ERROR;
-    return ControllerStepResult(-1, -1);
+    return ControllerStepResult(false);
   }
   if (result.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
     drawLogoScreen(phost, DIALOG_ERROR_MARKER_NOT_DETECTED);
     stage = STAGE_ERROR;
-    return ControllerStepResult(-1, -1);
+    return ControllerStepResult(false);
   }
   if (result.dispenser == DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE) {
     drawLogoScreen(phost, DIALOG_ERROR_IR_SENSOR);
     stage = STAGE_ERROR;
-    return ControllerStepResult(-1, -1);
+    return ControllerStepResult(false);
   }
 
   if (stage == STAGE_HANDSHAKE && result.dispenser == DISPENSER_STATE_IDLING) {
@@ -48,7 +48,7 @@ void StartupController::onInteraction(const Interaction& interaction) {}
     startNextController(CONTROLLER_HOMING);
   }
   
-  return ControllerStepResult(-1, -1);
+  return ControllerStepResult(false);
 }
 
 int StartupController::getModeType() const {
