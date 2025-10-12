@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../gpu/Platform.h"
 #include "../gpu/App_Common.h"
 #include "common/Dialogs.h"

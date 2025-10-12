@@ -1,3 +1,5 @@
+#pragma once
+
 #include "BaseController.h"
 #include "../logic/TrayPositionHandler.h"
 #include "../../Config.h"

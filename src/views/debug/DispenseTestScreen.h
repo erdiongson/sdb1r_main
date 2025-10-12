@@ -8,6 +8,8 @@
  * Created: 2024-09-30
  */
 
+#pragma once
+
 #ifndef _DISPENSE_TEST_SCREEN_H_
 #define _DISPENSE_TEST_SCREEN_H_
 

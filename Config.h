@@ -1,3 +1,5 @@
+#pragma once
+
 #define LIMIT_S_X_MIN 46 // 32
 #define LIMIT_S_Y_MIN 32 // 33
 #define LIMIT_S_Z_MIN 36

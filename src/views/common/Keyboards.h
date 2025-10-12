@@ -8,8 +8,7 @@
  * Date: 2025-10-07
  */
 
-#ifndef _KEYBOARDS_H_
-#define _KEYBOARDS_H_
+#pragma once
 
 #include "../../gpu/Platform.h"
 #include "../../gpu/App_Common.h"
@@ -58,5 +57,3 @@ void loadBuffer(char *buf, float curval);
 // @param isfloat Float mode flag (true = allow decimal point).
 // @return The entered numeric value.
 float getKeypadValue(Gpu_Hal_Context_t *phost, float curval, float minval, float maxval, bool isfloat);
-
-#endif /* _KEYBOARDS_H_ */

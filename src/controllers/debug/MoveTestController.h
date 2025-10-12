@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../BaseController.h"
 
 class MoveTestController : public BaseController {
