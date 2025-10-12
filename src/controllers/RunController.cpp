@@ -37,7 +37,7 @@ void RunController::pause() {
 // Stops the run and returns to home position.
 void RunController::stop() {
   Logger::log(F("MODE: Stopped"));
-  drawMainScreen(phost, STOPPINGMENU, {profile, 0, 0, 0, 0, 0});
+  drawStoppingScreen({profile, {0, 0, 0, 0}, 0});
   paused = false;
 
   // Stop all stepper movements
@@ -145,17 +145,19 @@ ControllerStepResult RunController::onStep() {
 
   MainScreenParams params = {
     profile,
-    (uint16_t)trayHandler.getCurrentRow(),
-    (uint16_t)trayHandler.getCurrentColumn(),
-    (uint16_t)trayHandler.getTubesLeft(),
-    (uint16_t)trayHandler.getTubesDispensed() + 1,
+    {
+      (uint16_t)trayHandler.getCurrentRow(),
+      (uint16_t)trayHandler.getCurrentColumn(),
+      (uint16_t)trayHandler.getTubesLeft(),
+      (uint16_t)trayHandler.getTubesDispensed() + 1
+    },
     0
   };
 
   if (dispenserProcessResult.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
     Logger::log(F("MODE: Stepper error - limit switch triggered"));
     params.dialog_code = DIALOG_ERROR_LIMIT_SWITCH;
-    drawMainScreen(phost, RUNMENU, params);
+    drawRunScreen(params);
     pause();
     return ControllerStepResult(false);
   }
@@ -163,7 +165,7 @@ ControllerStepResult RunController::onStep() {
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE) {
     Logger::log(F("MODE: Dispenser error - IR sensor failure"));
     params.dialog_code = DIALOG_ERROR_IR_SENSOR;
-    drawMainScreen(phost, RUNMENU, params);
+    drawRunScreen(params);
     pause();
     return ControllerStepResult(false);
   }
@@ -171,7 +173,7 @@ ControllerStepResult RunController::onStep() {
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
     Logger::log(F("MODE: Dispenser error - Acknowledgment error"));
     params.dialog_code = DIALOG_ERROR_ACK_ERROR;
-    drawMainScreen(phost, RUNMENU, params);
+    drawRunScreen(params);
     pause();
     return ControllerStepResult(false);
   }
@@ -179,7 +181,7 @@ ControllerStepResult RunController::onStep() {
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
     Logger::log(F("MODE: Dispenser error - marker not detected"));
     params.dialog_code = DIALOG_ERROR_MARKER_NOT_DETECTED;
-    drawMainScreen(phost, RUNMENU, params);
+    drawRunScreen(params);
     pause();
     
     return ControllerStepResult(false);
@@ -200,7 +202,7 @@ void RunController::start() {
   Logger::log(F("MODE: Starting run"));
   paused = false;
   cycle = 0;
-  drawMainScreen(phost, RUNMENU, {profile, 0, 0, 0, 0, 0});
+  drawRunScreen({profile, {0, 0, 0, 0}, 0});
   startStage(STAGE_SET_VIB_LEVEL);
 }
 
@@ -298,13 +300,15 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
         // Update Home_Screen
         MainScreenParams params = {
           profile,
-          (uint16_t)trayHandler.getCurrentRow(),
-          (uint16_t)trayHandler.getCurrentColumn(),
-          (uint16_t)trayHandler.getTubesLeft(),
-          (uint16_t)trayHandler.getTubesDispensed() + 1,
+          {
+            (uint16_t)trayHandler.getCurrentRow(),
+            (uint16_t)trayHandler.getCurrentColumn(),
+            (uint16_t)trayHandler.getTubesLeft(),
+            (uint16_t)trayHandler.getTubesDispensed() + 1
+          },
           0
         };
-        drawMainScreen(phost, RUNMENU, params);
+        drawRunScreen(params);
 
         cycle = 0;
         startStage(STAGE_MOVE);

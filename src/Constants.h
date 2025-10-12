@@ -19,7 +19,7 @@
 #define DISPENSER_STATE_BLOCKED                 6
 
 // =============================================================================
-// CONTROLLER STATES
+// CONTROLLER IDENTIFIERS
 // =============================================================================
 #define CONTROLLER_STARTUP                      0
 #define CONTROLLER_HOMING                       1

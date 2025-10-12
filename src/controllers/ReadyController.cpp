@@ -7,7 +7,7 @@ ReadyController::ReadyController(ControllerParams params)
 void ReadyController::onStart() {
   Logger::log(F("ReadyController::on_start"));
   Profile& profile = profile_manager.getCurrentProfile();
-  drawMainScreen(phost, MAINMENU, {profile, 1, 1, 0, 0, 0});
+  drawReadyScreen({profile, {1, 1, 0, 0}, 0});
 
   // Home the dispenser head
 }
@@ -28,14 +28,14 @@ void ReadyController::onInteraction(const Interaction& interaction) {
         
         Profile& profile = profile_manager.getCurrentProfile();
         if (result == PASSWORD_CANCELLED) {
-          drawMainScreen(phost, MAINMENU, {profile, 1, 1, 0, 0, 0});
+          drawReadyScreen({profile, {1, 1, 0, 0}, 0});
           return;
         }
         
         if (result == PASSWORD_INCORRECT) {
-          drawMainScreen(phost, MAINMENU, {profile, 0, 0, 0, 0, DIALOG_ERROR_WRONG_PASSWORD});
+          drawReadyScreen({profile, {0, 0, 0, 0}, DIALOG_ERROR_WRONG_PASSWORD});
           delay(2000);
-          drawMainScreen(phost, MAINMENU, {profile, 1, 1, 0, 0, 0});
+          drawReadyScreen({profile, {1, 1, 0, 0}, 0});
           return;
         }
       }

@@ -4,76 +4,101 @@
 #include "../gpu/App_Common.h"
 #include "common/Dialogs.h"
 
-// Parameters for Home_Screen display.
-struct MainScreenParams {
-  Profile& profile;
+// Button enable states for the main screen.
+struct ButtonsEnabled {
+  bool setting;
+  bool start;
+  bool pause;
+  bool stop;
+  bool show_resume;    // If true, START button shows "RESUME" instead of "START"
+  bool show_homing;    // If true, STOP button shows "HOMING"
+  bool show_stopping;  // If true, STOP button shows "STOPPING"
+};
+
+// Run status information.
+struct RunStatus {
   uint16_t current_row;
   uint16_t current_column;
   uint16_t tubes_left;
   uint16_t filling_tube;
+};
+
+// Parameters for Home_Screen display.
+struct MainScreenParams {
+  Profile& profile;
+  RunStatus run_status;
   int dialog_code;
 };
 
-// Draws menu buttons based on the current menu state.
-// @param whichmenu The menu state (MAINMENU, RUNMENU, PAUSEMENU, HOMINGMENU, STOPPINGMENU).
-inline void drawMenuButtons(uint8_t whichmenu) {
-  // SETTING START PAUSE STOP
-  bool_t act_but[][6] = {
-    { 1, 1, 0, 0 }, // main menu
-    { 0, 0, 1, 1 }, // running menu
-    { 0, 1, 0, 1 }, // pause menu
-    { 0, 0, 0, 0},  // homing menu
-    { 0, 0, 0, 0},  // stopping menu
-  };
-  int i;
-  char but[4] = { SETTING, START, PAUSE, STOP };
-
-  for (i = 0; i < 4; i++) {
-    App_WrCoCmd_Buffer(phost, TAG(but[i]));
-
-    if (act_but[whichmenu][i]) {
-      App_WrCoCmd_Buffer(phost, COLOR_A(255));
-      App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-    } else {
-      App_WrCoCmd_Buffer(phost, COLOR_A(60));
-      App_WrCoCmd_Buffer(phost, TAG_MASK(0));
-    }
-
-    switch (but[i]) {
-      case START:
-        Gpu_CoCmd_FgColor(phost, 0x006400);
-        if (whichmenu == PAUSEMENU)
-          Gpu_CoCmd_Button(phost, 25, 112, 90, 36, 28, 0, "RESUME");
-        else
-          Gpu_CoCmd_Button(phost, 25, 112, 90, 36, 28, 0, "START");
-        break;
-      case PAUSE:
-        Gpu_CoCmd_FgColor(phost, 0xADAF3C);
-        Gpu_CoCmd_Button(phost, 207, 112, 90, 36, 28, 0, "PAUSE");
-        break;
-      case STOP:
-        Gpu_CoCmd_FgColor(phost, 0xAA0000);
-        if (whichmenu == HOMINGMENU)
-          Gpu_CoCmd_Button(phost, 25, 157, 273, 36, 28, 0, "HOMING");
-        else if (whichmenu == STOPPINGMENU)
-          Gpu_CoCmd_Button(phost, 25, 157, 273, 36, 28, 0, "STOPPING");
-        else {
-          Gpu_CoCmd_Button(phost, 25, 157, 273, 36, 28, 0, "STOP");
-        }
-        break;
-      case SETTING:
-        Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-        Gpu_CoCmd_Button(phost, 208, 5, 90, 36, 28, OPT_FORMAT, "Settings");
-    }
+// Draws menu buttons based on the button enable states.
+// @param buttons The button enable states.
+inline void drawMenuButtons(const ButtonsEnabled& buttons) {
+  // Draw SETTING button
+  App_WrCoCmd_Buffer(phost, TAG(SETTING));
+  if (buttons.setting) {
+    App_WrCoCmd_Buffer(phost, COLOR_A(255));
+    App_WrCoCmd_Buffer(phost, TAG_MASK(1));
+  } else {
+    App_WrCoCmd_Buffer(phost, COLOR_A(60));
     App_WrCoCmd_Buffer(phost, TAG_MASK(0));
   }
+  Gpu_CoCmd_FgColor(phost, 0x00A2E8);
+  Gpu_CoCmd_Button(phost, 208, 5, 90, 36, 28, OPT_FORMAT, "Settings");
+  App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+
+  // Draw START button
+  App_WrCoCmd_Buffer(phost, TAG(START));
+  if (buttons.start) {
+    App_WrCoCmd_Buffer(phost, COLOR_A(255));
+    App_WrCoCmd_Buffer(phost, TAG_MASK(1));
+  } else {
+    App_WrCoCmd_Buffer(phost, COLOR_A(60));
+    App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+  }
+  Gpu_CoCmd_FgColor(phost, 0x006400);
+  if (buttons.show_resume)
+    Gpu_CoCmd_Button(phost, 25, 112, 90, 36, 28, 0, "RESUME");
+  else
+    Gpu_CoCmd_Button(phost, 25, 112, 90, 36, 28, 0, "START");
+  App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+
+  // Draw PAUSE button
+  App_WrCoCmd_Buffer(phost, TAG(PAUSE));
+  if (buttons.pause) {
+    App_WrCoCmd_Buffer(phost, COLOR_A(255));
+    App_WrCoCmd_Buffer(phost, TAG_MASK(1));
+  } else {
+    App_WrCoCmd_Buffer(phost, COLOR_A(60));
+    App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+  }
+  Gpu_CoCmd_FgColor(phost, 0xADAF3C);
+  Gpu_CoCmd_Button(phost, 207, 112, 90, 36, 28, 0, "PAUSE");
+  App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+
+  // Draw STOP button
+  App_WrCoCmd_Buffer(phost, TAG(STOP));
+  if (buttons.stop) {
+    App_WrCoCmd_Buffer(phost, COLOR_A(255));
+    App_WrCoCmd_Buffer(phost, TAG_MASK(1));
+  } else {
+    App_WrCoCmd_Buffer(phost, COLOR_A(60));
+    App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+  }
+  Gpu_CoCmd_FgColor(phost, 0xAA0000);
+  if (buttons.show_homing)
+    Gpu_CoCmd_Button(phost, 25, 157, 273, 36, 28, 0, "HOMING");
+  else if (buttons.show_stopping)
+    Gpu_CoCmd_Button(phost, 25, 157, 273, 36, 28, 0, "STOPPING");
+  else
+    Gpu_CoCmd_Button(phost, 25, 157, 273, 36, 28, 0, "STOP");
+  App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 }
 
-// Draws the main screen with menu buttons and profile information.
+// Draws the base main screen with menu buttons and profile information.
 // @param phost GPU context.
-// @param whichmenu The menu state to display.
+// @param buttons The button enable states.
 // @param params Parameters containing profile and status information.
-inline void drawMainScreen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const MainScreenParams& params) {
+inline void drawBaseMainScreen(Gpu_Hal_Context_t* phost, const ButtonsEnabled& buttons, const MainScreenParams& params) {
 
   char buf[100];
 
@@ -104,7 +129,7 @@ inline void drawMainScreen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const Ma
   App_WrCoCmd_Buffer(phost, TAG_MASK(255));
 
 
-  drawMenuButtons(whichmenu);
+  drawMenuButtons(buttons);
 
   Profile& profile = params.profile;
   sprintf(buf, "Profile Name: %s", profile.profile_name);
@@ -112,13 +137,13 @@ inline void drawMainScreen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const Ma
   sprintf(buf, "No. of Cycles: %d", profile.cycles);
   Gpu_CoCmd_Text(phost, 25, 208, 20, OPT_FORMAT, buf);
 
-  sprintf(buf, "Filling tube: %d", params.filling_tube);
+  sprintf(buf, "Filling tube: %d", params.run_status.filling_tube);
   Gpu_CoCmd_Text(phost, 25, 220, 20, OPT_FORMAT, buf);
 
-  sprintf(buf, "Current Tube : R%2d C%2d", params.current_row, params.current_column);
+  sprintf(buf, "Current Tube : R%2d C%2d", params.run_status.current_row, params.run_status.current_column);
   Gpu_CoCmd_Text(phost, 292, 208, 20, OPT_RIGHTX | OPT_FORMAT, buf);
 
-  sprintf(buf, "Tube left : %3d", params.tubes_left);
+  sprintf(buf, "Tube left : %3d", params.run_status.tubes_left);
   Gpu_CoCmd_Text(phost, 294, 220, 20, OPT_RIGHTX | OPT_FORMAT, buf);
 
   //INSERT DIALOG
@@ -126,6 +151,41 @@ inline void drawMainScreen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const Ma
     drawDialog(phost, params.dialog_code);
   }
   Disp_End(phost);
+}
+
+// Draws the ready screen (main menu).
+// @param params Parameters containing profile and status information.
+inline void drawReadyScreen(const MainScreenParams& params) {
+  ButtonsEnabled buttons = { true, true, false, false, false, false, false };
+  drawBaseMainScreen(phost, buttons, params);
+}
+
+// Draws the run screen.
+// @param params Parameters containing profile and status information.
+inline void drawRunScreen(const MainScreenParams& params) {
+  ButtonsEnabled buttons = { false, false, true, true, false, false, false };
+  drawBaseMainScreen(phost, buttons, params);
+}
+
+// Draws the pause screen.
+// @param params Parameters containing profile and status information.
+inline void drawPauseScreen(const MainScreenParams& params) {
+  ButtonsEnabled buttons = { false, true, false, true, true, false, false };
+  drawBaseMainScreen(phost, buttons, params);
+}
+
+// Draws the homing screen.
+// @param params Parameters containing profile and status information.
+inline void drawHomingScreen(const MainScreenParams& params) {
+  ButtonsEnabled buttons = { false, false, false, false, false, true, false };
+  drawBaseMainScreen(phost, buttons, params);
+}
+
+// Draws the stopping screen.
+// @param params Parameters containing profile and status information.
+inline void drawStoppingScreen(const MainScreenParams& params) {
+  ButtonsEnabled buttons = { false, false, false, false, false, false, true };
+  drawBaseMainScreen(phost, buttons, params);
 }
 
 #endif
