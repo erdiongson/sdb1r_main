@@ -1,5 +1,4 @@
-#ifndef MAIN_SCREEN_H
-#define MAIN_SCREEN_H
+#pragma once
 
 #include "../gpu/App_Common.h"
 #include "common/Dialogs.h"
@@ -186,5 +185,3 @@ inline void drawStoppingScreen(const MainScreenParams& params) {
   ButtonsEnabled buttons = { false, false, false, false, false, false, true };
   drawBaseMainScreen(phost, buttons, params);
 }
-
-#endif

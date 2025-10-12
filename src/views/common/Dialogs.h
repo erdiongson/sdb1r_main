@@ -1,5 +1,4 @@
-#ifndef DIALOGS_H
-#define DIALOGS_H
+#pragma once
 
 #include "../../gpu/Platform.h"
 #include "../../gpu/App_Common.h"
@@ -24,5 +23,3 @@ void drawBaseDialog(Gpu_Hal_Context_t* phost, const DialogParams& params);
 // @param phost GPU context.
 // @param dialog_code The dialog code to display.
 void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code);
-
-#endif /* DIALOGS_H */

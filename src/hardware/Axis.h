@@ -1,5 +1,4 @@
-#ifndef AXIS_H
-#define AXIS_H
+#pragma once
 
 #include "Arduino.h"
 #include <AccelStepper.h>
@@ -191,5 +190,3 @@ class Axis {
     while (onStep() == AXIS_STATE_RUNNING) {}
   }
 };
-
-#endif  // AXIS_H

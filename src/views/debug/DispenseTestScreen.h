@@ -10,12 +10,9 @@
 
 #pragma once
 
-#ifndef _DISPENSE_TEST_SCREEN_H_
-  #define _DISPENSE_TEST_SCREEN_H_
-
-  #include "../../gpu/App_Common.h"
-  #include "../../gpu/Platform.h"
-  #include "../../Constants.h"
+#include "../../gpu/App_Common.h"
+#include "../../gpu/Platform.h"
+#include "../../Constants.h"
 
 // Dispense test screen parameters.
 struct DispenseTestScreenParams {
@@ -32,7 +29,6 @@ struct DispenseTestScreenParams {
 // @param params Screen parameters including status message.
 void drawDispenseTestScreen(Gpu_Hal_Context_t* phost, const DispenseTestScreenParams& params);
 
-#endif /* _DISPENSE_TEST_SCREEN_H_ */
 // Display the dispense test screen.
 // Creates a test interface for dispense functionality testing.
 // @param phost Pointer to GPU HAL context.

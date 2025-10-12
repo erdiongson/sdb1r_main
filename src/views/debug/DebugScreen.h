@@ -1,5 +1,4 @@
-#ifndef DEBUG_SCREEN_H
-#define DEBUG_SCREEN_H
+#pragma once
 
 #include "../../gpu/App_Common.h"
 #include "../../Constants.h"
@@ -96,5 +95,3 @@ inline void drawDebugScreen(Gpu_Hal_Context_t* phost, DebugScreenParams params) 
 
   Disp_End(phost);
 }
-
-#endif

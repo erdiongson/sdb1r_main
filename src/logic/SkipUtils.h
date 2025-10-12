@@ -1,5 +1,4 @@
-#ifndef SKIP_UTILS_H
-#define SKIP_UTILS_H
+#pragma once
 
 #include <Arduino.h>
 #include "../logic/Profile.h"
@@ -369,5 +368,3 @@ class SkipUtils {
     return result;
   }
 };
-
-#endif  // SKIP_UTILS_H

@@ -1,5 +1,4 @@
-#ifndef TRAY_POSITION_HANDLER_H
-#define TRAY_POSITION_HANDLER_H
+#pragma once
 
 #include <Arduino.h>
 #include "../../Config.h"
@@ -362,5 +361,3 @@ class TrayPositionHandler {
 };
 
 }  // namespace TrayHandler
-
-#endif  // TRAY_POSITION_HANDLER_H

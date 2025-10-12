@@ -10,12 +10,9 @@
 
 #pragma once
 
-#ifndef _MOVE_TEST_SCREEN_H_
-  #define _MOVE_TEST_SCREEN_H_
-
-  #include "../../gpu/App_Common.h"
-  #include "../../gpu/Platform.h"
-  #include "../../Constants.h"
+#include "../../gpu/App_Common.h"
+#include "../../gpu/Platform.h"
+#include "../../Constants.h"
 
 // Limit switch states structure.
 struct LimitSwitchStates {
@@ -43,7 +40,6 @@ struct MoveTestParams {
 // @param params Movement control parameters.
 void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limitStates, const MoveTestParams& params);
 
-#endif /* _MOVE_TEST_SCREEN_H_ */
 // Display the movement test screen.
 // Creates a test interface with directional controls for manual movement testing.
 // @param phost Pointer to GPU HAL context.

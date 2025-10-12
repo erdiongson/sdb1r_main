@@ -1,5 +1,4 @@
-#ifndef DISPENSER_SERIAL_H
-#define DISPENSER_SERIAL_H
+#pragma once
 
 #include <Arduino.h>
 #include "../Constants.h"
@@ -41,5 +40,3 @@ class PicSerial {
   // Timeout timestamp in milliseconds.
   static unsigned long timeout_at;
 };
-
-#endif  // DISPENSER_SERIAL_H

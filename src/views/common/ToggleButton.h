@@ -1,5 +1,4 @@
-#ifndef TOGGLE_BUTTON_H
-#define TOGGLE_BUTTON_H
+#pragma once
 
 #include "../../gpu/App_Common.h"
 
@@ -38,5 +37,3 @@ void Toggle_Button(Gpu_Hal_Context_t* phost, bool enabled, uint8_t tag, int16_t 
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
   App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));
 }
-
-#endif  // TOGGLE_BUTTON_H

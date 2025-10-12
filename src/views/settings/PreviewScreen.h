@@ -1,5 +1,4 @@
-#ifndef PREVIEW_SCREEN_H
-#define PREVIEW_SCREEN_H
+#pragma once
 
 #include "../../gpu/App_Common.h"
 #include "../../logic/TrayPositionHandler.h"
@@ -206,5 +205,3 @@ void drawPreviewScreen(Gpu_Hal_Context_t* phost, const TrayHandler::Position ski
 
   Disp_End(phost);
 }
-
-#endif  // PREVIEW_SCREEN_H

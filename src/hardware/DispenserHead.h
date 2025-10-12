@@ -1,5 +1,4 @@
-#ifndef DISPENSER_HEAD_H
-#define DISPENSER_HEAD_H
+#pragma once
 
 #include "Axis.h"
 #include "../../Config.h"
@@ -149,5 +148,3 @@ class DispenserHead {
   Axis z_axis;
   int dispensing_state = DISPENSER_STATE_IDLING;
 };
-
-#endif  // DISPENSER_HEAD_H

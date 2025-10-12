@@ -1,5 +1,4 @@
-#ifndef PROFILE_SCREEN_H
-#define PROFILE_SCREEN_H
+#pragma once
 
 #include "../../gpu/App_Common.h"
 #include "../../gpu/Platform.h"
@@ -130,5 +129,3 @@ void drawProfileScreen(Gpu_Hal_Context_t* phost, ProfileParams params) {
 
   Disp_End(phost);
 }
-
-#endif /* PROFILE_SCREEN_H */

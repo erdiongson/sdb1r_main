@@ -1,5 +1,4 @@
-#ifndef SETTINGS_SCREEN_H
-#define SETTINGS_SCREEN_H
+#pragma once
 
 #include "../../gpu/App_Common.h"
 #include "../../Utils.h"
@@ -372,5 +371,3 @@ void confirmAdvanceSetting(Gpu_Hal_Context_t* phost) {
 
   Disp_End(phost);
 }
-
-#endif /* SETTINGS_SCREEN_H */
