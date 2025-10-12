@@ -11,7 +11,7 @@ struct MainScreenParams {
   uint16_t current_column;
   uint16_t tubes_left;
   uint16_t filling_tube;
-  int error_code;
+  int dialog_code;
 };
 
 // Draws menu buttons based on the current menu state.
@@ -127,8 +127,8 @@ inline void drawMainScreen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const Ma
   Gpu_CoCmd_Text(phost, 294, 220, 20, OPT_RIGHTX | OPT_FORMAT, buf);
 
   //INSERT DIALOG
-  if (params && params->error_code > 0) {
-    drawDialog(phost, params->error_code);
+  if (params && params->dialog_code > 0) {
+    drawDialog(phost, params->dialog_code);
   }
   Disp_End(phost);
 }

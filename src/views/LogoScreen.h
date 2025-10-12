@@ -4,8 +4,8 @@
 
 // Draws the logo screen with optional error dialog.
 // @param phost GPU context.
-// @param error_code Optional error code to display dialog (0 for no error).
-void drawLogoScreen(Gpu_Hal_Context_t *phost, int error_code)
+// @param dialog_code Optional error code to display dialog (0 for no error).
+void drawLogoScreen(Gpu_Hal_Context_t *phost, int dialog_code)
 {
     Gpu_CoCmd_FlashFast(phost, 0);
     Gpu_CoCmd_Dlstart(phost);
@@ -27,8 +27,8 @@ void drawLogoScreen(Gpu_Hal_Context_t *phost, int error_code)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(40, 40, 40));
     Gpu_CoCmd_Text(phost, 160, 220, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, "v" FWVER);
 
-    if (error_code != 0) {
-        drawDialog(phost, error_code);
+    if (dialog_code != 0) {
+        drawDialog(phost, dialog_code);
     }
 
     Disp_End(phost);

@@ -155,7 +155,7 @@ ControllerStepResult RunController::onStep() {
 
   if (dispenserProcessResult.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
     Logger::log(F("MODE: Stepper error - limit switch triggered"));
-    params.error_code = DIALOG_ERROR_LIMIT_SWITCH;
+    params.dialog_code = DIALOG_ERROR_LIMIT_SWITCH;
     drawMainScreen(phost, RUNMENU, &params);
     pause();
     return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
@@ -163,7 +163,7 @@ ControllerStepResult RunController::onStep() {
 
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE) {
     Logger::log(F("MODE: Dispenser error - IR sensor failure"));
-    params.error_code = DIALOG_ERROR_IR_SENSOR;
+    params.dialog_code = DIALOG_ERROR_IR_SENSOR;
     drawMainScreen(phost, RUNMENU, &params);
     pause();
     return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
@@ -171,7 +171,7 @@ ControllerStepResult RunController::onStep() {
 
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
     Logger::log(F("MODE: Dispenser error - Acknowledgment error"));
-    params.error_code = DIALOG_ERROR_ACK_ERROR;
+    params.dialog_code = DIALOG_ERROR_ACK_ERROR;
     drawMainScreen(phost, RUNMENU, &params);
     pause();
     return ControllerStepResult(dispenserProcessResult.steppers, dispenserProcessResult.dispenser);
@@ -179,7 +179,7 @@ ControllerStepResult RunController::onStep() {
 
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
     Logger::log(F("MODE: Dispenser error - marker not detected"));
-    params.error_code = DIALOG_ERROR_MARKER_NOT_DETECTED;
+    params.dialog_code = DIALOG_ERROR_MARKER_NOT_DETECTED;
     drawMainScreen(phost, RUNMENU, &params);
     pause();
     
