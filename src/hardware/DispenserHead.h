@@ -3,7 +3,7 @@
 
 #include "Axis.h"
 #include "../../Config.h"
-#include "../serial/DispenserSerial.h"
+#include "../serial/PicSerial.h"
 
 // Struct for dispenser process result containing state and error information.
 struct DispenserProcessResult {
@@ -49,7 +49,7 @@ public:
     if (dispensing_state != DISPENSER_STATE_IDLING) return;
 
     // Use the serial handler to send the dispense command
-    DispenserSerial::sendDispense();
+    PicSerial::sendDispense();
     dispensing_state = DISPENSER_STATE_SENT;
   }
 
@@ -59,7 +59,7 @@ public:
     if (dispensing_state != DISPENSER_STATE_IDLING) return;
 
     // Use the serial handler to send the handshake command
-    DispenserSerial::sendHandshake();
+    PicSerial::sendHandshake();
     dispensing_state = DISPENSER_STATE_SENT;
   }
 
@@ -68,7 +68,7 @@ public:
   void setVibrationLevel(uint8_t level) {
     if (dispensing_state != DISPENSER_STATE_IDLING) return;
 
-    DispenserSerial::sendVibrationLevel(level);
+    PicSerial::sendVibrationLevel(level);
     dispensing_state = DISPENSER_STATE_SENT;
   }
 
@@ -77,7 +77,7 @@ public:
   void setVibrationTime(uint8_t seconds) {
     if (dispensing_state != DISPENSER_STATE_IDLING) return;
 
-    DispenserSerial::sendVibrationTime(seconds);
+    PicSerial::sendVibrationTime(seconds);
     dispensing_state = DISPENSER_STATE_SENT;
   }
 
@@ -106,7 +106,7 @@ public:
     if (dispensing_state == DISPENSER_STATE_IDLING) return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_IDLING);
 
     // Process dispenser's serial data
-    int response = DispenserSerial::process();
+    int response = PicSerial::process();
 
     // Handle the response based on the returned code
     switch (response) {

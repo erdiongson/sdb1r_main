@@ -8,8 +8,8 @@
 #define START_BYTE DISPENSER_START_BYTE
 #define END_BYTE DISPENSER_END_BYTE
 
-// DispenserSerial class for handling dispenser communication.
-class DispenserSerial {
+// PicSerial class for handling dispenser communication.
+class PicSerial {
 public:
   // Send a dispense command to the dispenser.
   static void sendDispense();

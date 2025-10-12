@@ -1,19 +1,19 @@
-#include "DispenserSerial.h"
+#include "PicSerial.h"
 #include "../Utils.h"
 
 // Initialize static member.
-unsigned long DispenserSerial::timeout_at = 0;
+unsigned long PicSerial::timeout_at = 0;
 
 // Send a message to the dispenser with command and data bytes.
 // @param command Command byte to send.
 // @param data Data byte to send.
-void DispenserSerial::sendMessage(byte command, byte data) {
+void PicSerial::sendMessage(byte command, byte data) {
   // Clear serial buffer
   while (Serial2.available()) Serial2.read();
 
   uint8_t checksum = command + data;
   uint8_t msg[] = {START_BYTE, command, data, checksum, END_BYTE};
-  Logger::log("DispenserSerial - Sending Message: ", msg, 5);
+  Logger::log("PicSerial - Sending Message: ", msg, 5);
 
   Serial2.write(msg, 5);
   
@@ -22,13 +22,13 @@ void DispenserSerial::sendMessage(byte command, byte data) {
 }
 
 // Send a dispense command to the dispenser.
-void DispenserSerial::sendDispense() { sendMessage(SDB_DISPENSE_START, 0x01); }
+void PicSerial::sendDispense() { sendMessage(SDB_DISPENSE_START, 0x01); }
 
 // Send a handshake command to the dispenser.
-void DispenserSerial::sendHandshake() { sendMessage(SDB_HANDSHAKE, 0x01); }
+void PicSerial::sendHandshake() { sendMessage(SDB_HANDSHAKE, 0x01); }
 
 // Set the vibration level for the dispenser.
-void DispenserSerial::sendVibrationLevel(uint8_t level) {
+void PicSerial::sendVibrationLevel(uint8_t level) {
   if (level < 0) level = 0;
   if (level > 4) level = 4;
   sendMessage(SDB_VIBRATE_LEVEL, VIBMODE_U0 + level);
@@ -36,7 +36,7 @@ void DispenserSerial::sendVibrationLevel(uint8_t level) {
 
 // Set the vibration time for the dispenser.
 // @param seconds Vibration time in seconds (1-5).
-void DispenserSerial::sendVibrationTime(uint8_t seconds) {
+void PicSerial::sendVibrationTime(uint8_t seconds) {
   if (seconds < 1) seconds = 1;
   if (seconds > 5) seconds = 5;
   sendMessage(SDB_VIBRATE_TIME, VIBDUR_1 + seconds - 1);
@@ -44,7 +44,7 @@ void DispenserSerial::sendVibrationTime(uint8_t seconds) {
 
 // Process incoming data from the dispenser.
 // @return Command code if valid message received, 0 if no message, -1 if error.
-int DispenserSerial::process() {
+int PicSerial::process() {
   // Check for timeout.
   if (millis() >= timeout_at && timeout_at != 0) {
     timeout_at = 0; // Reset timeout
@@ -75,6 +75,6 @@ int DispenserSerial::process() {
 }
 
 // Block until a response is received from the dispenser.
-void DispenserSerial::blockUntilResponse() {
+void PicSerial::blockUntilResponse() {
   while (process() == 0) delay(10);
 }
