@@ -1,14 +1,14 @@
 /* Author : XentiQ
-* Date created - 2022.12.14 - XentiQ version
-* Created by: soonhl
-* 
-* Author: erdiongson
-* Date Created: 2023.12.22
-* Version 2.03: i. Changed the super password from XQokay to superXQ
-* 
-* Date Created: 2024.02.26
-* Version 2.03: ii. Revised the saved password logic
-*/
+ * Date created - 2022.12.14 - XentiQ version
+ * Created by: soonhl
+ *
+ * Author: erdiongson
+ * Date Created: 2023.12.22
+ * Version 2.03: i. Changed the super password from XQokay to superXQ
+ *
+ * Date Created: 2024.02.26
+ * Version 2.03: ii. Revised the saved password logic
+ */
 
 #include "src/gpu/Platform.h"
 #include "src/gpu/App_Common.h"
@@ -24,20 +24,11 @@
 Gpu_Hal_Context_t host, *phost;
 ProfileManager profile_manager;
 
-AxisParams axis_x(
-  MOTOR_X_CLK, MOTOR_X_CW,
-  LIMIT_S_X_MIN, LIMIT_S_X_MAX,
-  MOTOR_X_SPEED, MOTOR_X_ACCELERATION);
+AxisParams axis_x(MOTOR_X_CLK, MOTOR_X_CW, LIMIT_S_X_MIN, LIMIT_S_X_MAX, MOTOR_X_SPEED, MOTOR_X_ACCELERATION);
 
-AxisParams axis_y(
-  MOTOR_Y_CLK, MOTOR_Y_CW,
-  LIMIT_S_Y_MIN, LIMIT_S_Y_MAX,
-  MOTOR_Y_SPEED, MOTOR_Y_ACCELERATION);
+AxisParams axis_y(MOTOR_Y_CLK, MOTOR_Y_CW, LIMIT_S_Y_MIN, LIMIT_S_Y_MAX, MOTOR_Y_SPEED, MOTOR_Y_ACCELERATION);
 
-AxisParams axis_z(
-  MOTOR_Z_CLK, MOTOR_z_CW,
-  LIMIT_S_Z_MIN, LIMIT_S_Z_MAX,
-  MOTOR_Y_SPEED, MOTOR_Y_ACCELERATION);
+AxisParams axis_z(MOTOR_Z_CLK, MOTOR_z_CW, LIMIT_S_Z_MIN, LIMIT_S_Z_MAX, MOTOR_Y_SPEED, MOTOR_Y_ACCELERATION);
 
 DispenserHeadParams params = { axis_x, axis_y, axis_z };
 DispenserHead dispenser_head(params);
@@ -47,9 +38,8 @@ void startNextController(int nextControllerType);
 
 // Controller manager instance
 static uint8_t controller_manager_buffer[sizeof(ControllerManager)];
-ControllerManager& controller_manager = *(new (controller_manager_buffer) ControllerManager(
-  dispenser_head, &host, profile_manager, startNextController
-));
+ControllerManager& controller_manager =
+    *(new (controller_manager_buffer) ControllerManager(dispenser_head, &host, profile_manager, startNextController));
 
 // To track when to check for interactions
 unsigned long last_interaction_check = 0;
@@ -59,7 +49,6 @@ unsigned long last_interaction_check = 0;
 void startNextController(int nextControllerType) {
   controller_manager.startNextController(nextControllerType);
 }
-
 
 void setup() {
   phost = &host;
@@ -79,7 +68,7 @@ void setup() {
   Gpu_Hal_Wr8(phost, REG_TOUCH_SETTLE, 3);
 
   Logger::log("Controller buffer size: ", String(ControllerManager::getMaxControllerSize()) + " bytes");
-  
+
   Logger::log("Starting first controller..");
   startNextController(CONTROLLER_STARTUP);
 }

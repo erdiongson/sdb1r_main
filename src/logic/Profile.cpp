@@ -20,7 +20,8 @@ static_assert(PROFILE_SIZE <= RESERVED_PROFILE_SIZE, "Profile size exceeds reser
 static_assert(EEPROM_SIZE >= MAX_PROFILES * RESERVED_PROFILE_SIZE, "EEPROM size is too small");
 
 void ProfileManager::blankEEPROM(void) {
-  for (int i = 0; i < EEPROM_SIZE; i++) EEPROM.put(i, 0);
+  for (int i = 0; i < EEPROM_SIZE; i++)
+    EEPROM.put(i, 0);
 }
 
 void ProfileManager::preLoadEEPROM(void) {
@@ -49,7 +50,7 @@ void ProfileManager::preLoadEEPROM(void) {
     writeProfileEEPROM(i);
   }
 
-  writeCurIDEEPROM(0);  //reset current profile in eeprom to 0
+  writeCurIDEEPROM(0);  // reset current profile in eeprom to 0
 }
 
 void ProfileManager::checkProfile(void) {
@@ -72,11 +73,11 @@ void ProfileManager::checkProfile(void) {
 }
 
 uint8_t ProfileManager::loadProfile(void) {
-
   this->currentProfileIndex = readCurIDEEPROM();
-  if (this->currentProfileIndex >= MAX_PROFILES) this->currentProfileIndex = 0;  // if corrcupt data from eeprom, set id=0
+  if (this->currentProfileIndex >= MAX_PROFILES)
+    this->currentProfileIndex = 0;  // if corrcupt data from eeprom, set id=0
 
-  readProfileEEPROM(this->currentProfileIndex);  //reread as it is not profile id 0
+  readProfileEEPROM(this->currentProfileIndex);  // reread as it is not profile id 0
   if (currentProfile.cycles > MAXCYCLE) currentProfile.cycles = MAXCYCLE;
   if (currentProfile.pitch_x > MAXPITCHX) currentProfile.pitch_x = MAXPITCHX;
   if (currentProfile.pitch_y > MAXPITCHY) currentProfile.pitch_y = MAXPITCHY;
@@ -90,24 +91,24 @@ uint8_t ProfileManager::loadProfile(void) {
   return this->currentProfileIndex;
 }
 
-void ProfileManager::readPassEEPROM(char *pass) {
+void ProfileManager::readPassEEPROM(char* pass) {
   int addr = 4000;
   char c;
   int i = 0;
   do {
     EEPROM.get(addr++, c);  // Read one character from EEPROM
     pass[i++] = c;          // Store the character in pass and increment the index
-  } while (c != '\0');      // Repeat until null terminator is encountered
+  } while (c != '\0');  // Repeat until null terminator is encountered
 }
 
-void ProfileManager::writePassEEPROM(char *pass) {
+void ProfileManager::writePassEEPROM(char* pass) {
   int addr = 4000;
   int i = 0;
   char c;
   do {
     c = pass[i++];          // Get the next character from the pass array and increment the index
     EEPROM.put(addr++, c);  // Write the character to EEPROM
-  } while (c != '\0');      // Repeat until null terminator is encountered
+  } while (c != '\0');  // Repeat until null terminator is encountered
 }
 
 void ProfileManager::writeCurIDEEPROM(uint8_t curprofid) {
@@ -212,7 +213,7 @@ void ProfileManager::readProfileEEPROM(int index) {
 // Verifies the password by prompting the user for input.
 // @param phost GPU context for displaying the keyboard.
 // @return PasswordVerificationResult indicating success, incorrect, or cancelled.
-PasswordVerificationResult ProfileManager::verifyPassword(Gpu_Hal_Context_t *phost) {
+PasswordVerificationResult ProfileManager::verifyPassword(Gpu_Hal_Context_t* phost) {
   char currentPassword[PROFILE_NAME_MAX_LEN] = "";
   char inputPassword[PROFILE_NAME_MAX_LEN] = "";
 

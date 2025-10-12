@@ -2,21 +2,19 @@
 #include "../../views/settings/ProfileScreen.h"
 #include "../../views/common/Keyboards.h"
 
-ProfileController::ProfileController(ControllerParams params)
-  : BaseController(params), selected_profile_num(0) {}
+ProfileController::ProfileController(ControllerParams params) : BaseController(params), selected_profile_num(0) {}
 
 void ProfileController::onStart() {
-  ProfileParams params = {0, 0, profile_manager.getCurrentProfile(), 0};
+  ProfileParams params = { 0, 0, profile_manager.getCurrentProfile(), 0 };
   drawProfileScreen(phost, params);
 }
 
 void ProfileController::onInteraction(const Interaction& interaction) {
   if (interaction.key_pressed == 0) return;
 
-  static ProfileParams params = {0, 0, profile_manager.getCurrentProfile(), 0};
+  static ProfileParams params = { 0, 0, profile_manager.getCurrentProfile(), 0 };
 
   switch (interaction.key_pressed) {
-
     case TAG_PROFILE_BACK:
       startNextController(CONTROLLER_SETTINGS);
       break;
@@ -25,7 +23,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
       profile_manager.setCurrentProfileNum(selected_profile_num);
       profile_manager.writeCurIDEEPROM(selected_profile_num);
       profile_manager.readProfileEEPROM(selected_profile_num);
-      
+
       // Show profile loaded dialog
       params.keypressed = 0;
       params.cur_prof_num = selected_profile_num;
@@ -68,7 +66,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
     case TAG_PROFILE_CHANGE_PASSWORD: {
       char new_password_1[PASSWORD_MAX_LEN] = "";
       char new_password_2[PASSWORD_MAX_LEN] = "";
-      
+
       getKeyboardValue(phost, new_password_1, "Enter New Password", FALSE);
       if (new_password_1[0] == 0) {
         params.keypressed = 0;

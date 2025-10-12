@@ -14,43 +14,36 @@ struct AxisParams {
   float max_speed;
   float acceleration;
 
-  AxisParams(
-    int step_pin,
-    int dir_pin,
-    int min_pin,
-    int max_pin,
-    float max_speed = 1000.0,
-    float acceleration = 500.0)
-    : step_pin(step_pin),
-      dir_pin(dir_pin),
-      min_pin(min_pin),
-      max_pin(max_pin),
-      max_speed(max_speed),
-      acceleration(acceleration) {}
+  AxisParams(int step_pin, int dir_pin, int min_pin, int max_pin, float max_speed = 1000.0, float acceleration = 500.0)
+      : step_pin(step_pin),
+        dir_pin(dir_pin),
+        min_pin(min_pin),
+        max_pin(max_pin),
+        max_speed(max_speed),
+        acceleration(acceleration) {}
 };
 
 class Axis {
-private:
+ private:
   AccelStepper stepper;
   int min_limit_pin;
   int max_limit_pin;
   bool moving_positive;  // true if moving in positive direction, false if negative
-  bool enabled;         // true if axis is enabled, false if disabled
+  bool enabled;          // true if axis is enabled, false if disabled
   bool running = false;
   bool to_limit = false;
   bool prev_min_state = false;  // Previous state of min limit switch (true = hit)
   bool prev_max_state = false;  // Previous state of max limit switch (true = hit)
 
-public:
+ public:
   // Constructor for Axis class using AxisParams struct.
   // @param params Struct containing all axis configuration parameters.
   Axis(const AxisParams& params)
-    : stepper(1, params.step_pin, params.dir_pin),  // 1 = DRIVER interface (step/dir)
-      min_limit_pin(params.min_pin),
-      max_limit_pin(params.max_pin),
-      moving_positive(false),
-      enabled(true) {
-
+      : stepper(1, params.step_pin, params.dir_pin),  // 1 = DRIVER interface (step/dir)
+        min_limit_pin(params.min_pin),
+        max_limit_pin(params.max_pin),
+        moving_positive(false),
+        enabled(true) {
     // Configure limit switch pins as inputs with pull-up resistors
     pinMode(min_limit_pin, INPUT_PULLUP);
     pinMode(max_limit_pin, INPUT_PULLUP);
@@ -60,14 +53,9 @@ public:
     stepper.setAcceleration(params.acceleration);
   }
 
+  void reset() { stepper.setCurrentPosition(0); }
 
-  void reset() {
-    stepper.setCurrentPosition(0);
-  }
-
-  void setDisabled(bool disabled) {
-    enabled = !disabled;
-  }
+  void setDisabled(bool disabled) { enabled = !disabled; }
 
   void moveToMax() {
     if (!enabled) return;
@@ -109,7 +97,7 @@ public:
   void moveTo(long position) {
     if (!enabled) return;
     bool wouldMovePositive = (position > stepper.currentPosition());
-    if (wouldMovePositive && isAtMax()) return;  // Trying to move positive but at max limit
+    if (wouldMovePositive && isAtMax()) return;   // Trying to move positive but at max limit
     if (!wouldMovePositive && isAtMin()) return;  // Trying to move negative but at min limit
     running = true;
     to_limit = false;
@@ -125,13 +113,9 @@ public:
     stepper.stop();
   }
 
-  bool isAtMin() {
-    return digitalRead(min_limit_pin) == LOW;
-  }
+  bool isAtMin() { return digitalRead(min_limit_pin) == LOW; }
 
-  bool isAtMax() {
-    return digitalRead(max_limit_pin) == LOW;
-  }
+  bool isAtMax() { return digitalRead(max_limit_pin) == LOW; }
 
   // Returns true if the min limit switch transitioned from not-hit to hit.
   // Updates the stored previous state.
@@ -195,15 +179,13 @@ public:
   void stopRunning() {
     if (!enabled) return;
     running = false;
-    stepper.move(0); // Sets the target position to the current position;
+    stepper.move(0);  // Sets the target position to the current position;
     stepper.setAcceleration(0);
     stepper.setSpeed(0);
     stepper.runToPosition();
   }
 
-  AccelStepper& getStepper() {
-    return stepper;
-  }
+  AccelStepper& getStepper() { return stepper; }
 
   void runUntilCompleteBlocking() {
     while (onStep() == AXIS_STATE_RUNNING) {}

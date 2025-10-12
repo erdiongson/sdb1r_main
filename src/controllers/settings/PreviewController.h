@@ -4,7 +4,7 @@
 #include "../../logic/TrayPositionHandler.h"
 
 class PreviewController : public BaseController {
-private:
+ private:
   Profile* current_profile;
   bool simulating;
   unsigned long last_simulation_time;
@@ -12,12 +12,12 @@ private:
   int simulate_col;
   int simulate_row;
   char preview_info_text[50];
-  
+
   void startSimulation();
   void endSimulation();
   void stepSimulation();
 
-public:
+ public:
   PreviewController(ControllerParams params);
 
   void onStart() override;

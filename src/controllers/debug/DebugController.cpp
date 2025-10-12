@@ -2,18 +2,16 @@
 #include "../../views/debug/DebugScreen.h"
 #include "../../views/common/Keyboards.h"
 
-DebugController::DebugController(ControllerParams params)
-  : BaseController(params) {}
+DebugController::DebugController(ControllerParams params) : BaseController(params) {}
 
 void DebugController::onStart() {
   Logger::log(F("DebugController::on_start"));
-  drawDebugScreen(phost, {false, false, 0});
+  drawDebugScreen(phost, { false, false, 0 });
 }
 
 void DebugController::onInteraction(const Interaction& interaction) {
   // Handle key presses
   switch (interaction.key_pressed) {
-
     case TAG_DEBUG_MOVE_TEST:
       Logger::log(F("Debug: Move Test button pressed"));
       startNextController(CONTROLLER_MOVE_TEST);
@@ -30,21 +28,21 @@ void DebugController::onInteraction(const Interaction& interaction) {
       float dialog_num = getKeypadValue(phost, 0, 0, 11, false);
       int dialog_code = (int)dialog_num;
       // Redraw screen with the selected dialog
-      drawDebugScreen(phost, {false, false, dialog_code});
+      drawDebugScreen(phost, { false, false, dialog_code });
       break;
     }
 
     case TAG_DEBUG_BLANK_EEPROM: {
       Logger::log(F("Debug: Blank EEPROM button pressed"));
       profile_manager.blankEEPROM();
-      drawDebugScreen(phost, {false, true, 0});
+      drawDebugScreen(phost, { false, true, 0 });
       break;
     }
 
     case TAG_DEBUG_RESET_PROFILES: {
       Logger::log(F("Debug: Reset Profiles button pressed"));
       profile_manager.preLoadEEPROM();
-      drawDebugScreen(phost, {false, true, 0});
+      drawDebugScreen(phost, { false, true, 0 });
       break;
     }
 

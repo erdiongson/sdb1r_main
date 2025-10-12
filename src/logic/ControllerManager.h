@@ -16,23 +16,17 @@
 #include "../Constants.h"
 
 // Define placement new operator for Arduino (if not already available).
-inline void* operator new(size_t size, void* ptr) { return ptr; }
+inline void* operator new(size_t size, void* ptr) {
+  return ptr;
+}
 
 // Manages controller lifecycle and transitions between different controllers.
 class ControllerManager {
-private:
+ private:
   // Calculate the maximum controller size at compile time.
-  static constexpr size_t MAX_CONTROLLER_SIZE = MaxSize<
-    ReadyController,
-    RunController,
-    MoveTestController,
-    DispenseTestController,
-    SettingsController,
-    ProfileController,
-    StartupController,
-    DebugController,
-    PreviewController
-  >::value;
+  static constexpr size_t MAX_CONTROLLER_SIZE =
+      MaxSize<ReadyController, RunController, MoveTestController, DispenseTestController, SettingsController,
+              ProfileController, StartupController, DebugController, PreviewController>::value;
 
   // Static buffer to hold any controller (aligned for proper object construction).
   struct alignas(BaseController) ControllerBuffer {
@@ -48,22 +42,19 @@ private:
   ProfileManager& profile_manager;
   ControllerCompletionCallback callback;
 
-public:
+ public:
   // Constructor that initializes the controller manager with required dependencies.
   // @param dispenserHead Reference to the dispenser head hardware.
   // @param phost Pointer to the GPU HAL context.
   // @param profile_manager Reference to the profile manager.
   // @param callback Callback function to handle controller transitions.
-  ControllerManager(
-    DispenserHead& dispenserHead,
-    Gpu_Hal_Context_t* phost,
-    ProfileManager& profile_manager,
-    ControllerCompletionCallback callback
-  ) : controller(nullptr),
-      dispenserHead(dispenserHead),
-      phost(phost),
-      profile_manager(profile_manager),
-      callback(callback) {}
+  ControllerManager(DispenserHead& dispenserHead, Gpu_Hal_Context_t* phost, ProfileManager& profile_manager,
+                    ControllerCompletionCallback callback)
+      : controller(nullptr),
+        dispenserHead(dispenserHead),
+        phost(phost),
+        profile_manager(profile_manager),
+        callback(callback) {}
 
   // Destructor that cleans up the current controller.
   ~ControllerManager() {
@@ -86,7 +77,7 @@ public:
     ControllerParams params = { dispenserHead, phost, callback, profile_manager };
 
     // Create the new controller in the static buffer using placement new
-    switch(nextControllerType) {
+    switch (nextControllerType) {
       case CONTROLLER_READY:
         controller = new (controllerBuffer.data) ReadyController(params);
         break;
@@ -144,13 +135,9 @@ public:
 
   // Gets the current active controller.
   // @return Pointer to the current controller, or nullptr if no controller is active.
-  BaseController* getCurrentController() {
-    return controller;
-  }
+  BaseController* getCurrentController() { return controller; }
 
   // Gets the maximum controller buffer size.
   // @return The size in bytes of the largest controller.
-  static constexpr size_t getMaxControllerSize() {
-    return MAX_CONTROLLER_SIZE;
-  }
+  static constexpr size_t getMaxControllerSize() { return MAX_CONTROLLER_SIZE; }
 };

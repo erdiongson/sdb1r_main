@@ -3,7 +3,7 @@
 #include "../BaseController.h"
 
 class DispenseTestController : public BaseController {
-private:
+ private:
   enum State {
     READY,
     WAITING_FOR_RESPONSE,
@@ -11,7 +11,8 @@ private:
   };
 
   State state;
-public:
+
+ public:
   DispenseTestController(ControllerParams params);
   void onStart() override;
   void onInteraction(const Interaction& interaction) override;

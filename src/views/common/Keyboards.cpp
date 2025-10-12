@@ -7,15 +7,15 @@ inline int32_t minimum(int32_t a, int32_t b) {
   return a < b ? a : b;
 }
 
-struct
-{
+struct {
   uint8_t Key_Detect : 1;
   uint8_t Caps : 1;
   uint8_t Numeric : 1;
   uint8_t Exit : 1;
 } Flag;
 
-void drawKeyboard(Gpu_Hal_Context_t *phost, uint8_t keypressed, char *displaytext, char *displaytitle, bool numlock, bool caplock, bool errorcode) {
+void drawKeyboard(Gpu_Hal_Context_t* phost, uint8_t keypressed, char* displaytext, char* displaytitle, bool numlock,
+                  bool caplock, bool errorcode) {
   char buf[PROFILE_NAME_MAX_LEN + 8];
 
   // Display List start
@@ -31,57 +31,50 @@ void drawKeyboard(Gpu_Hal_Context_t *phost, uint8_t keypressed, char *displaytex
   Gpu_CoCmd_FgColor(phost, 0xAA0000);
 
   App_WrCoCmd_Buffer(phost, TAG(CLEAR_KEY));  // Back		 Return to Home
-  Gpu_CoCmd_Button(phost, (DispWidth * 0.855), (DispHeight * 0.83), (DispWidth * 0.146), (DispHeight * 0.112),
-                   font, (keypressed == CLEAR_KEY) ? OPT_FLAT : 0, "Clear");
+  Gpu_CoCmd_Button(phost, (DispWidth * 0.855), (DispHeight * 0.83), (DispWidth * 0.146), (DispHeight * 0.112), font,
+                   (keypressed == CLEAR_KEY) ? OPT_FLAT : 0, "Clear");
   Gpu_CoCmd_FgColor(phost, 0x703800);
-
 
   Gpu_CoCmd_FgColor(phost, 0xADAF3C);
   App_WrCoCmd_Buffer(phost, TAG(BACK_SPACE));  // BackSpace
-  Gpu_CoCmd_Button(phost, (DispWidth * 0.875), (DispHeight * 0.70), (DispWidth * 0.125),
-                   (DispHeight * 0.112), font, (keypressed == BACK_SPACE) ? OPT_FLAT : 0, "<-");
+  Gpu_CoCmd_Button(phost, (DispWidth * 0.875), (DispHeight * 0.70), (DispWidth * 0.125), (DispHeight * 0.112), font,
+                   (keypressed == BACK_SPACE) ? OPT_FLAT : 0, "<-");
   Gpu_CoCmd_FgColor(phost, 0x703800);
-
-
 
   Gpu_CoCmd_FgColor(phost, 0x00a2e8);
   App_WrCoCmd_Buffer(phost, TAG(KBBACK));  // Back		 Return to Home
-  Gpu_CoCmd_Button(phost, (DispWidth * 0.115), (DispHeight * 0.83), (DispWidth * 0.192), (DispHeight * 0.112),
-                   font, (keypressed == KBBACK) ? OPT_FLAT : 0, "Back");
+  Gpu_CoCmd_Button(phost, (DispWidth * 0.115), (DispHeight * 0.83), (DispWidth * 0.192), (DispHeight * 0.112), font,
+                   (keypressed == KBBACK) ? OPT_FLAT : 0, "Back");
 
-  Gpu_CoCmd_FgColor(phost, 0x202020);   //0x703800);
+  Gpu_CoCmd_FgColor(phost, 0x202020);   // 0x703800);
   App_WrCoCmd_Buffer(phost, TAG(' '));  // Space
-  Gpu_CoCmd_Button(phost, (DispWidth * 0.315), (DispHeight * 0.83), (DispWidth * 0.33), (DispHeight * 0.112),
-                   font, (keypressed == ' ') ? OPT_FLAT : 0, "Space");
+  Gpu_CoCmd_Button(phost, (DispWidth * 0.315), (DispHeight * 0.83), (DispWidth * 0.33), (DispHeight * 0.112), font,
+                   (keypressed == ' ') ? OPT_FLAT : 0, "Space");
 
   if (!numlock) {
     Gpu_CoCmd_Keys(phost, 0, (DispHeight * 0.442), DispWidth, (DispHeight * 0.112), font, keypressed,
                    ((caplock) ? "QWERTYUIOP" : "qwertyuiop"));
-    Gpu_CoCmd_Keys(phost, (DispWidth * 0.042), (DispHeight * 0.57), (DispWidth * 0.96), (DispHeight * 0.112),
-                   font, keypressed, ((caplock) ? "ASDFGHJKL" : "asdfghjkl"));
-    Gpu_CoCmd_Keys(phost, (DispWidth * 0.125), (DispHeight * 0.70), (DispWidth * 0.73), (DispHeight * 0.112),
-                   font, keypressed, ((caplock) ? "ZXCVBNM" : "zxcvbnm"));
-
+    Gpu_CoCmd_Keys(phost, (DispWidth * 0.042), (DispHeight * 0.57), (DispWidth * 0.96), (DispHeight * 0.112), font,
+                   keypressed, ((caplock) ? "ASDFGHJKL" : "asdfghjkl"));
+    Gpu_CoCmd_Keys(phost, (DispWidth * 0.125), (DispHeight * 0.70), (DispWidth * 0.73), (DispHeight * 0.112), font,
+                   keypressed, ((caplock) ? "ZXCVBNM" : "zxcvbnm"));
 
     App_WrCoCmd_Buffer(phost, TAG(CAPS_LOCK));  // Capslock
     Gpu_CoCmd_Button(phost, 0, (DispHeight * 0.70), (DispWidth * 0.10), (DispHeight * 0.112), font,
-                     (keypressed == CAPS_LOCK) ? OPT_FLAT : 0,
-                     ((caplock) ? "a^" : "A^"));
+                     (keypressed == CAPS_LOCK) ? OPT_FLAT : 0, ((caplock) ? "a^" : "A^"));
     App_WrCoCmd_Buffer(phost, TAG(NUMBER_LOCK));  // Numberlock
     Gpu_CoCmd_Button(phost, 0, (DispHeight * 0.83), (DispWidth * 0.10), (DispHeight * 0.112), font,
-                     (keypressed == NUMBER_LOCK) ? OPT_FLAT : 0,
-                     "12*");
+                     (keypressed == NUMBER_LOCK) ? OPT_FLAT : 0, "12*");
   } else {
-    Gpu_CoCmd_Keys(phost, (DispWidth * 0), (DispHeight * 0.442), DispWidth, (DispHeight * 0.112), font,
-                   keypressed, "1234567890");
-    Gpu_CoCmd_Keys(phost, (DispWidth * 0.042), (DispHeight * 0.57), (DispWidth * 0.96), (DispHeight * 0.112),
-                   font, keypressed, "-@#%^&*()");
-    Gpu_CoCmd_Keys(phost, (DispWidth * 0.125), (DispHeight * 0.70), (DispWidth * 0.73), (DispHeight * 0.112),
-                   font, keypressed, ",_+[]{}");
+    Gpu_CoCmd_Keys(phost, (DispWidth * 0), (DispHeight * 0.442), DispWidth, (DispHeight * 0.112), font, keypressed,
+                   "1234567890");
+    Gpu_CoCmd_Keys(phost, (DispWidth * 0.042), (DispHeight * 0.57), (DispWidth * 0.96), (DispHeight * 0.112), font,
+                   keypressed, "-@#%^&*()");
+    Gpu_CoCmd_Keys(phost, (DispWidth * 0.125), (DispHeight * 0.70), (DispWidth * 0.73), (DispHeight * 0.112), font,
+                   keypressed, ",_+[]{}");
     App_WrCoCmd_Buffer(phost, TAG(NUMBER_LOCK));  // Numberlock
     Gpu_CoCmd_Button(phost, 0, (DispHeight * 0.83), (DispWidth * 0.10), (DispHeight * 0.112), font,
-                     (keypressed == NUMBER_LOCK) ? OPT_FLAT : 0,
-                     "AB*");
+                     (keypressed == NUMBER_LOCK) ? OPT_FLAT : 0, "AB*");
   }
   Gpu_CoCmd_FgColor(phost, 0x006400);
   App_WrCoCmd_Buffer(phost, TAG(SAVE_KEY));  // Enter
@@ -112,8 +105,8 @@ void drawKeyboard(Gpu_Hal_Context_t *phost, uint8_t keypressed, char *displaytex
   Disp_End(phost);
 }
 
-void getKeyboardValue(Gpu_Hal_Context_t *phost, char *curtext, char *curtitle, bool password) {
-  delay(200); // Added to create smooth transition between screen
+void getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* curtitle, bool password) {
+  delay(200);  // Added to create smooth transition between screen
   uint8_t font = 27;
   char buf[PROFILE_NAME_MAX_LEN] = "";
   uint8_t curpos = 0;
@@ -146,7 +139,7 @@ void getKeyboardValue(Gpu_Hal_Context_t *phost, char *curtext, char *curtitle, b
 
       case BACK_SPACE:
         // check in the line there is any characters are present, cursor not included
-        if (curpos > 0)  {
+        if (curpos > 0) {
           curpos--;  // clear the character in the buffer
           buf[curpos] = 0;
           if (password) curtext[curpos] = 0;
@@ -192,14 +185,14 @@ void getKeyboardValue(Gpu_Hal_Context_t *phost, char *curtext, char *curtitle, b
   }
 }
 
-void roundOneDecimal(float *x) {
+void roundOneDecimal(float* x) {
   char buf[PROFILE_NAME_MAX_LEN];
 
   dtostrf(*x, 3, 1, buf);
   *x = atof(buf);
 }
 
-void drawKeypad(Gpu_Hal_Context_t *phost, int32_t keypressed, char *displaynum, int8_t errorcode) {
+void drawKeypad(Gpu_Hal_Context_t* phost, int32_t keypressed, char* displaynum, int8_t errorcode) {
   char buf[KEYPAD_MAX_LEN];
 
   Gpu_CoCmd_Dlstart(phost);
@@ -207,8 +200,8 @@ void drawKeypad(Gpu_Hal_Context_t *phost, int32_t keypressed, char *displaynum, 
   App_WrCoCmd_Buffer(phost, CLEAR(1, 1, 1));
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));  // enable tagbuffer updation
-  //Gpu_CoCmd_FgColor(phost, 0xB40000);     // 0x703800 0xD00000
-  //Gpu_CoCmd_BgColor(phost, 0xB40000);
+  // Gpu_CoCmd_FgColor(phost, 0xB40000);     // 0x703800 0xD00000
+  // Gpu_CoCmd_BgColor(phost, 0xB40000);
   Gpu_CoCmd_FgColor(phost, 0x202020);
   Gpu_CoCmd_BgColor(phost, 0x202020);
 
@@ -232,7 +225,6 @@ void drawKeypad(Gpu_Hal_Context_t *phost, int32_t keypressed, char *displaynum, 
   Gpu_CoCmd_Keys(phost, 47, 140, 150, 50, 29, keypressed, "123");
   Gpu_CoCmd_Keys(phost, 47, 191, 150, 40, 29, keypressed, "0.");
 
-
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));  // Disable the tag buffer updates
   App_WrCoCmd_Buffer(phost, SCISSOR_XY(0, 0));
   App_WrCoCmd_Buffer(phost, SCISSOR_SIZE(320, 34));
@@ -249,7 +241,7 @@ void drawKeypad(Gpu_Hal_Context_t *phost, int32_t keypressed, char *displaynum, 
   App_Flush_Co_Buffer(phost);
 }
 
-float getKeypadValue(Gpu_Hal_Context_t *phost, float curval, float minval, float maxval, bool isfloat) {
+float getKeypadValue(Gpu_Hal_Context_t* phost, float curval, float minval, float maxval, bool isfloat) {
   phost = &host;
   char buf[KEYPAD_MAX_LEN] = "";
   int8_t curpos;
@@ -263,11 +255,13 @@ float getKeypadValue(Gpu_Hal_Context_t *phost, float curval, float minval, float
 
   drawKeypad(phost, 0, buf, 0);
 
-  while(true) {
+  while (true) {
     int keypressed = InteractionsHandler::getTouchStateChanged();
 
     // Only update when key actually changed
-    if (keypressed == -1) { continue; }
+    if (keypressed == -1) {
+      continue;
+    }
 
     switch (keypressed) {
       // No key
@@ -300,17 +294,17 @@ float getKeypadValue(Gpu_Hal_Context_t *phost, float curval, float minval, float
       }
 
       // Any other key
-      default: 
+      default:
         if (curpos < KEYPAD_MAX_LEN - 1) {
           buf[curpos] = keypressed;
           buf[++curpos] = 0;
           drawKeypad(phost, keypressed, buf, 0);
-        } else { //max entry
+        } else {  // max entry
           drawKeypad(phost, keypressed, buf, 1);
         }
         break;
     }
-  } 
+  }
 
   return curval;
 }

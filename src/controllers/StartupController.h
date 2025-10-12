@@ -3,14 +3,15 @@
 #include "BaseController.h"
 
 class StartupController : public BaseController {
-private:
+ private:
   enum {
     STAGE_HANDSHAKE,
     STAGE_ERROR,
   };
   int stage = STAGE_HANDSHAKE;
-  DispenserHead &dispenserHead;
-public:
+  DispenserHead& dispenserHead;
+
+ public:
   StartupController(ControllerParams params);
 
   void onStart() override;

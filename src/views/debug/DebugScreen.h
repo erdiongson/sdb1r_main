@@ -7,15 +7,15 @@
 
 // Parameters for Debug Screen display.
 struct DebugScreenParams {
-  bool blanked_eeprom;   // true = show (Done) on Blank EEPROM button
-  bool profiles_reset;   // true = show (Done) on Reset Profiles button
-  int dialog_code;       // dialog code to display (0 = no dialog)
+  bool blanked_eeprom;  // true = show (Done) on Blank EEPROM button
+  bool profiles_reset;  // true = show (Done) on Reset Profiles button
+  int dialog_code;      // dialog code to display (0 = no dialog)
 };
 
 // Draws the debug screen with test and utility buttons.
 // @param phost Pointer to the GPU HAL context.
 // @param params Debug screen parameters.
-inline void drawDebugScreen(Gpu_Hal_Context_t *phost, DebugScreenParams params) {
+inline void drawDebugScreen(Gpu_Hal_Context_t* phost, DebugScreenParams params) {
   char buf[100];
 
   Gpu_CoCmd_FlashFast(phost, 0);
@@ -30,14 +30,14 @@ inline void drawDebugScreen(Gpu_Hal_Context_t *phost, DebugScreenParams params) 
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 165, 0));
   Gpu_CoCmd_Text(phost, 159, 20, 30, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, "DEBUG MENU");
-  
+
   // Divider line
   App_WrCoCmd_Buffer(phost, COLOR_RGB(193, 64, 0));
   App_WrCoCmd_Buffer(phost, BEGIN(LINES));
   App_WrCoCmd_Buffer(phost, VERTEX2F(0, 720));
   App_WrCoCmd_Buffer(phost, VERTEX2F(5120, 720));
   App_WrCoCmd_Buffer(phost, END());
-  
+
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
 
@@ -50,7 +50,7 @@ inline void drawDebugScreen(Gpu_Hal_Context_t *phost, DebugScreenParams params) 
   App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_MOVE_TEST));
   Gpu_CoCmd_FgColor(phost, 0x00A2E8);
   Gpu_CoCmd_Button(phost, 25, button_y, 130, button_height, 26, 0, "Move Test");
-  
+
   App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_DISPENSER_TEST));
   Gpu_CoCmd_FgColor(phost, 0x00A2E8);
   Gpu_CoCmd_Button(phost, 165, button_y, 130, button_height, 26, 0, "Dispenser Test");

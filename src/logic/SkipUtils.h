@@ -7,15 +7,15 @@
 
 // Forward declaration - Position must be defined before including this header
 namespace TrayHandler {
-  struct Position;
+struct Position;
 }
 
 class SkipUtils {
-private:
+ private:
   // Helper function to check if a string contains only digits.
   // @param str The string to check.
   // @return True if string contains only digits, false otherwise.
-  static bool isAllDigits(const char *str) {
+  static bool isAllDigits(const char* str) {
     if (str == nullptr || str[0] == '\0') return false;
     for (int i = 0; str[i] != '\0'; i++) {
       if (str[i] < '0' || str[i] > '9') return false;
@@ -27,7 +27,7 @@ private:
   // @param pos The position to check.
   // @param dimensions The tray dimensions to validate against.
   // @return True if position is valid and within bounds, false otherwise.
-  static bool isValidSkipPosition(const TrayHandler::Position &pos, const TrayHandler::Dimensions &dimensions) {
+  static bool isValidSkipPosition(const TrayHandler::Position& pos, const TrayHandler::Dimensions& dimensions) {
     // Invalid position marker
     if (pos.x == -1 && pos.y == -1) return false;
 
@@ -35,42 +35,35 @@ private:
     if (pos.y == 0 && pos.x != 0) {
       return (pos.x >= 1 && pos.x <= dimensions.columns);
     }
-    
+
     // Row skip: y should be within [1, dimensions.rows], x is 0
     if (pos.x == 0 && pos.y != 0) {
       return (pos.y >= 1 && pos.y <= dimensions.rows);
     }
-    
+
     // Individual position skip: both x and y should be within bounds
     if (pos.x != 0 && pos.y != 0) {
-      return (pos.x >= 1 && pos.x <= dimensions.columns && 
-              pos.y >= 1 && pos.y <= dimensions.rows);
+      return (pos.x >= 1 && pos.x <= dimensions.columns && pos.y >= 1 && pos.y <= dimensions.rows);
     }
 
     return false;
   }
 
-public:
-  enum SkipType {
-    ROW,
-    COLUMN,
-    INDIVIDUAL
-  };
+ public:
+  enum SkipType { ROW, COLUMN, INDIVIDUAL };
 
   struct CleanResult {
     char cleaned[ROW_COL_MAX_LEN];
     bool was_cleaned;
 
-    CleanResult() : was_cleaned(false) {
-      cleaned[0] = '\0';
-    }
+    CleanResult() : was_cleaned(false) { cleaned[0] = '\0'; }
   };
 
   // Converts profile skip strings into an array of Position objects.
   // @param profile The profile containing skip information.
   // @param outPositions Output array to store parsed positions (must be at least MAX_POSITIONS in size).
   // @return The number of positions parsed.
-  static int convert(Profile &profile, TrayHandler::Position outPositions[MAX_POSITIONS]) {
+  static int convert(Profile& profile, TrayHandler::Position outPositions[MAX_POSITIONS]) {
     // Initialize all positions to -1 to mark unused entries
     for (int i = 0; i < MAX_POSITIONS; i++) {
       outPositions[i] = TrayHandler::Position(-1, -1);
@@ -84,7 +77,7 @@ public:
       strncpy(tempCol, profile.skip_col, ROW_COL_MAX_LEN - 1);
       tempCol[ROW_COL_MAX_LEN - 1] = '\0';
 
-      char *token = strtok(tempCol, ",");
+      char* token = strtok(tempCol, ",");
       while (token != nullptr && posIndex < MAX_POSITIONS) {
         // Extract column number (skip the 'C' prefix)
         if (token[0] == 'C') {
@@ -104,7 +97,7 @@ public:
       strncpy(tempRow, profile.skip_row, ROW_COL_MAX_LEN - 1);
       tempRow[ROW_COL_MAX_LEN - 1] = '\0';
 
-      char *token = strtok(tempRow, ",");
+      char* token = strtok(tempRow, ",");
       while (token != nullptr && posIndex < MAX_POSITIONS) {
         // Extract row number (skip the 'R' prefix)
         if (token[0] == 'R') {
@@ -124,12 +117,12 @@ public:
       strncpy(tempPos, profile.skip_single_pos, ROW_COL_MAX_LEN - 1);
       tempPos[ROW_COL_MAX_LEN - 1] = '\0';
 
-      char *token = strtok(tempPos, ",");
+      char* token = strtok(tempPos, ",");
       while (token != nullptr && posIndex < MAX_POSITIONS) {
         // Extract column and row numbers (format: CxRy)
         int col = 0, row = 0;
-        char *colStr = strstr(token, "C");
-        char *rowStr = strstr(token, "R");
+        char* colStr = strstr(token, "C");
+        char* rowStr = strstr(token, "R");
 
         if (colStr && rowStr) {
           // Extract column number
@@ -154,7 +147,7 @@ public:
   // @param element The element string (e.g., "C1", "R5", "C2R4").
   // @param type The type of skip string (ROW, COLUMN, or INDIVIDUAL).
   // @return Position object. Returns Position(-1, -1) if invalid.
-  static TrayHandler::Position convertElement(const char *element, SkipType type) {
+  static TrayHandler::Position convertElement(const char* element, SkipType type) {
     if (element == nullptr || element[0] == '\0') {
       return TrayHandler::Position(-1, -1);
     }
@@ -178,18 +171,18 @@ public:
     } else if (type == INDIVIDUAL) {
       // Format: C<number>R<number>
       if (element[0] == 'C') {
-        char *rowStr = strchr(element + 1, 'R');
+        char* rowStr = strchr(element + 1, 'R');
         if (rowStr != nullptr) {
           int colNumLen = rowStr - (element + 1);
           if (colNumLen > 0) {
             char colNum[ROW_COL_MAX_LEN];
             strncpy(colNum, element + 1, colNumLen);
             colNum[colNumLen] = '\0';
-            
+
             if (isAllDigits(colNum) && isAllDigits(rowStr + 1)) {
               int col = atoi(colNum);
               int row = atoi(rowStr + 1);
-              
+
               if (col > 0 && row > 0) {
                 return TrayHandler::Position(col, row);
               }
@@ -206,7 +199,7 @@ public:
   // @param input The input string to format.
   // @param type The type of skip string (ROW, COLUMN, or INDIVIDUAL).
   // @param output Buffer to store the formatted string (must be at least ROW_COL_MAX_LEN in size).
-  static void format(const char *input, SkipType type, char *output) {
+  static void format(const char* input, SkipType type, char* output) {
     if (input == nullptr || output == nullptr) {
       if (output != nullptr) output[0] = '\0';
       return;
@@ -214,18 +207,18 @@ public:
 
     // Initialize output
     output[0] = '\0';
-    
+
     // Step 1: Capitalize 'c' to 'C' and 'r' to 'R', remove all unnecessary characters
     char normalized[ROW_COL_MAX_LEN];
     int normalizedIdx = 0;
-    
+
     for (int i = 0; input[i] != '\0' && normalizedIdx < ROW_COL_MAX_LEN - 1; i++) {
       char c = input[i];
-      
+
       // Capitalize c to C and r to R
       if (c == 'c') c = 'C';
       if (c == 'r') c = 'R';
-      
+
       // Keep only valid characters based on type
       bool isValidChar = false;
       if (type == COLUMN) {
@@ -238,13 +231,13 @@ public:
         // Valid characters: C, R, digits, comma
         isValidChar = (c == 'C' || c == 'R' || (c >= '0' && c <= '9') || c == ',');
       }
-      
+
       if (isValidChar) {
         normalized[normalizedIdx++] = c;
       }
     }
     normalized[normalizedIdx] = '\0';
-    
+
     if (normalized[0] == '\0') {
       return;
     }
@@ -258,7 +251,7 @@ public:
     strncpy(temp, normalized, ROW_COL_MAX_LEN - 1);
     temp[ROW_COL_MAX_LEN - 1] = '\0';
 
-    char *token = strtok(temp, ",");
+    char* token = strtok(temp, ",");
     while (token != nullptr) {
       // Skip empty tokens
       if (strlen(token) == 0) {
@@ -293,7 +286,7 @@ public:
       } else if (type == INDIVIDUAL) {
         // Format: C followed by digits, then R followed by digits (CXRX where X is a digit)
         if (token[0] == 'C') {
-          char *rowStr = strchr(token + 1, 'R');
+          char* rowStr = strchr(token + 1, 'R');
           if (rowStr != nullptr) {
             // Extract column number between C and R
             int colNumLen = rowStr - (token + 1);
@@ -301,12 +294,12 @@ public:
               char colNum[ROW_COL_MAX_LEN];
               strncpy(colNum, token + 1, colNumLen);
               colNum[colNumLen] = '\0';
-              
+
               // Verify both parts are all digits
               if (isAllDigits(colNum) && isAllDigits(rowStr + 1)) {
                 int col = atoi(colNum);
                 int row = atoi(rowStr + 1);
-                
+
                 if (col > 0 && row > 0) {
                   isValid = true;
                   if (!firstEntry) strcat(result, ",");
@@ -331,9 +324,9 @@ public:
   // @param type The type of skip string (ROW, COLUMN, or INDIVIDUAL).
   // @param dimensions The tray dimensions to validate against.
   // @return CleanResult containing the cleaned string and whether it was modified.
-  static CleanResult clean(const char *input, SkipType type, const TrayHandler::Dimensions &dimensions) {
+  static CleanResult clean(const char* input, SkipType type, const TrayHandler::Dimensions& dimensions) {
     CleanResult result;
-    
+
     if (input == nullptr) {
       return result;
     }
@@ -351,11 +344,11 @@ public:
     finalResult[0] = '\0';
     bool firstEntry = true;
 
-    char *token = strtok(temp, ",");
+    char* token = strtok(temp, ",");
     while (token != nullptr) {
       // Convert element to Position
       TrayHandler::Position pos = convertElement(token, type);
-      
+
       // Check if position is valid and within bounds
       if (isValidSkipPosition(pos, dimensions)) {
         if (!firstEntry) strcat(finalResult, ",");
@@ -377,4 +370,4 @@ public:
   }
 };
 
-#endif // SKIP_UTILS_H
+#endif  // SKIP_UTILS_H

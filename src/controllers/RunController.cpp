@@ -3,8 +3,7 @@
 #include "../views/common/Dialogs.h"
 #include "../Utils.h"
 
-RunController::RunController(ControllerParams params)
-  : BaseController(params) {}
+RunController::RunController(ControllerParams params) : BaseController(params) {}
 
 void RunController::onStart() {
   this->profile = profile_manager.getCurrentProfile();
@@ -37,7 +36,7 @@ void RunController::pause() {
 // Stops the run and returns to home position.
 void RunController::stop() {
   Logger::log(F("MODE: Stopped"));
-  drawStoppingScreen({profile, {0, 0, 0, 0}, 0});
+  drawStoppingScreen({ profile, { 0, 0, 0, 0 }, 0 });
   paused = false;
 
   // Stop all stepper movements
@@ -143,16 +142,10 @@ ControllerStepResult RunController::onStep() {
     return ControllerStepResult(true);
   }
 
-  MainScreenParams params = {
-    profile,
-    {
-      (uint16_t)trayHandler.getCurrentRow(),
-      (uint16_t)trayHandler.getCurrentColumn(),
-      (uint16_t)trayHandler.getTubesLeft(),
-      (uint16_t)trayHandler.getTubesDispensed() + 1
-    },
-    0
-  };
+  MainScreenParams params = { profile,
+                              { (uint16_t)trayHandler.getCurrentRow(), (uint16_t)trayHandler.getCurrentColumn(),
+                                (uint16_t)trayHandler.getTubesLeft(), (uint16_t)trayHandler.getTubesDispensed() + 1 },
+                              0 };
 
   if (dispenserProcessResult.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
     Logger::log(F("MODE: Stepper error - limit switch triggered"));
@@ -183,7 +176,7 @@ ControllerStepResult RunController::onStep() {
     params.dialog_code = DIALOG_ERROR_MARKER_NOT_DETECTED;
     drawRunScreen(params);
     pause();
-    
+
     return ControllerStepResult(false);
   }
 
@@ -202,7 +195,7 @@ void RunController::start() {
   Logger::log(F("MODE: Starting run"));
   paused = false;
   cycle = 0;
-  drawRunScreen({profile, {0, 0, 0, 0}, 0});
+  drawRunScreen({ profile, { 0, 0, 0, 0 }, 0 });
   startStage(STAGE_SET_VIB_LEVEL);
 }
 
@@ -250,7 +243,10 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
       if (cycle >= PRIME_DISPENSE_NUM) {
         // Calculate the first position and move to it
         TrayHandler::Position firstPosition = trayHandler.reset();
-        target_x = (profile.tray_origin_x + ((firstPosition.x - 1 + ((profile.staggered && firstPosition.y % 2 == 0) ? 0.5 : 0)) * profile.pitch_x)) * -STEPS_PER_UNIT_X;
+        target_x =
+            (profile.tray_origin_x +
+             ((firstPosition.x - 1 + ((profile.staggered && firstPosition.y % 2 == 0) ? 0.5 : 0)) * profile.pitch_x)) *
+            -STEPS_PER_UNIT_X;
         target_y = (profile.tray_origin_y + ((firstPosition.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
         startStage(STAGE_MOVE);
       } else {
@@ -272,7 +268,7 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
     }
 
     case STAGE_WAIT_DISPENSE: {
-      if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING)  break;
+      if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING) break;
       cycle++;
 
       // Check if dispensing should end
@@ -294,20 +290,18 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
       if (result.has_next) {
         Logger::log("Next position: " + String(result.position.x) + ", " + String(result.position.y));
 
-        target_x = (profile.tray_origin_x + ((result.position.x - 1 + ((profile.staggered && result.position.y % 2 == 0) ? 0.5: 0)) * profile.pitch_x)) * -STEPS_PER_UNIT_X;
+        target_x = (profile.tray_origin_x +
+                    ((result.position.x - 1 + ((profile.staggered && result.position.y % 2 == 0) ? 0.5 : 0)) *
+                     profile.pitch_x)) *
+                   -STEPS_PER_UNIT_X;
         target_y = (profile.tray_origin_y + ((result.position.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
 
         // Update Home_Screen
-        MainScreenParams params = {
-          profile,
-          {
-            (uint16_t)trayHandler.getCurrentRow(),
-            (uint16_t)trayHandler.getCurrentColumn(),
-            (uint16_t)trayHandler.getTubesLeft(),
-            (uint16_t)trayHandler.getTubesDispensed() + 1
-          },
-          0
-        };
+        MainScreenParams params = { profile,
+                                    { (uint16_t)trayHandler.getCurrentRow(), (uint16_t)trayHandler.getCurrentColumn(),
+                                      (uint16_t)trayHandler.getTubesLeft(),
+                                      (uint16_t)trayHandler.getTubesDispensed() + 1 },
+                                    0 };
         drawRunScreen(params);
 
         cycle = 0;

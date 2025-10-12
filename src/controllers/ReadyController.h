@@ -3,7 +3,7 @@
 #include "BaseController.h"
 
 class ReadyController : public BaseController {
-public:
+ public:
   ReadyController(ControllerParams params);
 
   void onStart() override;

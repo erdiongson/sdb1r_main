@@ -98,8 +98,8 @@ inline void drawMenuButtons(const ButtonsEnabled& buttons) {
 // @param phost GPU context.
 // @param buttons The button enable states.
 // @param params Parameters containing profile and status information.
-inline void drawBaseMainScreen(Gpu_Hal_Context_t* phost, const ButtonsEnabled& buttons, const MainScreenParams& params) {
-
+inline void drawBaseMainScreen(Gpu_Hal_Context_t* phost, const ButtonsEnabled& buttons,
+                               const MainScreenParams& params) {
   char buf[100];
 
   Gpu_CoCmd_FlashFast(phost, 0);
@@ -128,12 +128,11 @@ inline void drawBaseMainScreen(Gpu_Hal_Context_t* phost, const ButtonsEnabled& b
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, TAG_MASK(255));
 
-
   drawMenuButtons(buttons);
 
   Profile& profile = params.profile;
   sprintf(buf, "Profile Name: %s", profile.profile_name);
-  Gpu_CoCmd_Text(phost, 25, 195, 20, OPT_FORMAT, buf);  //OPT_CENTER | OPT_RIGHTX |
+  Gpu_CoCmd_Text(phost, 25, 195, 20, OPT_FORMAT, buf);  // OPT_CENTER | OPT_RIGHTX |
   sprintf(buf, "No. of Cycles: %d", profile.cycles);
   Gpu_CoCmd_Text(phost, 25, 208, 20, OPT_FORMAT, buf);
 
@@ -146,7 +145,7 @@ inline void drawBaseMainScreen(Gpu_Hal_Context_t* phost, const ButtonsEnabled& b
   sprintf(buf, "Tube left : %3d", params.run_status.tubes_left);
   Gpu_CoCmd_Text(phost, 294, 220, 20, OPT_RIGHTX | OPT_FORMAT, buf);
 
-  //INSERT DIALOG
+  // INSERT DIALOG
   if (params.dialog_code > 0) {
     drawDialog(phost, params.dialog_code);
   }

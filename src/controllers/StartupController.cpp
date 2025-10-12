@@ -1,17 +1,15 @@
 #include "StartupController.h"
 #include "../views/LogoScreen.h"
 
-StartupController::StartupController(ControllerParams params)
-  : BaseController(params), dispenserHead(params.head) {
-  }
+StartupController::StartupController(ControllerParams params) : BaseController(params), dispenserHead(params.head) {}
 
 void StartupController::onStart() {
   Logger::log(F("StartupController::on_start"));
-  
+
   // Load profile from EEPROM
   Logger::log("Loading profile..");
   profile_manager.loadProfile();
-  
+
   drawLogoScreen(phost, 0);
 
   // Check if dispenser is online and responding
@@ -44,7 +42,7 @@ ControllerStepResult StartupController::onStep() {
     Logger::log(F("Handshake acknowledged 👍"));
     startNextController(CONTROLLER_HOMING);
   }
-  
+
   return ControllerStepResult(false);
 }
 

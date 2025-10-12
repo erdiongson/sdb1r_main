@@ -10,8 +10,7 @@ struct DispenserProcessResult {
   int steppers;
   int dispenser;
 
-  DispenserProcessResult(int steppers, int dispenser)
-    : steppers(steppers), dispenser(dispenser) {}
+  DispenserProcessResult(int steppers, int dispenser) : steppers(steppers), dispenser(dispenser) {}
 };
 
 // Struct for all dispenser head parameters.
@@ -20,24 +19,16 @@ struct DispenserHeadParams {
   AxisParams y_axis;
   AxisParams z_axis;
 
-  DispenserHeadParams(
-    const AxisParams& x_axis,
-    const AxisParams& y_axis,
-    const AxisParams& z_axis)
-    : x_axis(x_axis),
-      y_axis(y_axis),
-      z_axis(z_axis) {}
+  DispenserHeadParams(const AxisParams& x_axis, const AxisParams& y_axis, const AxisParams& z_axis)
+      : x_axis(x_axis), y_axis(y_axis), z_axis(z_axis) {}
 };
 
 class DispenserHead {
-public:
-
+ public:
   // Constructor for DispenserHead using DispenserHeadParams.
   // @param params All parameters for the dispenser head.
   DispenserHead(const DispenserHeadParams& params)
-    : x_axis(params.x_axis),
-      y_axis(params.y_axis),
-      z_axis(params.z_axis) {}
+      : x_axis(params.x_axis), y_axis(params.y_axis), z_axis(params.z_axis) {}
 
   Axis& x() { return x_axis; }
   Axis& y() { return y_axis; }
@@ -84,26 +75,29 @@ public:
   // Process incoming data from the dispenser.
   // @return DispenserProcessResult containing the updated state and any error code.
   DispenserProcessResult process() {
-
-    #if DEBUG_ONLY_SCREEN
-      return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_IDLING);
-    #endif
+#if DEBUG_ONLY_SCREEN
+    return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_IDLING);
+#endif
 
     // Process stepper motors
     int x_result = this->x_axis.onStep();
     if (x_result == AXIS_STATE_RUNNING) return DispenserProcessResult(AXIS_STATE_RUNNING, DISPENSER_STATE_BLOCKED);
-    if (x_result == AXIS_STATE_ERROR_LIMIT_SWITCH) return DispenserProcessResult(AXIS_STATE_ERROR_LIMIT_SWITCH, DISPENSER_STATE_BLOCKED);
+    if (x_result == AXIS_STATE_ERROR_LIMIT_SWITCH)
+      return DispenserProcessResult(AXIS_STATE_ERROR_LIMIT_SWITCH, DISPENSER_STATE_BLOCKED);
 
     int y_result = this->y_axis.onStep();
     if (y_result == AXIS_STATE_RUNNING) return DispenserProcessResult(AXIS_STATE_RUNNING, DISPENSER_STATE_BLOCKED);
-    if (y_result == AXIS_STATE_ERROR_LIMIT_SWITCH) return DispenserProcessResult(AXIS_STATE_ERROR_LIMIT_SWITCH, DISPENSER_STATE_BLOCKED);
+    if (y_result == AXIS_STATE_ERROR_LIMIT_SWITCH)
+      return DispenserProcessResult(AXIS_STATE_ERROR_LIMIT_SWITCH, DISPENSER_STATE_BLOCKED);
 
     int z_result = this->z_axis.onStep();
     if (z_result == AXIS_STATE_RUNNING) return DispenserProcessResult(AXIS_STATE_RUNNING, DISPENSER_STATE_BLOCKED);
-    if (z_result == AXIS_STATE_ERROR_LIMIT_SWITCH) return DispenserProcessResult(AXIS_STATE_ERROR_LIMIT_SWITCH, DISPENSER_STATE_BLOCKED);
+    if (z_result == AXIS_STATE_ERROR_LIMIT_SWITCH)
+      return DispenserProcessResult(AXIS_STATE_ERROR_LIMIT_SWITCH, DISPENSER_STATE_BLOCKED);
 
     // If not expecting any dispenser response, skip processing
-    if (dispensing_state == DISPENSER_STATE_IDLING) return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_IDLING);
+    if (dispensing_state == DISPENSER_STATE_IDLING)
+      return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_IDLING);
 
     // Process dispenser's serial data
     int response = PicSerial::process();
@@ -140,9 +134,7 @@ public:
   }
 
   // Get the current dispensing state
-  int getState() const {
-    return dispensing_state;
-  }
+  int getState() const { return dispensing_state; }
 
   // Clear axes if at limit positions by moving them away.
   void clearLimits() {
@@ -151,7 +143,7 @@ public:
     if (z_axis.isAtMin()) z_axis.moveBy(STEPS_PER_UNIT_Z * 10);
   }
 
-private:
+ private:
   Axis x_axis;
   Axis y_axis;
   Axis z_axis;

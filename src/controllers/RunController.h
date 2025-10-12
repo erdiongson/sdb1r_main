@@ -5,7 +5,7 @@
 #include "../../Config.h"
 
 class RunController : public BaseController {
-private:
+ private:
   bool paused = false;
 
   enum Stage {
@@ -35,7 +35,7 @@ private:
   void stop();
   void start();
 
-public:
+ public:
   RunController(ControllerParams params);
 
   void onStart() override;

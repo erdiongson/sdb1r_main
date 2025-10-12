@@ -3,7 +3,7 @@
 #include "../BaseController.h"
 
 class DebugController : public BaseController {
-public:
+ public:
   DebugController(ControllerParams params);
 
   void onStart() override;

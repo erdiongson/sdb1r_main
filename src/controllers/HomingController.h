@@ -3,14 +3,15 @@
 #include "BaseController.h"
 
 class HomingController : public BaseController {
-private:
+ private:
   enum {
     STAGE_CLEAR,
     STAGE_HOME,
     STAGE_ERROR,
   };
   int stage = STAGE_CLEAR;
-public:
+
+ public:
   HomingController(ControllerParams params);
 
   void onStart() override;

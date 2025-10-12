@@ -3,10 +3,10 @@
 #include "../BaseController.h"
 
 class ProfileController : public BaseController {
-private:
+ private:
   int8_t selected_profile_num;
 
-public:
+ public:
   ProfileController(ControllerParams params);
 
   void onStart() override;

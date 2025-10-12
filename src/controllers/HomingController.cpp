@@ -1,8 +1,7 @@
 #include "HomingController.h"
 #include "../views/MainScreen.h"
 
-HomingController::HomingController(ControllerParams params)
-  : BaseController(params) {}
+HomingController::HomingController(ControllerParams params) : BaseController(params) {}
 
 void HomingController::onStart() {
   Logger::log(F("HomingController::on_start"));
