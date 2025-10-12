@@ -68,11 +68,9 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       profile_manager.writeProfileEEPROM(currentNum);
       
       // Show profile saved dialog
-      SettingsScreenParams params = {*current_profile, DIALOG_PROFILE_SAVED};
-      drawSettingsScreen(phost, params);
+      drawSettingsScreen(phost, {*current_profile, DIALOG_PROFILE_SAVED});
       delay(2000);
-      params.dialog_code = 0;
-      drawSettingsScreen(phost, params);
+      drawSettingsScreen(phost, {*current_profile, 0});
       break;
     }
 

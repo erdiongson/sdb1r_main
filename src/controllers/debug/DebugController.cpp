@@ -9,8 +9,7 @@ DebugController::DebugController(ControllerParams params)
 
 void DebugController::onStart() {
   Logger::log(F("DebugController::on_start"));
-  DebugScreenParams params = {false, false};
-  drawDebugScreen(phost, params);
+  drawDebugScreen(phost, {false, false});
 }
 
 void DebugController::onInteraction(const Interaction& interaction) {
@@ -30,16 +29,14 @@ void DebugController::onInteraction(const Interaction& interaction) {
     case TAG_DEBUG_BLANK_EEPROM: {
       Logger::log(F("Debug: Blank EEPROM button pressed"));
       profile_manager.blankEEPROM();
-      DebugScreenParams params = {false, true};
-      drawDebugScreen(phost, params);
+      drawDebugScreen(phost, {false, true});
       break;
     }
 
     case TAG_DEBUG_RESET_PROFILES: {
       Logger::log(F("Debug: Reset Profiles button pressed"));
       profile_manager.preLoadEEPROM();
-      DebugScreenParams params = {false, true};
-      drawDebugScreen(phost, params);
+      drawDebugScreen(phost, {false, true});
       break;
     }
 

@@ -72,8 +72,8 @@ inline void drawMenuButtons(uint8_t whichmenu) {
 // Draws the main screen with menu buttons and profile information.
 // @param phost GPU context.
 // @param whichmenu The menu state to display.
-// @param params Optional parameters containing profile and status information.
-inline void drawMainScreen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const MainScreenParams* params = nullptr) {
+// @param params Parameters containing profile and status information.
+inline void drawMainScreen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const MainScreenParams& params) {
 
   char buf[100];
 
@@ -106,29 +106,24 @@ inline void drawMainScreen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const Ma
 
   drawMenuButtons(whichmenu);
 
-  if (!params) {
-    Disp_End(phost);
-    return;
-  }
-  
-  Profile& profile = params->profile;
+  Profile& profile = params.profile;
   sprintf(buf, "Profile Name: %s", profile.profile_name);
   Gpu_CoCmd_Text(phost, 25, 195, 20, OPT_FORMAT, buf);  //OPT_CENTER | OPT_RIGHTX |
   sprintf(buf, "No. of Cycles: %d", profile.cycles);
   Gpu_CoCmd_Text(phost, 25, 208, 20, OPT_FORMAT, buf);
 
-  sprintf(buf, "Filling tube: %d", params ? params->filling_tube : 0);
+  sprintf(buf, "Filling tube: %d", params.filling_tube);
   Gpu_CoCmd_Text(phost, 25, 220, 20, OPT_FORMAT, buf);
 
-  sprintf(buf, "Current Tube : R%2d C%2d", params ? params->current_row : 1, params ? params->current_column : 1);
+  sprintf(buf, "Current Tube : R%2d C%2d", params.current_row, params.current_column);
   Gpu_CoCmd_Text(phost, 292, 208, 20, OPT_RIGHTX | OPT_FORMAT, buf);
 
-  sprintf(buf, "Tube left : %3d", params ? params->tubes_left : 0);
+  sprintf(buf, "Tube left : %3d", params.tubes_left);
   Gpu_CoCmd_Text(phost, 294, 220, 20, OPT_RIGHTX | OPT_FORMAT, buf);
 
   //INSERT DIALOG
-  if (params && params->dialog_code > 0) {
-    drawDialog(phost, params->dialog_code);
+  if (params.dialog_code > 0) {
+    drawDialog(phost, params.dialog_code);
   }
   Disp_End(phost);
 }

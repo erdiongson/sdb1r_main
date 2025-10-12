@@ -37,8 +37,7 @@ void RunController::pause() {
 // Stops the run and returns to home position.
 void RunController::stop() {
   Logger::log(F("MODE: Stopped"));
-  MainScreenParams params = {profile, 0, 0, 0, 0, 0};
-  drawMainScreen(phost, STOPPINGMENU, &params);
+  drawMainScreen(phost, STOPPINGMENU, {profile, 0, 0, 0, 0, 0});
   paused = false;
 
   // Stop all stepper movements
@@ -156,7 +155,7 @@ ControllerStepResult RunController::onStep() {
   if (dispenserProcessResult.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
     Logger::log(F("MODE: Stepper error - limit switch triggered"));
     params.dialog_code = DIALOG_ERROR_LIMIT_SWITCH;
-    drawMainScreen(phost, RUNMENU, &params);
+    drawMainScreen(phost, RUNMENU, params);
     pause();
     return ControllerStepResult(false);
   }
@@ -164,7 +163,7 @@ ControllerStepResult RunController::onStep() {
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE) {
     Logger::log(F("MODE: Dispenser error - IR sensor failure"));
     params.dialog_code = DIALOG_ERROR_IR_SENSOR;
-    drawMainScreen(phost, RUNMENU, &params);
+    drawMainScreen(phost, RUNMENU, params);
     pause();
     return ControllerStepResult(false);
   }
@@ -172,7 +171,7 @@ ControllerStepResult RunController::onStep() {
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
     Logger::log(F("MODE: Dispenser error - Acknowledgment error"));
     params.dialog_code = DIALOG_ERROR_ACK_ERROR;
-    drawMainScreen(phost, RUNMENU, &params);
+    drawMainScreen(phost, RUNMENU, params);
     pause();
     return ControllerStepResult(false);
   }
@@ -180,7 +179,7 @@ ControllerStepResult RunController::onStep() {
   if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
     Logger::log(F("MODE: Dispenser error - marker not detected"));
     params.dialog_code = DIALOG_ERROR_MARKER_NOT_DETECTED;
-    drawMainScreen(phost, RUNMENU, &params);
+    drawMainScreen(phost, RUNMENU, params);
     pause();
     
     return ControllerStepResult(false);
@@ -201,8 +200,7 @@ void RunController::start() {
   Logger::log(F("MODE: Starting run"));
   paused = false;
   cycle = 0;
-  MainScreenParams params = {profile, 0, 0, 0, 0, 0};
-  drawMainScreen(phost, RUNMENU, &params);
+  drawMainScreen(phost, RUNMENU, {profile, 0, 0, 0, 0, 0});
   startStage(STAGE_SET_VIB_LEVEL);
 }
 
@@ -306,7 +304,7 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
           (uint16_t)trayHandler.getTubesDispensed() + 1,
           0
         };
-        drawMainScreen(phost, RUNMENU, &params);
+        drawMainScreen(phost, RUNMENU, params);
 
         cycle = 0;
         startStage(STAGE_MOVE);
