@@ -1,9 +1,5 @@
 #include "ReadyController.h"
 #include "../views/MainScreen.h"
-#include "../logic/Profile.h"
-#include "../Constants.h"
-#include "../../Config.h"
-#include "../Utils.h"
 
 ReadyController::ReadyController(ControllerParams params)
   : BaseController(params) {}

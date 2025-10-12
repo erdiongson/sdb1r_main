@@ -1,6 +1,4 @@
 #include "HomingController.h"
-#include "../Constants.h"
-#include "../../Config.h"
 #include "../views/MainScreen.h"
 
 HomingController::HomingController(ControllerParams params)

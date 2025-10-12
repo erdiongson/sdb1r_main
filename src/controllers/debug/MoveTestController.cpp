@@ -1,9 +1,6 @@
 #include "MoveTestController.h"
 #include "../../views/debug/MoveTestScreen.h"
 #include "../../views/common/Keyboards.h"
-#include "../../Constants.h"
-#include "../../../Config.h"
-#include "../../Utils.h"
 
 MoveTestController::MoveTestController(ControllerParams params)
   : BaseController(params) {}

@@ -1,11 +1,8 @@
-#include "../../gpu/Platform.h"
-#include "../../../Config.h"
+#include "SettingsController.h"
 #include "../../views/settings/SettingsScreen.h"
 #include "../../views/common/Keyboards.h"
 #include "../../logic/TrayPositionHandler.h"
 #include "../../logic/SkipUtils.h"
-#include "SettingsController.h"
-#include "../../Utils.h"
 
 SettingsController::SettingsController(ControllerParams params)
   : BaseController(params), current_profile(nullptr) {}

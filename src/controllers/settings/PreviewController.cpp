@@ -1,8 +1,5 @@
 #include "PreviewController.h"
 #include "../../views/settings/PreviewScreen.h"
-#include "../../Constants.h"
-#include "../../../Config.h"
-#include "../../Utils.h"
 
 PreviewController::PreviewController(ControllerParams params)
   : BaseController(params), current_profile(nullptr), 

@@ -1,8 +1,5 @@
 #include "DebugController.h"
 #include "../../views/debug/DebugScreen.h"
-#include "../../Constants.h"
-#include "../../../Config.h"
-#include "../../Utils.h"
 #include "../../views/common/Keyboards.h"
 
 DebugController::DebugController(ControllerParams params)

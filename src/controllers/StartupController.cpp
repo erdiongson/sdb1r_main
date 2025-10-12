@@ -1,7 +1,4 @@
 #include "StartupController.h"
-#include "../Constants.h"
-#include "../../Config.h"
-#include "../Utils.h"
 #include "../views/LogoScreen.h"
 
 StartupController::StartupController(ControllerParams params)
