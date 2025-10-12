@@ -10,8 +10,9 @@ Date created - 2022.12.14 - XentiQ version
 #include <Arduino.h>
 #include "../gpu/Platform.h"
 
-#define EEPROM_SIZE 2048 
-#define MAX_PROFILES 10 //(EEPROM_SIZE / sizeof(Profile))
+#define EEPROM_SIZE 4096 // For an Arduino Mega 
+#define MAX_PROFILES 10
+#define RESERVED_PROFILE_SIZE 300
 #define PROFILE_START_ADDR 0
 
 #define PROFILE_NAME_MAX_LEN 30

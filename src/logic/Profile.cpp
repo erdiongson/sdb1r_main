@@ -16,9 +16,11 @@ Date created - 2022.12.14 - XentiQ version
 #include "../views/common/Keyboards.h"
 
 const int PROFILE_SIZE = sizeof(Profile);
+static_assert(PROFILE_SIZE <= RESERVED_PROFILE_SIZE, "Profile size exceeds reserved space");
+static_assert(EEPROM_SIZE >= MAX_PROFILES * RESERVED_PROFILE_SIZE, "EEPROM size is too small");
 
 void ProfileManager::blankEEPROM(void) {
-  for (int i = 0; i < 4096; i++) EEPROM.put(i, 0);
+  for (int i = 0; i < EEPROM_SIZE; i++) EEPROM.put(i, 0);
 }
 
 void ProfileManager::preLoadEEPROM(void) {
@@ -122,7 +124,7 @@ uint8_t ProfileManager::readCurIDEEPROM(void) {
 }
 
 void ProfileManager::writeProfileEEPROM(int index) {
-  int address = (index * 300) + sizeof(uint8_t);
+  int address = (index * RESERVED_PROFILE_SIZE) + sizeof(uint8_t);
   Logger::log("Starting Address = ", (float)address);
 
   EEPROM.put(address, currentProfile.profile_name);
@@ -168,7 +170,7 @@ void ProfileManager::writeProfileEEPROM(int index) {
 void ProfileManager::readProfileEEPROM(int index) {
   char buf[10];
 
-  int address = (index * 300) + sizeof(uint8_t);
+  int address = (index * RESERVED_PROFILE_SIZE) + sizeof(uint8_t);
   Logger::log("Starting Address = ", (float)address);
 
   EEPROM.get(address, currentProfile.profile_name);
