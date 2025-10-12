@@ -17,12 +17,34 @@ void drawBaseDialog(Gpu_Hal_Context_t *phost, const DialogParams& params) {
   App_WrCoCmd_Buffer(phost, COLOR_A(255));  // Restore full opacity
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
   
+  // Determine button rendering based on what's provided
+  bool has_left_btn = (params.left_btn != nullptr && params.left_btn[0] != '\0');
+  bool has_right_btn = (params.right_btn != nullptr && params.right_btn[0] != '\0');
+  bool has_buttons = has_left_btn || has_right_btn;
+  
+  // Calculate dialog dimensions
+  const int box_width = 260;
+  const int box_x = 30;  // (320 - 260) / 2
+  const int button_height = 30;
+  const int button_spacing = 10;
+  
+  // Calculate box height based on whether buttons are present
+  int box_height;
+  if (has_buttons) {
+    box_height = 155;  // Original height with buttons
+  } else {
+    box_height = 110;  // Reduced height without buttons (155 - 30 - 15 spacing)
+  }
+  
+  // Center the dialog vertically on screen (screen height = 240)
+  int box_y = (240 - box_height) / 2;
+  
   // Draw black box with white outline in the middle of the screen (slightly transparent)
   App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));
   App_WrCoCmd_Buffer(phost, COLOR_A(220));  // Slightly transparent (220/255 opacity)
   App_WrCoCmd_Buffer(phost, BEGIN(RECTS));
-  App_WrCoCmd_Buffer(phost, VERTEX2F(480, 560));   // Top-left corner (30, 35)
-  App_WrCoCmd_Buffer(phost, VERTEX2F(4640, 3040)); // Bottom-right corner (290, 190)
+  App_WrCoCmd_Buffer(phost, VERTEX2F(box_x * 16, box_y * 16));   // Top-left corner
+  App_WrCoCmd_Buffer(phost, VERTEX2F((box_x + box_width) * 16, (box_y + box_height) * 16)); // Bottom-right corner
   App_WrCoCmd_Buffer(phost, END());
   App_WrCoCmd_Buffer(phost, COLOR_A(255));  // Restore full opacity
   
@@ -30,52 +52,52 @@ void drawBaseDialog(Gpu_Hal_Context_t *phost, const DialogParams& params) {
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, LINE_WIDTH(16));
   App_WrCoCmd_Buffer(phost, BEGIN(LINE_STRIP));
-  App_WrCoCmd_Buffer(phost, VERTEX2F(480, 560));   // Top-left
-  App_WrCoCmd_Buffer(phost, VERTEX2F(4640, 560));  // Top-right
-  App_WrCoCmd_Buffer(phost, VERTEX2F(4640, 3040)); // Bottom-right
-  App_WrCoCmd_Buffer(phost, VERTEX2F(480, 3040));  // Bottom-left
-  App_WrCoCmd_Buffer(phost, VERTEX2F(480, 560));   // Close the box
+  App_WrCoCmd_Buffer(phost, VERTEX2F(box_x * 16, box_y * 16));   // Top-left
+  App_WrCoCmd_Buffer(phost, VERTEX2F((box_x + box_width) * 16, box_y * 16));  // Top-right
+  App_WrCoCmd_Buffer(phost, VERTEX2F((box_x + box_width) * 16, (box_y + box_height) * 16)); // Bottom-right
+  App_WrCoCmd_Buffer(phost, VERTEX2F(box_x * 16, (box_y + box_height) * 16));  // Bottom-left
+  App_WrCoCmd_Buffer(phost, VERTEX2F(box_x * 16, box_y * 16));   // Close the box
   App_WrCoCmd_Buffer(phost, END());
   
-  // Display title text
+  // Display title text (relative to box position)
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
-  Gpu_CoCmd_Text(phost, 160, 58, 28, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, params.title);
+  Gpu_CoCmd_Text(phost, 160, box_y + 23, 28, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, params.title);
   
-  // Display subtitle text with wrapping
+  // Display subtitle text with wrapping (relative to box position)
   Gpu_CoCmd_FillWidth(phost, 240);  // Set wrap width to 240 pixels (box is 260 wide, leave 10px margin each side)
-  Gpu_CoCmd_Text(phost, 160, 78, 21, OPT_CENTERX | OPT_FILL, params.subtitle);
+  Gpu_CoCmd_Text(phost, 160, box_y + 43, 21, OPT_CENTERX | OPT_FILL, params.subtitle);
   Gpu_CoCmd_FillWidth(phost, 0);  // Reset fill width
   
-  // Determine button rendering based on what's provided
-  bool has_left_btn = (params.left_btn != nullptr && params.left_btn[0] != '\0');
-  bool has_right_btn = (params.right_btn != nullptr && params.right_btn[0] != '\0');
-  
-  if (has_left_btn && has_right_btn) {
-    // Both buttons - each takes half width with padding
-    App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-    App_WrCoCmd_Buffer(phost, TAG(params.left_tag));
-    Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-    Gpu_CoCmd_Button(phost, 40, 145, 115, 30, 21, 0, params.left_btn);
+  // Render buttons if present
+  if (has_buttons) {
+    int button_y = box_y + box_height - button_height - button_spacing;
     
-    App_WrCoCmd_Buffer(phost, TAG(params.right_tag));
-    Gpu_CoCmd_Button(phost, 165, 145, 115, 30, 21, 0, params.right_btn);
-    App_WrCoCmd_Buffer(phost, TAG_MASK(0));
-  } else if (has_left_btn) {
-    // Only left button - full width with padding
-    App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-    App_WrCoCmd_Buffer(phost, TAG(params.left_tag));
-    Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-    Gpu_CoCmd_Button(phost, 40, 145, 240, 30, 21, 0, params.left_btn);
-    App_WrCoCmd_Buffer(phost, TAG_MASK(0));
-  } else if (has_right_btn) {
-    // Only right button - full width with padding
-    App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-    App_WrCoCmd_Buffer(phost, TAG(params.right_tag));
-    Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-    Gpu_CoCmd_Button(phost, 40, 145, 240, 30, 21, 0, params.right_btn);
-    App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+    if (has_left_btn && has_right_btn) {
+      // Both buttons - each takes half width with padding
+      App_WrCoCmd_Buffer(phost, TAG_MASK(1));
+      App_WrCoCmd_Buffer(phost, TAG(params.left_tag));
+      Gpu_CoCmd_FgColor(phost, 0x00A2E8);
+      Gpu_CoCmd_Button(phost, box_x + 10, button_y, 115, button_height, 21, 0, params.left_btn);
+      
+      App_WrCoCmd_Buffer(phost, TAG(params.right_tag));
+      Gpu_CoCmd_Button(phost, box_x + 135, button_y, 115, button_height, 21, 0, params.right_btn);
+      App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+    } else if (has_left_btn) {
+      // Only left button - full width with padding
+      App_WrCoCmd_Buffer(phost, TAG_MASK(1));
+      App_WrCoCmd_Buffer(phost, TAG(params.left_tag));
+      Gpu_CoCmd_FgColor(phost, 0x00A2E8);
+      Gpu_CoCmd_Button(phost, box_x + 10, button_y, 240, button_height, 21, 0, params.left_btn);
+      App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+    } else if (has_right_btn) {
+      // Only right button - full width with padding
+      App_WrCoCmd_Buffer(phost, TAG_MASK(1));
+      App_WrCoCmd_Buffer(phost, TAG(params.right_tag));
+      Gpu_CoCmd_FgColor(phost, 0x00A2E8);
+      Gpu_CoCmd_Button(phost, box_x + 10, button_y, 240, button_height, 21, 0, params.right_btn);
+      App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+    }
   }
-  // If neither button is provided, don't render any buttons
 }
 
 // Displays a dialog based on dialog code.
