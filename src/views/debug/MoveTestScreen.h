@@ -15,7 +15,7 @@
 #include "../../gpu/Platform.h"
 #include "../../Constants.h"
 
-// Limit switch states structure
+// Limit switch states structure.
 struct LimitSwitchStates {
   bool x_max_limit;
   bool x_min_limit;
@@ -25,33 +25,22 @@ struct LimitSwitchStates {
   bool z_min_limit;
 };
 
-/**
- * @brief Display the movement test screen
- * 
- * Creates a test interface with:
- * - Left 2/3: Square directional buttons (Up, Down, Left, Right)
- * - Right 1/3: Z-axis controls (Up, Down)
- * 
- * @param phost Pointer to GPU HAL context
- * @param limitStates Limit switch states for display
- */
+// Display the movement test screen.
+// Creates a test interface with:
+// - Left 2/3: Square directional buttons (Up, Down, Left, Right)
+// - Right 1/3: Z-axis controls (Up, Down)
+// @param phost Pointer to GPU HAL context.
+// @param limitStates Limit switch states for display.
 void drawMoveTestScreen(Gpu_Hal_Context_t *phost, const LimitSwitchStates& limitStates);
 
 #endif /* _MOVE_TEST_SCREEN_H_ */
-
-/**
- * @brief Display the movement test screen
- * 
- * Creates a test interface with directional controls for manual movement testing
- * 
- * @param phost Pointer to GPU HAL context
- * @param limitStates Limit switch states for display
- */
+// Display the movement test screen.
+// Creates a test interface with directional controls for manual movement testing.
+// @param phost Pointer to GPU HAL context.
+// @param limitStates Limit switch states for display.
 void drawMoveTestScreen(Gpu_Hal_Context_t *phost, const LimitSwitchStates& limitStates)
 {
     char buf[100];
-    
-    // Initialize display
     Gpu_CoCmd_FlashFast(phost, 0);
     Gpu_CoCmd_Dlstart(phost);
     

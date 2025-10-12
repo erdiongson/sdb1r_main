@@ -15,40 +15,29 @@
 #include "../../gpu/Platform.h"
 #include "../../Constants.h"
 
-// Dispense test screen parameters
+// Dispense test screen parameters.
 struct DispenseTestScreenParams {
   const char* status_message;
 };
 
-/**
- * @brief Display the dispense test screen
- * 
- * Creates a test interface with:
- * - Row 1: Dispense button
- * - Row 2: Vibration level selection (U0-U4)
- * - Row 3: Vibration time selection (1-5s)
- * - Back button
- * 
- * @param phost Pointer to GPU HAL context
- * @param params Screen parameters including status message
- */
+// Display the dispense test screen.
+// Creates a test interface with:
+// - Row 1: Dispense button
+// - Row 2: Vibration level selection (U0-U4)
+// - Row 3: Vibration time selection (1-5s)
+// - Back button
+// @param phost Pointer to GPU HAL context.
+// @param params Screen parameters including status message.
 void drawDispenseTestScreen(Gpu_Hal_Context_t *phost, const DispenseTestScreenParams& params);
 
 #endif /* _DISPENSE_TEST_SCREEN_H_ */
-
-/**
- * @brief Display the dispense test screen
- * 
- * Creates a test interface for dispense functionality testing
- * 
- * @param phost Pointer to GPU HAL context
- * @param params Screen parameters including status message
- */
+// Display the dispense test screen.
+// Creates a test interface for dispense functionality testing.
+// @param phost Pointer to GPU HAL context.
+// @param params Screen parameters including status message.
 void drawDispenseTestScreen(Gpu_Hal_Context_t *phost, const DispenseTestScreenParams& params)
 {
     char buf[100];
-    
-    // Initialize display
     Gpu_CoCmd_FlashFast(phost, 0);
     Gpu_CoCmd_Dlstart(phost);
     

@@ -5,9 +5,7 @@
 #include <AccelStepper.h>
 #include "../Constants.h"
 
-/**
- * Struct for complete axis configuration parameters
- */
+// Struct for complete axis configuration parameters.
 struct AxisParams {
   int step_pin;
   int dir_pin;
@@ -44,11 +42,8 @@ private:
   bool prev_max_state = false;  // Previous state of max limit switch (true = hit)
 
 public:
-  /**
-     * Constructor for Axis class using AxisParams struct
-     * 
-     * @param params Struct containing all axis configuration parameters
-     */
+  // Constructor for Axis class using AxisParams struct.
+  // @param params Struct containing all axis configuration parameters.
   Axis(const AxisParams& params)
     : stepper(1, params.step_pin, params.dir_pin),  // 1 = DRIVER interface (step/dir)
       min_limit_pin(params.min_pin),

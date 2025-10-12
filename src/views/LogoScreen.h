@@ -2,6 +2,9 @@
 #include "../gpu/App_Common.h"
 #include "common/Dialogs.h"
 
+// Draws the logo screen with optional error dialog.
+// @param phost GPU context.
+// @param error_code Optional error code to display dialog (0 for no error).
 void drawLogoScreen(Gpu_Hal_Context_t *phost, int error_code)
 {
     Gpu_CoCmd_FlashFast(phost, 0);

@@ -14,8 +14,10 @@ struct MainScreenParams {
   int error_code;
 };
 
+// Draws menu buttons based on the current menu state.
+// @param whichmenu The menu state (MAINMENU, RUNMENU, PAUSEMENU, HOMINGMENU, STOPPINGMENU).
 inline void drawMenuButtons(uint8_t whichmenu) {
-  //					 	 SETTING START PAUSE STOP
+  // SETTING START PAUSE STOP
   bool_t act_but[][6] = {
     { 1, 1, 0, 0 }, // main menu
     { 0, 0, 1, 1 }, // running menu
@@ -67,6 +69,10 @@ inline void drawMenuButtons(uint8_t whichmenu) {
   }
 }
 
+// Draws the main screen with menu buttons and profile information.
+// @param phost GPU context.
+// @param whichmenu The menu state to display.
+// @param params Optional parameters containing profile and status information.
 inline void drawMainScreen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const MainScreenParams* params = nullptr) {
 
   char buf[100];
@@ -79,7 +85,6 @@ inline void drawMainScreen(Gpu_Hal_Context_t *phost, uint8_t whichmenu, const Ma
   App_WrCoCmd_Buffer(phost, CLEAR(1, 1, 1));
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-
 
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
   App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(0, 0, 0));
