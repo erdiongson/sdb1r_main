@@ -4,47 +4,9 @@ Date created - 2022.12.14 - XentiQ version
 
 #pragma once
 
-#ifndef _PROFILE_H_
-  #define _PROFILE_H_
-
-  #include <Arduino.h>
-  #include "../gpu/Platform.h"
-
-  #define EEPROM_SIZE 4096  // For an Arduino Mega
-  #define MAX_PROFILES 10
-  #define RESERVED_PROFILE_SIZE 300
-  #define PROFILE_START_ADDR 0
-
-  #define PROFILE_NAME_MAX_LEN 30
-  #define PASSWORD_MAX_LEN 30
-  #define KEYPAD_MAX_LEN 6
-  #define ROW_COL_MAX_LEN 45
-
-  // Change MAX_BUTTONS_X and MAX_BUTTONS_Y depending on the use;
-  // for (L) 300x300 - MAX_BUTTONS_X 33; MAX_BUTTONS_Y 33
-  // for (S) 200x300 - MAX_BUTTONS_X 20; MAX_BUTTONS_Y 27
-  #define MAX_BUTTONS_X 42  // try054 33// Columns - small = 20
-  #define MAX_BUTTONS_Y 33  // Rows   - small = 27
-  #define MAXORGX 999       // v204 99.9
-  #define MAXORGY 999       // v204 99.9
-
-  #define MINZDIP 0
-  #define MAXZDIP 999
-
-  #define MINNUMX 1
-  #define MINNUMY 1
-  // Change MAXNUMX and MAXNUMY depending on the use;
-  // for (L) 300x300 - MAXNUMX 33; MAXNUMY 33
-  // for (S) 200x300 - MAXNUMX 20; MAXNUMY 27
-  #define MAXNUMX 42  // try054 33
-  #define MAXNUMY 33
-
-  #define MINPITCHX 9    // v205
-  #define MINPITCHY 9    // v205
-  #define MAXPITCHX 999  // v204 99.9
-  #define MAXPITCHY 999  // v204 99.9
-  #define MAXCYCLE 99
-  #define MINCYCLE 1
+#include <Arduino.h>
+#include "../gpu/Platform.h"
+#include "../../Config.h"
 
 typedef struct {
   char profile_name[PROFILE_NAME_MAX_LEN];
@@ -137,5 +99,3 @@ class ProfileManager {
 
 // Global profile_manager instance (defined in sdb1r_main.ino).
 extern ProfileManager profile_manager;
-
-#endif /*_PROFILE_H_*/
