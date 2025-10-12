@@ -3,13 +3,14 @@
 #include "../../Constants.h"
 #include "../../../Config.h"
 #include "../../Utils.h"
+#include "../../views/common/Keyboards.h"
 
 DebugController::DebugController(ControllerParams params)
   : BaseController(params) {}
 
 void DebugController::onStart() {
   Logger::log(F("DebugController::on_start"));
-  drawDebugScreen(phost, {false, false});
+  drawDebugScreen(phost, {false, false, 0});
 }
 
 void DebugController::onInteraction(const Interaction& interaction) {
@@ -26,17 +27,27 @@ void DebugController::onInteraction(const Interaction& interaction) {
       startNextController(CONTROLLER_DISPENSE_TEST);
       break;
 
+    case TAG_DEBUG_DIALOG_TEST: {
+      Logger::log(F("Debug: Dialog Test button pressed"));
+      // Get dialog code from user using keypad (0-11 range for existing dialogs)
+      float dialog_num = getKeypadValue(phost, 0, 0, 11, false);
+      int dialog_code = (int)dialog_num;
+      // Redraw screen with the selected dialog
+      drawDebugScreen(phost, {false, false, dialog_code});
+      break;
+    }
+
     case TAG_DEBUG_BLANK_EEPROM: {
       Logger::log(F("Debug: Blank EEPROM button pressed"));
       profile_manager.blankEEPROM();
-      drawDebugScreen(phost, {false, true});
+      drawDebugScreen(phost, {false, true, 0});
       break;
     }
 
     case TAG_DEBUG_RESET_PROFILES: {
       Logger::log(F("Debug: Reset Profiles button pressed"));
       profile_manager.preLoadEEPROM();
-      drawDebugScreen(phost, {false, true});
+      drawDebugScreen(phost, {false, true, 0});
       break;
     }
 

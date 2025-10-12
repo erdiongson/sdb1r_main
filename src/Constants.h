@@ -88,6 +88,7 @@
 // Debug screen control tags
 #define TAG_DEBUG_MOVE_TEST     90
 #define TAG_DEBUG_DISPENSER_TEST 91
+#define TAG_DEBUG_DIALOG_TEST   95
 #define TAG_DEBUG_BLANK_EEPROM  92
 #define TAG_DEBUG_RESET_PROFILES 93
 #define TAG_DEBUG_BACK          94

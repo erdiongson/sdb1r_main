@@ -3,11 +3,13 @@
 
 #include "../../gpu/App_Common.h"
 #include "../../Constants.h"
+#include "../common/Dialogs.h"
 
 // Parameters for Debug Screen display.
 struct DebugScreenParams {
   bool blanked_eeprom;   // true = show (Done) on Blank EEPROM button
   bool profiles_reset;   // true = show (Done) on Reset Profiles button
+  int dialog_code;       // dialog code to display (0 = no dialog)
 };
 
 // Draws the debug screen with test and utility buttons.
@@ -54,7 +56,10 @@ inline void drawDebugScreen(Gpu_Hal_Context_t *phost, DebugScreenParams params) 
   Gpu_CoCmd_Button(phost, 165, button_y, 130, button_height, 26, 0, "Dispenser Test");
   button_y += button_spacing;
 
-  // Leave empty space where second row would be
+  // Dialog Test button (same width as Move Test)
+  App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_DIALOG_TEST));
+  Gpu_CoCmd_FgColor(phost, 0x00A2E8);
+  Gpu_CoCmd_Button(phost, 25, button_y, 130, button_height, 26, 0, "Dialog Test");
   button_y += button_spacing;
 
   // Blank EEPROM button
@@ -83,6 +88,11 @@ inline void drawDebugScreen(Gpu_Hal_Context_t *phost, DebugScreenParams params) 
   Gpu_CoCmd_Button(phost, 10, 210, 62, 26, 21, 0, "Back");
 
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+
+  // Draw dialog if dialog_code is set
+  if (params.dialog_code > 0) {
+    drawDialog(phost, params.dialog_code);
+  }
 
   Disp_End(phost);
 }
