@@ -5,6 +5,7 @@
 #include "../../Utils.h"
 #include "../common/Keyboards.h"
 #include "../common/Dialogs.h"
+#include "../common/ToggleButton.h"
 
 // Parameters for Config_Screen display.
 struct SettingsScreenParams {
