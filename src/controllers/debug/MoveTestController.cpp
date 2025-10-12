@@ -1,5 +1,6 @@
 #include "MoveTestController.h"
 #include "../../views/debug/MoveTestScreen.h"
+#include "../../views/common/Keyboards.h"
 #include "../../Constants.h"
 #include "../../../Config.h"
 #include "../../Utils.h"
@@ -9,7 +10,21 @@ MoveTestController::MoveTestController(ControllerParams params)
 
 void MoveTestController::onStart() {
   Logger::log(F("MoveTestController::on_start"));
-  drawMoveTestScreen(phost, {});  
+  
+  LimitSwitchStates limitStates = {};
+  limitStates.x_max_limit = false;
+  limitStates.x_min_limit = false;
+  limitStates.y_max_limit = false;
+  limitStates.y_min_limit = false;
+  limitStates.z_max_limit = false;
+  limitStates.z_min_limit = false;
+  
+  MoveTestParams params;
+  params.xy_distance_cm = xy_distance_cm;
+  params.z_distance_cm = z_distance_cm;
+  params.bounce_count = bounce_count;
+  
+  drawMoveTestScreen(phost, limitStates, params);  
 }
 
 void MoveTestController::onInteraction(const Interaction& interaction) {
@@ -18,32 +33,75 @@ void MoveTestController::onInteraction(const Interaction& interaction) {
   switch (button) {
     case TAG_MOVE_UP:
       Logger::log(F("MoveTestController::on_interaction: Move up"));
-      dispenserHead.y().moveBy(STEPS_PER_UNIT_Y * 1 * 50);
+      dispenserHead.y().moveBy(STEPS_PER_UNIT_Y * xy_distance_cm * 10);
       break;
     
     case TAG_MOVE_DOWN:
       Logger::log(F("MoveTestController::on_interaction: Move down"));
-      dispenserHead.y().moveBy(-STEPS_PER_UNIT_Y * 1 * 50);
+      dispenserHead.y().moveBy(-STEPS_PER_UNIT_Y * xy_distance_cm * 10);
       break;
     
     case TAG_MOVE_LEFT:
       Logger::log(F("MoveTestController::on_interaction: Move left"));
-      dispenserHead.x().moveBy(STEPS_PER_UNIT_X * 1 * 50);
+      dispenserHead.x().moveBy(STEPS_PER_UNIT_X * xy_distance_cm * 10);
       break;
     
     case TAG_MOVE_RIGHT:
       Logger::log(F("MoveTestController::on_interaction: Move right"));
-      dispenserHead.x().moveBy(-STEPS_PER_UNIT_X * 1 * 50);
+      dispenserHead.x().moveBy(-STEPS_PER_UNIT_X * xy_distance_cm * 10);
       break;
     
     case TAG_Z_UP:
       Logger::log(F("MoveTestController::on_interaction: Move z up"));
-      dispenserHead.z().moveBy(-STEPS_PER_UNIT_Z * 1 * 30);
+      dispenserHead.z().moveBy(-STEPS_PER_UNIT_Z * z_distance_cm * 10);
       break;
     
     case TAG_Z_DOWN:
       Logger::log(F("MoveTestController::on_interaction: Move z down"));
-      dispenserHead.z().moveBy(STEPS_PER_UNIT_Z * 1 * 30);
+      dispenserHead.z().moveBy(STEPS_PER_UNIT_Z * z_distance_cm * 10);
+      break;
+    
+    case TAG_MOVE_XY_DIST:
+      Logger::log(F("MoveTestController::on_interaction: Set XY distance"));
+      xy_distance_cm = getKeypadValue(phost, xy_distance_cm, 0, 99.9, true);
+      {
+        MoveTestParams params;
+        params.xy_distance_cm = xy_distance_cm;
+        params.z_distance_cm = z_distance_cm;
+        params.bounce_count = bounce_count;
+        drawMoveTestScreen(phost, {}, params);
+      }
+      break;
+    
+    case TAG_MOVE_Z_DIST:
+      Logger::log(F("MoveTestController::on_interaction: Set Z distance"));
+      z_distance_cm = getKeypadValue(phost, z_distance_cm, 0, 99.9, true);
+      {
+        MoveTestParams params;
+        params.xy_distance_cm = xy_distance_cm;
+        params.z_distance_cm = z_distance_cm;
+        params.bounce_count = bounce_count;
+        drawMoveTestScreen(phost, {}, params);
+      }
+      break;
+    
+    case TAG_MOVE_BOUNCE:
+      Logger::log(F("MoveTestController::on_interaction: Set bounce count"));
+      bounce_count = (int)getKeypadValue(phost, bounce_count, 0, 9999, false);
+      {
+        MoveTestParams params;
+        params.xy_distance_cm = xy_distance_cm;
+        params.z_distance_cm = z_distance_cm;
+        params.bounce_count = bounce_count;
+        drawMoveTestScreen(phost, {}, params);
+      }
+      break;
+    
+    case TAG_MOVE_STOP:
+      Logger::log(F("MoveTestController::on_interaction: Stop all movement"));
+      dispenserHead.x().stop();
+      dispenserHead.y().stop();
+      dispenserHead.z().stop();
       break;
     
     case TAG_MOVE_BACK:
@@ -67,7 +125,12 @@ ControllerStepResult MoveTestController::onStep() {
     limitStates.y_min_limit = dispenserHead.y().isAtMin();
     limitStates.z_max_limit = dispenserHead.z().isAtMax();
     limitStates.z_min_limit = dispenserHead.z().isAtMin();
-    drawMoveTestScreen(phost, limitStates);
+    
+    MoveTestParams params;
+    params.xy_distance_cm = xy_distance_cm;
+    params.z_distance_cm = z_distance_cm;
+    params.bounce_count = bounce_count;
+    drawMoveTestScreen(phost, limitStates, params);
   }
 
   return ControllerStepResult(result.steppers, result.dispenser);

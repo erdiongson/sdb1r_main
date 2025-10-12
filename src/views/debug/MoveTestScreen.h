@@ -25,20 +25,29 @@ struct LimitSwitchStates {
   bool z_min_limit;
 };
 
+// Movement test control parameters.
+struct MoveTestParams {
+  float xy_distance_cm;
+  float z_distance_cm;
+  int bounce_count;
+};
+
 // Display the movement test screen.
 // Creates a test interface with:
 // - Left 2/3: Square directional buttons (Up, Down, Left, Right)
 // - Right 1/3: Z-axis controls (Up, Down)
 // @param phost Pointer to GPU HAL context.
 // @param limitStates Limit switch states for display.
-void drawMoveTestScreen(Gpu_Hal_Context_t *phost, const LimitSwitchStates& limitStates);
+// @param params Movement control parameters.
+void drawMoveTestScreen(Gpu_Hal_Context_t *phost, const LimitSwitchStates& limitStates, const MoveTestParams& params);
 
 #endif /* _MOVE_TEST_SCREEN_H_ */
 // Display the movement test screen.
 // Creates a test interface with directional controls for manual movement testing.
 // @param phost Pointer to GPU HAL context.
 // @param limitStates Limit switch states for display.
-void drawMoveTestScreen(Gpu_Hal_Context_t *phost, const LimitSwitchStates& limitStates)
+// @param params Movement control parameters.
+void drawMoveTestScreen(Gpu_Hal_Context_t *phost, const LimitSwitchStates& limitStates, const MoveTestParams& params)
 {
     char buf[100];
     Gpu_CoCmd_FlashFast(phost, 0);
@@ -74,11 +83,7 @@ void drawMoveTestScreen(Gpu_Hal_Context_t *phost, const LimitSwitchStates& limit
     // Button dimensions for directional controls
     int32_t button_size = 45;
     int32_t center_x = left_section_width / 2;
-    int32_t center_y = (DispHeight + 60) / 2;  // Offset from header
-    
-    // Left section - XY Movement Controls
-    App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
-    Gpu_CoCmd_Text(phost, center_x, 70, 26, OPT_CENTER | OPT_FORMAT, "XY Movement");
+    int32_t center_y = (DispHeight + 60) / 2 - 30;  // Moved up to fill empty space
     
     // UP button
     Gpu_CoCmd_FgColor(phost, 0x006400);
@@ -149,9 +154,6 @@ void drawMoveTestScreen(Gpu_Hal_Context_t *phost, const LimitSwitchStates& limit
     int32_t z_button_width = right_section_width - 20;  // Leave some margin
     int32_t z_button_height = 35;
     
-    App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
-    Gpu_CoCmd_Text(phost, z_center_x, 70, 26, OPT_CENTER | OPT_FORMAT, "Z Axis");
-    
     // Z UP button
     Gpu_CoCmd_FgColor(phost, 0x0066CC);
     App_WrCoCmd_Buffer(phost, TAG(TAG_Z_UP));
@@ -196,6 +198,41 @@ void drawMoveTestScreen(Gpu_Hal_Context_t *phost, const LimitSwitchStates& limit
     App_WrCoCmd_Buffer(phost, TAG(TAG_MOVE_BACK));
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
     Gpu_CoCmd_Button(phost, 10, DispHeight - 35, 60, 25, 26, 0, "Back");
+    
+    // Control buttons to the right of Back button
+    int32_t control_x = 80;
+    int32_t control_y = DispHeight - 35;
+    int32_t control_width = 55;
+    int32_t control_height = 25;
+    int32_t control_spacing = 60;
+    
+    // XY Distance button
+    Gpu_CoCmd_FgColor(phost, 0x00A2E8);
+    App_WrCoCmd_Buffer(phost, TAG(TAG_MOVE_XY_DIST));
+    int xy_int = (int)params.xy_distance_cm;
+    int xy_dec = (int)((params.xy_distance_cm - xy_int) * 10);
+    sprintf(buf, "XY:%d.%d", xy_int, xy_dec);
+    Gpu_CoCmd_Button(phost, control_x, control_y, control_width, control_height, 21, 0, buf);
+    
+    // Z Distance button
+    control_x += control_spacing;
+    App_WrCoCmd_Buffer(phost, TAG(TAG_MOVE_Z_DIST));
+    int z_int = (int)params.z_distance_cm;
+    int z_dec = (int)((params.z_distance_cm - z_int) * 10);
+    sprintf(buf, "Z:%d.%d", z_int, z_dec);
+    Gpu_CoCmd_Button(phost, control_x, control_y, control_width, control_height, 21, 0, buf);
+    
+    // Bounce button
+    control_x += control_spacing;
+    App_WrCoCmd_Buffer(phost, TAG(TAG_MOVE_BOUNCE));
+    sprintf(buf, "B:%d", params.bounce_count);
+    Gpu_CoCmd_Button(phost, control_x, control_y, control_width, control_height, 21, 0, buf);
+    
+    // Stop button
+    control_x += control_spacing;
+    Gpu_CoCmd_FgColor(phost, 0xFF0000);
+    App_WrCoCmd_Buffer(phost, TAG(TAG_MOVE_STOP));
+    Gpu_CoCmd_Button(phost, control_x, control_y, control_width, control_height, 21, 0, "STOP");
     
     App_WrCoCmd_Buffer(phost, TAG_MASK(0));
     

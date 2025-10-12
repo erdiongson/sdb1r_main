@@ -62,6 +62,10 @@
 #define TAG_Z_UP            54
 #define TAG_Z_DOWN          55
 #define TAG_MOVE_BACK       56
+#define TAG_MOVE_XY_DIST    57
+#define TAG_MOVE_Z_DIST     58
+#define TAG_MOVE_BOUNCE     59
+#define TAG_MOVE_STOP       100
 
 // Dispense test control tags
 #define TAG_DISPENSE            60
