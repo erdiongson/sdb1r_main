@@ -32,7 +32,7 @@ void ReadyController::onInteraction(const Interaction& interaction) {
 
         if (result == PASSWORD_INCORRECT) {
           drawReadyScreen({ profile, { 0, 0, 0, 0 }, DIALOG_ERROR_WRONG_PASSWORD });
-          delay(2000);
+          delay(DIALOG_DISPLAY_DURATION_MS);
           drawReadyScreen({ profile, { 1, 1, 0, 0 }, 0 });
           return;
         }

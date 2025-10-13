@@ -189,6 +189,13 @@
 #define PLC_END_BYTE 0xFE
 #define PLC_MESSAGE_LENGTH 5
 
+// PLC Command Codes
+#define PLC_CMD_START 0x30
+#define PLC_CMD_STOP 0x31
+#define PLC_CMD_PAUSE 0x32
+#define PLC_CMD_RAISE_Z 0x42
+#define PLC_CMD_LOWER_Z 0x41
+
 // =============================================================================
 // DIALOG CODES
 // =============================================================================

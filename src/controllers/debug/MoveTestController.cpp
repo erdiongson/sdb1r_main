@@ -29,37 +29,37 @@ void MoveTestController::onInteraction(const Interaction& interaction) {
   switch (button) {
     case TAG_MOVE_UP:
       Logger::log(F("MoveTestController::on_interaction: Move up"));
-      dispenserHead.y().moveBy(STEPS_PER_UNIT_Y * xy_distance_cm * 10);
+      dispenserHead.y().moveBy(STEPS_PER_UNIT_Y * xy_distance_cm * CM_TO_MM_MULTIPLIER);
       break;
 
     case TAG_MOVE_DOWN:
       Logger::log(F("MoveTestController::on_interaction: Move down"));
-      dispenserHead.y().moveBy(-STEPS_PER_UNIT_Y * xy_distance_cm * 10);
+      dispenserHead.y().moveBy(-STEPS_PER_UNIT_Y * xy_distance_cm * CM_TO_MM_MULTIPLIER);
       break;
 
     case TAG_MOVE_LEFT:
       Logger::log(F("MoveTestController::on_interaction: Move left"));
-      dispenserHead.x().moveBy(STEPS_PER_UNIT_X * xy_distance_cm * 10);
+      dispenserHead.x().moveBy(STEPS_PER_UNIT_X * xy_distance_cm * CM_TO_MM_MULTIPLIER);
       break;
 
     case TAG_MOVE_RIGHT:
       Logger::log(F("MoveTestController::on_interaction: Move right"));
-      dispenserHead.x().moveBy(-STEPS_PER_UNIT_X * xy_distance_cm * 10);
+      dispenserHead.x().moveBy(-STEPS_PER_UNIT_X * xy_distance_cm * CM_TO_MM_MULTIPLIER);
       break;
 
     case TAG_Z_UP:
       Logger::log(F("MoveTestController::on_interaction: Move z up"));
-      dispenserHead.z().moveBy(-STEPS_PER_UNIT_Z * z_distance_cm * 10);
+      dispenserHead.z().moveBy(-STEPS_PER_UNIT_Z * z_distance_cm * CM_TO_MM_MULTIPLIER);
       break;
 
     case TAG_Z_DOWN:
       Logger::log(F("MoveTestController::on_interaction: Move z down"));
-      dispenserHead.z().moveBy(STEPS_PER_UNIT_Z * z_distance_cm * 10);
+      dispenserHead.z().moveBy(STEPS_PER_UNIT_Z * z_distance_cm * CM_TO_MM_MULTIPLIER);
       break;
 
     case TAG_MOVE_XY_DIST:
       Logger::log(F("MoveTestController::on_interaction: Set XY distance"));
-      xy_distance_cm = getKeypadValue(phost, xy_distance_cm, 0, 99.9, true);
+      xy_distance_cm = getKeypadValue(phost, xy_distance_cm, MIN_MOVE_DISTANCE_CM, MAX_MOVE_DISTANCE_CM, true);
       {
         MoveTestParams params;
         params.xy_distance_cm = xy_distance_cm;
@@ -71,7 +71,7 @@ void MoveTestController::onInteraction(const Interaction& interaction) {
 
     case TAG_MOVE_Z_DIST:
       Logger::log(F("MoveTestController::on_interaction: Set Z distance"));
-      z_distance_cm = getKeypadValue(phost, z_distance_cm, 0, 99.9, true);
+      z_distance_cm = getKeypadValue(phost, z_distance_cm, MIN_MOVE_DISTANCE_CM, MAX_MOVE_DISTANCE_CM, true);
       {
         MoveTestParams params;
         params.xy_distance_cm = xy_distance_cm;
@@ -83,7 +83,7 @@ void MoveTestController::onInteraction(const Interaction& interaction) {
 
     case TAG_MOVE_BOUNCE:
       Logger::log(F("MoveTestController::on_interaction: Set bounce count"));
-      bounce_count = (int)getKeypadValue(phost, bounce_count, 0, 9999, false);
+      bounce_count = (int)getKeypadValue(phost, bounce_count, MIN_MOVE_DISTANCE_CM, MAX_BOUNCE_COUNT, false);
       {
         MoveTestParams params;
         params.xy_distance_cm = xy_distance_cm;

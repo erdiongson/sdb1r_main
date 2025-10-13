@@ -47,10 +47,10 @@ void SettingsController::onInteraction(const Interaction& interaction) {
           strcpy(buf, current_profile->profile_name);
           sprintf(current_profile->profile_name, "Error in entry");
           drawSettingsScreen(phost, { *current_profile, 0 });
-          delay(3000);
+          delay(ERROR_DISPLAY_DURATION_MS);
           strcpy(current_profile->profile_name, buf);
           drawSettingsScreen(phost, { *current_profile, 0 });
-          delay(3000);
+          delay(ERROR_DISPLAY_DURATION_MS);
         } else {
           startNextController(CONTROLLER_READY);
         }
@@ -70,7 +70,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
 
       // Show profile saved dialog
       drawSettingsScreen(phost, { *current_profile, DIALOG_PROFILE_SAVED });
-      delay(2000);
+      delay(DIALOG_DISPLAY_DURATION_MS);
       drawSettingsScreen(phost, { *current_profile, 0 });
       break;
     }
@@ -290,13 +290,13 @@ int SettingsController::getModeType() const {
 
 void SettingsController::incrementVibrationLevel() {
   int next_level = current_profile->vibration_enabled + 1;
-  if (next_level > 4) next_level = 0;
+  if (next_level > MAX_VIBRATION_LEVEL) next_level = 0;
   current_profile->vibration_enabled = next_level;
 }
 
 void SettingsController::incrementVibrationTime() {
   int next_duration = current_profile->vibration_duration + 1;
-  if (next_duration > 5) next_duration = 1;
+  if (next_duration > MAX_VIBRATION_DURATION) next_duration = MIN_VIBRATION_DURATION;
 
   current_profile->vibration_duration = next_duration;
 }

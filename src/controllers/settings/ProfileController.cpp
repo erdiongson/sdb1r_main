@@ -29,7 +29,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
       params.cur_prof_num = selected_profile_num;
       params.dialog_code = DIALOG_PROFILE_LOADED;
       drawProfileScreen(phost, params);
-      delay(2000);
+      delay(DIALOG_DISPLAY_DURATION_MS);
       startNextController(CONTROLLER_SETTINGS);
       break;
     }
@@ -91,7 +91,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
         params.cur_prof_num = selected_profile_num;
         params.dialog_code = DIALOG_ERROR_PASSWORD_MISMATCH;
         drawProfileScreen(phost, params);
-        delay(2000);
+        delay(DIALOG_DISPLAY_DURATION_MS);
         params.dialog_code = 0;
         drawProfileScreen(phost, params);
         break;
@@ -102,7 +102,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
       params.cur_prof_num = selected_profile_num;
       params.dialog_code = DIALOG_PASSWORD_CHANGED;
       drawProfileScreen(phost, params);
-      delay(2000);
+      delay(DIALOG_DISPLAY_DURATION_MS);
       params.dialog_code = 0;
       drawProfileScreen(phost, params);
       break;

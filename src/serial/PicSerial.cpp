@@ -19,7 +19,7 @@ void PicSerial::sendMessage(byte command, byte data) {
   Serial2.write(msg, 5);
 
   // Set timeout to 5 seconds from now.
-  timeout_at = millis() + 5000;
+  timeout_at = millis() + DISPENSER_TIMEOUT_MS;
 }
 
 // Send a dispense command to the dispenser.
@@ -35,15 +35,15 @@ void PicSerial::sendHandshake() {
 // Set the vibration level for the dispenser.
 void PicSerial::sendVibrationLevel(uint8_t level) {
   if (level < 0) level = 0;
-  if (level > 4) level = 4;
+  if (level > MAX_VIBRATION_LEVEL) level = MAX_VIBRATION_LEVEL;
   sendMessage(SDB_VIBRATE_LEVEL, VIBMODE_U0 + level);
 }
 
 // Set the vibration time for the dispenser.
 // @param seconds Vibration time in seconds (1-5).
 void PicSerial::sendVibrationTime(uint8_t seconds) {
-  if (seconds < 1) seconds = 1;
-  if (seconds > 5) seconds = 5;
+  if (seconds < MIN_VIBRATION_DURATION) seconds = MIN_VIBRATION_DURATION;
+  if (seconds > MAX_VIBRATION_DURATION) seconds = MAX_VIBRATION_DURATION;
   sendMessage(SDB_VIBRATE_TIME, VIBDUR_1 + seconds - 1);
 }
 
@@ -82,5 +82,5 @@ int PicSerial::process() {
 // Block until a response is received from the dispenser.
 void PicSerial::blockUntilResponse() {
   while (process() == 0)
-    delay(10);
+    delay(DISPENSER_POLL_DELAY_MS);
 }

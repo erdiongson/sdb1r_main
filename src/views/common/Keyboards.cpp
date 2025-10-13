@@ -106,7 +106,7 @@ void drawKeyboard(Gpu_Hal_Context_t* phost, uint8_t keypressed, char* displaytex
 }
 
 void getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* curtitle, bool password) {
-  delay(200);  // Added to create smooth transition between screen
+  delay(KEYBOARD_TRANSITION_DELAY_MS);  // Added to create smooth transition between screen
   uint8_t font = 27;
   char buf[PROFILE_NAME_MAX_LEN] = "";
   uint8_t curpos = 0;
@@ -177,7 +177,7 @@ void getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* curtitle, b
           drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, false);
         } else {
           drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, TRUE);
-          delay(1000);
+          delay(KEYBOARD_ERROR_DISPLAY_MS);
           drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, false);
         }
         break;

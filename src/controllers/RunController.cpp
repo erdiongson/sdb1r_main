@@ -245,7 +245,7 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
         TrayHandler::Position firstPosition = trayHandler.reset();
         target_x =
             (profile.tray_origin_x +
-             ((firstPosition.x - 1 + ((profile.staggered && firstPosition.y % 2 == 0) ? 0.5 : 0)) * profile.pitch_x)) *
+             ((firstPosition.x - 1 + ((profile.staggered && firstPosition.y % 2 == 0) ? STAGGERED_OFFSET_FACTOR : 0)) * profile.pitch_x)) *
             -STEPS_PER_UNIT_X;
         target_y = (profile.tray_origin_y + ((firstPosition.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
         startStage(STAGE_MOVE);
@@ -291,7 +291,7 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
         Logger::log("Next position: " + String(result.position.x) + ", " + String(result.position.y));
 
         target_x = (profile.tray_origin_x +
-                    ((result.position.x - 1 + ((profile.staggered && result.position.y % 2 == 0) ? 0.5 : 0)) *
+                    ((result.position.x - 1 + ((profile.staggered && result.position.y % 2 == 0) ? STAGGERED_OFFSET_FACTOR : 0)) *
                      profile.pitch_x)) *
                    -STEPS_PER_UNIT_X;
         target_y = (profile.tray_origin_y + ((result.position.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;

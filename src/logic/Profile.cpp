@@ -33,15 +33,15 @@ void ProfileManager::preLoadEEPROM(void) {
 
     currentProfile.tube_no_x = MAX_TUBES_X;
     currentProfile.tube_no_y = MAX_TUBES_Y;
-    currentProfile.pitch_x = 9;
-    currentProfile.pitch_y = 9;
-    currentProfile.tray_origin_x = 10;
-    currentProfile.tray_origin_y = 10;
-    currentProfile.cycles = 2;
-    currentProfile.vibration_enabled = 0;
+    currentProfile.pitch_x = DEFAULT_PITCH;
+    currentProfile.pitch_y = DEFAULT_PITCH;
+    currentProfile.tray_origin_x = DEFAULT_ORIGIN;
+    currentProfile.tray_origin_y = DEFAULT_ORIGIN;
+    currentProfile.cycles = DEFAULT_CYCLES;
+    currentProfile.vibration_enabled = DEFAULT_VIBRATION_LEVEL;
     currentProfile.password_enabled = TRUE;
-    currentProfile.vibration_duration = 2;
-    currentProfile.z_dip = 0.0;
+    currentProfile.vibration_duration = DEFAULT_VIBRATION_DURATION;
+    currentProfile.z_dip = DEFAULT_Z_DIP;
     currentProfile.skip_col[0] = '\0';
     currentProfile.skip_row[0] = '\0';
     currentProfile.skip_single_pos[0] = '\0';
@@ -92,7 +92,7 @@ uint8_t ProfileManager::loadProfile(void) {
 }
 
 void ProfileManager::readPassEEPROM(char* pass) {
-  int addr = 4000;
+  int addr = PASSWORD_EEPROM_ADDR;
   char c;
   int i = 0;
   do {
@@ -102,7 +102,7 @@ void ProfileManager::readPassEEPROM(char* pass) {
 }
 
 void ProfileManager::writePassEEPROM(char* pass) {
-  int addr = 4000;
+  int addr = PASSWORD_EEPROM_ADDR;
   int i = 0;
   char c;
   do {
@@ -112,13 +112,13 @@ void ProfileManager::writePassEEPROM(char* pass) {
 }
 
 void ProfileManager::writeCurIDEEPROM(uint8_t curprofid) {
-  EEPROM.put(0, curprofid);
+  EEPROM.put(PROFILE_START_ADDR, curprofid);
 }
 
 uint8_t ProfileManager::readCurIDEEPROM(void) {
   uint8_t temp;
 
-  EEPROM.get(0, temp);
+  EEPROM.get(PROFILE_START_ADDR, temp);
   if (temp > MAX_PROFILES) temp = 0;
   return temp;
 }

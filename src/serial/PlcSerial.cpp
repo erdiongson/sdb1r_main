@@ -47,19 +47,19 @@ PLCMessage PlcSerial::process() {
 
   // Determine message type based on command byte [1]
   switch (response[1]) {
-    case 0x30:
+    case PLC_CMD_START:
       result.type = MSG_START;
       break;
-    case 0x31:
+    case PLC_CMD_STOP:
       result.type = MSG_STOP;
       break;
-    case 0x32:
+    case PLC_CMD_PAUSE:
       result.type = MSG_PAUSE;
       break;
-    case 0x42:
+    case PLC_CMD_RAISE_Z:
       result.type = MSG_RAISE_Z;
       break;
-    case 0x41:
+    case PLC_CMD_LOWER_Z:
       result.type = MSG_LOWER_Z;
       break;
     default:

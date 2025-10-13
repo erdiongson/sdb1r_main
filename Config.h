@@ -73,6 +73,15 @@
 // Defines the number of "dispenses" performed during priming.
 #define PRIME_DISPENSE_NUM 2
 
+// Vibration settings
+#define MAX_VIBRATION_LEVEL 4
+#define MIN_VIBRATION_DURATION 1
+#define MAX_VIBRATION_DURATION 5
+
+// Serial communication timeouts (in milliseconds)
+#define DISPENSER_TIMEOUT_MS 5000
+#define DISPENSER_POLL_DELAY_MS 10
+
 // =============================================================================
 // DEBUG SETTINGS
 // =============================================================================
@@ -86,6 +95,7 @@
 #define MAX_PROFILES 10
 #define RESERVED_PROFILE_SIZE 300
 #define PROFILE_START_ADDR 0
+#define PASSWORD_EEPROM_ADDR 4000
 
 // VERSION SPECIFIC: Change based on machine size
 // (L) Large 300x300: MAX_TUBES_X = 33, MAX_TUBES_Y = 33
@@ -115,6 +125,35 @@
 
 #define MIN_CYCLE 1
 #define MAX_CYCLE 99
+
+// Default profile values
+#define DEFAULT_PITCH 9
+#define DEFAULT_ORIGIN 10
+#define DEFAULT_CYCLES 2
+#define DEFAULT_VIBRATION_DURATION 2
+#define DEFAULT_VIBRATION_LEVEL 0
+#define DEFAULT_Z_DIP 0.0
+
+// =============================================================================
+// UI TIMING SETTINGS (in milliseconds)
+// =============================================================================
+#define DIALOG_DISPLAY_DURATION_MS 2000
+#define ERROR_DISPLAY_DURATION_MS 3000
+#define KEYBOARD_TRANSITION_DELAY_MS 200
+#define KEYBOARD_ERROR_DISPLAY_MS 1000
+
+// =============================================================================
+// MOVEMENT TEST SETTINGS
+// =============================================================================
+#define CM_TO_MM_MULTIPLIER 10
+#define MAX_MOVE_DISTANCE_CM 99.9
+#define MIN_MOVE_DISTANCE_CM 0
+#define MAX_BOUNCE_COUNT 9999
+
+// =============================================================================
+// CALCULATION CONSTANTS
+// =============================================================================
+#define STAGGERED_OFFSET_FACTOR 0.5
 
 // =============================================================================
 // FIRMWARE VERSION
