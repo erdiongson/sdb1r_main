@@ -3,6 +3,7 @@
 #include "Arduino.h"
 #include <AccelStepper.h>
 #include "../Constants.h"
+#include "../Utils.h"
 
 // Struct for complete axis configuration parameters.
 struct AxisParams {
@@ -33,6 +34,8 @@ class Axis {
   bool to_limit = false;
   bool prev_min_state = false;  // Previous state of min limit switch (true = hit)
   bool prev_max_state = false;  // Previous state of max limit switch (true = hit)
+  int min_counter = 0;          // Debounce counter for min limit switch
+  int max_counter = 0;          // Debounce counter for max limit switch
 
  public:
   // Constructor for Axis class using AxisParams struct.
@@ -91,6 +94,9 @@ class Axis {
 
     prev_min_state = isAtMin();
     prev_max_state = isAtMax();
+
+    Logger::log("Moving to " + String(position));
+    Logger::log("Is at max?" + String(prev_max_state));
   }
 
   void moveTo(long position) {
@@ -117,20 +123,56 @@ class Axis {
   bool isAtMax() { return digitalRead(max_limit_pin) == LOW; }
 
   // Returns true if the min limit switch transitioned from not-hit to hit.
+  // Uses debouncing logic requiring 3 steady states before transitioning.
   // Updates the stored previous state.
   // @return True if switch just got hit, false otherwise.
   bool didHitMin() {
-    bool currentState = isAtMin();
+    bool rawState = isAtMin();
+    
+    // Update counter based on raw state
+    if (rawState) {
+      if (min_counter < 3) min_counter++;
+    } else {
+      if (min_counter > -3) min_counter--;
+    }
+    
+    // Determine debounced current state
+    bool currentState = prev_min_state;
+    if (min_counter >= 3) {
+      currentState = true;
+    } else if (min_counter <= -3) {
+      currentState = false;
+    }
+    
+    // Detect transition from not-hit to hit
     bool justHit = !prev_min_state && currentState;
     prev_min_state = currentState;
     return justHit;
   }
 
   // Returns true if the max limit switch transitioned from not-hit to hit.
+  // Uses debouncing logic requiring 3 steady states before transitioning.
   // Updates the stored previous state.
   // @return True if switch just got hit, false otherwise.
   bool didHitMax() {
-    bool currentState = isAtMax();
+    bool rawState = isAtMax();
+    
+    // Update counter based on raw state
+    if (rawState) {
+      if (max_counter < 3) max_counter++;
+    } else {
+      if (max_counter > -3) max_counter--;
+    }
+    
+    // Determine debounced current state
+    bool currentState = prev_max_state;
+    if (max_counter >= 3) {
+      currentState = true;
+    } else if (max_counter <= -3) {
+      currentState = false;
+    }
+    
+    // Detect transition from not-hit to hit
     bool justHit = !prev_max_state && currentState;
     prev_max_state = currentState;
     return justHit;
@@ -150,16 +192,19 @@ class Axis {
         return AXIS_STATE_COMPLETE;
       } else {
         // Not expected, error
+        Logger::log(F("Min limit switch triggered unexpectedly"));
         return AXIS_STATE_ERROR_LIMIT_SWITCH;
       }
     }
     if (didHitMax()) {
+      Logger::log("Max limit switch triggered");
       stopRunning();
       if (to_limit && moving_positive) {
         // Expected, should stop
         return AXIS_STATE_COMPLETE;
       } else {
         // Not expected, error
+        Logger::log(F("Max limit switch triggered unexpectedly"));
         return AXIS_STATE_ERROR_LIMIT_SWITCH;
       }
     }

@@ -29,32 +29,56 @@ void MoveTestController::onInteraction(const Interaction& interaction) {
   switch (button) {
     case TAG_MOVE_UP:
       Logger::log(F("MoveTestController::on_interaction: Move up"));
-      dispenserHead.y().moveBy(STEPS_PER_UNIT_Y * xy_distance_cm * CM_TO_MM_MULTIPLIER);
+      bounce_state.current_count = bounce_count;
+      bounce_state.current_stage = BOUNCE_STAGE_GO;
+      bounce_state.axis = BOUNCE_AXIS_Y;
+      bounce_state.go_amount = STEPS_PER_UNIT_Y * xy_distance_cm * CM_TO_MM_MULTIPLIER;
+      dispenserHead.y().moveBy(bounce_state.go_amount);
       break;
 
     case TAG_MOVE_DOWN:
       Logger::log(F("MoveTestController::on_interaction: Move down"));
-      dispenserHead.y().moveBy(-STEPS_PER_UNIT_Y * xy_distance_cm * CM_TO_MM_MULTIPLIER);
+      bounce_state.current_count = bounce_count;
+      bounce_state.current_stage = BOUNCE_STAGE_GO;
+      bounce_state.axis = BOUNCE_AXIS_Y;
+      bounce_state.go_amount = -STEPS_PER_UNIT_Y * xy_distance_cm * CM_TO_MM_MULTIPLIER;
+      dispenserHead.y().moveBy(bounce_state.go_amount);
       break;
 
     case TAG_MOVE_LEFT:
       Logger::log(F("MoveTestController::on_interaction: Move left"));
-      dispenserHead.x().moveBy(STEPS_PER_UNIT_X * xy_distance_cm * CM_TO_MM_MULTIPLIER);
+      bounce_state.current_count = bounce_count;
+      bounce_state.current_stage = BOUNCE_STAGE_GO;
+      bounce_state.axis = BOUNCE_AXIS_X;
+      bounce_state.go_amount = STEPS_PER_UNIT_X * xy_distance_cm * CM_TO_MM_MULTIPLIER;
+      dispenserHead.x().moveBy(bounce_state.go_amount);
       break;
 
     case TAG_MOVE_RIGHT:
       Logger::log(F("MoveTestController::on_interaction: Move right"));
-      dispenserHead.x().moveBy(-STEPS_PER_UNIT_X * xy_distance_cm * CM_TO_MM_MULTIPLIER);
+      bounce_state.current_count = bounce_count;
+      bounce_state.current_stage = BOUNCE_STAGE_GO;
+      bounce_state.axis = BOUNCE_AXIS_X;
+      bounce_state.go_amount = -STEPS_PER_UNIT_X * xy_distance_cm * CM_TO_MM_MULTIPLIER;
+      dispenserHead.x().moveBy(bounce_state.go_amount);
       break;
 
     case TAG_Z_UP:
       Logger::log(F("MoveTestController::on_interaction: Move z up"));
-      dispenserHead.z().moveBy(-STEPS_PER_UNIT_Z * z_distance_cm * CM_TO_MM_MULTIPLIER);
+      bounce_state.current_count = bounce_count;
+      bounce_state.current_stage = BOUNCE_STAGE_GO;
+      bounce_state.axis = BOUNCE_AXIS_Z;
+      bounce_state.go_amount = STEPS_PER_UNIT_Z * z_distance_cm * CM_TO_MM_MULTIPLIER;
+      dispenserHead.z().moveBy(bounce_state.go_amount);
       break;
 
     case TAG_Z_DOWN:
       Logger::log(F("MoveTestController::on_interaction: Move z down"));
-      dispenserHead.z().moveBy(STEPS_PER_UNIT_Z * z_distance_cm * CM_TO_MM_MULTIPLIER);
+      bounce_state.current_count = bounce_count;
+      bounce_state.current_stage = BOUNCE_STAGE_GO;
+      bounce_state.axis = BOUNCE_AXIS_Z;
+      bounce_state.go_amount = -STEPS_PER_UNIT_Z * z_distance_cm * CM_TO_MM_MULTIPLIER;
+      dispenserHead.z().moveBy(bounce_state.go_amount);
       break;
 
     case TAG_MOVE_XY_DIST:
@@ -95,9 +119,10 @@ void MoveTestController::onInteraction(const Interaction& interaction) {
 
     case TAG_MOVE_STOP:
       Logger::log(F("MoveTestController::on_interaction: Stop all movement"));
-      dispenserHead.x().stop();
-      dispenserHead.y().stop();
-      dispenserHead.z().stop();
+      dispenserHead.x().stopRunning();
+      dispenserHead.y().stopRunning();
+      dispenserHead.z().stopRunning();
+      bounce_state.current_count = 0;
       break;
 
     case TAG_MOVE_BACK:
@@ -114,6 +139,36 @@ ControllerStepResult MoveTestController::onStep() {
   DispenserProcessResult result = dispenserHead.process();
 
   if (result.steppers == AXIS_STATE_COMPLETE) {
+
+    // Bounce
+    if (bounce_state.current_count > 0) {
+      if (bounce_state.current_stage == BOUNCE_STAGE_GO) {
+        // Switch to RETURN stage and move back
+        bounce_state.current_stage = BOUNCE_STAGE_RETURN;
+        if (bounce_state.axis == BOUNCE_AXIS_X) {
+          dispenserHead.x().moveBy(-bounce_state.go_amount);
+        } else if (bounce_state.axis == BOUNCE_AXIS_Y) {
+          dispenserHead.y().moveBy(-bounce_state.go_amount);
+        } else if (bounce_state.axis == BOUNCE_AXIS_Z) {
+          dispenserHead.z().moveBy(-bounce_state.go_amount);
+        }
+      } else if (bounce_state.current_stage == BOUNCE_STAGE_RETURN) {
+        // Decrement count
+        bounce_state.current_count--;
+        if (bounce_state.current_count > 0) {
+          // Switch to GO stage and move forward again
+          bounce_state.current_stage = BOUNCE_STAGE_GO;
+          if (bounce_state.axis == BOUNCE_AXIS_X) {
+            dispenserHead.x().moveBy(bounce_state.go_amount);
+          } else if (bounce_state.axis == BOUNCE_AXIS_Y) {
+            dispenserHead.y().moveBy(bounce_state.go_amount);
+          } else if (bounce_state.axis == BOUNCE_AXIS_Z) {
+            dispenserHead.z().moveBy(bounce_state.go_amount);
+          }
+        }
+      }
+    }
+
     LimitSwitchStates limitStates;
     limitStates.x_max_limit = dispenserHead.x().isAtMax();
     limitStates.x_min_limit = dispenserHead.x().isAtMin();
