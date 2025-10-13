@@ -295,8 +295,8 @@ class TrayPositionHandler {
     int skipCount = 0;
 
     // Count skip positions - track which rows/columns are already skipped to avoid double-counting
-    bool skippedRows[MAX_TUBES_Y + 1] = { false };
-    bool skippedCols[MAX_TUBES_X + 1] = { false };
+    bool skippedRows[TUBES_Y_MAX + 1] = { false };
+    bool skippedCols[TUBES_X_MAX + 1] = { false };
 
     // First pass: mark entire rows and columns as skipped
     for (int i = 0; i < MAX_POSITIONS; i++) {

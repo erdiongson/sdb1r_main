@@ -28,17 +28,17 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         bool error = FALSE;
 
         if (current_profile->tube_no_x == 0)
-          maxval = MAXXMM - current_profile->tray_origin_x;
+          maxval = TRAY_X_MAX - current_profile->tray_origin_x;
         else
-          maxval = (MAXXMM - current_profile->tray_origin_x) / (current_profile->tube_no_x - 1);
+          maxval = (TRAY_X_MAX - current_profile->tray_origin_x) / (current_profile->tube_no_x - 1);
         roundOneDecimal(&maxval);
         if (current_profile->pitch_x > maxval)
           error = TRUE;
         else {
           if (current_profile->tube_no_y == 0)
-            maxval = MAXYMM - current_profile->tray_origin_y;
+            maxval = TRAY_Y_MAX - current_profile->tray_origin_y;
           else
-            maxval = (MAXYMM - current_profile->tray_origin_y) / (current_profile->tube_no_y - 1);
+            maxval = (TRAY_Y_MAX - current_profile->tray_origin_y) / (current_profile->tube_no_y - 1);
           roundOneDecimal(&maxval);
           if (current_profile->pitch_y > maxval) error = TRUE;
         }
@@ -93,11 +93,11 @@ void SettingsController::onInteraction(const Interaction& interaction) {
 
     case TAG_CONFIG_TUBES_X:  // Number of Columns
     {
-      float maxval = (int)((MAXXMM - current_profile->tray_origin_x) / current_profile->pitch_x) + 1;
-      if (maxval > MAX_TUBES_X) maxval = MAX_TUBES_X;
+      float maxval = (int)((TRAY_X_MAX - current_profile->tray_origin_x) / current_profile->pitch_x) + 1;
+      if (maxval > TUBES_X_MAX) maxval = TUBES_X_MAX;
 
       int oldTubeNoX = current_profile->tube_no_x;
-      current_profile->tube_no_x = getKeypadValue(&host, current_profile->tube_no_x, MIN_NUM_X, MAX_TUBES_X, FALSE);
+      current_profile->tube_no_x = getKeypadValue(&host, current_profile->tube_no_x, TUBES_X_MIN, TUBES_X_MAX, FALSE);
 
       // If rows decreased, clean skip strings to remove out-of-bounds positions
       if (current_profile->tube_no_x < oldTubeNoX) {
@@ -124,11 +124,11 @@ void SettingsController::onInteraction(const Interaction& interaction) {
 
     case TAG_CONFIG_TUBES_Y:  // Number of Rows
     {
-      float maxval = (int)((MAXYMM - current_profile->tray_origin_y) / current_profile->pitch_y) + 1;
+      float maxval = (int)((TRAY_Y_MAX - current_profile->tray_origin_y) / current_profile->pitch_y) + 1;
 
-      if (maxval > MAX_TUBES_Y) maxval = MAX_TUBES_Y;
+      if (maxval > TUBES_Y_MAX) maxval = TUBES_Y_MAX;
       int oldTubeNoY = current_profile->tube_no_y;
-      current_profile->tube_no_y = getKeypadValue(&host, current_profile->tube_no_y, MIN_NUM_Y, MAX_TUBES_Y, FALSE);
+      current_profile->tube_no_y = getKeypadValue(&host, current_profile->tube_no_y, TUBES_Y_MIN, TUBES_Y_MAX, FALSE);
 
       // If columns decreased, clean skip strings to remove out-of-bounds positions
       if (current_profile->tube_no_y < oldTubeNoY) {
@@ -157,12 +157,12 @@ void SettingsController::onInteraction(const Interaction& interaction) {
     {
       float maxval;
       if (current_profile->tube_no_x == 0)
-        maxval = MAXXMM - current_profile->tray_origin_x;
+        maxval = TRAY_X_MAX - current_profile->tray_origin_x;
       else
-        maxval = (MAXXMM - current_profile->tray_origin_x) / (current_profile->tube_no_x - 1);
+        maxval = (TRAY_X_MAX - current_profile->tray_origin_x) / (current_profile->tube_no_x - 1);
       roundOneDecimal(&maxval);
-      if (maxval > MAX_PITCH_X) maxval = MAX_PITCH_X;
-      current_profile->pitch_x = getKeypadValue(&host, current_profile->pitch_x, MIN_PITCH_X, MAX_PITCH_X, TRUE);
+      if (maxval > PITCH_X_MAX) maxval = PITCH_X_MAX;
+      current_profile->pitch_x = getKeypadValue(&host, current_profile->pitch_x, PITCH_X_MIN, PITCH_X_MAX, TRUE);
       drawSettingsScreen(phost, { *current_profile, 0 });
     } break;
 
@@ -170,12 +170,12 @@ void SettingsController::onInteraction(const Interaction& interaction) {
     {
       float maxval;
       if (current_profile->tube_no_y == 0)
-        maxval = MAXYMM - current_profile->tray_origin_y;
+        maxval = TRAY_Y_MAX - current_profile->tray_origin_y;
       else
-        maxval = (MAXYMM - current_profile->tray_origin_y) / (current_profile->tube_no_y - 1);
+        maxval = (TRAY_Y_MAX - current_profile->tray_origin_y) / (current_profile->tube_no_y - 1);
       roundOneDecimal(&maxval);
-      if (maxval > MAX_PITCH_Y) maxval = MAX_PITCH_Y;
-      current_profile->pitch_y = getKeypadValue(&host, current_profile->pitch_y, MIN_PITCH_Y, MAX_PITCH_Y, TRUE);
+      if (maxval > PITCH_Y_MAX) maxval = PITCH_Y_MAX;
+      current_profile->pitch_y = getKeypadValue(&host, current_profile->pitch_y, PITCH_Y_MIN, PITCH_Y_MAX, TRUE);
       drawSettingsScreen(phost, { *current_profile, 0 });
     } break;
 
@@ -183,13 +183,13 @@ void SettingsController::onInteraction(const Interaction& interaction) {
     {
       float maxval;
       if (current_profile->tube_no_x == 0)
-        maxval = MAXXMM;
+        maxval = TRAY_X_MAX;
       else
-        maxval = MAXXMM - (current_profile->pitch_x * (current_profile->tube_no_x - 1));
+        maxval = TRAY_X_MAX - (current_profile->pitch_x * (current_profile->tube_no_x - 1));
       roundOneDecimal(&maxval);
-      if (maxval > MAX_ORG_X) maxval = MAX_ORG_X;
+      if (maxval > ORIGIN_X_MAX) maxval = ORIGIN_X_MAX;
 
-      current_profile->tray_origin_x = getKeypadValue(&host, current_profile->tray_origin_x, 0, MAX_ORG_X, TRUE);
+      current_profile->tray_origin_x = getKeypadValue(&host, current_profile->tray_origin_x, 0, ORIGIN_X_MAX, TRUE);
       drawSettingsScreen(phost, { *current_profile, 0 });
     } break;
 
@@ -197,23 +197,23 @@ void SettingsController::onInteraction(const Interaction& interaction) {
     {
       float maxval;
       if (current_profile->tube_no_y == 0)
-        maxval = MAXYMM;
+        maxval = TRAY_Y_MAX;
       else
-        maxval = MAXYMM - (current_profile->pitch_y * (current_profile->tube_no_y - 1));
+        maxval = TRAY_Y_MAX - (current_profile->pitch_y * (current_profile->tube_no_y - 1));
       roundOneDecimal(&maxval);
-      if (maxval > MAX_ORG_Y) maxval = MAX_ORG_Y;
-      current_profile->tray_origin_y = getKeypadValue(&host, current_profile->tray_origin_y, 0, MAX_ORG_Y, TRUE);
+      if (maxval > ORIGIN_Y_MAX) maxval = ORIGIN_Y_MAX;
+      current_profile->tray_origin_y = getKeypadValue(&host, current_profile->tray_origin_y, 0, ORIGIN_Y_MAX, TRUE);
       drawSettingsScreen(phost, { *current_profile, 0 });
     } break;
 
     case TAG_NUM_CYCLE:
-      current_profile->cycles = getKeypadValue(phost, current_profile->cycles, MIN_CYCLE, MAX_CYCLE, FALSE);
+      current_profile->cycles = getKeypadValue(phost, current_profile->cycles, CYCLES_MIN, CYCLES_MAX, FALSE);
       drawSettingsScreen(phost, { *current_profile, 0 });
       break;
 
     case TAG_Z_DIP:
       Logger::log(F("Incrementing Z Dip"));
-      current_profile->z_dip = getKeypadValue(phost, current_profile->z_dip, MIN_Z_DIP, MAX_Z_DIP, TRUE);
+      current_profile->z_dip = getKeypadValue(phost, current_profile->z_dip, Z_DIP_MIN, Z_DIP_MAX, TRUE);
       drawSettingsScreen(phost, { *current_profile, 0 });
       break;
 
@@ -290,13 +290,13 @@ int SettingsController::getModeType() const {
 
 void SettingsController::incrementVibrationLevel() {
   int next_level = current_profile->vibration_enabled + 1;
-  if (next_level > MAX_VIBRATION_LEVEL) next_level = 0;
+  if (next_level > VIBRATION_LEVEL_MAX) next_level = 0;
   current_profile->vibration_enabled = next_level;
 }
 
 void SettingsController::incrementVibrationTime() {
   int next_duration = current_profile->vibration_duration + 1;
-  if (next_duration > MAX_VIBRATION_DURATION) next_duration = MIN_VIBRATION_DURATION;
+  if (next_duration > VIBRATION_DURATION_MAX) next_duration = VIBRATION_DURATION_MIN;
 
   current_profile->vibration_duration = next_duration;
 }

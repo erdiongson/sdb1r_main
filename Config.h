@@ -42,10 +42,10 @@
 // MACHINE DIMENSIONS (in mm)
 // =============================================================================
 // VERSION SPECIFIC: Change based on machine size
-// (L) Large 300x300: MAXXMM = 400, MAXYMM = 330
-// (S) Small 200x300: MAXXMM = 190, MAXYMM = 250
-#define MAXXMM 400
-#define MAXYMM 330
+// (L) Large 300x300: TRAY_X_MAX = 400, TRAY_Y_MAX = 330
+// (S) Small 200x300: TRAY_X_MAX = 190, TRAY_Y_MAX = 250
+#define TRAY_X_MAX 400
+#define TRAY_Y_MAX 330
 
 // =============================================================================
 // STEPS PER UNIT (Motor Calibration)
@@ -74,9 +74,12 @@
 #define PRIME_DISPENSE_NUM 2
 
 // Vibration settings
-#define MAX_VIBRATION_LEVEL 4
-#define MIN_VIBRATION_DURATION 1
-#define MAX_VIBRATION_DURATION 5
+#define VIBRATION_LEVEL_DEFAULT 0
+#define VIBRATION_LEVEL_MAX 4
+
+#define VIBRATION_DURATION_DEFAULT 2
+#define VIBRATION_DURATION_MIN 1
+#define VIBRATION_DURATION_MAX 5
 
 // Serial communication timeouts (in milliseconds)
 #define DISPENSER_TIMEOUT_MS 5000
@@ -98,41 +101,37 @@
 #define PASSWORD_EEPROM_ADDR 4000
 
 // VERSION SPECIFIC: Change based on machine size
-// (L) Large 300x300: MAX_TUBES_X = 33, MAX_TUBES_Y = 33
-// (S) Small 200x300: MAX_TUBES_X = 20, MAX_TUBES_Y = 27
-#define MAX_TUBES_X 42
-#define MAX_TUBES_Y 33
+// (L) Large 300x300: TUBES_X_MAX = 33, TUBES_Y_MAX = 33
+// (S) Small 200x300: TUBES_X_MAX = 20, TUBES_Y_MAX = 27
+#define TUBES_X_MAX 42
+#define TUBES_Y_MAX 33
+#define TUBES_X_MIN 1
+#define TUBES_Y_MIN 1
 
 #define PROFILE_NAME_MAX_LEN 30
 #define PASSWORD_MAX_LEN 30
 #define KEYPAD_MAX_LEN 6
 #define ROW_COL_MAX_LEN 45
 
-#define MAX_ORG_X 999
-#define MAX_ORG_Y 999
+#define ORIGIN_DEFAULT 10
+#define ORIGIN_X_MAX 999
+#define ORIGIN_Y_MAX 999
 
-#define MIN_Z_DIP 0
-#define MAX_Z_DIP 999
+#define Z_DIP_DEFAULT 0.0
+#define Z_DIP_MIN 0
+#define Z_DIP_MAX 999
 
-#define MIN_NUM_X 1
-#define MIN_NUM_Y 1
+#define PITCH_DEFAULT 9
+#define PITCH_X_MIN 9
+#define PITCH_X_MAX 999
+#define PITCH_Y_MIN 9
+#define PITCH_Y_MAX 999
 
-#define MIN_PITCH_X 9
-#define MAX_PITCH_X 999
+#define CYCLES_DEFAULT 2
+#define CYCLES_MIN 1
+#define CYCLES_MAX 99
 
-#define MIN_PITCH_Y 9
-#define MAX_PITCH_Y 999
-
-#define MIN_CYCLE 1
-#define MAX_CYCLE 99
-
-// Default profile values
-#define DEFAULT_PITCH 9
-#define DEFAULT_ORIGIN 10
-#define DEFAULT_CYCLES 2
-#define DEFAULT_VIBRATION_DURATION 2
-#define DEFAULT_VIBRATION_LEVEL 0
-#define DEFAULT_Z_DIP 0.0
+#define STAGGERED_OFFSET_FACTOR 0.5
 
 // =============================================================================
 // UI TIMING SETTINGS (in milliseconds)
@@ -153,7 +152,6 @@
 // =============================================================================
 // CALCULATION CONSTANTS
 // =============================================================================
-#define STAGGERED_OFFSET_FACTOR 0.5
 
 // =============================================================================
 // FIRMWARE VERSION

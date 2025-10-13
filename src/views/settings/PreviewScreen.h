@@ -50,9 +50,9 @@ void drawPreviewScreen(Gpu_Hal_Context_t* phost, const TrayHandler::Position ski
   const int AVAILABLE_HEIGHT = SCREEN_HEIGHT - GRID_TOP_MARGIN - GRID_BOTTOM_MARGIN;
 
   // Calculate dot size and spacing to fit the grid
-  // We need to fit MAX_TUBES_X x MAX_TUBES_Y grid
-  int minDotSpacingX = AVAILABLE_WIDTH / (MAX_TUBES_X + 1);
-  int minDotSpacingY = AVAILABLE_HEIGHT / (MAX_TUBES_Y + 1);
+  // We need to fit TUBES_X_MAX x TUBES_Y_MAX grid
+  int minDotSpacingX = AVAILABLE_WIDTH / (TUBES_X_MAX + 1);
+  int minDotSpacingY = AVAILABLE_HEIGHT / (TUBES_Y_MAX + 1);
 
   int maxDotSpacingX = minDotSpacingX * 2;
   int maxDotSpacingY = minDotSpacingY * 2;

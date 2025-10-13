@@ -35,15 +35,15 @@ void PicSerial::sendHandshake() {
 // Set the vibration level for the dispenser.
 void PicSerial::sendVibrationLevel(uint8_t level) {
   if (level < 0) level = 0;
-  if (level > MAX_VIBRATION_LEVEL) level = MAX_VIBRATION_LEVEL;
+  if (level > VIBRATION_LEVEL_MAX) level = VIBRATION_LEVEL_MAX;
   sendMessage(SDB_VIBRATE_LEVEL, VIBMODE_U0 + level);
 }
 
 // Set the vibration time for the dispenser.
 // @param seconds Vibration time in seconds (1-5).
 void PicSerial::sendVibrationTime(uint8_t seconds) {
-  if (seconds < MIN_VIBRATION_DURATION) seconds = MIN_VIBRATION_DURATION;
-  if (seconds > MAX_VIBRATION_DURATION) seconds = MAX_VIBRATION_DURATION;
+  if (seconds < VIBRATION_DURATION_MIN) seconds = VIBRATION_DURATION_MIN;
+  if (seconds > VIBRATION_DURATION_MAX) seconds = VIBRATION_DURATION_MAX;
   sendMessage(SDB_VIBRATE_TIME, VIBDUR_1 + seconds - 1);
 }
 

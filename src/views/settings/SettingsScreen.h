@@ -122,7 +122,7 @@ void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams params) {
   // Password Enable/Disable
   Toggle_Button(phost, profile.password_enabled, TAG_PASSWORD_ENABLED, 242, 180, "On", "Off");
 
-  if (profile.tube_no_x > MAX_TUBES_X)
+  if (profile.tube_no_x > TUBES_X_MAX)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
   else
     App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));  // Change the color back to black
@@ -133,7 +133,7 @@ void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams params) {
 
   // v204
   // Text - Tube Number Column
-  if (profile.tube_no_y > MAX_TUBES_Y)
+  if (profile.tube_no_y > TUBES_Y_MAX)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
   else
     App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));  // Change the color back to black
@@ -143,9 +143,9 @@ void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams params) {
   // v204
   // Text - Pitch Row
   if (profile.tube_no_x == 0)
-    maxval = MAXXMM - profile.tray_origin_x;
+    maxval = TRAY_X_MAX - profile.tray_origin_x;
   else
-    maxval = (MAXXMM - profile.tray_origin_x) / (profile.tube_no_x - 1);
+    maxval = (TRAY_X_MAX - profile.tray_origin_x) / (profile.tube_no_x - 1);
   roundOneDecimal(&maxval);
   if (maxval < profile.pitch_x)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
@@ -159,9 +159,9 @@ void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams params) {
   // v204
   // Text - Pitch Column
   if (profile.tube_no_y == 0)
-    maxval = MAXYMM - profile.tray_origin_y;
+    maxval = TRAY_Y_MAX - profile.tray_origin_y;
   else
-    maxval = (MAXYMM - profile.tray_origin_y) / (profile.tube_no_y - 1);
+    maxval = (TRAY_Y_MAX - profile.tray_origin_y) / (profile.tube_no_y - 1);
   roundOneDecimal(&maxval);
   if (maxval < profile.pitch_y)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
@@ -175,9 +175,9 @@ void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams params) {
   // v204
   // Text - Origin X
   if (profile.tube_no_x == 0)
-    maxval = MAXXMM;
+    maxval = TRAY_X_MAX;
   else
-    maxval = MAXXMM - (profile.pitch_x * (profile.tube_no_x - 1));
+    maxval = TRAY_X_MAX - (profile.pitch_x * (profile.tube_no_x - 1));
   roundOneDecimal(&maxval);
   if (maxval < profile.tray_origin_x)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
@@ -191,9 +191,9 @@ void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams params) {
   // v204
   // Text - Origin Y
   if (profile.tube_no_y == 0)
-    maxval = MAXYMM;
+    maxval = TRAY_Y_MAX;
   else
-    maxval = MAXYMM - (profile.pitch_y * (profile.tube_no_y - 1));
+    maxval = TRAY_Y_MAX - (profile.pitch_y * (profile.tube_no_y - 1));
   roundOneDecimal(&maxval);
   if (maxval < profile.tray_origin_y)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
