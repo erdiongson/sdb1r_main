@@ -29,6 +29,8 @@ struct MoveTestParams {
   float xy_distance_cm;
   float z_distance_cm;
   int bounce_count;
+  int current_bounce_count;
+  int total_bounce_count;
 };
 
 // Display the movement test screen.
@@ -152,11 +154,13 @@ void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit
   int32_t z_center_x = right_section_start + right_section_width / 2;
   int32_t z_button_width = right_section_width - 20;  // Leave some margin
   int32_t z_button_height = 35;
+  int32_t z_button_spacing = 5;  // Spacing between buttons
 
-  // Z UP button
+  // Z UP button (aligned with UP button)
+  int32_t z_start_y = center_y - button_size - 10;  // Same Y position as UP button
   Gpu_CoCmd_FgColor(phost, 0x0066CC);
   App_WrCoCmd_Buffer(phost, TAG(TAG_Z_UP));
-  Gpu_CoCmd_Button(phost, right_section_start + 10, center_y - z_button_height - 10, z_button_width, z_button_height,
+  Gpu_CoCmd_Button(phost, right_section_start + 10, z_start_y, z_button_width, z_button_height,
                    26, 0, "Z UP");
 
   // Z UP button limit switch dot (Z max limit)
@@ -165,7 +169,7 @@ void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit
                                       limitStates.z_max_limit ? 0 : 128));
   App_WrCoCmd_Buffer(phost, POINT_SIZE(4 * 16));
   App_WrCoCmd_Buffer(phost, BEGIN(POINTS));
-  App_WrCoCmd_Buffer(phost, VERTEX2F((right_section_start + 18) * 16, (center_y - z_button_height - 2) * 16));
+  App_WrCoCmd_Buffer(phost, VERTEX2F((right_section_start + 18) * 16, (z_start_y + 8) * 16));
   App_WrCoCmd_Buffer(phost, END());
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, TAG_MASK(255));
@@ -173,7 +177,7 @@ void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit
   // Z DOWN button
   Gpu_CoCmd_FgColor(phost, 0x0066CC);
   App_WrCoCmd_Buffer(phost, TAG(TAG_Z_DOWN));
-  Gpu_CoCmd_Button(phost, right_section_start + 10, center_y + 10, z_button_width, z_button_height, 26, 0, "Z DOWN");
+  Gpu_CoCmd_Button(phost, right_section_start + 10, z_start_y + z_button_height + z_button_spacing, z_button_width, z_button_height, 26, 0, "Z DOWN");
 
   // Z DOWN button limit switch dot (Z min limit)
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
@@ -181,17 +185,15 @@ void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit
                                       limitStates.z_min_limit ? 0 : 128));
   App_WrCoCmd_Buffer(phost, POINT_SIZE(4 * 16));
   App_WrCoCmd_Buffer(phost, BEGIN(POINTS));
-  App_WrCoCmd_Buffer(phost, VERTEX2F((right_section_start + 18) * 16, (center_y + 18) * 16));
+  App_WrCoCmd_Buffer(phost, VERTEX2F((right_section_start + 18) * 16, (z_start_y + z_button_height + z_button_spacing + 8) * 16));
   App_WrCoCmd_Buffer(phost, END());
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, TAG_MASK(255));
 
-  // Draw vertical separator line between sections
-  App_WrCoCmd_Buffer(phost, COLOR_RGB(128, 128, 128));
-  App_WrCoCmd_Buffer(phost, BEGIN(LINES));
-  App_WrCoCmd_Buffer(phost, VERTEX2F(right_section_start * 16, 60 * 16));
-  App_WrCoCmd_Buffer(phost, VERTEX2F(right_section_start * 16, (DispHeight - 40) * 16));
-  App_WrCoCmd_Buffer(phost, END());
+  // STOP button (below Z DOWN)
+  Gpu_CoCmd_FgColor(phost, 0xFF0000);
+  App_WrCoCmd_Buffer(phost, TAG(TAG_MOVE_STOP));
+  Gpu_CoCmd_Button(phost, right_section_start + 10, z_start_y + (z_button_height + z_button_spacing) * 2, z_button_width, z_button_height, 26, 0, "STOP");
 
   // Back button
   Gpu_CoCmd_FgColor(phost, 0xAA0000);
@@ -228,11 +230,12 @@ void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit
   sprintf(buf, "B:%d", params.bounce_count);
   Gpu_CoCmd_Button(phost, control_x, control_y, control_width, control_height, 21, 0, buf);
 
-  // Stop button
-  control_x += control_spacing;
-  Gpu_CoCmd_FgColor(phost, 0xFF0000);
-  App_WrCoCmd_Buffer(phost, TAG(TAG_MOVE_STOP));
-  Gpu_CoCmd_Button(phost, control_x, control_y, control_width, control_height, 21, 0, "STOP");
+  // Bounce progress text (if bouncing is active)
+  if (params.total_bounce_count > 0) {
+    App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
+    sprintf(buf, "%d/%d", params.current_bounce_count, params.total_bounce_count);
+    Gpu_CoCmd_Text(phost, control_x + control_width + 5, control_y + control_height / 2, 21, OPT_CENTERY, buf);
+  }
 
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 

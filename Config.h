@@ -159,7 +159,9 @@
 #define DEFAULT_Z_DISTANCE_CM 3.0
 #define DEFAULT_BOUNCE_COUNT 0
 
+#define MOVE_TEST_REFRESH_INTERVAL_MS 1000
 #define SIMULATION_UPDATE_INTERVAL_MS 600
+
 
 // =============================================================================
 // FIRMWARE VERSION
