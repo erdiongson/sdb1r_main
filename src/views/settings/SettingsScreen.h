@@ -12,7 +12,7 @@ struct SettingsScreenParams {
   int dialog_code;
 };
 
-void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams params) {
+inline void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams params) {
   Profile& profile = params.profile;
   int16_t vibstatus;
   int16_t passwordStatus;
@@ -281,7 +281,7 @@ void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams params) {
   Disp_End(phost);
 }
 
-void drawSkipScreen(Gpu_Hal_Context_t* phost, Profile& profile) {
+inline void drawSkipScreen(Gpu_Hal_Context_t* phost, Profile& profile) {
   char rowBuf[SKIP_STRING_LEN];        // a buffer for skip row entry
   char colBuf[SKIP_STRING_LEN];        // a buffer for skip column entry
   char singlePosBuf[SKIP_STRING_LEN];  // a buffer for skip single position entry
@@ -358,7 +358,7 @@ void drawSkipScreen(Gpu_Hal_Context_t* phost, Profile& profile) {
   Disp_End(phost);
 }
 
-void confirmAdvanceSetting(Gpu_Hal_Context_t* phost) {
+inline void confirmAdvanceSetting(Gpu_Hal_Context_t* phost) {
   Gpu_CoCmd_FlashFast(phost, 0);
   Gpu_CoCmd_Dlstart(phost);
   App_WrCoCmd_Buffer(phost, CLEAR(1, 1, 1));

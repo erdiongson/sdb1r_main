@@ -11,6 +11,7 @@
 #include "../controllers/settings/PreviewController.h"
 #include "../controllers/settings/SettingsController.h"
 #include "../controllers/settings/ProfileController.h"
+#include "../controllers/settings/AdvancedSettingsController.h"
 #include "../hardware/DispenserHead.h"
 #include "../logic/Profile.h"
 #include "../gpu/App_Common.h"
@@ -27,7 +28,8 @@ class ControllerManager {
   // Calculate the maximum controller size at compile time.
   static constexpr size_t MAX_CONTROLLER_SIZE =
       MaxSize<ReadyController, RunController, MoveTestController, DispenseTestController, SettingsController,
-              ProfileController, StartupController, DebugController, PreviewController>::value;
+              ProfileController, StartupController, DebugController, PreviewController,
+              AdvancedSettingsController>::value;
 
   // Static buffer to hold any controller (aligned for proper object construction).
   struct alignas(BaseController) ControllerBuffer {
@@ -108,6 +110,9 @@ class ControllerManager {
         break;
       case CONTROLLER_PREVIEW:
         controller = new (controllerBuffer.data) PreviewController(params);
+        break;
+      case CONTROLLER_ADVANCED_SETTINGS:
+        controller = new (controllerBuffer.data) AdvancedSettingsController(params);
         break;
       default:
         Logger::log("Unknown controller type: ", (uint8_t)nextControllerType);

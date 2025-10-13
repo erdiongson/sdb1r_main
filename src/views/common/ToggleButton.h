@@ -10,12 +10,12 @@
 // @param y The y-coordinate of the toggle button.
 // @param enabledLabel The label to display when enabled.
 // @param disabledLabel The label to display when disabled.
-void Toggle_Button(Gpu_Hal_Context_t* phost, bool enabled, uint8_t tag, int16_t x, int16_t y, const char* enabledLabel,
-                   const char* disabledLabel) {
+inline void Toggle_Button(Gpu_Hal_Context_t* phost, bool enabled, uint8_t tag, int16_t x, int16_t y, const char* enabledLabel,
+                          const char* disabledLabel) {
   char labels[50];
   snprintf(labels, sizeof(labels), "%s\xFF%s", enabledLabel, disabledLabel);
 
-  int16_t toggleState = enabled ? 0 : 65535;
+  int16_t toggleState = !enabled ? 0 : 65535;
 
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   Gpu_CoCmd_BgColor(phost, 0x00A2E8);

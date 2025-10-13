@@ -31,6 +31,7 @@
 #define CONTROLLER_PROFILE 7
 #define CONTROLLER_PREVIEW 8
 #define CONTROLLER_DEBUG 9
+#define CONTROLLER_ADVANCED_SETTINGS 10
 
 // =============================================================================
 // UI TAG CONSTANTS - Main Screen (Ready, Run, Homing)
