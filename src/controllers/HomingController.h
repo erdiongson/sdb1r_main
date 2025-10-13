@@ -5,11 +5,10 @@
 class HomingController : public BaseController {
  private:
   enum {
-    STAGE_CLEAR,
     STAGE_HOME,
     STAGE_ERROR,
   };
-  int stage = STAGE_CLEAR;
+  int stage = STAGE_HOME;
 
  public:
   HomingController(ControllerParams params);

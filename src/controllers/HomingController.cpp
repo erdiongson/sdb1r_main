@@ -6,20 +6,13 @@ HomingController::HomingController(ControllerParams params) : BaseController(par
 void HomingController::onStart() {
   Logger::log(F("HomingController::on_start"));
 
-  // If the dispenser head is at the limit switches, clear them before
-  // proceeding with the homing process
-  Profile& profile = profile_manager.getCurrentProfile();
-  drawHomingScreen({ profile, { 0, 0, 0, 0 }, 0 });
-  dispenserHead.clearLimits();
+  // Start the homing process
+  dispenserHead.x().moveToMin();
+  dispenserHead.y().moveToMin();
+  dispenserHead.z().moveToMax();
 }
 
-void HomingController::onInteraction(const Interaction& interaction) {
-  if (interaction.key_pressed == TAG_CONTINUE) {
-    Profile& profile = profile_manager.getCurrentProfile();
-    drawHomingScreen({ profile, { 0, 0, 0, 0 }, 0 });
-    dispenserHead.clearLimits();
-  }
-}
+void HomingController::onInteraction(const Interaction& interaction) {}
 
 ControllerStepResult HomingController::onStep() {
   DispenserProcessResult result = dispenserHead.process();
@@ -32,17 +25,8 @@ ControllerStepResult HomingController::onStep() {
     return ControllerStepResult(false);
   }
 
-  if (stage == STAGE_CLEAR && result.steppers == AXIS_STATE_COMPLETE) {
-    Logger::log(F("Axis cleared 👍"));
-    dispenserHead.x().moveToMin();
-    dispenserHead.y().moveToMin();
-    dispenserHead.z().moveToMax();
-    stage = STAGE_HOME;
-    return ControllerStepResult(true);
-  }
-
   if (stage == STAGE_HOME && result.steppers == AXIS_STATE_COMPLETE) {
-    Logger::log(F("Axis homed 👍"));
+    Logger::log(F("Homing completed 👍"));
     startNextController(CONTROLLER_READY);
   }
 
