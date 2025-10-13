@@ -79,7 +79,7 @@ void RunController::startStage(Stage newStage) {
       this->stage = STAGE_ZERO;
       dispenserHead.x().moveToMax();
       dispenserHead.y().moveToMin();
-      dispenserHead.z().moveToMin();
+      dispenserHead.z().moveToMax();
       break;
 
     case STAGE_START_PRIME:
@@ -126,7 +126,7 @@ void RunController::startStage(Stage newStage) {
     case STAGE_RAISE_HEAD:
       Logger::log(F("STAGE: Raising head"));
       this->stage = STAGE_RAISE_HEAD;
-      dispenserHead.z().moveTo(0);
+      dispenserHead.z().moveToMax();
       break;
 
     default:
@@ -142,10 +142,7 @@ ControllerStepResult RunController::onStep() {
     return ControllerStepResult(true);
   }
 
-  MainScreenParams params = { profile,
-                              { (uint16_t)trayHandler.getCurrentRow(), (uint16_t)trayHandler.getCurrentColumn(),
-                                (uint16_t)trayHandler.getTubesLeft(), (uint16_t)trayHandler.getTubesDispensed() + 1 },
-                              0 };
+  MainScreenParams params = { profile, getRunStatus(), 0 };
 
   if (dispenserProcessResult.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
     Logger::log(F("MODE: Stepper error - limit switch triggered"));
@@ -207,11 +204,15 @@ void RunController::onInteraction(const Interaction& interaction) {
   }
 
   if (interaction.plc_message_type == MSG_PAUSE || interaction.key_pressed == TAG_PAUSE) {
-    if (paused) {
-      start();
-    } else {
-      pause();
-    }
+    pause();
+    drawPauseScreen({ profile, getRunStatus(), 0 });
+    return;
+  }
+
+  if (interaction.key_pressed == TAG_START) {
+    paused = false;
+    startStage(stage);
+    drawRunScreen({ profile, getRunStatus(), 0 });
     return;
   }
 }
@@ -221,16 +222,22 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
   switch (stage) {
     case STAGE_SET_VIB_LEVEL:
       if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING) break;
+      Logger::log("Vibration Level set, setting Vibration Duration");
       startStage(STAGE_SET_VIB_DURATION);
       break;
 
     case STAGE_SET_VIB_DURATION:
       if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING) break;
+      Logger::log("Vibration Duration set, moving to zero position");
       startStage(STAGE_ZERO);
       break;
 
     case STAGE_ZERO:
       if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
+      Logger::log("Zero position reached, starting prime");
+      dispenserHead.x().reset();
+      dispenserHead.y().reset();
+      dispenserHead.z().reset();
       cycle = 0;
       startStage(STAGE_START_PRIME);
       break;
@@ -241,6 +248,7 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
 
       // Check if priming should end
       if (cycle >= PRIME_DISPENSE_NUM) {
+        Logger::log("Prime completed, moving to first position");
         // Calculate the first position and move to it
         TrayHandler::Position firstPosition = trayHandler.reset();
         target_x =
@@ -250,6 +258,7 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
         target_y = (profile.tray_origin_y + ((firstPosition.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
         startStage(STAGE_MOVE);
       } else {
+        Logger::log("Prime not completed, starting next prime");
         startStage(STAGE_START_PRIME);
       }
       break;
@@ -257,11 +266,13 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
 
     case STAGE_MOVE:
       if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
+      Logger::log("Move completed, lowering head");
       startStage(STAGE_LOWER_HEAD);
       break;
 
     case STAGE_LOWER_HEAD: {
       if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
+      Logger::log("Head lowered, starting dispensing");
       cycle = 0;
       startStage(STAGE_START_DISPENSE);
       break;
@@ -273,9 +284,11 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
 
       // Check if dispensing should end
       if (cycle >= profile.cycles) {
+        Logger::log("Dispensing completed, raising head");
         dispenserHead.z().moveTo(0);
         startStage(STAGE_RAISE_HEAD);
       } else {
+        Logger::log("Dispensing not completed, starting next dispensing");
         startStage(STAGE_START_DISPENSE);
       }
       break;
@@ -288,6 +301,7 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
       Logger::log("Next position: " + String(result.position.x) + ", " + String(result.position.y));
 
       if (result.has_next) {
+        Logger::log("Moving to next position");
         Logger::log("Next position: " + String(result.position.x) + ", " + String(result.position.y));
 
         target_x = (profile.tray_origin_x +
@@ -297,18 +311,14 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
         target_y = (profile.tray_origin_y + ((result.position.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
 
         // Update Home_Screen
-        MainScreenParams params = { profile,
-                                    { (uint16_t)trayHandler.getCurrentRow(), (uint16_t)trayHandler.getCurrentColumn(),
-                                      (uint16_t)trayHandler.getTubesLeft(),
-                                      (uint16_t)trayHandler.getTubesDispensed() + 1 },
-                                    0 };
+        MainScreenParams params = { profile, getRunStatus(), 0 };
         drawRunScreen(params);
 
         cycle = 0;
         startStage(STAGE_MOVE);
       } else {
         Logger::log(F("MODE: Run complete"));
-        startNextController(CONTROLLER_READY);
+        startNextController(CONTROLLER_HOMING);
       }
       break;
     }
@@ -316,4 +326,9 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
     default:
       break;
   }
+}
+
+RunStatus RunController::getRunStatus() {
+  return { (uint16_t)trayHandler.getCurrentRow(), (uint16_t)trayHandler.getCurrentColumn(),
+           (uint16_t)trayHandler.getTubesLeft(), (uint16_t)trayHandler.getTubesDispensed() + 1 };
 }

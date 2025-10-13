@@ -2,6 +2,7 @@
 
 #include "BaseController.h"
 #include "../logic/TrayPositionHandler.h"
+#include "../views/MainScreen.h"
 #include "../../Config.h"
 
 class RunController : public BaseController {
@@ -34,6 +35,10 @@ class RunController : public BaseController {
   void pause();
   void stop();
   void start();
+  
+  // Prepares the current run status for display.
+  // @return RunStatus struct with current position and progress information.
+  RunStatus getRunStatus();
 
  public:
   RunController(ControllerParams params);
