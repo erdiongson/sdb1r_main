@@ -197,6 +197,15 @@ void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
       params.right_tag = 0;
       break;
 
+    case DIALOG_ERROR_DIMENSION:
+      params.title = "Dimension Error";
+      params.subtitle = "The parameters exceed the tray boundaries. Please ensure the values are correct.";
+      params.left_btn = "Continue";
+      params.right_btn = nullptr;
+      params.left_tag = TAG_CONTINUE;
+      params.right_tag = 0;
+      break;
+
     default:
       params.title = "Unknown Error";
       params.subtitle = "An unknown error occurred.";

@@ -210,6 +210,20 @@ void ProfileManager::readProfileEEPROM(int index) {
   checkProfile();
 }
 
+// Validates that the physical dimensions of the profile are feasible.
+// @return True if the dimensions are valid, false otherwise.
+bool ProfileManager::validatePhysicalDimensions(void) {
+  // Validate X-axis: check if tubes exceed tray boundary
+  if (currentProfile.tray_origin_x + (currentProfile.pitch_x * currentProfile.tube_no_x) > TRAY_X_MAX)
+    return false;
+
+  // Validate Y-axis: check if tubes exceed tray boundary
+  if (currentProfile.tray_origin_y + (currentProfile.pitch_y * currentProfile.tube_no_y) > TRAY_Y_MAX)
+    return false;
+
+  return true;
+}
+
 // Verifies the password by prompting the user for input.
 // @param phost GPU context for displaying the keyboard.
 // @return PasswordVerificationResult indicating success, incorrect, or cancelled.

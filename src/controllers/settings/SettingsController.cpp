@@ -1,6 +1,7 @@
 #include "SettingsController.h"
 #include "../../views/settings/SettingsScreen.h"
 #include "../../views/common/Keyboards.h"
+#include "../../views/common/Dialogs.h"
 #include "../../logic/TrayPositionHandler.h"
 #include "../../logic/SkipUtils.h"
 
@@ -23,34 +24,8 @@ void SettingsController::onInteraction(const Interaction& interaction) {
     case TAG_CONFIG_HOME:  // Home button
       Logger::log(F("Button Pressed: HOME"));
       {
-        char buf[PROFILE_NAME_MAX_LEN];
-        float maxval = 0;
-        bool error = false;
-
-        if (current_profile->tube_no_x == TUBES_X_MIN - 1)
-          maxval = TRAY_X_MAX - current_profile->tray_origin_x;
-        else
-          maxval = (TRAY_X_MAX - current_profile->tray_origin_x) / (current_profile->tube_no_x - 1);
-        roundOneDecimal(&maxval);
-        if (current_profile->pitch_x > maxval)
-          error = true;
-        else {
-          if (current_profile->tube_no_y == TUBES_Y_MIN - 1)
-            maxval = TRAY_Y_MAX - current_profile->tray_origin_y;
-          else
-            maxval = (TRAY_Y_MAX - current_profile->tray_origin_y) / (current_profile->tube_no_y - 1);
-          roundOneDecimal(&maxval);
-          if (current_profile->pitch_y > maxval) error = true;
-        }
-
-        if (error) {
-          strcpy(buf, current_profile->profile_name);
-          sprintf(current_profile->profile_name, "Error in entry");
-          drawSettingsScreen(phost, { *current_profile, 0 });
-          delay(ERROR_DISPLAY_DURATION_MS);
-          strcpy(current_profile->profile_name, buf);
-          drawSettingsScreen(phost, { *current_profile, 0 });
-          delay(ERROR_DISPLAY_DURATION_MS);
+        if (!profile_manager.validatePhysicalDimensions()) {
+          drawSettingsScreen(phost, { *current_profile, DIALOG_ERROR_DIMENSION });
         } else {
           startNextController(CONTROLLER_READY);
         }
@@ -64,14 +39,18 @@ void SettingsController::onInteraction(const Interaction& interaction) {
 
     case TAG_CONFIG_SAVE: {
       Logger::log("Button Pressed: SAVE");
-      uint8_t currentNum = profile_manager.getCurrentProfileNum();
-      profile_manager.writeCurIDEEPROM(currentNum);
-      profile_manager.writeProfileEEPROM(currentNum);
+      if (!profile_manager.validatePhysicalDimensions()) {
+        drawSettingsScreen(phost, { *current_profile, DIALOG_ERROR_DIMENSION });
+      } else {
+        uint8_t currentNum = profile_manager.getCurrentProfileNum();
+        profile_manager.writeCurIDEEPROM(currentNum);
+        profile_manager.writeProfileEEPROM(currentNum);
 
-      // Show profile saved dialog
-      drawSettingsScreen(phost, { *current_profile, DIALOG_PROFILE_SAVED });
-      delay(DIALOG_DISPLAY_DURATION_MS);
-      drawSettingsScreen(phost, { *current_profile, 0 });
+        // Show profile saved dialog
+        drawSettingsScreen(phost, { *current_profile, DIALOG_PROFILE_SAVED });
+        delay(DIALOG_DISPLAY_DURATION_MS);
+        drawSettingsScreen(phost, { *current_profile, 0 });
+      }
       break;
     }
 
@@ -272,6 +251,11 @@ void SettingsController::onInteraction(const Interaction& interaction) {
     case TAG_ADVANCED:
       Logger::log(F("Button Pressed: ADVANCED"));
       drawSkipScreen(phost, *current_profile);
+      break;
+
+    case TAG_CONTINUE:
+      Logger::log(F("Button Pressed: CONTINUE"));
+      drawSettingsScreen(phost, { *current_profile, 0 });
       break;
 
     default:

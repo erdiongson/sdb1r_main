@@ -197,6 +197,7 @@
 #define DIALOG_ERROR_PASSWORD_MISMATCH 9
 #define DIALOG_PASSWORD_CHANGED 10
 #define DIALOG_ERROR_WRONG_PASSWORD 11
+#define DIALOG_ERROR_DIMENSION 12
 
 // =============================================================================
 // ARRAY LIMITS

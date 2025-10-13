@@ -80,6 +80,10 @@ class ProfileManager {
   // Checks and validates profile parameters.
   void checkProfile(void);
 
+  // Validates that the physical dimensions of the profile are feasible.
+  // @return True if the dimensions are valid, false otherwise.
+  bool validatePhysicalDimensions(void);
+
   // Gets a reference to the current profile.
   // @return Reference to the current profile.
   Profile& getCurrentProfile(void);
