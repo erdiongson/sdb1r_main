@@ -3,6 +3,7 @@
 #include "Axis.h"
 #include "../../Config.h"
 #include "../serial/PicSerial.h"
+#include "../Utils.h"
 
 // Struct for dispenser process result containing state and error information.
 struct DispenserProcessResult {
@@ -81,18 +82,24 @@ class DispenserHead {
     // Process stepper motors
     int x_result = this->x_axis.onStep();
     if (x_result == AXIS_STATE_RUNNING) return DispenserProcessResult(AXIS_STATE_RUNNING, DISPENSER_STATE_BLOCKED);
-    if (x_result == AXIS_STATE_ERROR_LIMIT_SWITCH)
+    if (x_result == AXIS_STATE_ERROR_LIMIT_SWITCH) {
+      Logger::log(F("X axis limit switch triggered unexpectedly"));
       return DispenserProcessResult(AXIS_STATE_ERROR_LIMIT_SWITCH, DISPENSER_STATE_BLOCKED);
+    }
 
     int y_result = this->y_axis.onStep();
     if (y_result == AXIS_STATE_RUNNING) return DispenserProcessResult(AXIS_STATE_RUNNING, DISPENSER_STATE_BLOCKED);
-    if (y_result == AXIS_STATE_ERROR_LIMIT_SWITCH)
+    if (y_result == AXIS_STATE_ERROR_LIMIT_SWITCH) {
+      Logger::log(F("Y axis limit switch triggered unexpectedly"));
       return DispenserProcessResult(AXIS_STATE_ERROR_LIMIT_SWITCH, DISPENSER_STATE_BLOCKED);
+    }
 
     int z_result = this->z_axis.onStep();
     if (z_result == AXIS_STATE_RUNNING) return DispenserProcessResult(AXIS_STATE_RUNNING, DISPENSER_STATE_BLOCKED);
-    if (z_result == AXIS_STATE_ERROR_LIMIT_SWITCH)
+    if (z_result == AXIS_STATE_ERROR_LIMIT_SWITCH) {
+      Logger::log(F("Z axis limit switch triggered unexpectedly"));
       return DispenserProcessResult(AXIS_STATE_ERROR_LIMIT_SWITCH, DISPENSER_STATE_BLOCKED);
+    }
 
     // If not expecting any dispenser response, skip processing
     if (dispensing_state == DISPENSER_STATE_IDLING)
@@ -139,7 +146,12 @@ class DispenserHead {
   void clearLimits() {
     if (x_axis.isAtMin()) x_axis.moveBy(STEPS_PER_UNIT_X * 10);
     if (y_axis.isAtMin()) y_axis.moveBy(STEPS_PER_UNIT_Y * 10);
-    if (z_axis.isAtMin()) z_axis.moveBy(STEPS_PER_UNIT_Z * 10);
+    bool zAtMax = z_axis.isAtMax();
+    Logger::log("Z is at max already?" + String(zAtMax));
+    if (zAtMax) {
+      Logger::log("Clearing Z");
+      z_axis.moveBy(-STEPS_PER_UNIT_Z * 10);
+    }
   }
 
  private:
