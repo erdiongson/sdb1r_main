@@ -62,16 +62,6 @@
 #define STEPS_PER_UNIT_Z 390L
 
 // =============================================================================
-// TUBE ARRAY DIMENSIONS
-// =============================================================================
-// VERSION SPECIFIC: Change based on machine size
-// (L) Large 300x300: MAX_TUBES_X = 33, MAX_TUBES_Y = 33
-// (S) Small 200x300: MAX_TUBES_X = 20, MAX_TUBES_Y = 27
-#define MAX_TUBES_X 42
-#define MAX_TUBES_Y 33
-#define MAX_ZDIP 2000  // 20cm
-
-// =============================================================================
 // SECURITY
 // =============================================================================
 #define SUPER_PASSWORD "superXQ"
@@ -97,36 +87,34 @@
 #define RESERVED_PROFILE_SIZE 300
 #define PROFILE_START_ADDR 0
 
+// VERSION SPECIFIC: Change based on machine size
+// (L) Large 300x300: MAX_TUBES_X = 33, MAX_TUBES_Y = 33
+// (S) Small 200x300: MAX_TUBES_X = 20, MAX_TUBES_Y = 27
+#define MAX_TUBES_X 42
+#define MAX_TUBES_Y 33
+
 #define PROFILE_NAME_MAX_LEN 30
 #define PASSWORD_MAX_LEN 30
 #define KEYPAD_MAX_LEN 6
 #define ROW_COL_MAX_LEN 45
 
-// Change MAX_BUTTONS_X and MAX_BUTTONS_Y depending on the use;
-// for (L) 300x300 - MAX_BUTTONS_X 33; MAX_BUTTONS_Y 33
-// for (S) 200x300 - MAX_BUTTONS_X 20; MAX_BUTTONS_Y 27
-#define MAX_BUTTONS_X 42  // try054 33// Columns - small = 20
-#define MAX_BUTTONS_Y 33  // Rows   - small = 27
-#define MAXORGX 999       // v204 99.9
-#define MAXORGY 999       // v204 99.9
+#define MAX_ORG_X 999
+#define MAX_ORG_Y 999
 
-#define MINZDIP 0
-#define MAXZDIP 999
+#define MIN_Z_DIP 0
+#define MAX_Z_DIP 999
 
-#define MINNUMX 1
-#define MINNUMY 1
-// Change MAXNUMX and MAXNUMY depending on the use;
-// for (L) 300x300 - MAXNUMX 33; MAXNUMY 33
-// for (S) 200x300 - MAXNUMX 20; MAXNUMY 27
-#define MAXNUMX 42  // try054 33
-#define MAXNUMY 33
+#define MIN_NUM_X 1
+#define MIN_NUM_Y 1
 
-#define MINPITCHX 9    // v205
-#define MINPITCHY 9    // v205
-#define MAXPITCHX 999  // v204 99.9
-#define MAXPITCHY 999  // v204 99.9
-#define MAXCYCLE 99
-#define MINCYCLE 1
+#define MIN_PITCH_X 9
+#define MAX_PITCH_X 999
+
+#define MIN_PITCH_Y 9
+#define MAX_PITCH_Y 999
+
+#define MIN_CYCLE 1
+#define MAX_CYCLE 99
 
 // =============================================================================
 // FIRMWARE VERSION

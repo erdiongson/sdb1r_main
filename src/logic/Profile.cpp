@@ -31,8 +31,8 @@ void ProfileManager::preLoadEEPROM(void) {
     sprintf(buf, "profile %d", i + 1);
     strcpy(currentProfile.profile_name, buf);
 
-    currentProfile.tube_no_x = MAX_BUTTONS_X;
-    currentProfile.tube_no_y = MAX_BUTTONS_Y;
+    currentProfile.tube_no_x = MAX_TUBES_X;
+    currentProfile.tube_no_y = MAX_TUBES_Y;
     currentProfile.pitch_x = 9;
     currentProfile.pitch_y = 9;
     currentProfile.tray_origin_x = 10;
@@ -54,22 +54,22 @@ void ProfileManager::preLoadEEPROM(void) {
 }
 
 void ProfileManager::checkProfile(void) {
-  if (currentProfile.cycles > MAXCYCLE) currentProfile.cycles = MAXCYCLE;
+  if (currentProfile.cycles > MAX_CYCLE) currentProfile.cycles = MAX_CYCLE;
   if (currentProfile.cycles < 0) currentProfile.cycles = 0;
-  if (currentProfile.pitch_x > MAXPITCHX) currentProfile.pitch_x = MAXPITCHX;
+  if (currentProfile.pitch_x > MAX_PITCH_X) currentProfile.pitch_x = MAX_PITCH_X;
   if (currentProfile.pitch_x < 0) currentProfile.pitch_x = 0;
-  if (currentProfile.pitch_y > MAXPITCHY) currentProfile.pitch_y = MAXPITCHY;
+  if (currentProfile.pitch_y > MAX_PITCH_Y) currentProfile.pitch_y = MAX_PITCH_Y;
   if (currentProfile.pitch_y < 0) currentProfile.pitch_y = 0;
-  if (currentProfile.tray_origin_x > MAXORGX) currentProfile.tray_origin_x = MAXORGX;
+  if (currentProfile.tray_origin_x > MAX_ORG_X) currentProfile.tray_origin_x = MAX_ORG_X;
   if (currentProfile.tray_origin_x < 0) currentProfile.tray_origin_x = 0;
-  if (currentProfile.tray_origin_y > MAXORGY) currentProfile.tray_origin_y = MAXORGY;
+  if (currentProfile.tray_origin_y > MAX_ORG_Y) currentProfile.tray_origin_y = MAX_ORG_Y;
   if (currentProfile.tray_origin_y < 0) currentProfile.tray_origin_y = 0;
   if (currentProfile.tube_no_x > MAX_TUBES_X) currentProfile.tube_no_x = MAX_TUBES_X;
   if (currentProfile.tube_no_x < 0) currentProfile.tube_no_x = 0;
   if (currentProfile.tube_no_y > MAX_TUBES_Y) currentProfile.tube_no_y = MAX_TUBES_Y;
   if (currentProfile.tube_no_y < 0) currentProfile.tube_no_y = 0;
   if (currentProfile.z_dip < 0) currentProfile.z_dip = 0;
-  if (currentProfile.z_dip > MAX_ZDIP) currentProfile.z_dip = MAX_ZDIP;
+  if (currentProfile.z_dip > MAX_Z_DIP) currentProfile.z_dip = MAX_Z_DIP;
 }
 
 uint8_t ProfileManager::loadProfile(void) {
@@ -78,15 +78,15 @@ uint8_t ProfileManager::loadProfile(void) {
     this->currentProfileIndex = 0;  // if corrcupt data from eeprom, set id=0
 
   readProfileEEPROM(this->currentProfileIndex);  // reread as it is not profile id 0
-  if (currentProfile.cycles > MAXCYCLE) currentProfile.cycles = MAXCYCLE;
-  if (currentProfile.pitch_x > MAXPITCHX) currentProfile.pitch_x = MAXPITCHX;
-  if (currentProfile.pitch_y > MAXPITCHY) currentProfile.pitch_y = MAXPITCHY;
-  if (currentProfile.tray_origin_x > MAXORGX) currentProfile.tray_origin_x = MAXORGX;
-  if (currentProfile.tray_origin_y > MAXORGY) currentProfile.tray_origin_y = MAXORGY;
+  if (currentProfile.cycles > MAX_CYCLE) currentProfile.cycles = MAX_CYCLE;
+  if (currentProfile.pitch_x > MAX_PITCH_X) currentProfile.pitch_x = MAX_PITCH_X;
+  if (currentProfile.pitch_y > MAX_PITCH_Y) currentProfile.pitch_y = MAX_PITCH_Y;
+  if (currentProfile.tray_origin_x > MAX_ORG_X) currentProfile.tray_origin_x = MAX_ORG_X;
+  if (currentProfile.tray_origin_y > MAX_ORG_Y) currentProfile.tray_origin_y = MAX_ORG_Y;
   if (currentProfile.tube_no_x > MAX_TUBES_X) currentProfile.tube_no_x = MAX_TUBES_X;
   if (currentProfile.tube_no_y > MAX_TUBES_Y) currentProfile.tube_no_y = MAX_TUBES_Y;
   if (currentProfile.z_dip < 0) currentProfile.z_dip = 0;
-  if (currentProfile.z_dip > MAX_ZDIP) currentProfile.z_dip = MAX_ZDIP;
+  if (currentProfile.z_dip > MAX_Z_DIP) currentProfile.z_dip = MAX_Z_DIP;
 
   return this->currentProfileIndex;
 }

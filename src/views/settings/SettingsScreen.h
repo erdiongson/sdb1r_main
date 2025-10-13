@@ -122,7 +122,7 @@ void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams params) {
   // Password Enable/Disable
   Toggle_Button(phost, profile.password_enabled, TAG_PASSWORD_ENABLED, 242, 180, "On", "Off");
 
-  if (profile.tube_no_x > MAXNUMX)
+  if (profile.tube_no_x > MAX_TUBES_X)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
   else
     App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));  // Change the color back to black
@@ -133,7 +133,7 @@ void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams params) {
 
   // v204
   // Text - Tube Number Column
-  if (profile.tube_no_y > MAXNUMY)
+  if (profile.tube_no_y > MAX_TUBES_Y)
     App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
   else
     App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));  // Change the color back to black

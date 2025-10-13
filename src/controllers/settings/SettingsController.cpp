@@ -94,10 +94,10 @@ void SettingsController::onInteraction(const Interaction& interaction) {
     case TAG_CONFIG_TUBES_X:  // Number of Columns
     {
       float maxval = (int)((MAXXMM - current_profile->tray_origin_x) / current_profile->pitch_x) + 1;
-      if (maxval > MAXNUMX) maxval = MAXNUMX;
+      if (maxval > MAX_TUBES_X) maxval = MAX_TUBES_X;
 
       int oldTubeNoX = current_profile->tube_no_x;
-      current_profile->tube_no_x = getKeypadValue(&host, current_profile->tube_no_x, MINNUMX, MAXNUMX, FALSE);
+      current_profile->tube_no_x = getKeypadValue(&host, current_profile->tube_no_x, MIN_NUM_X, MAX_TUBES_X, FALSE);
 
       // If rows decreased, clean skip strings to remove out-of-bounds positions
       if (current_profile->tube_no_x < oldTubeNoX) {
@@ -126,9 +126,9 @@ void SettingsController::onInteraction(const Interaction& interaction) {
     {
       float maxval = (int)((MAXYMM - current_profile->tray_origin_y) / current_profile->pitch_y) + 1;
 
-      if (maxval > MAXNUMY) maxval = MAXNUMY;
+      if (maxval > MAX_TUBES_Y) maxval = MAX_TUBES_Y;
       int oldTubeNoY = current_profile->tube_no_y;
-      current_profile->tube_no_y = getKeypadValue(&host, current_profile->tube_no_y, MINNUMY, MAXNUMY, FALSE);
+      current_profile->tube_no_y = getKeypadValue(&host, current_profile->tube_no_y, MIN_NUM_Y, MAX_TUBES_Y, FALSE);
 
       // If columns decreased, clean skip strings to remove out-of-bounds positions
       if (current_profile->tube_no_y < oldTubeNoY) {
@@ -161,8 +161,8 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       else
         maxval = (MAXXMM - current_profile->tray_origin_x) / (current_profile->tube_no_x - 1);
       roundOneDecimal(&maxval);
-      if (maxval > MAXPITCHX) maxval = MAXPITCHX;
-      current_profile->pitch_x = getKeypadValue(&host, current_profile->pitch_x, MINPITCHX, MAXPITCHX, TRUE);
+      if (maxval > MAX_PITCH_X) maxval = MAX_PITCH_X;
+      current_profile->pitch_x = getKeypadValue(&host, current_profile->pitch_x, MIN_PITCH_X, MAX_PITCH_X, TRUE);
       drawSettingsScreen(phost, { *current_profile, 0 });
     } break;
 
@@ -174,8 +174,8 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       else
         maxval = (MAXYMM - current_profile->tray_origin_y) / (current_profile->tube_no_y - 1);
       roundOneDecimal(&maxval);
-      if (maxval > MAXPITCHY) maxval = MAXPITCHY;
-      current_profile->pitch_y = getKeypadValue(&host, current_profile->pitch_y, MINPITCHY, MAXPITCHY, TRUE);
+      if (maxval > MAX_PITCH_Y) maxval = MAX_PITCH_Y;
+      current_profile->pitch_y = getKeypadValue(&host, current_profile->pitch_y, MIN_PITCH_Y, MAX_PITCH_Y, TRUE);
       drawSettingsScreen(phost, { *current_profile, 0 });
     } break;
 
@@ -187,9 +187,9 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       else
         maxval = MAXXMM - (current_profile->pitch_x * (current_profile->tube_no_x - 1));
       roundOneDecimal(&maxval);
-      if (maxval > MAXORGX) maxval = MAXORGX;
+      if (maxval > MAX_ORG_X) maxval = MAX_ORG_X;
 
-      current_profile->tray_origin_x = getKeypadValue(&host, current_profile->tray_origin_x, 0, MAXORGX, TRUE);
+      current_profile->tray_origin_x = getKeypadValue(&host, current_profile->tray_origin_x, 0, MAX_ORG_X, TRUE);
       drawSettingsScreen(phost, { *current_profile, 0 });
     } break;
 
@@ -201,19 +201,19 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       else
         maxval = MAXYMM - (current_profile->pitch_y * (current_profile->tube_no_y - 1));
       roundOneDecimal(&maxval);
-      if (maxval > MAXORGY) maxval = MAXORGY;
-      current_profile->tray_origin_y = getKeypadValue(&host, current_profile->tray_origin_y, 0, MAXORGY, TRUE);
+      if (maxval > MAX_ORG_Y) maxval = MAX_ORG_Y;
+      current_profile->tray_origin_y = getKeypadValue(&host, current_profile->tray_origin_y, 0, MAX_ORG_Y, TRUE);
       drawSettingsScreen(phost, { *current_profile, 0 });
     } break;
 
     case TAG_NUM_CYCLE:
-      current_profile->cycles = getKeypadValue(phost, current_profile->cycles, MINCYCLE, MAXCYCLE, FALSE);
+      current_profile->cycles = getKeypadValue(phost, current_profile->cycles, MIN_CYCLE, MAX_CYCLE, FALSE);
       drawSettingsScreen(phost, { *current_profile, 0 });
       break;
 
     case TAG_Z_DIP:
       Logger::log(F("Incrementing Z Dip"));
-      current_profile->z_dip = getKeypadValue(phost, current_profile->z_dip, MINZDIP, MAXZDIP, TRUE);
+      current_profile->z_dip = getKeypadValue(phost, current_profile->z_dip, MIN_Z_DIP, MAX_Z_DIP, TRUE);
       drawSettingsScreen(phost, { *current_profile, 0 });
       break;
 
