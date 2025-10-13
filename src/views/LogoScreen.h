@@ -4,10 +4,18 @@
 #include "../gpu/App_Common.h"
 #include "common/Dialogs.h"
 
-// Draws the logo screen with optional error dialog.
+// Parameters for Logo Screen display.
+struct LogoScreenParams {
+  int dialog_code;
+  const char* status_message;
+};
+
+// Draws the logo screen with optional error dialog and status message.
 // @param phost GPU context.
-// @param dialog_code Optional error code to display dialog (0 for no error).
-void drawLogoScreen(Gpu_Hal_Context_t* phost, int dialog_code) {
+// @param params Parameters containing dialog code and status message.
+inline void drawLogoScreen(Gpu_Hal_Context_t* phost, const LogoScreenParams& params) {
+  char buf[100];
+
   Gpu_CoCmd_FlashFast(phost, 0);
   Gpu_CoCmd_Dlstart(phost);
 
@@ -24,12 +32,13 @@ void drawLogoScreen(Gpu_Hal_Context_t* phost, int dialog_code) {
   App_WrCoCmd_Buffer(phost, VERTEX2F(1856, 1152));
   App_WrCoCmd_Buffer(phost, END());
 
-  // Draw firmware version at bottom of screen
+  // Draw firmware version and status message at bottom of screen
   App_WrCoCmd_Buffer(phost, COLOR_RGB(40, 40, 40));
-  Gpu_CoCmd_Text(phost, 160, 220, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, "v" FWVER);
+  sprintf(buf, "v%s - %s", FWVER, params.status_message);
+  Gpu_CoCmd_Text(phost, 160, 220, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 
-  if (dialog_code != 0) {
-    drawDialog(phost, dialog_code);
+  if (params.dialog_code != 0) {
+    drawDialog(phost, params.dialog_code);
   }
 
   Disp_End(phost);

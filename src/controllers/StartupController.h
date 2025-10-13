@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaseController.h"
+#include "../views/LogoScreen.h"
 
 class StartupController : public BaseController {
  private:
@@ -12,6 +13,7 @@ class StartupController : public BaseController {
   };
   int stage = STAGE_HANDSHAKE;
   DispenserHead& dispenserHead;
+  LogoScreenParams logoParams = {0, ""};
 
  public:
   StartupController(ControllerParams params);
