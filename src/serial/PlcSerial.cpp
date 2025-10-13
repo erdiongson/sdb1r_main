@@ -42,6 +42,9 @@ PLCMessage PlcSerial::process() {
     result.data[i] = response[i];
   }
 
+  // Send acknowledgement (mirror the received message back to PLC)
+  Serial3.write(response, PLC_MESSAGE_LENGTH);
+
   // Store data value
   result.data_value = response[2];
 
