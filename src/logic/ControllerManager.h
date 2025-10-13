@@ -4,6 +4,7 @@
 #include "../controllers/ReadyController.h"
 #include "../controllers/RunController.h"
 #include "../controllers/StartupController.h"
+#include "../controllers/HomingController.h"
 #include "../controllers/debug/DebugController.h"
 #include "../controllers/debug/MoveTestController.h"
 #include "../controllers/debug/DispenseTestController.h"
@@ -80,6 +81,9 @@ class ControllerManager {
     switch (nextControllerType) {
       case CONTROLLER_READY:
         controller = new (controllerBuffer.data) ReadyController(params);
+        break;
+      case CONTROLLER_HOMING:
+        controller = new (controllerBuffer.data) HomingController(params);
         break;
       case CONTROLLER_RUN:
         controller = new (controllerBuffer.data) RunController(params);
