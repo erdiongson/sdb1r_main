@@ -7,7 +7,7 @@ void StartupController::onStart() {
   Logger::log(F("StartupController::on_start"));
 
   // Load profile from EEPROM
-  Logger::log("Loading profile..");
+  Logger::log(F("Loading profile.."));
   profile_manager.loadProfile();
 
   drawLogoScreen(phost, 0);

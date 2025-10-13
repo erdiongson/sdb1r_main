@@ -38,7 +38,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       break;
 
     case TAG_CONFIG_SAVE: {
-      Logger::log("Button Pressed: SAVE");
+      Logger::log(F("Button Pressed: SAVE"));
       if (!profile_manager.validatePhysicalDimensions()) {
         drawSettingsScreen(phost, { *current_profile, DIALOG_ERROR_DIMENSION });
       } else {

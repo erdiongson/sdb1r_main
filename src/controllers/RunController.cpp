@@ -231,19 +231,19 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
   switch (stage) {
     case STAGE_SET_VIB_LEVEL:
       if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING) break;
-      Logger::log("Vibration Level set, setting Vibration Duration");
+      Logger::log(F("Vibration Level set, setting Vibration Duration"));
       startStage(STAGE_SET_VIB_DURATION);
       break;
 
     case STAGE_SET_VIB_DURATION:
       if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING) break;
-      Logger::log("Vibration Duration set, moving to zero position");
+      Logger::log(F("Vibration Duration set, moving to zero position"));
       startStage(STAGE_ZERO);
       break;
 
     case STAGE_ZERO:
       if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
-      Logger::log("Zero position reached, starting prime");
+      Logger::log(F("Zero position reached, starting prime"));
       dispenserHead.x().reset();
       dispenserHead.y().reset();
       dispenserHead.z().reset();
@@ -257,7 +257,7 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
 
       // Check if priming should end
       if (cycle >= PRIME_DISPENSE_NUM) {
-        Logger::log("Prime completed, moving to first position");
+        Logger::log(F("Prime completed, moving to first position"));
         // Calculate the first position and move to it
         TrayHandler::Position firstPosition = trayHandler.reset();
         target_x =
@@ -267,7 +267,7 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
         target_y = (profile.tray_origin_y + ((firstPosition.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
         startStage(STAGE_MOVE);
       } else {
-        Logger::log("Prime not completed, starting next prime");
+        Logger::log(F("Prime not completed, starting next prime"));
         startStage(STAGE_START_PRIME);
       }
       break;
@@ -275,13 +275,13 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
 
     case STAGE_MOVE:
       if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
-      Logger::log("Move completed, lowering head");
+      Logger::log(F("Move completed, lowering head"));
       startStage(STAGE_LOWER_HEAD);
       break;
 
     case STAGE_LOWER_HEAD: {
       if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
-      Logger::log("Head lowered, starting dispensing");
+      Logger::log(F("Head lowered, starting dispensing"));
       cycle = 0;
       startStage(STAGE_START_DISPENSE);
       break;
@@ -293,11 +293,11 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
 
       // Check if dispensing should end
       if (cycle >= profile.cycles) {
-        Logger::log("Dispensing completed, raising head");
+        Logger::log(F("Dispensing completed, raising head"));
         dispenserHead.z().moveTo(0);
         startStage(STAGE_RAISE_HEAD);
       } else {
-        Logger::log("Dispensing not completed, starting next dispensing");
+        Logger::log(F("Dispensing not completed, starting next dispensing"));
         startStage(STAGE_START_DISPENSE);
       }
       break;
@@ -310,7 +310,7 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
       Logger::log("Next position: " + String(result.position.x) + ", " + String(result.position.y));
 
       if (result.has_next) {
-        Logger::log("Moving to next position");
+        Logger::log(F("Moving to next position"));
         Logger::log("Next position: " + String(result.position.x) + ", " + String(result.position.y));
 
         target_x = (profile.tray_origin_x +

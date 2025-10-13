@@ -69,8 +69,8 @@ void setup() {
 
   Logger::log("Controller buffer size: ", String(ControllerManager::getMaxControllerSize()) + " bytes");
 
-  Logger::log("Starting first controller..");
   startNextController(CONTROLLER_STARTUP);
+  Logger::log(F("Starting first controller.."));
 }
 
 Interaction interaction;
