@@ -17,7 +17,7 @@ void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams params) {
   int16_t vibstatus;
   int16_t passwordStatus;
   int16_t vibtime_status;
-  char buf[PROFILE_NAME_MAX_LEN];
+  char buf[30];
   float maxval = 0;  // v204
 
   Gpu_CoCmd_FlashFast(phost, 0);
@@ -282,9 +282,9 @@ void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams params) {
 }
 
 void drawSkipScreen(Gpu_Hal_Context_t* phost, Profile& profile) {
-  char rowBuf[ROW_COL_MAX_LEN];        // a buffer for skip row entry
-  char colBuf[ROW_COL_MAX_LEN];        // a buffer for skip column entry
-  char singlePosBuf[ROW_COL_MAX_LEN];  // a buffer for skip single position entry
+  char rowBuf[SKIP_STRING_LEN];        // a buffer for skip row entry
+  char colBuf[SKIP_STRING_LEN];        // a buffer for skip column entry
+  char singlePosBuf[SKIP_STRING_LEN];  // a buffer for skip single position entry
   uint8_t keypressed;
 
   Gpu_CoCmd_FlashFast(phost, 0);

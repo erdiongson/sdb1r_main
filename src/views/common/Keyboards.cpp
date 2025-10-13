@@ -16,7 +16,7 @@ struct {
 
 void drawKeyboard(Gpu_Hal_Context_t* phost, uint8_t keypressed, char* displaytext, char* displaytitle, bool numlock,
                   bool caplock, bool errorcode) {
-  char buf[PROFILE_NAME_MAX_LEN + 8];
+  char buf[KEYBOARD_MAX_LEN + 8];
 
   // Display List start
   Gpu_CoCmd_Dlstart(phost);
@@ -108,7 +108,7 @@ void drawKeyboard(Gpu_Hal_Context_t* phost, uint8_t keypressed, char* displaytex
 void getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* curtitle, bool password) {
   delay(KEYBOARD_TRANSITION_DELAY_MS);  // Added to create smooth transition between screen
   uint8_t font = 27;
-  char buf[PROFILE_NAME_MAX_LEN] = "";
+  char buf[KEYBOARD_MAX_LEN] = "";
   uint8_t curpos = 0;
 
   bool numlock = false;
@@ -186,7 +186,7 @@ void getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* curtitle, b
 }
 
 void roundOneDecimal(float* x) {
-  char buf[PROFILE_NAME_MAX_LEN];
+  char buf[KEYPAD_MAX_LEN];
 
   dtostrf(*x, 3, 1, buf);
   *x = atof(buf);

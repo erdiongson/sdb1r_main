@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../../Config.h"
 #include "../BaseController.h"
 
 class MoveTestController : public BaseController {
@@ -13,7 +14,7 @@ class MoveTestController : public BaseController {
   int getModeType() const override;
 
  private:
-  float xy_distance_cm = 5.0;  // XY movement distance in cm
-  float z_distance_cm = 3.0;   // Z movement distance in cm
-  int bounce_count = 0;        // Number of times to bounce back
+  float xy_distance_cm = DEFAULT_XY_DISTANCE_CM;  // XY movement distance in cm
+  float z_distance_cm = DEFAULT_Z_DISTANCE_CM;    // Z movement distance in cm
+  int bounce_count = DEFAULT_BOUNCE_COUNT;        // Number of times to bounce back
 };

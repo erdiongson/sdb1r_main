@@ -110,8 +110,7 @@
 
 #define PROFILE_NAME_MAX_LEN 30
 #define PASSWORD_MAX_LEN 30
-#define KEYPAD_MAX_LEN 6
-#define ROW_COL_MAX_LEN 45
+#define SKIP_STRING_LEN 45
 
 #define ORIGIN_DEFAULT 10
 #define ORIGIN_X_MAX 999
@@ -134,12 +133,15 @@
 #define STAGGERED_OFFSET_FACTOR 0.5
 
 // =============================================================================
-// UI TIMING SETTINGS (in milliseconds)
+// UI TIMING SETTINGS
 // =============================================================================
 #define DIALOG_DISPLAY_DURATION_MS 2000
 #define ERROR_DISPLAY_DURATION_MS 3000
 #define KEYBOARD_TRANSITION_DELAY_MS 200
 #define KEYBOARD_ERROR_DISPLAY_MS 1000
+
+#define KEYPAD_MAX_LEN 6
+#define KEYBOARD_MAX_LEN 30
 
 // =============================================================================
 // MOVEMENT TEST SETTINGS
@@ -149,9 +151,9 @@
 #define MIN_MOVE_DISTANCE_CM 0
 #define MAX_BOUNCE_COUNT 9999
 
-// =============================================================================
-// CALCULATION CONSTANTS
-// =============================================================================
+#define DEFAULT_XY_DISTANCE_CM 5.0
+#define DEFAULT_Z_DISTANCE_CM 3.0
+#define DEFAULT_BOUNCE_COUNT 0
 
 // =============================================================================
 // FIRMWARE VERSION

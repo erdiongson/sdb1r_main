@@ -106,16 +106,16 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         // Clean skip rows
         SkipUtils::CleanResult rowResult = SkipUtils::clean(current_profile->skip_row, SkipUtils::ROW, dimensions);
         if (rowResult.was_cleaned) {
-          strncpy(current_profile->skip_row, rowResult.cleaned, ROW_COL_MAX_LEN - 1);
-          current_profile->skip_row[ROW_COL_MAX_LEN - 1] = '\0';
+          strncpy(current_profile->skip_row, rowResult.cleaned, SKIP_STRING_LEN - 1);
+          current_profile->skip_row[SKIP_STRING_LEN - 1] = '\0';
         }
 
         // Clean skip individual positions
         SkipUtils::CleanResult posResult =
             SkipUtils::clean(current_profile->skip_single_pos, SkipUtils::INDIVIDUAL, dimensions);
         if (posResult.was_cleaned) {
-          strncpy(current_profile->skip_single_pos, posResult.cleaned, ROW_COL_MAX_LEN - 1);
-          current_profile->skip_single_pos[ROW_COL_MAX_LEN - 1] = '\0';
+          strncpy(current_profile->skip_single_pos, posResult.cleaned, SKIP_STRING_LEN - 1);
+          current_profile->skip_single_pos[SKIP_STRING_LEN - 1] = '\0';
         }
       }
 
@@ -137,16 +137,16 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         // Clean skip columns
         SkipUtils::CleanResult colResult = SkipUtils::clean(current_profile->skip_col, SkipUtils::COLUMN, dimensions);
         if (colResult.was_cleaned) {
-          strncpy(current_profile->skip_col, colResult.cleaned, ROW_COL_MAX_LEN - 1);
-          current_profile->skip_col[ROW_COL_MAX_LEN - 1] = '\0';
+          strncpy(current_profile->skip_col, colResult.cleaned, SKIP_STRING_LEN - 1);
+          current_profile->skip_col[SKIP_STRING_LEN - 1] = '\0';
         }
 
         // Clean skip individual positions
         SkipUtils::CleanResult posResult =
             SkipUtils::clean(current_profile->skip_single_pos, SkipUtils::INDIVIDUAL, dimensions);
         if (posResult.was_cleaned) {
-          strncpy(current_profile->skip_single_pos, posResult.cleaned, ROW_COL_MAX_LEN - 1);
-          current_profile->skip_single_pos[ROW_COL_MAX_LEN - 1] = '\0';
+          strncpy(current_profile->skip_single_pos, posResult.cleaned, SKIP_STRING_LEN - 1);
+          current_profile->skip_single_pos[SKIP_STRING_LEN - 1] = '\0';
         }
       }
 
@@ -313,8 +313,8 @@ void SettingsController::editSkipColumn(Gpu_Hal_Context_t* phost) {
 
     // If input was cleaned, update and loop again
     if (result.was_cleaned) {
-      strncpy(current_profile->skip_col, result.cleaned, ROW_COL_MAX_LEN - 1);
-      current_profile->skip_col[ROW_COL_MAX_LEN - 1] = '\0';
+      strncpy(current_profile->skip_col, result.cleaned, SKIP_STRING_LEN - 1);
+      current_profile->skip_col[SKIP_STRING_LEN - 1] = '\0';
       Logger::log(F("Input was cleaned, showing keyboard again"));
     } else {
       // Input is clean, exit loop
@@ -336,8 +336,8 @@ void SettingsController::editSkipRow(Gpu_Hal_Context_t* phost) {
 
     // If input was cleaned, update and loop again
     if (result.was_cleaned) {
-      strncpy(current_profile->skip_row, result.cleaned, ROW_COL_MAX_LEN - 1);
-      current_profile->skip_row[ROW_COL_MAX_LEN - 1] = '\0';
+      strncpy(current_profile->skip_row, result.cleaned, SKIP_STRING_LEN - 1);
+      current_profile->skip_row[SKIP_STRING_LEN - 1] = '\0';
       Logger::log(F("Input was cleaned, showing keyboard again"));
     } else {
       // Input is clean, exit loop
@@ -363,8 +363,8 @@ void SettingsController::editSkipIndividual(Gpu_Hal_Context_t* phost) {
     // If input was cleaned, update and loop again
     if (result.was_cleaned) {
       Logger::log(F("Actually cleaned!"));
-      strncpy(current_profile->skip_single_pos, result.cleaned, ROW_COL_MAX_LEN - 1);
-      current_profile->skip_single_pos[ROW_COL_MAX_LEN - 1] = '\0';
+      strncpy(current_profile->skip_single_pos, result.cleaned, SKIP_STRING_LEN - 1);
+      current_profile->skip_single_pos[SKIP_STRING_LEN - 1] = '\0';
       Logger::log(F("Input was cleaned, showing keyboard again"));
     } else {
       // Input is clean, exit loop

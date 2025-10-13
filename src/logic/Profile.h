@@ -22,9 +22,9 @@ typedef struct {
   int16_t password_enabled = 0;
   int16_t vibration_duration = 2;
   float z_dip = 0.0;
-  char skip_col[ROW_COL_MAX_LEN];
-  char skip_row[ROW_COL_MAX_LEN];
-  char skip_single_pos[ROW_COL_MAX_LEN];
+  char skip_col[SKIP_STRING_LEN];
+  char skip_row[SKIP_STRING_LEN];
+  char skip_single_pos[SKIP_STRING_LEN];
   bool staggered = false;
 } Profile;
 

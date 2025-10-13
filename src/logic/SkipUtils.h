@@ -52,7 +52,7 @@ class SkipUtils {
   enum SkipType { ROW, COLUMN, INDIVIDUAL };
 
   struct CleanResult {
-    char cleaned[ROW_COL_MAX_LEN];
+    char cleaned[SKIP_STRING_LEN];
     bool was_cleaned;
 
     CleanResult() : was_cleaned(false) { cleaned[0] = '\0'; }
@@ -72,9 +72,9 @@ class SkipUtils {
 
     // Parse skipCol string (format: "C1,C9,...")
     if (profile.skip_col[0] != '\0') {
-      char tempCol[ROW_COL_MAX_LEN];
-      strncpy(tempCol, profile.skip_col, ROW_COL_MAX_LEN - 1);
-      tempCol[ROW_COL_MAX_LEN - 1] = '\0';
+      char tempCol[SKIP_STRING_LEN];
+      strncpy(tempCol, profile.skip_col, SKIP_STRING_LEN - 1);
+      tempCol[SKIP_STRING_LEN - 1] = '\0';
 
       char* token = strtok(tempCol, ",");
       while (token != nullptr && posIndex < MAX_POSITIONS) {
@@ -92,9 +92,9 @@ class SkipUtils {
 
     // Parse skipRow string (format: "R1,R9,...")
     if (profile.skip_row[0] != '\0') {
-      char tempRow[ROW_COL_MAX_LEN];
-      strncpy(tempRow, profile.skip_row, ROW_COL_MAX_LEN - 1);
-      tempRow[ROW_COL_MAX_LEN - 1] = '\0';
+      char tempRow[SKIP_STRING_LEN];
+      strncpy(tempRow, profile.skip_row, SKIP_STRING_LEN - 1);
+      tempRow[SKIP_STRING_LEN - 1] = '\0';
 
       char* token = strtok(tempRow, ",");
       while (token != nullptr && posIndex < MAX_POSITIONS) {
@@ -112,9 +112,9 @@ class SkipUtils {
 
     // Parse skipSinglePos string (format: "C2R4,C3R4,...")
     if (profile.skip_single_pos[0] != '\0') {
-      char tempPos[ROW_COL_MAX_LEN];
-      strncpy(tempPos, profile.skip_single_pos, ROW_COL_MAX_LEN - 1);
-      tempPos[ROW_COL_MAX_LEN - 1] = '\0';
+      char tempPos[SKIP_STRING_LEN];
+      strncpy(tempPos, profile.skip_single_pos, SKIP_STRING_LEN - 1);
+      tempPos[SKIP_STRING_LEN - 1] = '\0';
 
       char* token = strtok(tempPos, ",");
       while (token != nullptr && posIndex < MAX_POSITIONS) {
@@ -174,7 +174,7 @@ class SkipUtils {
         if (rowStr != nullptr) {
           int colNumLen = rowStr - (element + 1);
           if (colNumLen > 0) {
-            char colNum[ROW_COL_MAX_LEN];
+            char colNum[SKIP_STRING_LEN];
             strncpy(colNum, element + 1, colNumLen);
             colNum[colNumLen] = '\0';
 
@@ -197,7 +197,7 @@ class SkipUtils {
   // Formats a skip string by removing invalid characters and malformed entries.
   // @param input The input string to format.
   // @param type The type of skip string (ROW, COLUMN, or INDIVIDUAL).
-  // @param output Buffer to store the formatted string (must be at least ROW_COL_MAX_LEN in size).
+  // @param output Buffer to store the formatted string (must be at least SKIP_STRING_LEN in size).
   static void format(const char* input, SkipType type, char* output) {
     if (input == nullptr || output == nullptr) {
       if (output != nullptr) output[0] = '\0';
@@ -208,10 +208,10 @@ class SkipUtils {
     output[0] = '\0';
 
     // Step 1: Capitalize 'c' to 'C' and 'r' to 'R', remove all unnecessary characters
-    char normalized[ROW_COL_MAX_LEN];
+    char normalized[SKIP_STRING_LEN];
     int normalizedIdx = 0;
 
-    for (int i = 0; input[i] != '\0' && normalizedIdx < ROW_COL_MAX_LEN - 1; i++) {
+    for (int i = 0; input[i] != '\0' && normalizedIdx < SKIP_STRING_LEN - 1; i++) {
       char c = input[i];
 
       // Capitalize c to C and r to R
@@ -242,13 +242,13 @@ class SkipUtils {
     }
 
     // Step 2: Parse and validate format (CXX, RXX, or CXRX where X is a digit)
-    char result[ROW_COL_MAX_LEN];
+    char result[SKIP_STRING_LEN];
     result[0] = '\0';
     bool firstEntry = true;
 
-    char temp[ROW_COL_MAX_LEN];
-    strncpy(temp, normalized, ROW_COL_MAX_LEN - 1);
-    temp[ROW_COL_MAX_LEN - 1] = '\0';
+    char temp[SKIP_STRING_LEN];
+    strncpy(temp, normalized, SKIP_STRING_LEN - 1);
+    temp[SKIP_STRING_LEN - 1] = '\0';
 
     char* token = strtok(temp, ",");
     while (token != nullptr) {
@@ -290,7 +290,7 @@ class SkipUtils {
             // Extract column number between C and R
             int colNumLen = rowStr - (token + 1);
             if (colNumLen > 0) {
-              char colNum[ROW_COL_MAX_LEN];
+              char colNum[SKIP_STRING_LEN];
               strncpy(colNum, token + 1, colNumLen);
               colNum[colNumLen] = '\0';
 
@@ -314,8 +314,8 @@ class SkipUtils {
       token = strtok(nullptr, ",");
     }
 
-    strncpy(output, result, ROW_COL_MAX_LEN - 1);
-    output[ROW_COL_MAX_LEN - 1] = '\0';
+    strncpy(output, result, SKIP_STRING_LEN - 1);
+    output[SKIP_STRING_LEN - 1] = '\0';
   }
 
   // Cleans and validates a skip string, checking bounds against dimensions.
@@ -331,15 +331,15 @@ class SkipUtils {
     }
 
     // Step 1: Format the string (remove invalid characters, validate format)
-    char formatted[ROW_COL_MAX_LEN];
+    char formatted[SKIP_STRING_LEN];
     format(input, type, formatted);
 
     // Step 2: Parse formatted string and check bounds
-    char temp[ROW_COL_MAX_LEN];
-    strncpy(temp, formatted, ROW_COL_MAX_LEN - 1);
-    temp[ROW_COL_MAX_LEN - 1] = '\0';
+    char temp[SKIP_STRING_LEN];
+    strncpy(temp, formatted, SKIP_STRING_LEN - 1);
+    temp[SKIP_STRING_LEN - 1] = '\0';
 
-    char finalResult[ROW_COL_MAX_LEN];
+    char finalResult[SKIP_STRING_LEN];
     finalResult[0] = '\0';
     bool firstEntry = true;
 
@@ -359,8 +359,8 @@ class SkipUtils {
     }
 
     // Copy final result to output
-    strncpy(result.cleaned, finalResult, ROW_COL_MAX_LEN - 1);
-    result.cleaned[ROW_COL_MAX_LEN - 1] = '\0';
+    strncpy(result.cleaned, finalResult, SKIP_STRING_LEN - 1);
+    result.cleaned[SKIP_STRING_LEN - 1] = '\0';
 
     // Check if input was modified
     result.was_cleaned = (strcmp(input, result.cleaned) != 0);

@@ -214,8 +214,8 @@ void ProfileManager::readProfileEEPROM(int index) {
 // @param phost GPU context for displaying the keyboard.
 // @return PasswordVerificationResult indicating success, incorrect, or cancelled.
 PasswordVerificationResult ProfileManager::verifyPassword(Gpu_Hal_Context_t* phost) {
-  char currentPassword[PROFILE_NAME_MAX_LEN] = "";
-  char inputPassword[PROFILE_NAME_MAX_LEN] = "";
+  char currentPassword[PASSWORD_MAX_LEN] = "";
+  char inputPassword[PASSWORD_MAX_LEN] = "";
 
   readPassEEPROM(currentPassword);
   if (strcmp(currentPassword, "") == 0) strcpy(currentPassword, INITIAL_PASSWORD);
