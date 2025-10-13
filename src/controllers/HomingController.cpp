@@ -36,7 +36,7 @@ ControllerStepResult HomingController::onStep() {
     Logger::log(F("Axis cleared 👍"));
     dispenserHead.x().moveToMin();
     dispenserHead.y().moveToMin();
-    dispenserHead.z().moveToMin();
+    dispenserHead.z().moveToMax();
     stage = STAGE_HOME;
     return ControllerStepResult(true);
   }

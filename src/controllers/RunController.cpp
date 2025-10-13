@@ -106,7 +106,7 @@ void RunController::startStage(Stage newStage) {
     case STAGE_LOWER_HEAD:
       Logger::log("STAGE: Lowering head to Z=" + String(STEPS_PER_UNIT_Z * profile.z_dip));
       this->stage = STAGE_LOWER_HEAD;
-      dispenserHead.z().moveTo(STEPS_PER_UNIT_Z * profile.z_dip);
+      dispenserHead.z().moveTo(-STEPS_PER_UNIT_Z * profile.z_dip);
       break;
 
     case STAGE_START_DISPENSE:

@@ -9,8 +9,8 @@
 #define LIMIT_S_Y_MIN 32
 #define LIMIT_S_Y_MAX 44
 
-#define LIMIT_S_Z_MIN 36
-#define LIMIT_S_Z_MAX 38
+#define LIMIT_S_Z_MIN 38
+#define LIMIT_S_Z_MAX 36
 
 // =============================================================================
 // MOTOR CONTROL PINS
@@ -29,7 +29,7 @@
 // =============================================================================
 #define MOTOR_X_SPEED 80000  // 8000, 2000
 #define MOTOR_Y_SPEED 800    // 4800, 1000
-#define MOTOR_Z_SPEED 80000  // 4800, 1000
+#define MOTOR_Z_SPEED 8000  // 4800, 1000
 
 // =============================================================================
 // MOTOR ACCELERATION SETTINGS
