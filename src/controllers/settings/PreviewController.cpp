@@ -53,7 +53,7 @@ void PreviewController::onInteraction(const Interaction& interaction) {
       simulating = false;
       simulate_col = 0;
       simulate_row = 0;
-      startNextController(CONTROLLER_SETTINGS);
+      startNextController(CONTROLLER_ADVANCED_SETTINGS);
       break;
 
     case TAG_PREVIEW_SIMULATE:
