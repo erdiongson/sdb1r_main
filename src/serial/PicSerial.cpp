@@ -14,7 +14,6 @@ void PicSerial::sendMessage(byte command, byte data) {
 
   uint8_t checksum = command + data;
   uint8_t msg[] = { START_BYTE, command, data, checksum, END_BYTE };
-  Logger::log("PicSerial - Sending Message: ", msg, 5);
 
   Serial2.write(msg, 5);
 
