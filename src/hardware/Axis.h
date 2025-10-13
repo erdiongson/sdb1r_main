@@ -94,9 +94,6 @@ class Axis {
 
     prev_min_state = isAtMin();
     prev_max_state = isAtMax();
-
-    Logger::log("Moving to " + String(position));
-    Logger::log("Is at max?" + String(prev_max_state));
   }
 
   void moveTo(long position) {
@@ -192,12 +189,10 @@ class Axis {
         return AXIS_STATE_COMPLETE;
       } else {
         // Not expected, error
-        Logger::log(F("Min limit switch triggered unexpectedly"));
         return AXIS_STATE_ERROR_LIMIT_SWITCH;
       }
     }
     if (didHitMax()) {
-      Logger::log("Max limit switch triggered");
       stopRunning();
       if (to_limit && moving_positive) {
         // Expected, should stop

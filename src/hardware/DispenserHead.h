@@ -149,12 +149,7 @@ class DispenserHead {
   void clearLimits() {
     if (x_axis.isAtMin()) x_axis.moveBy(STEPS_PER_UNIT_X * 10);
     if (y_axis.isAtMin()) y_axis.moveBy(STEPS_PER_UNIT_Y * 10);
-    bool zAtMax = z_axis.isAtMax();
-    Logger::log("Z is at max already?" + String(zAtMax));
-    if (zAtMax) {
-      Logger::log("Clearing Z");
-      z_axis.moveBy(-STEPS_PER_UNIT_Z * 10);
-    }
+    if (z_axis.isAtMax()) z_axis.moveBy(-STEPS_PER_UNIT_Z * 10);
   }
 
  private:
