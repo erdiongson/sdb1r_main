@@ -201,12 +201,12 @@ void RunController::start() {
 
 // Handles user interactions during run mode
 void RunController::onInteraction(const Interaction& interaction) {
-  if (interaction.plc_message_type == MSG_STOP || interaction.key_pressed == STOP) {
+  if (interaction.plc_message_type == MSG_STOP || interaction.key_pressed == TAG_STOP) {
     stop();
     return;
   }
 
-  if (interaction.plc_message_type == MSG_PAUSE || interaction.key_pressed == PAUSE) {
+  if (interaction.plc_message_type == MSG_PAUSE || interaction.key_pressed == TAG_PAUSE) {
     if (paused) {
       start();
     } else {

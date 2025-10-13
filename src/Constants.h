@@ -33,26 +33,13 @@
 #define CONTROLLER_DEBUG 9
 
 // =============================================================================
-// SCREEN/MENU STATES
+// UI TAG CONSTANTS - Main Screen (Ready, Run, Homing)
 // =============================================================================
-#define LOGO 0
-#define MAINMENU 0
-#define RUNMENU 1
-#define PAUSEMENU 2
-#define HOMINGMENU 3
-#define STOPPINGMENU 4
-
-#define SETTING 2
-#define START 3
-#define PAUSE 4
-#define STOP 5
-#define ERROR 6
-
-// =============================================================================
-// UI TAG CONSTANTS - General
-// =============================================================================
-#define TAG_CONTINUE 5
-#define TAG_CONFIG_HOME 6
+#define TAG_SETTING 2
+#define TAG_START 3
+#define TAG_PAUSE 4
+#define TAG_STOP 5
+#define TAG_CONTINUE 101
 
 // =============================================================================
 // UI TAG CONSTANTS - Profile Management
@@ -67,6 +54,7 @@
 // =============================================================================
 // UI TAG CONSTANTS - Configuration
 // =============================================================================
+#define TAG_CONFIG_HOME 102
 #define TAG_CONFIG_LOAD 11
 #define TAG_CONFIG_SAVE 12
 #define TAG_CONFIG_PROFILE_NAME 13

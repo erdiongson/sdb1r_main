@@ -14,12 +14,12 @@ void ReadyController::onStart() {
 void ReadyController::onInteraction(const Interaction& interaction) {
   // Handle key presses
   switch (interaction.key_pressed) {
-    case START:
+    case TAG_START:
       Logger::log(F("ReadyController::on_interaction: Transitioning to start"));
       startNextController(CONTROLLER_RUN);
       return;
 
-    case SETTING:
+    case TAG_SETTING:
       // Handle password protection if enabled
       if (profile_manager.getCurrentProfile().password_enabled) {
         PasswordVerificationResult result = profile_manager.verifyPassword(phost);

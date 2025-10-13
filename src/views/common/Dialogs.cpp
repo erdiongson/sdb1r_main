@@ -130,8 +130,8 @@ void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
       params.subtitle = "Possible movement boundary collision. Please check the head position and resume.";
       params.left_btn = "Resume";
       params.right_btn = "Stop";
-      params.left_tag = START;
-      params.right_tag = STOP;
+      params.left_tag = TAG_START;
+      params.right_tag = TAG_STOP;
       break;
 
     case DIALOG_ERROR_LIMIT_SWITCH_HOMING:

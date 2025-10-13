@@ -33,7 +33,7 @@ struct MainScreenParams {
 // @param buttons The button enable states.
 inline void drawMenuButtons(const ButtonsEnabled& buttons) {
   // Draw SETTING button
-  App_WrCoCmd_Buffer(phost, TAG(SETTING));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_SETTING));
   if (buttons.setting) {
     App_WrCoCmd_Buffer(phost, COLOR_A(255));
     App_WrCoCmd_Buffer(phost, TAG_MASK(1));
@@ -46,7 +46,7 @@ inline void drawMenuButtons(const ButtonsEnabled& buttons) {
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // Draw START button
-  App_WrCoCmd_Buffer(phost, TAG(START));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_START));
   if (buttons.start) {
     App_WrCoCmd_Buffer(phost, COLOR_A(255));
     App_WrCoCmd_Buffer(phost, TAG_MASK(1));
@@ -62,7 +62,7 @@ inline void drawMenuButtons(const ButtonsEnabled& buttons) {
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // Draw PAUSE button
-  App_WrCoCmd_Buffer(phost, TAG(PAUSE));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_PAUSE));
   if (buttons.pause) {
     App_WrCoCmd_Buffer(phost, COLOR_A(255));
     App_WrCoCmd_Buffer(phost, TAG_MASK(1));
@@ -75,7 +75,7 @@ inline void drawMenuButtons(const ButtonsEnabled& buttons) {
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // Draw STOP button
-  App_WrCoCmd_Buffer(phost, TAG(STOP));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_STOP));
   if (buttons.stop) {
     App_WrCoCmd_Buffer(phost, COLOR_A(255));
     App_WrCoCmd_Buffer(phost, TAG_MASK(1));
