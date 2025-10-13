@@ -30,7 +30,7 @@ void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams params) {
   App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(193, 64, 0));
   Gpu_CoCmd_FgColor(phost, 0x00A2E8);
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-  App_WrCoCmd_Buffer(phost, TAG(6));
+  App_WrCoCmd_Buffer(phost, TAG(TAG_CONFIG_HOME));
   Gpu_CoCmd_Button(phost, 233, 9, 76, 26, 21, 0, "Home");
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
   Gpu_CoCmd_Text(phost, 41, 82, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, "");
