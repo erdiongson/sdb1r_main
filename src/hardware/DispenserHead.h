@@ -80,6 +80,13 @@ class DispenserHead {
 #endif
 
     // Process stepper motors
+    int z_result = this->z_axis.onStep();
+    if (z_result == AXIS_STATE_RUNNING) return DispenserProcessResult(AXIS_STATE_RUNNING, DISPENSER_STATE_BLOCKED);
+    if (z_result == AXIS_STATE_ERROR_LIMIT_SWITCH) {
+      Logger::log(F("Z axis limit switch triggered unexpectedly"));
+      return DispenserProcessResult(AXIS_STATE_ERROR_LIMIT_SWITCH, DISPENSER_STATE_BLOCKED);
+    }
+
     int x_result = this->x_axis.onStep();
     if (x_result == AXIS_STATE_RUNNING) return DispenserProcessResult(AXIS_STATE_RUNNING, DISPENSER_STATE_BLOCKED);
     if (x_result == AXIS_STATE_ERROR_LIMIT_SWITCH) {
@@ -91,13 +98,6 @@ class DispenserHead {
     if (y_result == AXIS_STATE_RUNNING) return DispenserProcessResult(AXIS_STATE_RUNNING, DISPENSER_STATE_BLOCKED);
     if (y_result == AXIS_STATE_ERROR_LIMIT_SWITCH) {
       Logger::log(F("Y axis limit switch triggered unexpectedly"));
-      return DispenserProcessResult(AXIS_STATE_ERROR_LIMIT_SWITCH, DISPENSER_STATE_BLOCKED);
-    }
-
-    int z_result = this->z_axis.onStep();
-    if (z_result == AXIS_STATE_RUNNING) return DispenserProcessResult(AXIS_STATE_RUNNING, DISPENSER_STATE_BLOCKED);
-    if (z_result == AXIS_STATE_ERROR_LIMIT_SWITCH) {
-      Logger::log(F("Z axis limit switch triggered unexpectedly"));
       return DispenserProcessResult(AXIS_STATE_ERROR_LIMIT_SWITCH, DISPENSER_STATE_BLOCKED);
     }
 
