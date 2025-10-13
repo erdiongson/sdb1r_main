@@ -55,20 +55,20 @@ void ProfileManager::preLoadEEPROM(void) {
 
 void ProfileManager::checkProfile(void) {
   if (currentProfile.cycles > CYCLES_MAX) currentProfile.cycles = CYCLES_MAX;
-  if (currentProfile.cycles < 0) currentProfile.cycles = 0;
+  if (currentProfile.cycles < CYCLES_MIN) currentProfile.cycles = CYCLES_MIN;
   if (currentProfile.pitch_x > PITCH_X_MAX) currentProfile.pitch_x = PITCH_X_MAX;
-  if (currentProfile.pitch_x < 0) currentProfile.pitch_x = 0;
+  if (currentProfile.pitch_x < PITCH_X_MIN) currentProfile.pitch_x = PITCH_X_MIN;
   if (currentProfile.pitch_y > PITCH_Y_MAX) currentProfile.pitch_y = PITCH_Y_MAX;
-  if (currentProfile.pitch_y < 0) currentProfile.pitch_y = 0;
+  if (currentProfile.pitch_y < PITCH_Y_MIN) currentProfile.pitch_y = PITCH_Y_MIN;
   if (currentProfile.tray_origin_x > ORIGIN_X_MAX) currentProfile.tray_origin_x = ORIGIN_X_MAX;
   if (currentProfile.tray_origin_x < 0) currentProfile.tray_origin_x = 0;
   if (currentProfile.tray_origin_y > ORIGIN_Y_MAX) currentProfile.tray_origin_y = ORIGIN_Y_MAX;
   if (currentProfile.tray_origin_y < 0) currentProfile.tray_origin_y = 0;
   if (currentProfile.tube_no_x > TUBES_X_MAX) currentProfile.tube_no_x = TUBES_X_MAX;
-  if (currentProfile.tube_no_x < 0) currentProfile.tube_no_x = 0;
+  if (currentProfile.tube_no_x < TUBES_X_MIN) currentProfile.tube_no_x = TUBES_X_MIN;
   if (currentProfile.tube_no_y > TUBES_Y_MAX) currentProfile.tube_no_y = TUBES_Y_MAX;
-  if (currentProfile.tube_no_y < 0) currentProfile.tube_no_y = 0;
-  if (currentProfile.z_dip < 0) currentProfile.z_dip = 0;
+  if (currentProfile.tube_no_y < TUBES_Y_MIN) currentProfile.tube_no_y = TUBES_Y_MIN;
+  if (currentProfile.z_dip < Z_DIP_MIN) currentProfile.z_dip = Z_DIP_MIN;
   if (currentProfile.z_dip > Z_DIP_MAX) currentProfile.z_dip = Z_DIP_MAX;
 }
 
@@ -85,7 +85,7 @@ uint8_t ProfileManager::loadProfile(void) {
   if (currentProfile.tray_origin_y > ORIGIN_Y_MAX) currentProfile.tray_origin_y = ORIGIN_Y_MAX;
   if (currentProfile.tube_no_x > TUBES_X_MAX) currentProfile.tube_no_x = TUBES_X_MAX;
   if (currentProfile.tube_no_y > TUBES_Y_MAX) currentProfile.tube_no_y = TUBES_Y_MAX;
-  if (currentProfile.z_dip < 0) currentProfile.z_dip = 0;
+  if (currentProfile.z_dip < Z_DIP_MIN) currentProfile.z_dip = Z_DIP_MIN;
   if (currentProfile.z_dip > Z_DIP_MAX) currentProfile.z_dip = Z_DIP_MAX;
 
   return this->currentProfileIndex;
