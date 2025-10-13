@@ -83,7 +83,7 @@ void MoveTestController::onInteraction(const Interaction& interaction) {
 
     case TAG_MOVE_BOUNCE:
       Logger::log(F("MoveTestController::on_interaction: Set bounce count"));
-      bounce_count = (int)getKeypadValue(phost, bounce_count, MIN_MOVE_DISTANCE_CM, MAX_BOUNCE_COUNT, false);
+      bounce_count = (int)getKeypadValue(phost, bounce_count, MIN_BOUNCE_COUNT, MAX_BOUNCE_COUNT, false);
       {
         MoveTestParams params;
         params.xy_distance_cm = xy_distance_cm;

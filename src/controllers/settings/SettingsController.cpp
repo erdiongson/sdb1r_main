@@ -25,22 +25,22 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       {
         char buf[PROFILE_NAME_MAX_LEN];
         float maxval = 0;
-        bool error = FALSE;
+        bool error = false;
 
-        if (current_profile->tube_no_x == 0)
+        if (current_profile->tube_no_x == TUBES_X_MIN - 1)
           maxval = TRAY_X_MAX - current_profile->tray_origin_x;
         else
           maxval = (TRAY_X_MAX - current_profile->tray_origin_x) / (current_profile->tube_no_x - 1);
         roundOneDecimal(&maxval);
         if (current_profile->pitch_x > maxval)
-          error = TRUE;
+          error = true;
         else {
-          if (current_profile->tube_no_y == 0)
+          if (current_profile->tube_no_y == TUBES_Y_MIN - 1)
             maxval = TRAY_Y_MAX - current_profile->tray_origin_y;
           else
             maxval = (TRAY_Y_MAX - current_profile->tray_origin_y) / (current_profile->tube_no_y - 1);
           roundOneDecimal(&maxval);
-          if (current_profile->pitch_y > maxval) error = TRUE;
+          if (current_profile->pitch_y > maxval) error = true;
         }
 
         if (error) {
@@ -79,9 +79,9 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       Logger::log(F("Button Pressed: PROFILE"));
       char buf[PROFILE_NAME_MAX_LEN];
       strcpy(buf, current_profile->profile_name);
-      getKeyboardValue(phost, buf, "Enter Profile Name", FALSE);
+      getKeyboardValue(phost, buf, "Enter Profile Name", false);
 
-      if (strcmp(buf, "debug") == 0) {
+      if (strcmp(buf, DEBUG_MODE_KEYWORD) == 0) {
         startNextController(CONTROLLER_DEBUG);
         return;
       }
@@ -156,64 +156,64 @@ void SettingsController::onInteraction(const Interaction& interaction) {
     case TAG_CONFIG_PITCH_X:  // pitch row
     {
       float maxval;
-      if (current_profile->tube_no_x == 0)
+      if (current_profile->tube_no_x == TUBES_X_MIN - 1)
         maxval = TRAY_X_MAX - current_profile->tray_origin_x;
       else
         maxval = (TRAY_X_MAX - current_profile->tray_origin_x) / (current_profile->tube_no_x - 1);
       roundOneDecimal(&maxval);
       if (maxval > PITCH_X_MAX) maxval = PITCH_X_MAX;
-      current_profile->pitch_x = getKeypadValue(&host, current_profile->pitch_x, PITCH_X_MIN, PITCH_X_MAX, TRUE);
+      current_profile->pitch_x = getKeypadValue(&host, current_profile->pitch_x, PITCH_X_MIN, PITCH_X_MAX, true);
       drawSettingsScreen(phost, { *current_profile, 0 });
     } break;
 
     case TAG_CONFIG_PITCH_Y:  // pitch col
     {
       float maxval;
-      if (current_profile->tube_no_y == 0)
+      if (current_profile->tube_no_y == TUBES_Y_MIN - 1)
         maxval = TRAY_Y_MAX - current_profile->tray_origin_y;
       else
         maxval = (TRAY_Y_MAX - current_profile->tray_origin_y) / (current_profile->tube_no_y - 1);
       roundOneDecimal(&maxval);
       if (maxval > PITCH_Y_MAX) maxval = PITCH_Y_MAX;
-      current_profile->pitch_y = getKeypadValue(&host, current_profile->pitch_y, PITCH_Y_MIN, PITCH_Y_MAX, TRUE);
+      current_profile->pitch_y = getKeypadValue(&host, current_profile->pitch_y, PITCH_Y_MIN, PITCH_Y_MAX, true);
       drawSettingsScreen(phost, { *current_profile, 0 });
     } break;
 
     case TAG_CONFIG_ORIGIN_X:  // origin row
     {
       float maxval;
-      if (current_profile->tube_no_x == 0)
+      if (current_profile->tube_no_x == TUBES_X_MIN - 1)
         maxval = TRAY_X_MAX;
       else
         maxval = TRAY_X_MAX - (current_profile->pitch_x * (current_profile->tube_no_x - 1));
       roundOneDecimal(&maxval);
       if (maxval > ORIGIN_X_MAX) maxval = ORIGIN_X_MAX;
 
-      current_profile->tray_origin_x = getKeypadValue(&host, current_profile->tray_origin_x, 0, ORIGIN_X_MAX, TRUE);
+      current_profile->tray_origin_x = getKeypadValue(&host, current_profile->tray_origin_x, 0, ORIGIN_X_MAX, true);
       drawSettingsScreen(phost, { *current_profile, 0 });
     } break;
 
     case TAG_CONFIG_ORIGIN_Y:  // origin col
     {
       float maxval;
-      if (current_profile->tube_no_y == 0)
+      if (current_profile->tube_no_y == TUBES_Y_MIN - 1)
         maxval = TRAY_Y_MAX;
       else
         maxval = TRAY_Y_MAX - (current_profile->pitch_y * (current_profile->tube_no_y - 1));
       roundOneDecimal(&maxval);
       if (maxval > ORIGIN_Y_MAX) maxval = ORIGIN_Y_MAX;
-      current_profile->tray_origin_y = getKeypadValue(&host, current_profile->tray_origin_y, 0, ORIGIN_Y_MAX, TRUE);
+      current_profile->tray_origin_y = getKeypadValue(&host, current_profile->tray_origin_y, 0, ORIGIN_Y_MAX, true);
       drawSettingsScreen(phost, { *current_profile, 0 });
     } break;
 
     case TAG_NUM_CYCLE:
-      current_profile->cycles = getKeypadValue(phost, current_profile->cycles, CYCLES_MIN, CYCLES_MAX, FALSE);
+      current_profile->cycles = getKeypadValue(phost, current_profile->cycles, CYCLES_MIN, CYCLES_MAX, false);
       drawSettingsScreen(phost, { *current_profile, 0 });
       break;
 
     case TAG_Z_DIP:
       Logger::log(F("Incrementing Z Dip"));
-      current_profile->z_dip = getKeypadValue(phost, current_profile->z_dip, Z_DIP_MIN, Z_DIP_MAX, TRUE);
+      current_profile->z_dip = getKeypadValue(phost, current_profile->z_dip, Z_DIP_MIN, Z_DIP_MAX, true);
       drawSettingsScreen(phost, { *current_profile, 0 });
       break;
 
@@ -306,7 +306,7 @@ void SettingsController::editSkipColumn(Gpu_Hal_Context_t* phost) {
   TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
 
   while (true) {
-    getKeyboardValue(phost, current_profile->skip_col, "Enter columns to skip", FALSE);
+    getKeyboardValue(phost, current_profile->skip_col, "Enter columns to skip", false);
 
     // Clean the input with bounds checking
     SkipUtils::CleanResult result = SkipUtils::clean(current_profile->skip_col, SkipUtils::COLUMN, dimensions);
@@ -329,7 +329,7 @@ void SettingsController::editSkipRow(Gpu_Hal_Context_t* phost) {
   TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
 
   while (true) {
-    getKeyboardValue(phost, current_profile->skip_row, "Enter rows to skip", FALSE);
+    getKeyboardValue(phost, current_profile->skip_row, "Enter rows to skip", false);
 
     // Clean the input with bounds checking
     SkipUtils::CleanResult result = SkipUtils::clean(current_profile->skip_row, SkipUtils::ROW, dimensions);
@@ -352,7 +352,7 @@ void SettingsController::editSkipIndividual(Gpu_Hal_Context_t* phost) {
   TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
 
   while (true) {
-    getKeyboardValue(phost, current_profile->skip_single_pos, "Enter positions to skip", FALSE);
+    getKeyboardValue(phost, current_profile->skip_single_pos, "Enter positions to skip", false);
 
     // Clean the input with bounds checking
     Logger::log(F("Cleaning!"));

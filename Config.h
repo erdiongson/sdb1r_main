@@ -88,8 +88,10 @@
 // =============================================================================
 // DEBUG SETTINGS
 // =============================================================================
-#define DEBUG_NO_LOG 0
-#define DEBUG_ONLY_SCREEN 0
+#define DEBUG_NO_LOG 0 // 1 to disable logging
+#define DEBUG_ONLY_SCREEN 0 // 1 to bypass comms with the dispenser / steppers 
+
+#define DEBUG_MODE_KEYWORD "debug"
 
 // =============================================================================
 // PROFILE SETTINGS
@@ -144,16 +146,20 @@
 #define KEYBOARD_MAX_LEN 30
 
 // =============================================================================
-// MOVEMENT TEST SETTINGS
+// TEST / PREVIEW SETTINGS
 // =============================================================================
 #define CM_TO_MM_MULTIPLIER 10
 #define MAX_MOVE_DISTANCE_CM 99.9
 #define MIN_MOVE_DISTANCE_CM 0
+
+#define MIN_BOUNCE_COUNT 0
 #define MAX_BOUNCE_COUNT 9999
 
 #define DEFAULT_XY_DISTANCE_CM 5.0
 #define DEFAULT_Z_DISTANCE_CM 3.0
 #define DEFAULT_BOUNCE_COUNT 0
+
+#define SIMULATION_UPDATE_INTERVAL_MS 600
 
 // =============================================================================
 // FIRMWARE VERSION

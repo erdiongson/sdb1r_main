@@ -39,7 +39,7 @@ void ProfileManager::preLoadEEPROM(void) {
     currentProfile.tray_origin_y = ORIGIN_DEFAULT;
     currentProfile.cycles = CYCLES_DEFAULT;
     currentProfile.vibration_enabled = VIBRATION_LEVEL_DEFAULT;
-    currentProfile.password_enabled = TRUE;
+    currentProfile.password_enabled = true;
     currentProfile.vibration_duration = VIBRATION_DURATION_DEFAULT;
     currentProfile.z_dip = Z_DIP_DEFAULT;
     currentProfile.skip_col[0] = '\0';

@@ -71,10 +71,10 @@ void PreviewController::onInteraction(const Interaction& interaction) {
 }
 
 ControllerStepResult PreviewController::onStep() {
-  // Handle simulation updates every 600 ms
+  // Handle simulation updates every SIMULATION_UPDATE_INTERVAL_MS
   if (simulating) {
     unsigned long currentTime = millis();
-    if (currentTime - last_simulation_time >= 600) {
+    if (currentTime - last_simulation_time >= SIMULATION_UPDATE_INTERVAL_MS) {
       last_simulation_time = currentTime;
       stepSimulation();
     }
