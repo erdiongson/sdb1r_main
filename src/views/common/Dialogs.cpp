@@ -152,6 +152,15 @@ void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
       params.right_tag = 0;
       break;
 
+    case DIALOG_ERROR_CYCLE_TIMEOUT:
+      params.title = "Dispense Timeout Error";
+      params.subtitle = "Did not receive response from the dispenser head. Please restart the device.";
+      params.left_btn = nullptr;
+      params.right_btn = nullptr;
+      params.left_tag = 0;
+      params.right_tag = 0;
+      break;
+
     case DIALOG_PROFILE_SAVED:
       params.title = "Profile Saved";
       params.subtitle = "Profile has been saved successfully.";

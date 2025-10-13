@@ -134,6 +134,9 @@ class DispenserHead {
       case MARKER_NOT_DETECTED:
         dispensing_state = DISPENSER_STATE_IDLING;
         return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED);
+      case CYCLE_TIMEOUT_ERROR:
+        dispensing_state = DISPENSER_STATE_IDLING;
+        return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_ERROR_CYCLES_TIMEOUT);
     }
 
     return DispenserProcessResult(AXIS_STATE_COMPLETE, dispensing_state);

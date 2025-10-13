@@ -117,6 +117,7 @@ ControllerStepResult DispenseTestController::onStep() {
 
   if (state == WAITING_FOR_RESPONSE && result.dispenser == DISPENSER_STATE_ACKNOWLEDGED) {
     drawDispenseTestScreen(phost, { "ACKNOWLEGED" });
+    return ControllerStepResult(false);
   }
 
   if (state == WAITING_FOR_RESPONSE) {
@@ -133,6 +134,9 @@ ControllerStepResult DispenseTestController::onStep() {
         break;
       case DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED:
         message = "MARKER NOT DETECTED";
+        break;
+      case DISPENSER_STATE_ERROR_CYCLES_TIMEOUT:
+        message = "CYCLE TIMEOUT";
         break;
       default:
         break;

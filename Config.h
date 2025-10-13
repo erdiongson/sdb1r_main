@@ -83,6 +83,7 @@
 
 // Serial communication timeouts (in milliseconds)
 #define DISPENSER_TIMEOUT_MS 5000
+#define DISPENSER_CYCLE_TIMEOUT_MS 30000
 #define DISPENSER_POLL_DELAY_MS 10
 
 // =============================================================================

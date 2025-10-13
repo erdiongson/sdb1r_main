@@ -1,8 +1,9 @@
 #include "PicSerial.h"
 #include "../Utils.h"
 
-// Initialize static member.
-unsigned long PicSerial::timeout_at = 0;
+// Initialize static members.
+unsigned long PicSerial::ack_timeout_at = 0;
+unsigned long PicSerial::cycle_complete_timeout_at = 0;
 
 // Send a message to the dispenser with command and data bytes.
 // @param command Command byte to send.
@@ -18,12 +19,14 @@ void PicSerial::sendMessage(byte command, byte data) {
   Serial2.write(msg, 5);
 
   // Set timeout to 5 seconds from now.
-  timeout_at = millis() + DISPENSER_TIMEOUT_MS;
+  ack_timeout_at = millis() + DISPENSER_TIMEOUT_MS;
 }
 
 // Send a dispense command to the dispenser.
 void PicSerial::sendDispense() {
   sendMessage(SDB_DISPENSE_START, 0x01);
+  // Set cycle completion timeout
+  cycle_complete_timeout_at = millis() + DISPENSER_CYCLE_TIMEOUT_MS;
 }
 
 // Send a handshake command to the dispenser.
@@ -49,10 +52,16 @@ void PicSerial::sendVibrationTime(uint8_t seconds) {
 // Process incoming data from the dispenser.
 // @return Command code if valid message received, 0 if no message, -1 if error.
 int PicSerial::process() {
-  // Check for timeout.
-  if (millis() >= timeout_at && timeout_at != 0) {
-    timeout_at = 0;  // Reset timeout
+  // Check for acknowledgment timeout.
+  if (millis() >= ack_timeout_at && ack_timeout_at != 0) {
+    ack_timeout_at = 0;  // Reset timeout
     return ACK_ERROR;
+  }
+
+  // Check for cycle completion timeout.
+  if (millis() >= cycle_complete_timeout_at && cycle_complete_timeout_at != 0) {
+    cycle_complete_timeout_at = 0;  // Reset timeout
+    return CYCLE_TIMEOUT_ERROR;
   }
 
   if (Serial2.available() == 0) return 0;
@@ -74,7 +83,13 @@ int PicSerial::process() {
     return 0;
   }
 
-  timeout_at = 0;
+  ack_timeout_at = 0;
+  
+  // Clear cycle timeout if dispense is done
+  if (response[MSG_COMMAND] == DISPENSE_DONE) {
+    cycle_complete_timeout_at = 0;
+  }
+  
   return response[MSG_COMMAND];
 }
 

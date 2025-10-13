@@ -177,6 +177,15 @@ ControllerStepResult RunController::onStep() {
     return ControllerStepResult(false);
   }
 
+  if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_CYCLES_TIMEOUT) {
+    Logger::log(F("MODE: Dispenser error - cycle timeout"));
+    params.dialog_code = DIALOG_ERROR_CYCLE_TIMEOUT;
+    drawRunScreen(params);
+    pause();
+
+    return ControllerStepResult(false);
+  }
+
   // Perform logic after all axis are idle (all movement is completed)
   processStageLogic(dispenserProcessResult);
 

@@ -16,7 +16,8 @@
 #define DISPENSER_STATE_ERROR_ACK_ERROR 3
 #define DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE 4
 #define DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED 5
-#define DISPENSER_STATE_BLOCKED 6
+#define DISPENSER_STATE_ERROR_CYCLES_TIMEOUT 6
+#define DISPENSER_STATE_BLOCKED 7
 
 // =============================================================================
 // CONTROLLER IDENTIFIERS
@@ -164,6 +165,7 @@
 #define IR_SENSOR_FAILURE 0xE1    // Error: IR sensor failure
 #define MARKER_NOT_DETECTED 0xE2  // Error: Marker not detected
 #define ACK_ERROR 0xE0            // Error: Acknowledgment error
+#define CYCLE_TIMEOUT_ERROR 0xE10 // Error: Cycle timeout
 
 // =============================================================================
 // DISPENSER SERIAL PROTOCOL - Vibration Settings
@@ -199,6 +201,7 @@
 #define DIALOG_PASSWORD_CHANGED 10
 #define DIALOG_ERROR_WRONG_PASSWORD 11
 #define DIALOG_ERROR_DIMENSION 12
+#define DIALOG_ERROR_CYCLE_TIMEOUT 13
 
 // =============================================================================
 // ARRAY LIMITS

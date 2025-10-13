@@ -37,6 +37,9 @@ class PicSerial {
   // @param data The data byte.
   static void sendMessage(byte command, byte data);
 
-  // Timeout timestamp in milliseconds.
-  static unsigned long timeout_at;
+  // Timeout timestamp in milliseconds for acknowledgment.
+  static unsigned long ack_timeout_at;
+
+  // Timeout timestamp in milliseconds for cycle completion.
+  static unsigned long cycle_complete_timeout_at;
 };

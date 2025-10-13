@@ -37,6 +37,11 @@ ControllerStepResult StartupController::onStep() {
     stage = STAGE_ERROR;
     return ControllerStepResult(false);
   }
+  if (result.dispenser == DISPENSER_STATE_ERROR_CYCLES_TIMEOUT) {
+    drawLogoScreen(phost, DIALOG_ERROR_CYCLE_TIMEOUT);
+    stage = STAGE_ERROR;
+    return ControllerStepResult(false);
+  }
 
   if (stage == STAGE_HANDSHAKE && result.dispenser == DISPENSER_STATE_IDLING) {
     Logger::log(F("Handshake acknowledged 👍"));
