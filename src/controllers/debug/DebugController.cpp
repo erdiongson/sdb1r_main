@@ -37,7 +37,7 @@ void DebugController::onInteraction(const Interaction& interaction) {
     case TAG_DEBUG_BLANK_EEPROM: {
       Logger::log(F("Debug: Blank EEPROM button pressed"));
       profile_manager.blankEEPROM();
-      drawDebugScreen(phost, { false, true, 0 });
+      drawDebugScreen(phost, { true, false, 0 });
       break;
     }
 

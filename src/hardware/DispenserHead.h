@@ -152,6 +152,12 @@ class DispenserHead {
     if (z_axis.isAtMax()) z_axis.moveBy(-STEPS_PER_UNIT_Z * 10);
   }
 
+  // Reset dispenser state and clear serial communication.
+  void resetDispenser() {
+    dispensing_state = DISPENSER_STATE_IDLING;
+    PicSerial::reset();
+  }
+
  private:
   Axis x_axis;
   Axis y_axis;
