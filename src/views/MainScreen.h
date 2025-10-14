@@ -141,7 +141,7 @@ inline void drawBaseMainScreen(Gpu_Hal_Context_t* phost, const ButtonsEnabled& b
   sprintf(buf, "Current Tube : R%2d C%2d", params.run_status.current_row, params.run_status.current_column);
   Gpu_CoCmd_Text(phost, 292, 208, 20, OPT_RIGHTX | OPT_FORMAT, buf);
 
-  sprintf(buf, "Tube left : %3d", params.run_status.tubes_left);
+  sprintf(buf, "Tubes left : %3d", params.run_status.tubes_left);
   Gpu_CoCmd_Text(phost, 294, 220, 20, OPT_RIGHTX | OPT_FORMAT, buf);
 
   // INSERT DIALOG
