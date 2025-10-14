@@ -167,7 +167,7 @@ void getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* curtitle, b
         return;
 
       default:
-        if (curpos < PROFILE_NAME_MAX_LEN) {
+        if (curpos < KEYBOARD_MAX_LEN) {
           buf[curpos] = keypressed;
           if (password) {
             curtext[curpos] = '*';
