@@ -14,6 +14,7 @@ Date created - 2022.12.14 - XentiQ version
 #include "../Constants.h"
 #include "../../Config.h"
 #include "../views/common/Keyboards.h"
+#include "TrayPositionHandler.h"
 
 const int PROFILE_SIZE = sizeof(Profile);
 static_assert(PROFILE_SIZE <= RESERVED_PROFILE_SIZE, "Profile size exceeds reserved space");
@@ -42,9 +43,10 @@ void ProfileManager::preLoadEEPROM(void) {
     currentProfile.password_enabled = true;
     currentProfile.vibration_duration = VIBRATION_DURATION_DEFAULT;
     currentProfile.z_dip = Z_DIP_DEFAULT;
-    currentProfile.skip_col[0] = '\0';
-    currentProfile.skip_row[0] = '\0';
-    currentProfile.skip_single_pos[0] = '\0';
+    currentProfile.skip_count = 0;
+    for (int j = 0; j < MAX_SKIP_POSITIONS; j++) {
+      currentProfile.skip_positions[j] = SkipPosition(0, 0);
+    }
     currentProfile.staggered = false;
 
     writeProfileEEPROM(i);
@@ -154,12 +156,10 @@ void ProfileManager::writeProfileEEPROM(int index) {
   address += sizeof(currentProfile.vibration_duration);
   EEPROM.put(address, currentProfile.z_dip);
   address += sizeof(currentProfile.z_dip);
-  EEPROM.put(address, currentProfile.skip_col);
-  address += sizeof(currentProfile.skip_col);
-  EEPROM.put(address, currentProfile.skip_row);
-  address += sizeof(currentProfile.skip_row);
-  EEPROM.put(address, currentProfile.skip_single_pos);
-  address += sizeof(currentProfile.skip_single_pos);
+  EEPROM.put(address, currentProfile.skip_positions);
+  address += sizeof(currentProfile.skip_positions);
+  EEPROM.put(address, currentProfile.skip_count);
+  address += sizeof(currentProfile.skip_count);
   EEPROM.put(address, currentProfile.staggered);
   address += sizeof(currentProfile.staggered);
 
@@ -196,12 +196,10 @@ void ProfileManager::readProfileEEPROM(int index) {
   address += sizeof(currentProfile.vibration_duration);
   EEPROM.get(address, currentProfile.z_dip);
   address += sizeof(currentProfile.z_dip);
-  EEPROM.get(address, currentProfile.skip_col);
-  address += sizeof(currentProfile.skip_col);
-  EEPROM.get(address, currentProfile.skip_row);
-  address += sizeof(currentProfile.skip_row);
-  EEPROM.get(address, currentProfile.skip_single_pos);
-  address += sizeof(currentProfile.skip_single_pos);
+  EEPROM.get(address, currentProfile.skip_positions);
+  address += sizeof(currentProfile.skip_positions);
+  EEPROM.get(address, currentProfile.skip_count);
+  address += sizeof(currentProfile.skip_count);
   EEPROM.get(address, currentProfile.staggered);
   address += sizeof(currentProfile.staggered);
 
@@ -274,4 +272,22 @@ void ProfileManager::setCurrentProfileNum(uint8_t profileNum) {
   if (profileNum < MAX_PROFILES) {
     currentProfileIndex = profileNum;
   }
+}
+
+// Gets skip data as char strings for UI display.
+// @param outSkipCol Output buffer for column skip string (must be at least SKIP_STRING_LEN).
+// @param outSkipRow Output buffer for row skip string (must be at least SKIP_STRING_LEN).
+// @param outSkipSinglePos Output buffer for individual position skip string (must be at least SKIP_STRING_LEN).
+void ProfileManager::getSkipStrings(char* outSkipCol, char* outSkipRow, char* outSkipSinglePos) {
+  SkipUtils::convertToStrings(currentProfile.skip_positions, currentProfile.skip_count,
+                              outSkipCol, outSkipRow, outSkipSinglePos);
+}
+
+// Sets skip data from char strings (from UI).
+// @param skipCol Column skip string (format: "C1,C9,...").
+// @param skipRow Row skip string (format: "R1,R9,...").
+// @param skipSinglePos Individual position skip string (format: "C2R4,C3R4,...").
+void ProfileManager::setSkipStrings(const char* skipCol, const char* skipRow, const char* skipSinglePos) {
+  currentProfile.skip_count = SkipUtils::convertFromStrings(skipCol, skipRow, skipSinglePos,
+                                                             currentProfile.skip_positions, MAX_SKIP_POSITIONS);
 }

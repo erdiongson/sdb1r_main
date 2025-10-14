@@ -5,6 +5,7 @@
 #include "../common/Keyboards.h"
 #include "../common/Dialogs.h"
 #include "../common/ToggleButton.h"
+#include "../../logic/TrayPositionHandler.h"
 
 // Parameters for Config_Screen display.
 struct SettingsScreenParams {
@@ -287,6 +288,9 @@ inline void drawSkipScreen(Gpu_Hal_Context_t* phost, Profile& profile) {
   char singlePosBuf[SKIP_STRING_LEN];  // a buffer for skip single position entry
   uint8_t keypressed;
 
+  // Convert SkipPosition array to strings for display
+  SkipUtils::convertToStrings(profile.skip_positions, profile.skip_count, colBuf, rowBuf, singlePosBuf);
+
   Gpu_CoCmd_FlashFast(phost, 0);
   Gpu_CoCmd_Dlstart(phost);
 
@@ -328,15 +332,15 @@ inline void drawSkipScreen(Gpu_Hal_Context_t* phost, Profile& profile) {
 
   // Text - Skip Columns
   App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));
-  Gpu_CoCmd_Text(phost, 15, 36, 21, 0, (const char*)profile.skip_col);
+  Gpu_CoCmd_Text(phost, 15, 36, 21, 0, (const char*)colBuf);
 
-  // Text - Skip Rowa
+  // Text - Skip Rows
   App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));
-  Gpu_CoCmd_Text(phost, 15, 84, 21, 0, (const char*)profile.skip_row);
+  Gpu_CoCmd_Text(phost, 15, 84, 21, 0, (const char*)rowBuf);
 
-  // Text - Skip Columns
+  // Text - Skip Single Positions
   App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));
-  Gpu_CoCmd_Text(phost, 15, 132, 21, 0, (const char*)profile.skip_single_pos);
+  Gpu_CoCmd_Text(phost, 15, 132, 21, 0, (const char*)singlePosBuf);
 
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));

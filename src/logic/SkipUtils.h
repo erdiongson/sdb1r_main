@@ -58,7 +58,127 @@ class SkipUtils {
     CleanResult() : was_cleaned(false) { cleaned[0] = '\0'; }
   };
 
-  // Converts profile skip strings into an array of Position objects.
+  // Converts SkipPosition array to char string arrays (for UI display).
+  // @param skipPositions Array of SkipPosition from EEPROM.
+  // @param count Number of positions in the array.
+  // @param outSkipCol Output buffer for column skip string (format: "C1,C9,...").
+  // @param outSkipRow Output buffer for row skip string (format: "R1,R9,...").
+  // @param outSkipSinglePos Output buffer for individual position skip string (format: "C2R4,C3R4,...").
+  static void convertToStrings(const SkipPosition* skipPositions, uint8_t count,
+                                char* outSkipCol, char* outSkipRow, char* outSkipSinglePos) {
+    if (outSkipCol) outSkipCol[0] = '\0';
+    if (outSkipRow) outSkipRow[0] = '\0';
+    if (outSkipSinglePos) outSkipSinglePos[0] = '\0';
+
+    if (!skipPositions || count == 0) return;
+
+    bool firstCol = true, firstRow = true, firstPos = true;
+    char temp[20];
+
+    for (uint8_t i = 0; i < count && i < MAX_SKIP_POSITIONS; i++) {
+      const SkipPosition& pos = skipPositions[i];
+
+      // Column skip: x != 0, y == 0
+      if (pos.x != 0 && pos.y == 0) {
+        if (!firstCol && outSkipCol) strcat(outSkipCol, ",");
+        sprintf(temp, "C%d", pos.x);
+        if (outSkipCol) strcat(outSkipCol, temp);
+        firstCol = false;
+      }
+      // Row skip: x == 0, y != 0
+      else if (pos.x == 0 && pos.y != 0) {
+        if (!firstRow && outSkipRow) strcat(outSkipRow, ",");
+        sprintf(temp, "R%d", pos.y);
+        if (outSkipRow) strcat(outSkipRow, temp);
+        firstRow = false;
+      }
+      // Individual position skip: x != 0, y != 0
+      else if (pos.x != 0 && pos.y != 0) {
+        if (!firstPos && outSkipSinglePos) strcat(outSkipSinglePos, ",");
+        sprintf(temp, "C%dR%d", pos.x, pos.y);
+        if (outSkipSinglePos) strcat(outSkipSinglePos, temp);
+        firstPos = false;
+      }
+    }
+  }
+
+  // Converts char string arrays to SkipPosition array (for EEPROM storage).
+  // @param skipCol Column skip string (format: "C1,C9,...").
+  // @param skipRow Row skip string (format: "R1,R9,...").
+  // @param skipSinglePos Individual position skip string (format: "C2R4,C3R4,...").
+  // @param outPositions Output array to store SkipPosition objects.
+  // @param maxPositions Maximum number of positions to store.
+  // @return The number of positions stored.
+  static uint8_t convertFromStrings(const char* skipCol, const char* skipRow, const char* skipSinglePos,
+                                     SkipPosition* outPositions, uint8_t maxPositions) {
+    if (!outPositions || maxPositions == 0) return 0;
+
+    uint8_t posIndex = 0;
+
+    // Parse skipCol string (format: "C1,C9,...")
+    if (skipCol && skipCol[0] != '\0') {
+      char tempCol[SKIP_STRING_LEN];
+      strncpy(tempCol, skipCol, SKIP_STRING_LEN - 1);
+      tempCol[SKIP_STRING_LEN - 1] = '\0';
+
+      char* token = strtok(tempCol, ",");
+      while (token != nullptr && posIndex < maxPositions) {
+        if (token[0] == 'C') {
+          int col = atoi(token + 1);
+          if (col > 0 && col <= 255) {
+            outPositions[posIndex++] = SkipPosition(col, 0);
+          }
+        }
+        token = strtok(nullptr, ",");
+      }
+    }
+
+    // Parse skipRow string (format: "R1,R9,...")
+    if (skipRow && skipRow[0] != '\0') {
+      char tempRow[SKIP_STRING_LEN];
+      strncpy(tempRow, skipRow, SKIP_STRING_LEN - 1);
+      tempRow[SKIP_STRING_LEN - 1] = '\0';
+
+      char* token = strtok(tempRow, ",");
+      while (token != nullptr && posIndex < maxPositions) {
+        if (token[0] == 'R') {
+          int row = atoi(token + 1);
+          if (row > 0 && row <= 255) {
+            outPositions[posIndex++] = SkipPosition(0, row);
+          }
+        }
+        token = strtok(nullptr, ",");
+      }
+    }
+
+    // Parse skipSinglePos string (format: "C2R4,C3R4,...")
+    if (skipSinglePos && skipSinglePos[0] != '\0') {
+      char tempPos[SKIP_STRING_LEN];
+      strncpy(tempPos, skipSinglePos, SKIP_STRING_LEN - 1);
+      tempPos[SKIP_STRING_LEN - 1] = '\0';
+
+      char* token = strtok(tempPos, ",");
+      while (token != nullptr && posIndex < maxPositions) {
+        int col = 0, row = 0;
+        char* colStr = strstr(token, "C");
+        char* rowStr = strstr(token, "R");
+
+        if (colStr && rowStr) {
+          col = atoi(colStr + 1);
+          row = atoi(rowStr + 1);
+
+          if (col > 0 && col <= 255 && row > 0 && row <= 255) {
+            outPositions[posIndex++] = SkipPosition(col, row);
+          }
+        }
+        token = strtok(nullptr, ",");
+      }
+    }
+
+    return posIndex;
+  }
+
+  // Converts profile skip data into an array of Position objects for TrayHandler.
   // @param profile The profile containing skip information.
   // @param outPositions Output array to store parsed positions (must be at least MAX_POSITIONS in size).
   // @return The number of positions parsed.
@@ -68,75 +188,11 @@ class SkipUtils {
       outPositions[i] = TrayHandler::Position(-1, -1);
     }
 
+    // Convert from SkipPosition array directly
     int posIndex = 0;
-
-    // Parse skipCol string (format: "C1,C9,...")
-    if (profile.skip_col[0] != '\0') {
-      char tempCol[SKIP_STRING_LEN];
-      strncpy(tempCol, profile.skip_col, SKIP_STRING_LEN - 1);
-      tempCol[SKIP_STRING_LEN - 1] = '\0';
-
-      char* token = strtok(tempCol, ",");
-      while (token != nullptr && posIndex < MAX_POSITIONS) {
-        // Extract column number (skip the 'C' prefix)
-        if (token[0] == 'C') {
-          int col = atoi(token + 1);
-          if (col > 0) {
-            // Add a position with x=col, y=0 to indicate entire column should be skipped
-            outPositions[posIndex++] = TrayHandler::Position(col, 0);
-          }
-        }
-        token = strtok(nullptr, ",");
-      }
-    }
-
-    // Parse skipRow string (format: "R1,R9,...")
-    if (profile.skip_row[0] != '\0') {
-      char tempRow[SKIP_STRING_LEN];
-      strncpy(tempRow, profile.skip_row, SKIP_STRING_LEN - 1);
-      tempRow[SKIP_STRING_LEN - 1] = '\0';
-
-      char* token = strtok(tempRow, ",");
-      while (token != nullptr && posIndex < MAX_POSITIONS) {
-        // Extract row number (skip the 'R' prefix)
-        if (token[0] == 'R') {
-          int row = atoi(token + 1);
-          if (row > 0) {
-            // Add a position with x=0, y=row to indicate entire row should be skipped
-            outPositions[posIndex++] = TrayHandler::Position(0, row);
-          }
-        }
-        token = strtok(nullptr, ",");
-      }
-    }
-
-    // Parse skipSinglePos string (format: "C2R4,C3R4,...")
-    if (profile.skip_single_pos[0] != '\0') {
-      char tempPos[SKIP_STRING_LEN];
-      strncpy(tempPos, profile.skip_single_pos, SKIP_STRING_LEN - 1);
-      tempPos[SKIP_STRING_LEN - 1] = '\0';
-
-      char* token = strtok(tempPos, ",");
-      while (token != nullptr && posIndex < MAX_POSITIONS) {
-        // Extract column and row numbers (format: CxRy)
-        int col = 0, row = 0;
-        char* colStr = strstr(token, "C");
-        char* rowStr = strstr(token, "R");
-
-        if (colStr && rowStr) {
-          // Extract column number
-          col = atoi(colStr + 1);
-
-          // Extract row number
-          row = atoi(rowStr + 1);
-
-          if (col > 0 && row > 0) {
-            // Add a position with specific x,y coordinates
-            outPositions[posIndex++] = TrayHandler::Position(col, row);
-          }
-        }
-        token = strtok(nullptr, ",");
-      }
+    for (uint8_t i = 0; i < profile.skip_count && i < MAX_SKIP_POSITIONS && posIndex < MAX_POSITIONS; i++) {
+      const SkipPosition& skipPos = profile.skip_positions[i];
+      outPositions[posIndex++] = TrayHandler::Position(skipPos.x, skipPos.y);
     }
 
     return posIndex;

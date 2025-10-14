@@ -73,16 +73,20 @@ void AdvancedSettingsController::editSkipColumn(Gpu_Hal_Context_t* phost) {
   // Create dimensions from profile
   TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
 
+  // Get current skip strings
+  char skipCol[SKIP_STRING_LEN], skipRow[SKIP_STRING_LEN], skipSinglePos[SKIP_STRING_LEN];
+  profile_manager.getSkipStrings(skipCol, skipRow, skipSinglePos);
+
   while (true) {
-    getKeyboardValue(phost, current_profile->skip_col, "Enter columns to skip", false);
+    getKeyboardValue(phost, skipCol, "Enter columns to skip", false);
 
     // Clean the input with bounds checking
-    SkipUtils::CleanResult result = SkipUtils::clean(current_profile->skip_col, SkipUtils::COLUMN, dimensions);
+    SkipUtils::CleanResult result = SkipUtils::clean(skipCol, SkipUtils::COLUMN, dimensions);
 
     // If input was cleaned, update and loop again
     if (result.was_cleaned) {
-      strncpy(current_profile->skip_col, result.cleaned, SKIP_STRING_LEN - 1);
-      current_profile->skip_col[SKIP_STRING_LEN - 1] = '\0';
+      strncpy(skipCol, result.cleaned, SKIP_STRING_LEN - 1);
+      skipCol[SKIP_STRING_LEN - 1] = '\0';
       Logger::log(F("Input was cleaned, showing keyboard again"));
     } else {
       // Input is clean, exit loop
@@ -90,22 +94,29 @@ void AdvancedSettingsController::editSkipColumn(Gpu_Hal_Context_t* phost) {
       break;
     }
   }
+
+  // Save back to profile
+  profile_manager.setSkipStrings(skipCol, skipRow, skipSinglePos);
 }
 
 void AdvancedSettingsController::editSkipRow(Gpu_Hal_Context_t* phost) {
   // Create dimensions from profile
   TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
 
+  // Get current skip strings
+  char skipCol[SKIP_STRING_LEN], skipRow[SKIP_STRING_LEN], skipSinglePos[SKIP_STRING_LEN];
+  profile_manager.getSkipStrings(skipCol, skipRow, skipSinglePos);
+
   while (true) {
-    getKeyboardValue(phost, current_profile->skip_row, "Enter rows to skip", false);
+    getKeyboardValue(phost, skipRow, "Enter rows to skip", false);
 
     // Clean the input with bounds checking
-    SkipUtils::CleanResult result = SkipUtils::clean(current_profile->skip_row, SkipUtils::ROW, dimensions);
+    SkipUtils::CleanResult result = SkipUtils::clean(skipRow, SkipUtils::ROW, dimensions);
 
     // If input was cleaned, update and loop again
     if (result.was_cleaned) {
-      strncpy(current_profile->skip_row, result.cleaned, SKIP_STRING_LEN - 1);
-      current_profile->skip_row[SKIP_STRING_LEN - 1] = '\0';
+      strncpy(skipRow, result.cleaned, SKIP_STRING_LEN - 1);
+      skipRow[SKIP_STRING_LEN - 1] = '\0';
       Logger::log(F("Input was cleaned, showing keyboard again"));
     } else {
       // Input is clean, exit loop
@@ -113,31 +124,43 @@ void AdvancedSettingsController::editSkipRow(Gpu_Hal_Context_t* phost) {
       break;
     }
   }
+
+  // Save back to profile
+  profile_manager.setSkipStrings(skipCol, skipRow, skipSinglePos);
 }
 
 void AdvancedSettingsController::editSkipIndividual(Gpu_Hal_Context_t* phost) {
   // Create dimensions from profile
   TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
 
+  // Get current skip strings
+  char skipCol[SKIP_STRING_LEN], skipRow[SKIP_STRING_LEN], skipSinglePos[SKIP_STRING_LEN];
+  profile_manager.getSkipStrings(skipCol, skipRow, skipSinglePos);
+
   while (true) {
-    getKeyboardValue(phost, current_profile->skip_single_pos, "Enter positions to skip", false);
+    Logger::log("Length of skip_single_pos: " + String(strlen(skipSinglePos)));
+    getKeyboardValue(phost, skipSinglePos, "Enter positions to skip", false);
 
     // Clean the input with bounds checking
     Logger::log(F("Cleaning!"));
     SkipUtils::CleanResult result =
-        SkipUtils::clean(current_profile->skip_single_pos, SkipUtils::INDIVIDUAL, dimensions);
+        SkipUtils::clean(skipSinglePos, SkipUtils::INDIVIDUAL, dimensions);
     Logger::log(F("Cleaned!"));
 
     // If input was cleaned, update and loop again
     if (result.was_cleaned) {
       Logger::log(F("Actually cleaned!"));
-      strncpy(current_profile->skip_single_pos, result.cleaned, SKIP_STRING_LEN - 1);
-      current_profile->skip_single_pos[SKIP_STRING_LEN - 1] = '\0';
-      Logger::log(F("Input was cleaned, showing keyboard again"));
+      strncpy(skipSinglePos, result.cleaned, SKIP_STRING_LEN - 1);
+      skipSinglePos[SKIP_STRING_LEN - 1] = '\0';
+      Logger::log(F("I was cleaned, showing keyboard again"));
+      delay(20);
     } else {
       // Input is clean, exit loop
       Logger::log(F("Nothing changed!"));
       break;
     }
   }
+
+  // Save back to profile
+  profile_manager.setSkipStrings(skipCol, skipRow, skipSinglePos);
 }
