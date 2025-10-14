@@ -18,7 +18,6 @@ typedef struct {
   float tray_origin_y = 0.0;
   int16_t cycles = 1;
   int16_t vibration_enabled = 0;
-  bool dispense_enabled = false;
   int16_t password_enabled = 0;
   int16_t vibration_duration = 2;
   float z_dip = 0.0;
