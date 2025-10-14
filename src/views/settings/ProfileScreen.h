@@ -122,6 +122,15 @@ void drawProfileScreen(Gpu_Hal_Context_t* phost, ProfileParams params) {
   sprintf(buf, "Vibration Time: %d", profile.vibration_duration);
   Gpu_CoCmd_Text(phost, 150, 80, 21, 0, buf);
 
+  // Print z_dip
+  dtostrf(profile.z_dip, 4, 1, buf);
+  Gpu_CoCmd_Text(phost, 150, 95, 21, 0, "Z Dip:");
+  Gpu_CoCmd_Text(phost, 195, 95, 21, 0, buf);
+
+  // Print staggered
+  sprintf(buf, "Staggered: %s", profile.staggered ? "True" : "False");
+  Gpu_CoCmd_Text(phost, 150, 110, 21, 0, buf);
+
   // Draw dialog if dialog_code is set
   if (params.dialog_code > 0) {
     drawDialog(phost, params.dialog_code);
