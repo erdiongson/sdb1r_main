@@ -51,6 +51,7 @@ void ProfileManager::preLoadEEPROM(void) {
   }
 
   writeCurIDEEPROM(0);  // reset current profile in eeprom to 0
+  readProfileEEPROM(0);  // reload profile 0 into memory
 }
 
 void ProfileManager::checkProfile(void) {
