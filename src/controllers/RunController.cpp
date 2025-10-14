@@ -2,6 +2,7 @@
 #include "../views/MainScreen.h"
 #include "../views/common/Dialogs.h"
 #include "../Utils.h"
+#include "../serial/PlcSerial.h"
 
 RunController::RunController(ControllerParams params) : BaseController(params) {}
 
@@ -332,6 +333,7 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
         startStage(STAGE_MOVE);
       } else {
         Logger::log(F("MODE: Run complete"));
+        PlcSerial::sendCompleted();
         startNextController(CONTROLLER_HOMING);
       }
       break;

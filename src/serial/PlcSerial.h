@@ -28,4 +28,8 @@ class PlcSerial {
   // Process incoming data from the PLC.
   // @return PLCMessage struct containing message type and data.
   static PLCMessage process();
+
+  // Send a "COMPLETED" message to the PLC.
+  // Message format: EF 17 00 17 FE
+  static void sendCompleted();
 };

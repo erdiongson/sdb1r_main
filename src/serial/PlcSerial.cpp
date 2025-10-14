@@ -72,3 +72,16 @@ PLCMessage PlcSerial::process() {
 
   return result;
 }
+
+// Send a "COMPLETED" message to the PLC.
+// Message format: EF 17 00 17 FE
+void PlcSerial::sendCompleted() {
+  uint8_t message[PLC_MESSAGE_LENGTH] = {
+    START_BYTE,  // 0xEF
+    0x17,        // Command byte
+    0x00,        // Data byte
+    0x17,        // Checksum (0x17 + 0x00 = 0x17)
+    END_BYTE     // 0xFE
+  };
+  Serial3.write(message, PLC_MESSAGE_LENGTH);
+}
