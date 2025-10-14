@@ -13,7 +13,7 @@ void StartupController::onStart() {
 
   logoParams = {0, "Initializing.."};
   drawLogoScreen(phost, logoParams);
-  delay(1000);
+  delay(500);
 
   // Check if dispenser is online and responding
   dispenserHead.sendHandshake();
