@@ -5,17 +5,20 @@
 ProfileController::ProfileController(ControllerParams params) : BaseController(params), selected_profile_num(0) {}
 
 void ProfileController::onStart() {
-  ProfileParams params = { 0, 0, profile_manager.getCurrentProfile(), 0 };
+  selected_profile_num = profile_manager.getCurrentProfileNum();
+  profile_manager.readProfileEEPROM(selected_profile_num);
+  ProfileParams params = { 0, selected_profile_num, profile_manager.getCurrentProfile(), 0 };
   drawProfileScreen(phost, params);
 }
 
 void ProfileController::onInteraction(const Interaction& interaction) {
   if (interaction.key_pressed == 0) return;
 
-  static ProfileParams params = { 0, 0, profile_manager.getCurrentProfile(), 0 };
+  static ProfileParams params = { 0, profile_manager.getCurrentProfileNum(), profile_manager.getCurrentProfile(), 0 };
 
   switch (interaction.key_pressed) {
     case TAG_PROFILE_BACK:
+      profile_manager.readProfileEEPROM(profile_manager.getCurrentProfileNum());
       startNextController(CONTROLLER_SETTINGS);
       break;
 
