@@ -98,3 +98,13 @@ void PicSerial::blockUntilResponse() {
   while (process() == 0)
     delay(DISPENSER_POLL_DELAY_MS);
 }
+
+// Reset timeouts and clear any incoming messages.
+void PicSerial::reset() {
+  ack_timeout_at = 0;
+  cycle_complete_timeout_at = 0;
+  
+  // Clear serial buffer
+  while (Serial2.available())
+    Serial2.read();
+}

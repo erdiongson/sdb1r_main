@@ -31,6 +31,9 @@ class PicSerial {
   // Block until a response is received from the dispenser.
   static void blockUntilResponse();
 
+  // Reset timeouts and clear any incoming messages.
+  static void reset();
+
  private:
   // Send a message to the dispenser.
   // @param command The command byte.

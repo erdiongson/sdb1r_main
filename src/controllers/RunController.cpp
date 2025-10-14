@@ -16,6 +16,9 @@ void RunController::onStart() {
     return;
   }
 
+  // Reset dispenser state and clear any incoming messages
+  dispenserHead.resetDispenser();
+
   // Set the current position as the default 0 as a safe position
   // in the case when STOP is triggered before the Zeroing is completed
   dispenserHead.z().reset();
@@ -284,6 +287,8 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
       Logger::log(F("Head lowered, starting dispensing"));
       cycle = 0;
       startStage(STAGE_START_DISPENSE);
+      MainScreenParams params = { profile, getRunStatus(), 0 };
+      drawRunScreen(params);
       break;
     }
 
