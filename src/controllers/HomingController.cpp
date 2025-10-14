@@ -20,6 +20,10 @@ void HomingController::onInteraction(const Interaction& interaction) {
     dispenserHead.x().moveToMin();
     dispenserHead.y().moveToMin();
     dispenserHead.z().moveToMax();
+
+    // Redraw the screen
+    Profile& profile = profile_manager.getCurrentProfile();
+    drawHomingScreen({ profile, { 0, 0, 0, 0 }, 0 });
   }
 }
 
