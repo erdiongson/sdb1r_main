@@ -17,16 +17,20 @@
 // Dispense test screen parameters.
 struct DispenseTestScreenParams {
   const char* status_message;
+  int repeat_count;
+  int current_repeat_count;
+  int total_repeat_count;
+  bool is_dispensing;
 };
 
 // Display the dispense test screen.
 // Creates a test interface with:
-// - Row 1: Dispense button
-// - Row 2: Vibration level selection (U0-U4)
-// - Row 3: Vibration time selection (1-5s)
+// - Row 1: Vibration level selection (U0-U4)
+// - Row 2: Vibration time selection (1-5s)
+// - Row 3: Repeat button, Dispense/Stop button, Progress text
 // - Back button
 // @param phost Pointer to GPU HAL context.
-// @param params Screen parameters including status message.
+// @param params Screen parameters including status message and repeat info.
 void drawDispenseTestScreen(Gpu_Hal_Context_t* phost, const DispenseTestScreenParams& params);
 
 // Display the dispense test screen.
@@ -67,18 +71,8 @@ void drawDispenseTestScreen(Gpu_Hal_Context_t* phost, const DispenseTestScreenPa
   int32_t button_height = 25;
   int32_t button_spacing = 6;
 
-  // Row 1: Dispense button (centered, larger)
-  int32_t dispense_width = 100;
-  int32_t dispense_height = 30;
-  int32_t dispense_x = (DispWidth - dispense_width) / 2;
-  int32_t dispense_y = start_y;
-
-  Gpu_CoCmd_FgColor(phost, 0xFF4500);  // Orange red for dispense
-  App_WrCoCmd_Buffer(phost, TAG(TAG_DISPENSE));
-  Gpu_CoCmd_Button(phost, dispense_x, dispense_y, dispense_width, dispense_height, 22, 0, "DISPENSE");
-
-  // Row 2: Vibration Level Selection (U0-U4)
-  int32_t vib_level_y = start_y + row_height + 15;
+  // Row 1: Vibration Level Selection (U0-U4)
+  int32_t vib_level_y = start_y;
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, TAG_MASK(255));
@@ -116,8 +110,8 @@ void drawDispenseTestScreen(Gpu_Hal_Context_t* phost, const DispenseTestScreenPa
   Gpu_CoCmd_Button(phost, vib_start_x + 4 * (button_width + button_spacing), vib_level_y, button_width, button_height,
                    20, 0, "U4");
 
-  // Row 3: Vibration Time Selection (1-5s)
-  int32_t vib_time_y = vib_level_y + row_height + 5;
+  // Row 2: Vibration Time Selection (1-5s) - 4px gap below vibration level
+  int32_t vib_time_y = vib_level_y + button_height + 4;
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, TAG_MASK(255));
@@ -155,17 +149,53 @@ void drawDispenseTestScreen(Gpu_Hal_Context_t* phost, const DispenseTestScreenPa
   Gpu_CoCmd_Button(phost, time_start_x + 4 * (button_width + button_spacing), vib_time_y, button_width, button_height,
                    20, 0, "5s");
 
+  // Row 3: Repeat button, Dispense/Stop button, Progress text - 4px gap below vibration time
+  int32_t row3_y = vib_time_y + button_height + 4;
+  int32_t row3_button_height = button_height;  // Same height as other buttons for consistency
+  int32_t row3_spacing = 6;  // Same spacing as other rows
+
+  // Repeat button (left-aligned with first two rows)
+  int32_t repeat_width = 60;
+  int32_t row3_start_x = vib_start_x;  // Align with vibration buttons
+  sprintf(buf, "Repeat: %d", params.repeat_count);
+  Gpu_CoCmd_FgColor(phost, 0x00A2E8);
+  App_WrCoCmd_Buffer(phost, TAG(TAG_DISPENSE_REPEAT));
+  Gpu_CoCmd_Button(phost, row3_start_x, row3_y, repeat_width, row3_button_height, 20, 0, buf);
+
+  // Dispense/Stop button (right next to repeat button)
+  int32_t dispense_width = 70;
+  int32_t dispense_x = row3_start_x + repeat_width + row3_spacing;
+  
+  if (params.is_dispensing) {
+    Gpu_CoCmd_FgColor(phost, 0xFF0000);  // Red for stop
+    App_WrCoCmd_Buffer(phost, TAG(TAG_DISPENSE_STOP));
+    Gpu_CoCmd_Button(phost, dispense_x, row3_y, dispense_width, row3_button_height, 20, 0, "STOP");
+  } else {
+    Gpu_CoCmd_FgColor(phost, 0xFF4500);  // Orange red for dispense
+    App_WrCoCmd_Buffer(phost, TAG(TAG_DISPENSE));
+    Gpu_CoCmd_Button(phost, dispense_x, row3_y, dispense_width, row3_button_height, 20, 0, "DISPENSE");
+  }
+
+  // Status message with progress (right of dispense button)
+  App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+  App_WrCoCmd_Buffer(phost, COLOR_RGB(200, 200, 200));
+  int32_t text_x = dispense_x + dispense_width + 10;
+  
+  // Combine status message with progress count if active
+  if (params.total_repeat_count > 0) {
+    sprintf(buf, "%s (%d/%d)", params.status_message, params.current_repeat_count, params.total_repeat_count);
+  } else {
+    sprintf(buf, "%s", params.status_message);
+  }
+  
+  Gpu_CoCmd_Text(phost, text_x, row3_y + row3_button_height / 2, 20, OPT_CENTERY, buf);
+  App_WrCoCmd_Buffer(phost, TAG_MASK(255));
+
   // Back button
   Gpu_CoCmd_FgColor(phost, 0xAA0000);
   App_WrCoCmd_Buffer(phost, TAG(TAG_DISPENSE_BACK));
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   Gpu_CoCmd_Button(phost, 10, DispHeight - 30, 50, 22, 20, 0, "Back");
-
-  // Status message display
-  App_WrCoCmd_Buffer(phost, TAG_MASK(0));
-  App_WrCoCmd_Buffer(phost, COLOR_RGB(200, 200, 200));
-  Gpu_CoCmd_Text(phost, DispWidth - 10, DispHeight - 15, 20, OPT_RIGHTX | OPT_FORMAT, params.status_message);
-  App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // Finalize display
   Disp_End(phost);

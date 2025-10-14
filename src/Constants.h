@@ -113,6 +113,8 @@
 #define TAG_VIB_TIME_4 69
 #define TAG_VIB_TIME_5 70
 #define TAG_DISPENSE_BACK 71
+#define TAG_DISPENSE_REPEAT 72
+#define TAG_DISPENSE_STOP 73
 
 // =============================================================================
 // UI TAG CONSTANTS - Preview Screen
