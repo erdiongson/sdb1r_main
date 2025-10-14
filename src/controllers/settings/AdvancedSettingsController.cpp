@@ -78,7 +78,7 @@ void AdvancedSettingsController::editSkipColumn(Gpu_Hal_Context_t* phost) {
   profile_manager.getSkipStrings(skipCol, skipRow, skipSinglePos);
 
   while (true) {
-    getKeyboardValue(phost, skipCol, "Enter columns to skip", false);
+    getKeyboardValue(phost, skipCol, "Enter columns to skip", false, SKIP_STRING_LEN);
 
     // Clean the input with bounds checking
     SkipUtils::CleanResult result = SkipUtils::clean(skipCol, SkipUtils::COLUMN, dimensions);
@@ -108,7 +108,7 @@ void AdvancedSettingsController::editSkipRow(Gpu_Hal_Context_t* phost) {
   profile_manager.getSkipStrings(skipCol, skipRow, skipSinglePos);
 
   while (true) {
-    getKeyboardValue(phost, skipRow, "Enter rows to skip", false);
+    getKeyboardValue(phost, skipRow, "Enter rows to skip", false, SKIP_STRING_LEN);
 
     // Clean the input with bounds checking
     SkipUtils::CleanResult result = SkipUtils::clean(skipRow, SkipUtils::ROW, dimensions);
@@ -139,7 +139,7 @@ void AdvancedSettingsController::editSkipIndividual(Gpu_Hal_Context_t* phost) {
 
   while (true) {
     Logger::log("Length of skip_single_pos: " + String(strlen(skipSinglePos)));
-    getKeyboardValue(phost, skipSinglePos, "Enter positions to skip", false);
+    getKeyboardValue(phost, skipSinglePos, "Enter positions to skip", false, SKIP_STRING_LEN);
 
     // Clean the input with bounds checking
     Logger::log(F("Cleaning!"));

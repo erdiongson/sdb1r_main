@@ -231,7 +231,7 @@ PasswordVerificationResult ProfileManager::verifyPassword(Gpu_Hal_Context_t* pho
   readPassEEPROM(currentPassword);
   if (strcmp(currentPassword, "") == 0) strcpy(currentPassword, INITIAL_PASSWORD);
 
-  getKeyboardValue(phost, inputPassword, "Enter Password", FALSE);
+  getKeyboardValue(phost, inputPassword, "Enter Password", FALSE, PASSWORD_MAX_LEN);
 
   // Cancelled
   if (strcmp(inputPassword, "") == 0) {

@@ -32,7 +32,8 @@ void waitKeyRelease(void);
 // @param curtext Current text buffer (input/output).
 // @param curtitle Title to display.
 // @param password Password mode flag (true = mask input with asterisks).
-void getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* curtitle, bool password);
+// @param maxlen Maximum length of the input value.
+void getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* curtitle, bool password, uint8_t maxlen);
 
 // Rounds a float value to one decimal place.
 // @param x Pointer to the float value to round.
