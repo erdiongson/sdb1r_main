@@ -70,6 +70,9 @@ void setup() {
   Logger::log("Controller buffer size: ", String(ControllerManager::getMaxControllerSize()) + " bytes");
 
   startNextController(CONTROLLER_STARTUP);
+  // Disable Z axis if required
+  if (Z_DISABLED) dispenser_head.z().setDisabled(true);
+
   Logger::log(F("Starting first controller.."));
 }
 

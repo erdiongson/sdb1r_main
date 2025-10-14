@@ -108,11 +108,13 @@ inline void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams pa
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // Z Dip
-  App_WrCoCmd_Buffer(phost, TAG_MASK(1));
-  App_WrCoCmd_Buffer(phost, TAG(TAG_Z_DIP));
-  App_WrCoCmd_Buffer(phost, VERTEX2F(3744, 2248));
-  App_WrCoCmd_Buffer(phost, VERTEX2F(4480, 2008));
-  App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+  if (!Z_DISABLED) {
+    App_WrCoCmd_Buffer(phost, TAG_MASK(1));
+    App_WrCoCmd_Buffer(phost, TAG(TAG_Z_DIP));
+    App_WrCoCmd_Buffer(phost, VERTEX2F(3744, 2248));
+    App_WrCoCmd_Buffer(phost, VERTEX2F(4480, 2008));
+    App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+  }
 
   App_WrCoCmd_Buffer(phost, END());
 
