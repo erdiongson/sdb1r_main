@@ -222,11 +222,6 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       // These are handled by AdvancedSettingsController
       break;
 
-    case TAG_CONFIG_PREVIEW:
-      Logger::log(F("Button Pressed: PREVIEW"));
-      startNextController(CONTROLLER_PREVIEW);
-      break;
-
     case TAG_ADVANCED:
       Logger::log(F("Button Pressed: ADVANCED"));
       startNextController(CONTROLLER_ADVANCED_SETTINGS);

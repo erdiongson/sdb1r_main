@@ -50,6 +50,11 @@ void AdvancedSettingsController::onInteraction(const Interaction& interaction) {
       startNextController(CONTROLLER_SETTINGS);
       break;
 
+    case TAG_CONFIG_PREVIEW:  // Preview button
+      Logger::log(F("Button Pressed: PREVIEW"));
+      startNextController(CONTROLLER_PREVIEW);
+      break;
+
     default:
       break;
   }
