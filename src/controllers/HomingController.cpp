@@ -1,10 +1,14 @@
 #include "HomingController.h"
 #include "../views/MainScreen.h"
+#include "../serial/PlcSerial.h"
 
 HomingController::HomingController(ControllerParams params) : BaseController(params) {}
 
 void HomingController::onStart() {
   Logger::log(F("HomingController::on_start"));
+
+  // Set busy state
+  PlcSerial::setBusy(true);
 
   // Start the homing process
   dispenserHead.x().moveToMin();
@@ -46,6 +50,8 @@ ControllerStepResult HomingController::onStep() {
 
   if (result.steppers == AXIS_STATE_COMPLETE) {
     Logger::log(F("Homing completed "));
+    // Clear busy state
+    PlcSerial::setBusy(false);
     startNextController(CONTROLLER_READY);
   }
 

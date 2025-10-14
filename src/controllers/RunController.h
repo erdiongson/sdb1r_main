@@ -33,6 +33,7 @@ class RunController : public BaseController {
   void processStageLogic(DispenserProcessResult& dispenserProcessResult);
   void startStage(Stage newStage);
   void pause();
+  void resume();
   void stop();
   void start();
   

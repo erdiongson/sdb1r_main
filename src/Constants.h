@@ -189,6 +189,9 @@
 #define PLC_CMD_RAISE_Z 0x42
 #define PLC_CMD_LOWER_Z 0x41
 
+// PLC Response Codes
+#define PLC_NAK_BYTE 0x16  // Negative acknowledgment byte
+
 // =============================================================================
 // DIALOG CODES
 // =============================================================================

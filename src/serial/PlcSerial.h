@@ -32,4 +32,11 @@ class PlcSerial {
   // Send a "COMPLETED" message to the PLC.
   // Message format: EF 17 00 17 FE
   static void sendCompleted();
+
+  // Set the busy state.
+  // @param busy True if the system is busy, false otherwise.
+  static void setBusy(bool busy);
+
+ private:
+  static bool isBusy;
 };

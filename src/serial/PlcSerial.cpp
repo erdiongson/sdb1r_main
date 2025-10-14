@@ -6,6 +6,9 @@
 
 #include "PlcSerial.h"
 
+// Initialize static member
+bool PlcSerial::isBusy = false;
+
 // Process incoming data from the PLC.
 // @return PLCMessage struct containing message type and data.
 PLCMessage PlcSerial::process() {
@@ -42,8 +45,15 @@ PLCMessage PlcSerial::process() {
     result.data[i] = response[i];
   }
 
-  // Send acknowledgement (mirror the received message back to PLC)
-  Serial3.write(response, PLC_MESSAGE_LENGTH);
+  // Check if this is a START command and system is busy
+  if (response[1] == PLC_CMD_START && isBusy) {
+    // Send 5 NAK bytes instead of mirroring
+    uint8_t nakResponse[5] = { PLC_NAK_BYTE, PLC_NAK_BYTE, PLC_NAK_BYTE, PLC_NAK_BYTE, PLC_NAK_BYTE };
+    Serial3.write(nakResponse, 5);
+  } else {
+    // Send acknowledgement (mirror the received message back to PLC)
+    Serial3.write(response, PLC_MESSAGE_LENGTH);
+  }
 
   // Store data value
   result.data_value = response[2];
@@ -84,4 +94,10 @@ void PlcSerial::sendCompleted() {
     END_BYTE     // 0xFE
   };
   Serial3.write(message, PLC_MESSAGE_LENGTH);
+}
+
+// Set the busy state.
+// @param busy True if the system is busy, false otherwise.
+void PlcSerial::setBusy(bool busy) {
+  isBusy = busy;
 }

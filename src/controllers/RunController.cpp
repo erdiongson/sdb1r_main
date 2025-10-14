@@ -24,6 +24,9 @@ void RunController::onStart() {
   // in the case when STOP is triggered before the Zeroing is completed
   dispenserHead.z().reset();
 
+  // Set busy state
+  PlcSerial::setBusy(true);
+
   // Actually start the sequence
   start();
 }
@@ -35,6 +38,18 @@ void RunController::pause() {
   dispenserHead.x().stop();
   dispenserHead.y().stop();
   dispenserHead.z().stop();
+
+  // Clear busy state
+  PlcSerial::setBusy(false);
+}
+
+// Resumes the run from a paused state.
+void RunController::resume() {
+  Logger::log(F("MODE: Resumed"));
+  PlcSerial::setBusy(true);
+  paused = false;
+  startStage(stage);
+  drawRunScreen({ profile, getRunStatus(), 0 });
 }
 
 // Stops the run and returns to home position.
@@ -223,9 +238,7 @@ void RunController::onInteraction(const Interaction& interaction) {
   }
 
   if (interaction.plc_message_type == MSG_START || interaction.key_pressed == TAG_START) {
-    paused = false;
-    startStage(stage);
-    drawRunScreen({ profile, getRunStatus(), 0 });
+    resume();
     return;
   }
 }
