@@ -68,7 +68,7 @@ void drawDispenseTestScreen(Gpu_Hal_Context_t* phost, const DispenseTestScreenPa
   int32_t button_spacing = 6;
 
   // Row 1: Dispense button (centered, larger)
-  int32_t dispense_width = 80;
+  int32_t dispense_width = 100;
   int32_t dispense_height = 30;
   int32_t dispense_x = (DispWidth - dispense_width) / 2;
   int32_t dispense_y = start_y;

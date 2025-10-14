@@ -120,14 +120,14 @@ ControllerStepResult DispenseTestController::onStep() {
     return ControllerStepResult(false);
   }
 
-  if (state == WAITING_FOR_RESPONSE) {
+  if (state == WAITING_FOR_RESPONSE && result.dispenser != DISPENSER_STATE_SENT) {
     const char* message = "";
     switch (result.dispenser) {
       case DISPENSER_STATE_IDLING:
-        message = "RESPONSE RECEIVED";
+        message = "COMPLETED";
         break;
       case DISPENSER_STATE_ERROR_ACK_ERROR:
-        message = "ACK ERROR";
+        message = "ACK TIMEOUT";
         break;
       case DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE:
         message = "IR SENSOR FAILURE";
