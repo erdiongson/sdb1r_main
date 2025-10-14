@@ -29,6 +29,8 @@ void DebugController::onInteraction(const Interaction& interaction) {
       int dialog_code = (int)dialog_num;
       // Redraw screen with the selected dialog
       drawDebugScreen(phost, { false, false, dialog_code });
+      delay(4000);
+      drawDebugScreen(phost, { false, false, 0 });
       break;
     }
 
