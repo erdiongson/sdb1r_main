@@ -12,21 +12,33 @@ void HomingController::onStart() {
   dispenserHead.z().moveToMax();
 }
 
-void HomingController::onInteraction(const Interaction& interaction) {}
+void HomingController::onInteraction(const Interaction& interaction) {
+  // Handle "Continue" button pressed in an error dialog
+  if (interaction.key_pressed == TAG_CONTINUE) {
+    running = true;
+    // Restart the homing process
+    dispenserHead.x().moveToMin();
+    dispenserHead.y().moveToMin();
+    dispenserHead.z().moveToMax();
+  }
+}
 
 ControllerStepResult HomingController::onStep() {
+  // Early return if not running (error state)
+  if (!running) return ControllerStepResult(false);
+
   DispenserProcessResult result = dispenserHead.process();
 
   // Handle possible errors
   if (result.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
     Profile& profile = profile_manager.getCurrentProfile();
     drawHomingScreen({ profile, { 0, 0, 0, 0 }, DIALOG_ERROR_LIMIT_SWITCH_HOMING });
-    stage = STAGE_ERROR;
+    running = false;
     return ControllerStepResult(false);
   }
 
-  if (stage == STAGE_HOME && result.steppers == AXIS_STATE_COMPLETE) {
-    Logger::log(F("Homing completed 👍"));
+  if (result.steppers == AXIS_STATE_COMPLETE) {
+    Logger::log(F("Homing completed "));
     startNextController(CONTROLLER_READY);
   }
 

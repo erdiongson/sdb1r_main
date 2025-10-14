@@ -9,9 +9,9 @@ class StartupController : public BaseController {
     STAGE_HANDSHAKE,
     STAGE_CLEAR,
     STAGE_HOME,
-    STAGE_ERROR,
   };
   int stage = STAGE_HANDSHAKE;
+  bool running = true;
   DispenserHead& dispenserHead;
   LogoScreenParams logoParams = {0, ""};
 

@@ -4,11 +4,7 @@
 
 class HomingController : public BaseController {
  private:
-  enum {
-    STAGE_HOME,
-    STAGE_ERROR,
-  };
-  int stage = STAGE_HOME;
+  bool running = true;
 
  public:
   HomingController(ControllerParams params);

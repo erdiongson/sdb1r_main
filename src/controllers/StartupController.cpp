@@ -11,7 +11,7 @@ void StartupController::onStart() {
   Logger::log(F("Loading profile.."));
   profile_manager.loadProfile();
 
-  logoParams = {0, ""};
+  logoParams = {0, "Initializing.."};
   drawLogoScreen(phost, logoParams);
   delay(1000);
 
@@ -23,8 +23,9 @@ void StartupController::onStart() {
 
 void StartupController::onInteraction(const Interaction& interaction) {
   // Handle "Continue" button pressed in an error dialog
-  if (interaction.tag == TAG_CONTINUE) {
+  if (interaction.key_pressed == TAG_CONTINUE) {
     logoParams.dialog_code = 0;
+    running = true;
 
     if (stage == STAGE_CLEAR) {
       logoParams.status_message = "Unlatching..";
@@ -41,30 +42,34 @@ void StartupController::onInteraction(const Interaction& interaction) {
 }
 
  ControllerStepResult StartupController::onStep() {
+  // Early return if not running (error state)
+  if (!running) return ControllerStepResult(false);
+
   DispenserProcessResult result = dispenserHead.process();
 
   // Handle possible errors
   if (result.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
     logoParams.dialog_code = DIALOG_ERROR_ACK_ERROR;
     drawLogoScreen(phost, logoParams);
-    stage = STAGE_ERROR;
+    running = false;
     return ControllerStepResult(false);
   }
   if (result.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
     logoParams.dialog_code = DIALOG_ERROR_MARKER_NOT_DETECTED;
     drawLogoScreen(phost, logoParams);
-    stage = STAGE_ERROR;
+    running = false;
     return ControllerStepResult(false);
   }
   if (result.dispenser == DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE) {
     logoParams.dialog_code = DIALOG_ERROR_IR_SENSOR;
     drawLogoScreen(phost, logoParams);
-    stage = STAGE_ERROR;
+    running = false;
     return ControllerStepResult(false);
   }
   if (result.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
     logoParams.dialog_code = DIALOG_ERROR_LIMIT_SWITCH_HOMING;
     drawLogoScreen(phost, logoParams);
+    running = false;
     return ControllerStepResult(false);
   }
 
