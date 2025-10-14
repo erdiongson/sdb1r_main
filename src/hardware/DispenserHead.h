@@ -147,9 +147,9 @@ class DispenserHead {
 
   // Clear axes if at limit positions by moving them away.
   void clearLimits() {
-    if (x_axis.isAtMin()) x_axis.moveBy(STEPS_PER_UNIT_X * 10);
-    if (y_axis.isAtMin()) y_axis.moveBy(STEPS_PER_UNIT_Y * 10);
-    if (z_axis.isAtMax()) z_axis.moveBy(-STEPS_PER_UNIT_Z * 10);
+    if (x_axis.isAtMin()) x_axis.moveBy(STEPS_PER_UNIT_X * 5);
+    if (y_axis.isAtMin()) y_axis.moveBy(STEPS_PER_UNIT_Y * 5);
+    if (z_axis.isAtMax()) z_axis.moveBy(-STEPS_PER_UNIT_Z * 5);
   }
 
   // Reset dispenser state and clear serial communication.
