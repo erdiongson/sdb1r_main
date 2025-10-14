@@ -218,10 +218,9 @@ class Axis {
   void stopRunning() {
     if (!enabled) return;
     running = false;
-    stepper.move(0);  // Sets the target position to the current position;
-    stepper.setAcceleration(0);
-    stepper.setSpeed(0);
-    stepper.runToPosition();
+    // Force immediate stop by setting target to current position
+    long currentPos = stepper.currentPosition();
+    stepper.setCurrentPosition(currentPos);  // Resets both current and target to same value
   }
 
   AccelStepper& getStepper() { return stepper; }
