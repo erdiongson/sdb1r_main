@@ -153,7 +153,7 @@ void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
       break;
 
     case DIALOG_ERROR_CYCLE_TIMEOUT:
-      params.title = "Dispense Timeout Error";
+      params.title = "Dispenser Timeout Error";
       params.subtitle = "Did not receive response from the dispenser head. Please restart the device.";
       params.left_btn = nullptr;
       params.right_btn = nullptr;
