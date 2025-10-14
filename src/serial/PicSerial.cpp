@@ -19,7 +19,7 @@ void PicSerial::sendMessage(byte command, byte data) {
   Serial2.write(msg, 5);
 
   // Set timeout to 5 seconds from now.
-  ack_timeout_at = millis() + DISPENSER_TIMEOUT_MS;
+  ack_timeout_at = millis() + DISPENSER_ACK_TIMEOUT_MS;
 }
 
 // Send a dispense command to the dispenser.
