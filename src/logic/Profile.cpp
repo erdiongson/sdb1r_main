@@ -74,6 +74,8 @@ void ProfileManager::checkProfile(void) {
 }
 
 uint8_t ProfileManager::loadProfile(void) {
+  Logger::log("PROFILE SIZE: " + String(PROFILE_SIZE));
+
   this->currentProfileIndex = readCurIDEEPROM();
   if (this->currentProfileIndex >= MAX_PROFILES)
     this->currentProfileIndex = 0;  // if corrcupt data from eeprom, set id=0
