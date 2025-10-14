@@ -221,7 +221,7 @@ void RunController::onInteraction(const Interaction& interaction) {
     return;
   }
 
-  if (interaction.key_pressed == TAG_START) {
+  if (interaction.plc_message_type == MSG_START || interaction.key_pressed == TAG_START) {
     paused = false;
     startStage(stage);
     drawRunScreen({ profile, getRunStatus(), 0 });
