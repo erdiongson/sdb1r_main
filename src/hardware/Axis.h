@@ -36,6 +36,8 @@ class Axis {
   bool prev_max_state = false;  // Previous state of max limit switch (true = hit)
   int min_counter = 0;          // Debounce counter for min limit switch
   int max_counter = 0;          // Debounce counter for max limit switch
+  float max_speed;              // Maximum speed for the axis
+  float max_acceleration;       // Maximum acceleration for the axis
 
  public:
   // Constructor for Axis class using AxisParams struct.
@@ -45,14 +47,16 @@ class Axis {
         min_limit_pin(params.min_pin),
         max_limit_pin(params.max_pin),
         moving_positive(false),
-        enabled(true) {
+        enabled(true),
+        max_speed(params.max_speed),
+        max_acceleration(params.acceleration) {
     // Configure limit switch pins as inputs with pull-up resistors
     pinMode(min_limit_pin, INPUT_PULLUP);
     pinMode(max_limit_pin, INPUT_PULLUP);
 
     // Configure stepper motor parameters
-    stepper.setMaxSpeed(params.max_speed);
-    stepper.setAcceleration(params.acceleration);
+    stepper.setMaxSpeed(max_speed);
+    stepper.setAcceleration(max_acceleration);
   }
 
   void reset() { stepper.setCurrentPosition(0); }
@@ -227,5 +231,27 @@ class Axis {
 
   void runUntilCompleteBlocking() {
     while (onStep() == AXIS_STATE_RUNNING) {}
+  }
+
+  // Gets the maximum speed for the axis.
+  // @return The maximum speed value.
+  float getMaxSpeed() const { return max_speed; }
+
+  // Gets the maximum acceleration for the axis.
+  // @return The maximum acceleration value.
+  float getMaxAcceleration() const { return max_acceleration; }
+
+  // Sets the maximum speed for the axis.
+  // @param speed The new maximum speed value.
+  void setMaxSpeed(float speed) {
+    max_speed = speed;
+    stepper.setMaxSpeed(max_speed);
+  }
+
+  // Sets the maximum acceleration for the axis.
+  // @param accel The new maximum acceleration value.
+  void setMaxAcceleration(float accel) {
+    max_acceleration = accel;
+    stepper.setAcceleration(max_acceleration);
   }
 };

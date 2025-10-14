@@ -33,6 +33,7 @@
 #define CONTROLLER_PREVIEW 8
 #define CONTROLLER_DEBUG 9
 #define CONTROLLER_ADVANCED_SETTINGS 10
+#define CONTROLLER_STEPPER_TEST 11
 
 // =============================================================================
 // UI TAG CONSTANTS - Main Screen (Ready, Run, Homing)
@@ -131,6 +132,33 @@
 #define TAG_DEBUG_RESET_PROFILES 93
 #define TAG_DEBUG_BACK 94
 #define TAG_DEBUG_DIALOG_TEST 95
+
+// =============================================================================
+// UI TAG CONSTANTS - Stepper Test Control
+// =============================================================================
+#define TAG_STEPPER_AXIS_X 110
+#define TAG_STEPPER_AXIS_Y 111
+#define TAG_STEPPER_AXIS_Z 112
+#define TAG_STEPPER_SPEED_VALUE 113
+#define TAG_STEPPER_SPEED_MINUS_10K 114
+#define TAG_STEPPER_SPEED_PLUS_10K 115
+#define TAG_STEPPER_SPEED_MINUS_1K 116
+#define TAG_STEPPER_SPEED_MINUS_100 117
+#define TAG_STEPPER_SPEED_PLUS_100 118
+#define TAG_STEPPER_SPEED_PLUS_1K 119
+#define TAG_STEPPER_SPEED_RESET 120
+#define TAG_STEPPER_ACCEL_VALUE 121
+#define TAG_STEPPER_ACCEL_MINUS_10K 122
+#define TAG_STEPPER_ACCEL_PLUS_10K 123
+#define TAG_STEPPER_ACCEL_MINUS_1K 124
+#define TAG_STEPPER_ACCEL_MINUS_100 125
+#define TAG_STEPPER_ACCEL_PLUS_100 126
+#define TAG_STEPPER_ACCEL_PLUS_1K 127
+#define TAG_STEPPER_ACCEL_RESET 128
+#define TAG_STEPPER_MOVE_MINUS 129
+#define TAG_STEPPER_MOVE_PLUS 130
+#define TAG_STEPPER_MOVE_AMOUNT 131
+#define TAG_STEPPER_BACK 132
 
 // =============================================================================
 // INTERACTION INTERVALS (in milliseconds)

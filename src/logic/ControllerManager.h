@@ -8,6 +8,7 @@
 #include "../controllers/debug/DebugController.h"
 #include "../controllers/debug/MoveTestController.h"
 #include "../controllers/debug/DispenseTestController.h"
+#include "../controllers/debug/StepperTestController.h"
 #include "../controllers/settings/PreviewController.h"
 #include "../controllers/settings/SettingsController.h"
 #include "../controllers/settings/ProfileController.h"
@@ -113,6 +114,9 @@ class ControllerManager {
         break;
       case CONTROLLER_ADVANCED_SETTINGS:
         controller = new (controllerBuffer.data) AdvancedSettingsController(params);
+        break;
+      case CONTROLLER_STEPPER_TEST:
+        controller = new (controllerBuffer.data) StepperTestController(params);
         break;
       default:
         Logger::log("Unknown controller type: ", (uint8_t)nextControllerType);
