@@ -22,7 +22,7 @@ struct BounceState {
   int total_count;
   BounceStage current_stage;
   BounceAxis axis;
-  int go_amount;
+  long go_amount;
 };
 
 class MoveTestController : public BaseController {
