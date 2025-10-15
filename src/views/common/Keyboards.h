@@ -13,6 +13,19 @@
 #include "../../gpu/Platform.h"
 #include "../../gpu/App_Common.h"
 
+// Keyboard action types.
+enum KeyboardAction {
+  ACTION_ENTER,  // User pressed Enter/Save
+  ACTION_BACK    // User pressed Back
+};
+
+// Result structure for keyboard input.
+struct KeyboardResult {
+  KeyboardAction action;
+  
+  KeyboardResult(KeyboardAction act = ACTION_ENTER) : action(act) {}
+};
+
 // Displays the on-screen keyboard interface.
 // @param phost GPU context pointer.
 // @param keypressed Currently pressed key code.
@@ -20,9 +33,9 @@
 // @param displaytitle Title text for the keyboard.
 // @param numlock Number lock state (true = numeric mode).
 // @param caplock Caps lock state (true = uppercase).
-// @param errorcode Error state flag.
+// @param errormsg Error message string (NULL or empty string = no error).
 void drawKeyboard(Gpu_Hal_Context_t* phost, uint8_t keypressed, char* displaytext, char* displaytitle, bool numlock,
-                  bool caplock, bool errorcode);
+                  bool caplock, const char* errormsg);
 
 // Waits for the current key to be released.
 void waitKeyRelease(void);
@@ -33,7 +46,9 @@ void waitKeyRelease(void);
 // @param curtitle Title to display.
 // @param password Password mode flag (true = mask input with asterisks).
 // @param maxlen Maximum length of the input value.
-void getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* curtitle, bool password, uint8_t maxlen);
+// @param errormsg Error message string (NULL or empty string = no error).
+// @return KeyboardResult containing the action taken (ACTION_ENTER or ACTION_BACK).
+KeyboardResult getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* curtitle, bool password, uint8_t maxlen, const char* errormsg);
 
 // Rounds a float value to one decimal place.
 // @param x Pointer to the float value to round.

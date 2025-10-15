@@ -15,7 +15,7 @@ struct {
 } Flag;
 
 void drawKeyboard(Gpu_Hal_Context_t* phost, uint8_t keypressed, char* displaytext, char* displaytitle, bool numlock,
-                  bool caplock, bool errorcode) {
+                  bool caplock, const char* errormsg) {
   char buf[KEYBOARD_MAX_LEN];
 
   // Display List start
@@ -131,13 +131,23 @@ void drawKeyboard(Gpu_Hal_Context_t* phost, uint8_t keypressed, char* displaytex
   App_WrCoCmd_Buffer(phost, SCISSOR_SIZE(DispWidth, (uint16_t)(DispHeight * 0.1)));
   App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(120, 120, 120));
   App_WrCoCmd_Buffer(phost, CLEAR(1, 1, 1));
-  App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 0));
-  Gpu_CoCmd_Text(phost, 160 - (strlen(displaytitle) * 5), 78, 27, 0, displaytitle);
+  
+  // Display title or error message
+  bool has_error = (errormsg != NULL && errormsg[0] != '\0');
+  if (has_error) {
+    // Display error message in darker red
+    App_WrCoCmd_Buffer(phost, COLOR_RGB(245, 20, 20));
+    Gpu_CoCmd_Text(phost, DispWidth / 2, 82, 27, OPT_CENTERX, errormsg);
+  } else {
+    // Display normal title in yellow
+    App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 0));
+    Gpu_CoCmd_Text(phost, DispWidth / 2, 82, 27, OPT_CENTERX, displaytitle);
+  }
 
   Disp_End(phost);
 }
 
-void getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* curtitle, bool password, uint8_t maxlen) {
+KeyboardResult getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* curtitle, bool password, uint8_t maxlen, const char* errormsg) {
   delay(KEYBOARD_TRANSITION_DELAY_MS);  // Added to create smooth transition between screen
   uint8_t font = 27;
   
@@ -156,8 +166,12 @@ void getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* curtitle, b
   buf[curpos] = 0;
   Flag.Numeric = OFF;  // Disable the numbers and spcial charaters
 
-  drawKeyboard(phost, 0, buf, curtitle, numlock, caplock, 0);
+  drawKeyboard(phost, 0, buf, curtitle, numlock, caplock, errormsg);
   InteractionsHandler::waitForTouchRelease();
+
+  if (errormsg != NULL && errormsg[0] != '\0') {
+    delay(KEYBOARD_ERROR_DISPLAY_MS);
+  }
 
   while (true) {
     int keypressed = InteractionsHandler::getTouchStateChanged();
@@ -165,12 +179,12 @@ void getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* curtitle, b
     // Only update the keyboard if a key was pressed
     if (keypressed == -1) continue;
 
-    drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, 0);
+    drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, NULL);
 
     switch (keypressed) {
       // No key
       case 0:
-        drawKeyboard(phost, 0, buf, curtitle, numlock, caplock, false);
+        drawKeyboard(phost, 0, buf, curtitle, numlock, caplock, NULL);
         break;
 
       case BACK_SPACE:
@@ -196,33 +210,26 @@ void getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* curtitle, b
         break;
 
       case KBBACK:
-        return;
+        return KeyboardResult(ACTION_BACK);
 
       case SAVE_KEY:
         strcpy(curtext, buf);
-        return;
+        return KeyboardResult(ACTION_ENTER);
 
       default:
+        if (curpos < maxlen - 1 && curpos < KEYBOARD_MAX_LEN - 1) {
           buf[curpos] = keypressed;
           if (password) {
             curtext[curpos] = '*';
             curtext[curpos + 1] = 0;
           }
           buf[++curpos] = 0;
-          drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, false);
-        // if (curpos < maxlen - 1 && curpos < KEYBOARD_MAX_LEN - 1) {
-        //   buf[curpos] = keypressed;
-        //   if (password) {
-        //     curtext[curpos] = '*';
-        //     curtext[curpos + 1] = 0;
-        //   }
-        //   buf[++curpos] = 0;
-        //   drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, false);
-        // } else {
-        //   drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, TRUE);
-        //   delay(KEYBOARD_ERROR_DISPLAY_MS);
-        //   drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, false);
-        // }
+          drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, NULL);
+        } else {
+          drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, "Max length reached");
+          delay(KEYBOARD_ERROR_DISPLAY_MS);
+          drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, NULL);
+        }
         break;
     }
   }

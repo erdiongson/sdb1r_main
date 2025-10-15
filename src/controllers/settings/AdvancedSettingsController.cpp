@@ -77,22 +77,36 @@ void AdvancedSettingsController::editSkipColumn(Gpu_Hal_Context_t* phost) {
   char skipCol[SKIP_STRING_LEN], skipRow[SKIP_STRING_LEN], skipSinglePos[SKIP_STRING_LEN];
   profile_manager.getSkipStrings(skipCol, skipRow, skipSinglePos);
 
+  const char* errorMsg = NULL;
   while (true) {
-    getKeyboardValue(phost, skipCol, "Enter columns to skip", false, SKIP_STRING_LEN);
+    KeyboardResult kbResult = getKeyboardValue(phost, skipCol, "Enter columns to skip", false, SKIP_STRING_LEN, errorMsg);
+
+    // Check if user pressed back
+    if (kbResult.action == ACTION_BACK) return;
 
     // Clean the input with bounds checking
     SkipUtils::CleanResult result = SkipUtils::clean(skipCol, SkipUtils::COLUMN, dimensions);
 
-    // If input was cleaned, update and loop again
-    if (result.was_cleaned) {
-      strncpy(skipCol, result.cleaned, SKIP_STRING_LEN - 1);
-      skipCol[SKIP_STRING_LEN - 1] = '\0';
-      Logger::log(F("Input was cleaned, showing keyboard again"));
-    } else {
-      // Input is clean, exit loop
-      Logger::log(F("Input is clean"));
-      break;
+    // Check if there was an error
+    if (result.error_message[0] != '\0') {
+      errorMsg = result.error_message;
+      Logger::log("Error: " + String(result.error_message));
+      // Use the cleaned text (capitalized) even with error
+      if (result.cleaned[0] != '\0') {
+        Serial.print("Controller: Copying cleaned text to skipCol: '");
+        Serial.print(result.cleaned);
+        Serial.println("'");
+        strncpy(skipCol, result.cleaned, SKIP_STRING_LEN - 1);
+        skipCol[SKIP_STRING_LEN - 1] = '\0';
+        Serial.print("Controller: skipCol after copy: '");
+        Serial.print(skipCol);
+        Serial.println("'");
+      }
+      continue;
     }
+
+    strncpy(skipCol, result.cleaned, SKIP_STRING_LEN - 1);
+    break;
   }
 
   // Save back to profile
@@ -107,22 +121,30 @@ void AdvancedSettingsController::editSkipRow(Gpu_Hal_Context_t* phost) {
   char skipCol[SKIP_STRING_LEN], skipRow[SKIP_STRING_LEN], skipSinglePos[SKIP_STRING_LEN];
   profile_manager.getSkipStrings(skipCol, skipRow, skipSinglePos);
 
+  const char* errorMsg = NULL;
   while (true) {
-    getKeyboardValue(phost, skipRow, "Enter rows to skip", false, SKIP_STRING_LEN);
+    KeyboardResult kbResult = getKeyboardValue(phost, skipRow, "Enter rows to skip", false, SKIP_STRING_LEN, errorMsg);
+
+    // Check if user pressed back
+    if (kbResult.action == ACTION_BACK) return;
 
     // Clean the input with bounds checking
     SkipUtils::CleanResult result = SkipUtils::clean(skipRow, SkipUtils::ROW, dimensions);
 
-    // If input was cleaned, update and loop again
-    if (result.was_cleaned) {
-      strncpy(skipRow, result.cleaned, SKIP_STRING_LEN - 1);
-      skipRow[SKIP_STRING_LEN - 1] = '\0';
-      Logger::log(F("Input was cleaned, showing keyboard again"));
-    } else {
-      // Input is clean, exit loop
-      Logger::log(F("Input is clean"));
-      break;
+    // Check if there was an error
+    if (result.error_message[0] != '\0') {
+      errorMsg = result.error_message;
+      Logger::log("Error: " + String(result.error_message));
+      // Use the cleaned text (capitalized) even with error
+      if (result.cleaned[0] != '\0') {
+        strncpy(skipRow, result.cleaned, SKIP_STRING_LEN - 1);
+        skipRow[SKIP_STRING_LEN - 1] = '\0';
+      }
+      continue;
     }
+
+    strncpy(skipRow, result.cleaned, SKIP_STRING_LEN - 1);
+    break;
   }
 
   // Save back to profile
@@ -137,9 +159,13 @@ void AdvancedSettingsController::editSkipIndividual(Gpu_Hal_Context_t* phost) {
   char skipCol[SKIP_STRING_LEN], skipRow[SKIP_STRING_LEN], skipSinglePos[SKIP_STRING_LEN];
   profile_manager.getSkipStrings(skipCol, skipRow, skipSinglePos);
 
+  const char* errorMsg = NULL;
   while (true) {
     Logger::log("Length of skip_single_pos: " + String(strlen(skipSinglePos)));
-    getKeyboardValue(phost, skipSinglePos, "Enter positions to skip", false, SKIP_STRING_LEN);
+    KeyboardResult kbResult = getKeyboardValue(phost, skipSinglePos, "Enter positions to skip", false, SKIP_STRING_LEN, errorMsg);
+
+    // Check if user pressed back
+    if (kbResult.action == ACTION_BACK) return;
 
     // Clean the input with bounds checking
     Logger::log(F("Cleaning!"));
@@ -147,18 +173,20 @@ void AdvancedSettingsController::editSkipIndividual(Gpu_Hal_Context_t* phost) {
         SkipUtils::clean(skipSinglePos, SkipUtils::INDIVIDUAL, dimensions);
     Logger::log(F("Cleaned!"));
 
-    // If input was cleaned, update and loop again
-    if (result.was_cleaned) {
-      Logger::log(F("Actually cleaned!"));
-      strncpy(skipSinglePos, result.cleaned, SKIP_STRING_LEN - 1);
-      skipSinglePos[SKIP_STRING_LEN - 1] = '\0';
-      Logger::log(F("I was cleaned, showing keyboard again"));
-      delay(20);
-    } else {
-      // Input is clean, exit loop
-      Logger::log(F("Nothing changed!"));
-      break;
+    // Check if there was an error
+    if (result.error_message[0] != '\0') {
+      errorMsg = result.error_message;
+      Logger::log("Error: " + String(result.error_message));
+      // Use the cleaned text (capitalized) even with error
+      if (result.cleaned[0] != '\0') {
+        strncpy(skipSinglePos, result.cleaned, SKIP_STRING_LEN - 1);
+        skipSinglePos[SKIP_STRING_LEN - 1] = '\0';
+      }
+      continue;
     }
+
+    strncpy(skipSinglePos, result.cleaned, SKIP_STRING_LEN - 1);
+    break;
   }
 
   // Save back to profile

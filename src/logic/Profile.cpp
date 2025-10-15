@@ -231,10 +231,10 @@ PasswordVerificationResult ProfileManager::verifyPassword(Gpu_Hal_Context_t* pho
   readPassEEPROM(currentPassword);
   if (strcmp(currentPassword, "") == 0) strcpy(currentPassword, INITIAL_PASSWORD);
 
-  getKeyboardValue(phost, inputPassword, "Enter Password", FALSE, PASSWORD_MAX_LEN);
+  KeyboardResult kbResult = getKeyboardValue(phost, inputPassword, "Enter Password", FALSE, PASSWORD_MAX_LEN, NULL);
 
   // Cancelled
-  if (strcmp(inputPassword, "") == 0) {
+  if (kbResult.action == ACTION_BACK || strcmp(inputPassword, "") == 0) {
     return PASSWORD_CANCELLED;
   }
 

@@ -54,8 +54,12 @@ class SkipUtils {
   struct CleanResult {
     char cleaned[SKIP_STRING_LEN];
     bool was_cleaned;
+    char error_message[SKIP_STRING_LEN];
 
-    CleanResult() : was_cleaned(false) { cleaned[0] = '\0'; }
+    CleanResult() : was_cleaned(false) { 
+      cleaned[0] = '\0'; 
+      error_message[0] = '\0';
+    }
   };
 
   // Converts SkipPosition array to char string arrays (for UI display).
@@ -254,25 +258,44 @@ class SkipUtils {
   // @param input The input string to format.
   // @param type The type of skip string (ROW, COLUMN, or INDIVIDUAL).
   // @param output Buffer to store the formatted string (must be at least SKIP_STRING_LEN in size).
-  static void format(const char* input, SkipType type, char* output) {
+  // @param error_message Buffer to store error message if invalid characters or format detected (must be at least SKIP_STRING_LEN in size).
+  static void format(const char* input, SkipType type, char* output, char* error_message) {
     if (input == nullptr || output == nullptr) {
       if (output != nullptr) output[0] = '\0';
+      if (error_message != nullptr) error_message[0] = '\0';
       return;
     }
 
-    // Initialize output
+    // Initialize output and error message
     output[0] = '\0';
+    if (error_message != nullptr) error_message[0] = '\0';
 
-    // Step 1: Capitalize 'c' to 'C' and 'r' to 'R', remove all unnecessary characters
-    char normalized[SKIP_STRING_LEN];
-    int normalizedIdx = 0;
+    // Step 1: Capitalize 'c' to 'C' and 'r' to 'R'
+    char capitalized[SKIP_STRING_LEN];
+    int capitalizedIdx = 0;
 
-    for (int i = 0; input[i] != '\0' && normalizedIdx < SKIP_STRING_LEN - 1; i++) {
+    for (int i = 0; input[i] != '\0' && capitalizedIdx < SKIP_STRING_LEN - 1; i++) {
       char c = input[i];
 
       // Capitalize c to C and r to R
       if (c == 'c') c = 'C';
       if (c == 'r') c = 'R';
+
+      capitalized[capitalizedIdx++] = c;
+    }
+    capitalized[capitalizedIdx] = '\0';
+
+    strncpy(output, capitalized, SKIP_STRING_LEN - 1);
+    output[SKIP_STRING_LEN - 1] = '\0';
+
+    // Step 2: Remove all unnecessary characters
+    char normalized[SKIP_STRING_LEN];
+    int normalizedIdx = 0;
+    bool hasInvalidChar = false;
+    char firstInvalidChar = '\0';
+
+    for (int i = 0; capitalized[i] != '\0' && normalizedIdx < SKIP_STRING_LEN - 1; i++) {
+      char c = capitalized[i];
 
       // Keep only valid characters based on type
       bool isValidChar = false;
@@ -289,18 +312,30 @@ class SkipUtils {
 
       if (isValidChar) {
         normalized[normalizedIdx++] = c;
+      } else if (!hasInvalidChar) {
+        // Record first invalid character for error message
+        hasInvalidChar = true;
+        firstInvalidChar = c;
       }
     }
     normalized[normalizedIdx] = '\0';
+
+    if (hasInvalidChar && error_message != nullptr) {
+      sprintf(error_message, "Error: Invalid character \"%c\" detected.", firstInvalidChar);
+      return;
+    }
 
     if (normalized[0] == '\0') {
       return;
     }
 
-    // Step 2: Parse and validate format (CXX, RXX, or CXRX where X is a digit)
+    // Step 3: Parse and validate format (CXX, RXX, or CXRX where X is a digit)
     char result[SKIP_STRING_LEN];
     result[0] = '\0';
     bool firstEntry = true;
+    bool hasInvalidFormat = false;
+    char firstInvalidToken[SKIP_STRING_LEN];
+    firstInvalidToken[0] = '\0';
 
     char temp[SKIP_STRING_LEN];
     strncpy(temp, normalized, SKIP_STRING_LEN - 1);
@@ -367,7 +402,20 @@ class SkipUtils {
         }
       }
 
+      // Record first invalid token for error message
+      if (!isValid && !hasInvalidFormat) {
+        hasInvalidFormat = true;
+        strncpy(firstInvalidToken, token, SKIP_STRING_LEN - 1);
+        firstInvalidToken[SKIP_STRING_LEN - 1] = '\0';
+      }
+
       token = strtok(nullptr, ",");
+    }
+
+    // Set error message for invalid format if no invalid character was detected
+    if (hasInvalidFormat && error_message != nullptr && error_message[0] == '\0') {
+      sprintf(error_message, "Error: Invalid format \"%s\" detected.", firstInvalidToken);
+      return;
     }
 
     strncpy(output, result, SKIP_STRING_LEN - 1);
@@ -378,7 +426,7 @@ class SkipUtils {
   // @param input The input string to clean.
   // @param type The type of skip string (ROW, COLUMN, or INDIVIDUAL).
   // @param dimensions The tray dimensions to validate against.
-  // @return CleanResult containing the cleaned string and whether it was modified.
+  // @return CleanResult containing the cleaned string, error message (if any), and whether it was modified.
   static CleanResult clean(const char* input, SkipType type, const TrayHandler::Dimensions& dimensions) {
     CleanResult result;
 
@@ -388,7 +436,21 @@ class SkipUtils {
 
     // Step 1: Format the string (remove invalid characters, validate format)
     char formatted[SKIP_STRING_LEN];
-    format(input, type, formatted);
+    char formatError[SKIP_STRING_LEN];
+    format(input, type, formatted, formatError);
+
+    // As long as provided a formatted string, return it later
+    if (formatted[0] != '\0') {
+      strncpy(result.cleaned, formatted, SKIP_STRING_LEN - 1);
+      result.cleaned[SKIP_STRING_LEN - 1] = '\0';
+    }
+
+    // If there was a format error, return it with the formatted (capitalized) string
+    if (formatError[0] != '\0') {
+      strncpy(result.error_message, formatError, SKIP_STRING_LEN - 1);
+      result.error_message[SKIP_STRING_LEN - 1] = '\0';
+      return result;
+    }
 
     // Step 2: Parse formatted string and check bounds
     char temp[SKIP_STRING_LEN];
@@ -398,6 +460,9 @@ class SkipUtils {
     char finalResult[SKIP_STRING_LEN];
     finalResult[0] = '\0';
     bool firstEntry = true;
+    bool hasOutOfBounds = false;
+    char firstOutOfBoundsToken[SKIP_STRING_LEN];
+    firstOutOfBoundsToken[0] = '\0';
 
     char* token = strtok(temp, ",");
     while (token != nullptr) {
@@ -409,9 +474,20 @@ class SkipUtils {
         if (!firstEntry) strcat(finalResult, ",");
         strcat(finalResult, token);
         firstEntry = false;
+      } else if (!hasOutOfBounds) {
+        // Record first out-of-bounds token for error message
+        hasOutOfBounds = true;
+        strncpy(firstOutOfBoundsToken, token, SKIP_STRING_LEN - 1);
+        firstOutOfBoundsToken[SKIP_STRING_LEN - 1] = '\0';
       }
 
       token = strtok(nullptr, ",");
+    }
+
+    // If there was an out-of-bounds error, return it with the cleaned string
+    if (hasOutOfBounds) {
+      sprintf(result.error_message, "Error: Position \"%s\" is out of bounds.", firstOutOfBoundsToken);
+      return result;
     }
 
     // Copy final result to output

@@ -58,7 +58,12 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       Logger::log(F("Button Pressed: PROFILE"));
       char buf[PROFILE_NAME_MAX_LEN];
       strcpy(buf, current_profile->profile_name);
-      getKeyboardValue(phost, buf, "Enter Profile Name", false, PROFILE_NAME_MAX_LEN);
+      KeyboardResult kbResult = getKeyboardValue(phost, buf, "Enter Profile Name", false, PROFILE_NAME_MAX_LEN, NULL);
+
+      if (kbResult.action == ACTION_BACK) {
+        drawSettingsScreen(phost, { *current_profile, 0 });
+        break;
+      }
 
       if (strcmp(buf, DEBUG_MODE_KEYWORD) == 0) {
         startNextController(CONTROLLER_DEBUG);
