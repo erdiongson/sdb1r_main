@@ -7,9 +7,22 @@
 #include "../common/ToggleButton.h"
 #include "../../logic/TrayPositionHandler.h"
 
+// Parameters for whether to highlight any fields in red
+struct InputErrors {
+  bool tubes_x = false;
+  bool tubes_y = false;
+  bool pitch_x = false;
+  bool pitch_y = false;
+  bool origin_x = false;
+  bool origin_y = false;
+  bool cycles = false;
+  bool z_dip = false;
+};
+
 // Parameters for Config_Screen display.
 struct SettingsScreenParams {
   Profile& profile;
+  InputErrors errors;
   int dialog_code;
 };
 
@@ -19,7 +32,6 @@ inline void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams pa
   int16_t passwordStatus;
   int16_t vibtime_status;
   char buf[30];
-  float maxval = 0;  // v204
 
   Gpu_CoCmd_FlashFast(phost, 0);
   Gpu_CoCmd_Dlstart(phost);
@@ -125,95 +137,47 @@ inline void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams pa
   // Password Enable/Disable
   Toggle_Button(phost, profile.password_enabled, TAG_PASSWORD_ENABLED, 242, 180, "On", "Off");
 
-  if (profile.tube_no_x > TUBES_X_MAX)
-    App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
-  else
-    App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));  // Change the color back to black
-  // v204
   // Text - Tube Number Row
+  App_WrCoCmd_Buffer(phost, params.errors.tubes_x ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
   sprintf(buf, "%d", profile.tube_no_x);
   Gpu_CoCmd_Text(phost, 180, 95, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 
-  // v204
   // Text - Tube Number Column
-  if (profile.tube_no_y > TUBES_Y_MAX)
-    App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
-  else
-    App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));  // Change the color back to black
-  // v204
+  App_WrCoCmd_Buffer(phost, params.errors.tubes_y ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
   sprintf(buf, "%d", profile.tube_no_y);
   Gpu_CoCmd_Text(phost, 122, 95, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
-  // v204
+  
   // Text - Pitch Row
-  if (profile.tube_no_x == 0)
-    maxval = TRAY_X_MAX - profile.tray_origin_x;
-  else
-    maxval = (TRAY_X_MAX - profile.tray_origin_x) / (profile.tube_no_x - 1);
-  roundOneDecimal(&maxval);
-  if (maxval < profile.pitch_x)
-    App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
-  else
-    App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));  // Change the color back to black
-                                                    // v204
+  App_WrCoCmd_Buffer(phost, params.errors.pitch_x ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
 
   dtostrf(profile.pitch_x, 4, 1, buf);
   Gpu_CoCmd_Text(phost, 180, 119, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 
-  // v204
   // Text - Pitch Column
-  if (profile.tube_no_y == 0)
-    maxval = TRAY_Y_MAX - profile.tray_origin_y;
-  else
-    maxval = (TRAY_Y_MAX - profile.tray_origin_y) / (profile.tube_no_y - 1);
-  roundOneDecimal(&maxval);
-  if (maxval < profile.pitch_y)
-    App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
-  else
-    App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));  // Change the color back to black
-                                                    // v204
+  App_WrCoCmd_Buffer(phost, params.errors.pitch_y ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
 
   dtostrf(profile.pitch_y, 4, 1, buf);
   Gpu_CoCmd_Text(phost, 122, 119, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 
-  // v204
   // Text - Origin X
-  if (profile.tube_no_x == 0)
-    maxval = TRAY_X_MAX;
-  else
-    maxval = TRAY_X_MAX - (profile.pitch_x * (profile.tube_no_x - 1));
-  roundOneDecimal(&maxval);
-  if (maxval < profile.tray_origin_x)
-    App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
-  else
-    App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));  // Change the color back to black
-                                                    // v204
+  App_WrCoCmd_Buffer(phost, params.errors.origin_x ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
 
   dtostrf(profile.tray_origin_x, 4, 1, buf);
   Gpu_CoCmd_Text(phost, 180, 143, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 
-  // v204
   // Text - Origin Y
-  if (profile.tube_no_y == 0)
-    maxval = TRAY_Y_MAX;
-  else
-    maxval = TRAY_Y_MAX - (profile.pitch_y * (profile.tube_no_y - 1));
-  roundOneDecimal(&maxval);
-  if (maxval < profile.tray_origin_y)
-    App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 0, 0));  // red color text
-  else
-    App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));  // Change the color back to black
-                                                    // v204
+  App_WrCoCmd_Buffer(phost, params.errors.origin_y ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
 
   dtostrf(profile.tray_origin_y, 4, 1, buf);
   Gpu_CoCmd_Text(phost, 122, 143, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 
-  App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 0, 0));  // Change the color back to black
-                                                  // Text - Cycles
+  // Text - Cycles
+  App_WrCoCmd_Buffer(phost, params.errors.cycles ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
   sprintf(buf, "%d", profile.cycles);
   Gpu_CoCmd_Text(phost, 255, 95, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 
   // Text - Z Dip
-  sprintf(buf, "%f", profile.z_dip);
+  App_WrCoCmd_Buffer(phost, params.errors.z_dip ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
   dtostrf(profile.z_dip, 4, 1, buf);
   Gpu_CoCmd_Text(phost, 255, 133, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
 

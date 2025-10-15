@@ -117,6 +117,8 @@
 #define MAX_SKIP_POSITIONS 90  // 180 bytes / 2 bytes per position (same memory as 3x60 char arrays)
 
 #define ORIGIN_DEFAULT 10
+#define ORIGIN_X_MIN 0
+#define ORIGIN_Y_MIN 0
 #define ORIGIN_X_MAX 999
 #define ORIGIN_Y_MAX 999
 

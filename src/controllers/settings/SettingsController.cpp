@@ -14,7 +14,7 @@ void SettingsController::onStart() {
   current_profile = &profile_manager.getCurrentProfile();
 
   // Display configuration screen
-  drawSettingsScreen(phost, { *current_profile, 0 });
+  drawScreen();
 }
 
 void SettingsController::onInteraction(const Interaction& interaction) {
@@ -24,8 +24,9 @@ void SettingsController::onInteraction(const Interaction& interaction) {
     case TAG_CONFIG_HOME:  // Home button
       Logger::log(F("Button Pressed: HOME"));
       {
-        if (!profile_manager.validatePhysicalDimensions()) {
-          drawSettingsScreen(phost, { *current_profile, DIALOG_ERROR_DIMENSION });
+        VerificationResult verification = verifyParameters();
+        if (!verification.is_valid) {
+          drawScreen(DIALOG_ERROR_DIMENSION);
         } else {
           startNextController(CONTROLLER_READY);
         }
@@ -39,17 +40,18 @@ void SettingsController::onInteraction(const Interaction& interaction) {
 
     case TAG_CONFIG_SAVE: {
       Logger::log(F("Button Pressed: SAVE"));
-      if (!profile_manager.validatePhysicalDimensions()) {
-        drawSettingsScreen(phost, { *current_profile, DIALOG_ERROR_DIMENSION });
+      VerificationResult verification = verifyParameters();
+      if (!verification.is_valid) {
+        drawScreen(DIALOG_ERROR_DIMENSION);
       } else {
         uint8_t currentNum = profile_manager.getCurrentProfileNum();
         profile_manager.writeCurIDEEPROM(currentNum);
         profile_manager.writeProfileEEPROM(currentNum);
 
         // Show profile saved dialog
-        drawSettingsScreen(phost, { *current_profile, DIALOG_PROFILE_SAVED });
+        drawScreen(DIALOG_PROFILE_SAVED);
         delay(DIALOG_DISPLAY_DURATION_MS);
-        drawSettingsScreen(phost, { *current_profile, 0 });
+        drawScreen();
       }
       break;
     }
@@ -61,7 +63,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       KeyboardResult kbResult = getKeyboardValue(phost, buf, "Enter Profile Name", false, PROFILE_NAME_MAX_LEN, NULL);
 
       if (kbResult.action == ACTION_BACK) {
-        drawSettingsScreen(phost, { *current_profile, 0 });
+        drawScreen();
         break;
       }
 
@@ -71,7 +73,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       }
 
       strcpy(current_profile->profile_name, buf);
-      drawSettingsScreen(phost, { *current_profile, 0 });
+      drawScreen();
       break;
     }
 
@@ -110,7 +112,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         profile_manager.setSkipStrings(skipCol, skipRow, skipSinglePos);
       }
 
-      drawSettingsScreen(phost, { *current_profile, 0 });
+      drawScreen();
     } break;
 
     case TAG_CONFIG_TUBES_Y:  // Number of Rows
@@ -148,7 +150,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         profile_manager.setSkipStrings(skipCol, skipRow, skipSinglePos);
       }
 
-      drawSettingsScreen(phost, { *current_profile, 0 });
+      drawScreen();
     } break;
 
     case TAG_CONFIG_PITCH_X:  // pitch row
@@ -161,7 +163,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       roundOneDecimal(&maxval);
       if (maxval > PITCH_X_MAX) maxval = PITCH_X_MAX;
       current_profile->pitch_x = getKeypadValue(&host, current_profile->pitch_x, PITCH_X_MIN, PITCH_X_MAX, true);
-      drawSettingsScreen(phost, { *current_profile, 0 });
+      drawScreen();
     } break;
 
     case TAG_CONFIG_PITCH_Y:  // pitch col
@@ -174,7 +176,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       roundOneDecimal(&maxval);
       if (maxval > PITCH_Y_MAX) maxval = PITCH_Y_MAX;
       current_profile->pitch_y = getKeypadValue(&host, current_profile->pitch_y, PITCH_Y_MIN, PITCH_Y_MAX, true);
-      drawSettingsScreen(phost, { *current_profile, 0 });
+      drawScreen();
     } break;
 
     case TAG_CONFIG_ORIGIN_X:  // origin row
@@ -188,7 +190,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       if (maxval > ORIGIN_X_MAX) maxval = ORIGIN_X_MAX;
 
       current_profile->tray_origin_x = getKeypadValue(&host, current_profile->tray_origin_x, 0, ORIGIN_X_MAX, true);
-      drawSettingsScreen(phost, { *current_profile, 0 });
+      drawScreen();
     } break;
 
     case TAG_CONFIG_ORIGIN_Y:  // origin col
@@ -201,36 +203,36 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       roundOneDecimal(&maxval);
       if (maxval > ORIGIN_Y_MAX) maxval = ORIGIN_Y_MAX;
       current_profile->tray_origin_y = getKeypadValue(&host, current_profile->tray_origin_y, 0, ORIGIN_Y_MAX, true);
-      drawSettingsScreen(phost, { *current_profile, 0 });
+      drawScreen();
     } break;
 
     case TAG_NUM_CYCLE:
       current_profile->cycles = getKeypadValue(phost, current_profile->cycles, CYCLES_MIN, CYCLES_MAX, false);
-      drawSettingsScreen(phost, { *current_profile, 0 });
+      drawScreen();
       break;
 
     case TAG_Z_DIP:
       Logger::log(F("Incrementing Z Dip"));
       current_profile->z_dip = getKeypadValue(phost, current_profile->z_dip, Z_DIP_MIN, Z_DIP_MAX, true);
-      drawSettingsScreen(phost, { *current_profile, 0 });
+      drawScreen();
       break;
 
     case TAG_VIBRATION_LEVEL:
       Logger::log(F("Incrementing vibration level"));
       incrementVibrationLevel();
-      drawSettingsScreen(phost, { *current_profile, 0 });
+      drawScreen();
       break;
 
     case TAG_VIBRATION_DURATION:
       Logger::log(F("Incrementing vibration duration"));
       incrementVibrationTime();
-      drawSettingsScreen(phost, { *current_profile, 0 });
+      drawScreen();
       break;
 
     case TAG_PASSWORD_ENABLED:
       Logger::log(F("Toggle password enable"));
       current_profile->password_enabled = !current_profile->password_enabled;
-      drawSettingsScreen(phost, { *current_profile, 0 });
+      drawScreen();
       break;
 
     case TAG_STAGGERED_TOGGLE:
@@ -248,7 +250,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
 
     case TAG_CONTINUE:
       Logger::log(F("Button Pressed: CONTINUE"));
-      drawSettingsScreen(phost, { *current_profile, 0 });
+      drawScreen();
       break;
 
     default:
@@ -276,5 +278,78 @@ void SettingsController::incrementVibrationTime() {
   if (next_duration > VIBRATION_DURATION_MAX) next_duration = VIBRATION_DURATION_MIN;
 
   current_profile->vibration_duration = next_duration;
+}
+
+// Verifies all profile parameters and returns validation result with error flags.
+// @return VerificationResult containing validity status and specific error flags.
+VerificationResult SettingsController::verifyParameters() {
+  VerificationResult result;
+  result.is_valid = true;
+  result.errors = InputErrors();  // Initialize all to false
+
+  if (current_profile->tube_no_x < TUBES_X_MIN || current_profile->tube_no_x > TUBES_X_MAX) {
+    result.is_valid = false;
+    result.errors.tubes_x = true;
+  }
+
+  if (current_profile->tube_no_y < TUBES_Y_MIN || current_profile->tube_no_y > TUBES_Y_MAX) {
+    result.is_valid = false;
+    result.errors.tubes_y = true;
+  }
+
+  if (current_profile->pitch_x < PITCH_X_MIN || current_profile->pitch_x > PITCH_X_MAX) {
+    result.is_valid = false;
+    result.errors.pitch_x = true;
+  }
+
+  if (current_profile->pitch_y < PITCH_Y_MIN || current_profile->pitch_y > PITCH_Y_MAX) {
+    result.is_valid = false;
+    result.errors.pitch_y = true;
+  }
+
+  if (current_profile->tray_origin_x < ORIGIN_X_MIN || current_profile->tray_origin_x > ORIGIN_X_MAX) {
+    result.is_valid = false;
+    result.errors.origin_x = true;
+  }
+
+  if (current_profile->tray_origin_y < ORIGIN_Y_MIN || current_profile->tray_origin_y > ORIGIN_Y_MAX) {
+    result.is_valid = false;
+    result.errors.origin_y = true;
+  }
+
+  if (current_profile->cycles < CYCLES_MIN || current_profile->cycles > CYCLES_MAX) {
+    result.is_valid = false;
+    result.errors.cycles = true;
+  }
+
+  if (current_profile->z_dip < Z_DIP_MIN || current_profile->z_dip > Z_DIP_MAX) {
+    result.is_valid = false;
+    result.errors.z_dip = true;
+  }
+
+  // Validate X-axis: check if tubes exceed tray boundary
+  if (current_profile->tray_origin_x + (current_profile->pitch_x * current_profile->tube_no_x) > TRAY_X_MAX) {
+    result.is_valid = false;
+    result.errors.tubes_x = true;
+    result.errors.pitch_x = true;
+    result.errors.origin_x = true;
+  }
+
+  // Validate Y-axis: check if tubes exceed tray boundary
+  if (current_profile->tray_origin_y + (current_profile->pitch_y * current_profile->tube_no_y) > TRAY_Y_MAX) {
+    result.is_valid = false;
+    result.errors.tubes_y = true;
+    result.errors.pitch_y = true;
+    result.errors.origin_y = true;
+  }
+
+  return result;
+}
+
+// Helper method to draw the settings screen with current profile and errors.
+// @param dialog_code Optional dialog code to display (default 0).
+void SettingsController::drawScreen(int dialog_code) {
+  VerificationResult verification = verifyParameters();
+  drawSettingsScreen(phost, { *current_profile, verification.errors, dialog_code });
 }
 
