@@ -16,7 +16,7 @@ struct {
 
 void drawKeyboard(Gpu_Hal_Context_t* phost, uint8_t keypressed, char* displaytext, char* displaytitle, bool numlock,
                   bool caplock, bool errorcode) {
-  char buf[KEYBOARD_MAX_LEN + 8];
+  char buf[KEYBOARD_MAX_LEN];
 
   // Display List start
   Gpu_CoCmd_Dlstart(phost);
@@ -83,17 +83,49 @@ void drawKeyboard(Gpu_Hal_Context_t* phost, uint8_t keypressed, char* displaytex
   Gpu_CoCmd_FgColor(phost, 0x703800);
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));  // Disable the tag buffer updates
   App_WrCoCmd_Buffer(phost, SCISSOR_XY(0, 0));
-  App_WrCoCmd_Buffer(phost, SCISSOR_SIZE(DispWidth, (uint16_t)(DispHeight * 0.41)));
+  App_WrCoCmd_Buffer(phost, SCISSOR_SIZE(DispWidth, 100));  // Increased height for wrapped text
   App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(0, 0, 0));
   App_WrCoCmd_Buffer(phost, CLEAR(1, 1, 1));
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));  // Text Color
 
-  if (errorcode) {
-    sprintf(buf, "%s\n%s", displaytext, "error");
-    Gpu_CoCmd_Text(phost, 0, 0, font, 0, buf);
-  } else {
-    Gpu_CoCmd_Text(phost, 0, 0, font, 0, displaytext);
+  // Manual text wrapping - split long text into up to 3 lines
+  const uint8_t line_height = 22;  // Vertical spacing between lines
+  uint8_t text_len = strlen(displaytext);
+  
+  // Split text into up to 3 lines (break at any character)
+  static char line1[KEYBOARD_MAX_PER_LINE + 1];
+  static char line2[KEYBOARD_MAX_PER_LINE + 1];
+  static char line3[KEYBOARD_MAX_PER_LINE + 1];
+  
+  memset(line1, 0, KEYBOARD_MAX_PER_LINE + 1);
+  memset(line2, 0, KEYBOARD_MAX_PER_LINE + 1);
+  memset(line3, 0, KEYBOARD_MAX_PER_LINE + 1);
+  
+  // Copy first line
+  uint8_t line1_len = (text_len < KEYBOARD_MAX_PER_LINE) ? text_len : KEYBOARD_MAX_PER_LINE;
+  memcpy(line1, displaytext, line1_len);
+  line1[line1_len] = '\0';
+  
+  // Copy second line if text is longer than first line
+  if (text_len > KEYBOARD_MAX_PER_LINE) {
+    uint8_t remaining = text_len - KEYBOARD_MAX_PER_LINE;
+    uint8_t line2_len = (remaining < KEYBOARD_MAX_PER_LINE) ? remaining : KEYBOARD_MAX_PER_LINE;
+    memcpy(line2, displaytext + KEYBOARD_MAX_PER_LINE, line2_len);
+    line2[line2_len] = '\0';
   }
+  
+  // Copy third line if text is longer than two lines
+  if (text_len > KEYBOARD_MAX_PER_LINE * 2) {
+    uint8_t remaining = text_len - (KEYBOARD_MAX_PER_LINE * 2);
+    uint8_t line3_len = (remaining < KEYBOARD_MAX_PER_LINE) ? remaining : KEYBOARD_MAX_PER_LINE;
+    memcpy(line3, displaytext + (KEYBOARD_MAX_PER_LINE * 2), line3_len);
+    line3[line3_len] = '\0';
+  }
+  
+  // Render all lines
+  Gpu_CoCmd_Text(phost, 0, 0, font, 0, line1);
+  if (line2[0] != '\0') Gpu_CoCmd_Text(phost, 0, line_height, font, 0, line2);
+  if (line3[0] != '\0') Gpu_CoCmd_Text(phost, 0, line_height * 2, font, 0, line3);
 
   App_WrCoCmd_Buffer(phost, SCISSOR_XY(0, 77));
   App_WrCoCmd_Buffer(phost, SCISSOR_SIZE(DispWidth, (uint16_t)(DispHeight * 0.1)));
@@ -171,7 +203,6 @@ void getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* curtitle, b
         return;
 
       default:
-        if (curpos < maxlen - 1 && curpos < KEYBOARD_MAX_LEN - 1) {
           buf[curpos] = keypressed;
           if (password) {
             curtext[curpos] = '*';
@@ -179,11 +210,19 @@ void getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* curtitle, b
           }
           buf[++curpos] = 0;
           drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, false);
-        } else {
-          drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, TRUE);
-          delay(KEYBOARD_ERROR_DISPLAY_MS);
-          drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, false);
-        }
+        // if (curpos < maxlen - 1 && curpos < KEYBOARD_MAX_LEN - 1) {
+        //   buf[curpos] = keypressed;
+        //   if (password) {
+        //     curtext[curpos] = '*';
+        //     curtext[curpos + 1] = 0;
+        //   }
+        //   buf[++curpos] = 0;
+        //   drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, false);
+        // } else {
+        //   drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, TRUE);
+        //   delay(KEYBOARD_ERROR_DISPLAY_MS);
+        //   drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, false);
+        // }
         break;
     }
   }

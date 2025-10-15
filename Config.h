@@ -144,8 +144,9 @@
 #define KEYBOARD_TRANSITION_DELAY_MS 200
 #define KEYBOARD_ERROR_DISPLAY_MS 1000
 
-#define KEYPAD_MAX_LEN 6
-#define KEYBOARD_MAX_LEN 30
+#define KEYPAD_MAX_LEN 10
+#define KEYBOARD_MAX_LEN 90
+#define KEYBOARD_MAX_PER_LINE 30
 
 // =============================================================================
 // TEST / PREVIEW SETTINGS
