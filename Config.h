@@ -115,7 +115,7 @@
 #define PASSWORD_MAX_LEN 30
 #define SKIP_STRING_LEN 45
 #define SKIP_STRING_INDIVIDUAL_LEN 200
-#define MAX_SKIP_POSITIONS 90  // 180 bytes / 2 bytes per position (same memory as 3x60 char arrays)
+#define MAX_SKIP_POSITIONS 2  // 180 bytes / 2 bytes per position (same memory as 3x60 char arrays)
 
 #define ORIGIN_DEFAULT 10
 #define ORIGIN_X_MIN 0

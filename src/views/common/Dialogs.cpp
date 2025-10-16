@@ -233,6 +233,15 @@ void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
       params.right_tag = 0;
       break;
 
+    case DIALOG_ERROR_SKIP_COUNT_EXCEEDED:
+      params.title = "Too Many Skip Positions";
+      params.subtitle = "The total number of skip positions exceeds the maximum allowed. Please reduce the number of skips.";
+      params.left_btn = "Continue";
+      params.right_btn = nullptr;
+      params.left_tag = TAG_CONTINUE;
+      params.right_tag = 0;
+      break;
+
     default:
       params.title = "Unknown Error";
       params.subtitle = "An unknown error occurred.";

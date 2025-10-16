@@ -5,6 +5,7 @@
 #include "../../logic/TrayPositionHandler.h"
 #include "../../logic/SkipUtils.h"
 #include "../common/ToggleButton.h"
+#include "../common/Dialogs.h"
 #include "../../Constants.h"
 
 // Parameters for whether to highlight skip fields in red
@@ -12,12 +13,14 @@ struct SkipErrors {
   bool skip_cols = false;
   bool skip_rows = false;
   bool skip_cells = false;
+  bool skip_count_exceeded = false;
 };
 
 // Parameters for Advanced Settings Screen display.
 struct AdvancedSettingsScreenParams {
   Profile& profile;
   SkipErrors errors;
+  int dialog_code;
 };
 
 inline void drawAdvancedSettingsScreen(Gpu_Hal_Context_t* phost, AdvancedSettingsScreenParams params) {
@@ -97,6 +100,13 @@ inline void drawAdvancedSettingsScreen(Gpu_Hal_Context_t* phost, AdvancedSetting
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   Gpu_CoCmd_Text(phost, 10, 165, 21, 0, "Staggered:");
   Toggle_Button(phost, profile.staggered, TAG_STAGGERED_TOGGLE, 92, 168, "On", "Off");
+
+  App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+
+  // Draw dialog if dialog_code is set
+  if (params.dialog_code > 0) {
+    drawDialog(phost, params.dialog_code);
+  }
 
   Disp_End(phost);
 }

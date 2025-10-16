@@ -13,6 +13,9 @@ void AdvancedSettingsController::onStart() {
   // Store reference to the current profile
   current_profile = &profile_manager.getCurrentProfile();
 
+  // Load current skip strings into member variables
+  profile_manager.getSkipStrings(skipCol, skipRow, skipSinglePos);
+
   // Display advanced settings screen
   drawScreen();
 }
@@ -45,14 +48,44 @@ void AdvancedSettingsController::onInteraction(const Interaction& interaction) {
       drawScreen();
       break;
 
-    case TAG_ADV_PROF_BACK:  // Back button
+    case TAG_ADV_PROF_BACK: {
       Logger::log(F("Button Pressed: BACK"));
-      startNextController(CONTROLLER_SETTINGS);
-      break;
+      SkipVerificationResult verification = verifyParameters();
+      if (verification.is_valid) {
+        // Save skip strings to profile and go back
+        profile_manager.setSkipStrings(skipCol, skipRow, skipSinglePos);
+        startNextController(CONTROLLER_SETTINGS);
+        return;
+      }
 
-    case TAG_CONFIG_PREVIEW:  // Preview button
+      if (verification.errors.skip_count_exceeded) {
+        drawScreen(DIALOG_ERROR_SKIP_COUNT_EXCEEDED);
+      } else {
+        drawScreen(DIALOG_ERROR_PARAMETER);
+      }
+      break;
+    }
+
+    case TAG_CONFIG_PREVIEW: {
       Logger::log(F("Button Pressed: PREVIEW"));
-      startNextController(CONTROLLER_PREVIEW);
+      SkipVerificationResult verification = verifyParameters();
+      if (verification.is_valid) {
+        // Save skip strings to profile and go to preview
+        profile_manager.setSkipStrings(skipCol, skipRow, skipSinglePos);
+        startNextController(CONTROLLER_PREVIEW);
+        return;
+      }
+      if (verification.errors.skip_count_exceeded) {
+        drawScreen(DIALOG_ERROR_SKIP_COUNT_EXCEEDED);
+      } else {
+        drawScreen(DIALOG_ERROR_PARAMETER);
+      }
+      break;
+    }
+
+    case TAG_CONTINUE:
+      Logger::log(F("Button Pressed: CONTINUE"));
+      drawScreen();
       break;
 
     default:
@@ -73,10 +106,6 @@ void AdvancedSettingsController::editSkipColumn(Gpu_Hal_Context_t* phost) {
   // Create dimensions from profile
   TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
 
-  // Get current skip strings
-  char skipCol[SKIP_STRING_LEN], skipRow[SKIP_STRING_LEN], skipSinglePos[SKIP_STRING_LEN];
-  profile_manager.getSkipStrings(skipCol, skipRow, skipSinglePos);
-
   const char* errorMsg = NULL;
   while (true) {
     KeyboardResult kbResult = getKeyboardValue(phost, skipCol, "Enter columns to skip", false, SKIP_STRING_LEN, errorMsg);
@@ -90,36 +119,24 @@ void AdvancedSettingsController::editSkipColumn(Gpu_Hal_Context_t* phost) {
     // Check if there was an error
     if (result.error_message[0] != '\0') {
       errorMsg = result.error_message;
-      Logger::log("Error: " + String(result.error_message));
+      Logger::log("Error Message: " + String(result.error_message));
       // Use the cleaned text (capitalized) even with error
       if (result.cleaned[0] != '\0') {
-        Serial.print("Controller: Copying cleaned text to skipCol: '");
-        Serial.print(result.cleaned);
-        Serial.println("'");
         strncpy(skipCol, result.cleaned, SKIP_STRING_LEN - 1);
         skipCol[SKIP_STRING_LEN - 1] = '\0';
-        Serial.print("Controller: skipCol after copy: '");
-        Serial.print(skipCol);
-        Serial.println("'");
       }
       continue;
     }
 
     strncpy(skipCol, result.cleaned, SKIP_STRING_LEN - 1);
+    Logger::log("New skipCol: " + String(skipCol));
     break;
   }
-
-  // Save back to profile
-  profile_manager.setSkipStrings(skipCol, skipRow, skipSinglePos);
 }
 
 void AdvancedSettingsController::editSkipRow(Gpu_Hal_Context_t* phost) {
   // Create dimensions from profile
   TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
-
-  // Get current skip strings
-  char skipCol[SKIP_STRING_LEN], skipRow[SKIP_STRING_LEN], skipSinglePos[SKIP_STRING_LEN];
-  profile_manager.getSkipStrings(skipCol, skipRow, skipSinglePos);
 
   const char* errorMsg = NULL;
   while (true) {
@@ -146,18 +163,11 @@ void AdvancedSettingsController::editSkipRow(Gpu_Hal_Context_t* phost) {
     strncpy(skipRow, result.cleaned, SKIP_STRING_LEN - 1);
     break;
   }
-
-  // Save back to profile
-  profile_manager.setSkipStrings(skipCol, skipRow, skipSinglePos);
 }
 
 void AdvancedSettingsController::editSkipIndividual(Gpu_Hal_Context_t* phost) {
   // Create dimensions from profile
   TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
-
-  // Get current skip strings
-  char skipCol[SKIP_STRING_LEN], skipRow[SKIP_STRING_LEN], skipSinglePos[SKIP_STRING_LEN];
-  profile_manager.getSkipStrings(skipCol, skipRow, skipSinglePos);
 
   const char* errorMsg = NULL;
   while (true) {
@@ -186,9 +196,6 @@ void AdvancedSettingsController::editSkipIndividual(Gpu_Hal_Context_t* phost) {
     strncpy(skipSinglePos, result.cleaned, SKIP_STRING_LEN - 1);
     break;
   }
-
-  // Save back to profile
-  profile_manager.setSkipStrings(skipCol, skipRow, skipSinglePos);
 }
 
 // Verifies skip positions and returns validation result with error flags.
@@ -197,6 +204,12 @@ SkipVerificationResult AdvancedSettingsController::verifyParameters() {
   SkipVerificationResult result;
   result.is_valid = true;
   result.errors = SkipErrors();  // Initialize all to false
+
+  // Check if skip count exceeds maximum
+  if (current_profile->skip_count > MAX_SKIP_POSITIONS) {
+    result.is_valid = false;
+    result.errors.skip_count_exceeded = true;
+  }
 
   // Check skip position validity
   if (current_profile->skip_count > 0) {
@@ -229,7 +242,7 @@ SkipVerificationResult AdvancedSettingsController::verifyParameters() {
 }
 
 // Helper method to draw the advanced settings screen with current profile and errors.
-void AdvancedSettingsController::drawScreen() {
+void AdvancedSettingsController::drawScreen(int dialog_code) {
   SkipVerificationResult verification = verifyParameters();
-  drawAdvancedSettingsScreen(phost, { *current_profile, verification.errors });
+  drawAdvancedSettingsScreen(phost, { *current_profile, verification.errors, dialog_code });
 }

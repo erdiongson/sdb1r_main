@@ -12,7 +12,9 @@ struct SkipVerificationResult {
 class AdvancedSettingsController : public BaseController {
  private:
   Profile* current_profile;
-
+  char skipCol[SKIP_STRING_LEN];
+  char skipRow[SKIP_STRING_LEN];
+  char skipSinglePos[SKIP_STRING_LEN];
   void editSkipColumn(Gpu_Hal_Context_t* phost);
   void editSkipRow(Gpu_Hal_Context_t* phost);
   void editSkipIndividual(Gpu_Hal_Context_t* phost);
@@ -22,7 +24,7 @@ class AdvancedSettingsController : public BaseController {
   SkipVerificationResult verifyParameters();
 
   // Helper method to draw the advanced settings screen with current profile and errors.
-  void drawScreen();
+  void drawScreen(int dialog_code = 0);
 
  public:
   AdvancedSettingsController(ControllerParams params);

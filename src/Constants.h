@@ -240,6 +240,7 @@
 #define DIALOG_ERROR_CYCLE_TIMEOUT 13
 #define DIALOG_ERROR_PARAMETER 14
 #define DIALOG_ERROR_SKIP_VALUES 15
+#define DIALOG_ERROR_SKIP_COUNT_EXCEEDED 16
 
 // =============================================================================
 // KEYBOARD SETTINGS
