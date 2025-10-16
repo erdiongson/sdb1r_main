@@ -236,6 +236,7 @@
 #define DIALOG_ERROR_DIMENSION 12
 #define DIALOG_ERROR_CYCLE_TIMEOUT 13
 #define DIALOG_ERROR_PARAMETER 14
+#define DIALOG_ERROR_SKIP_VALUES 15
 
 // =============================================================================
 // ARRAY LIMITS

@@ -170,7 +170,7 @@ void AdvancedSettingsController::editSkipIndividual(Gpu_Hal_Context_t* phost) {
     // Clean the input with bounds checking
     Logger::log(F("Cleaning!"));
     SkipUtils::CleanResult result =
-        SkipUtils::clean(skipSinglePos, SkipUtils::INDIVIDUAL, dimensions);
+        SkipUtils::clean(skipSinglePos, SkipUtils::INDIVIDUAL, dimensions, current_profile->staggered);
     Logger::log(F("Cleaned!"));
 
     // Check if there was an error

@@ -7,8 +7,7 @@
 struct VerificationResult {
   bool is_valid;
   InputErrors errors;
-  bool has_parameter_error;  // True if error is due to parameter range violations
-  bool has_dimension_error;  // True if error is due to dimension boundary violations
+  int dialog_code;  // The appropriate dialog code to show (0 if valid)
 };
 
 class SettingsController : public BaseController {

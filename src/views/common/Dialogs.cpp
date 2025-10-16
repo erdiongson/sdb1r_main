@@ -224,6 +224,15 @@ void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
       params.right_tag = 0;
       break;
 
+    case DIALOG_ERROR_SKIP_VALUES:
+      params.title = "Skip Values Error";
+      params.subtitle = "Skip positions are invalid for current tray configuration. Please update in Advanced settings.";
+      params.left_btn = "Continue";
+      params.right_btn = nullptr;
+      params.left_tag = TAG_CONTINUE;
+      params.right_tag = 0;
+      break;
+
     default:
       params.title = "Unknown Error";
       params.subtitle = "An unknown error occurred.";

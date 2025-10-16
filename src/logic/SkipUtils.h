@@ -22,11 +22,13 @@ class SkipUtils {
     return true;
   }
 
+ public:
   // Helper function to check if a skip position is valid and within bounds.
   // @param pos The position to check.
   // @param dimensions The tray dimensions to validate against.
+  // @param staggered If true, considers last column of even rows as invalid (staggered mode).
   // @return True if position is valid and within bounds, false otherwise.
-  static bool isValidSkipPosition(const TrayHandler::Position& pos, const TrayHandler::Dimensions& dimensions) {
+  static bool isValidSkipPosition(const TrayHandler::Position& pos, const TrayHandler::Dimensions& dimensions, bool staggered = false) {
     // Invalid position marker
     if (pos.x == -1 && pos.y == -1) return false;
 
@@ -42,13 +44,21 @@ class SkipUtils {
 
     // Individual position skip: both x and y should be within bounds
     if (pos.x != 0 && pos.y != 0) {
-      return (pos.x >= 1 && pos.x <= dimensions.columns && pos.y >= 1 && pos.y <= dimensions.rows);
+      bool withinBounds = (pos.x >= 1 && pos.x <= dimensions.columns && pos.y >= 1 && pos.y <= dimensions.rows);
+      
+      if (!withinBounds) return false;
+      
+      // If staggered mode is enabled, last column of every even row is invalid
+      if (staggered && pos.y % 2 == 0 && pos.x == dimensions.columns) {
+        return false;
+      }
+      
+      return true;
     }
 
     return false;
   }
 
- public:
   enum SkipType { ROW, COLUMN, INDIVIDUAL };
 
   struct CleanResult {
@@ -426,8 +436,9 @@ class SkipUtils {
   // @param input The input string to clean.
   // @param type The type of skip string (ROW, COLUMN, or INDIVIDUAL).
   // @param dimensions The tray dimensions to validate against.
+  // @param staggered If true, considers last column of even rows as invalid (staggered mode).
   // @return CleanResult containing the cleaned string, error message (if any), and whether it was modified.
-  static CleanResult clean(const char* input, SkipType type, const TrayHandler::Dimensions& dimensions) {
+  static CleanResult clean(const char* input, SkipType type, const TrayHandler::Dimensions& dimensions, bool staggered = false) {
     CleanResult result;
 
     if (input == nullptr) {
@@ -470,7 +481,7 @@ class SkipUtils {
       TrayHandler::Position pos = convertElement(token, type);
 
       // Check if position is valid and within bounds
-      if (isValidSkipPosition(pos, dimensions)) {
+      if (isValidSkipPosition(pos, dimensions, staggered)) {
         if (!firstEntry) strcat(finalResult, ",");
         strcat(finalResult, token);
         firstEntry = false;
