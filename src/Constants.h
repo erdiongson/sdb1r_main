@@ -132,6 +132,7 @@
 #define TAG_DEBUG_RESET_PROFILES 93
 #define TAG_DEBUG_BACK 94
 #define TAG_DEBUG_DIALOG_TEST 95
+#define TAG_DEBUG_STEPPER_TEST 96
 
 // =============================================================================
 // UI TAG CONSTANTS - Stepper Test Control

@@ -55,10 +55,14 @@ inline void drawDebugScreen(Gpu_Hal_Context_t* phost, DebugScreenParams params) 
   Gpu_CoCmd_Button(phost, 165, button_y, 130, button_height, 26, 0, "Dispenser Test");
   button_y += button_spacing;
 
-  // Dialog Test button (same width as Move Test)
+  // Dialog Test and Stepper Test buttons side-by-side (50% width each)
   App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_DIALOG_TEST));
   Gpu_CoCmd_FgColor(phost, 0x00A2E8);
   Gpu_CoCmd_Button(phost, 25, button_y, 130, button_height, 26, 0, "Dialog Test");
+
+  App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_STEPPER_TEST));
+  Gpu_CoCmd_FgColor(phost, 0x00A2E8);
+  Gpu_CoCmd_Button(phost, 165, button_y, 130, button_height, 26, 0, "Stepper Test");
   button_y += button_spacing;
 
   // Blank EEPROM button

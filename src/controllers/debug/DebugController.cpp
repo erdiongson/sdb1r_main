@@ -34,6 +34,11 @@ void DebugController::onInteraction(const Interaction& interaction) {
       break;
     }
 
+    case TAG_DEBUG_STEPPER_TEST:
+      Logger::log(F("Debug: Stepper Test button pressed"));
+      startNextController(CONTROLLER_STEPPER_TEST);
+      break;
+
     case TAG_DEBUG_BLANK_EEPROM: {
       Logger::log(F("Debug: Blank EEPROM button pressed"));
       profile_manager.blankEEPROM();
