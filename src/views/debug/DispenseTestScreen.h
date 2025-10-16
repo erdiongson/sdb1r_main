@@ -52,13 +52,13 @@ void drawDispenseTestScreen(Gpu_Hal_Context_t* phost, const DispenseTestScreenPa
   // Header section
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
-  Gpu_CoCmd_Text(phost, DispWidth / 2, 20, 28, OPT_CENTER | OPT_FORMAT, "Dispense Test");
+  Gpu_CoCmd_Text(phost, DispWidth / 2, 15, 28, OPT_CENTER | OPT_FORMAT, "Dispense Test");
 
   // Draw separator line
   App_WrCoCmd_Buffer(phost, COLOR_RGB(193, 64, 0));
   App_WrCoCmd_Buffer(phost, BEGIN(LINES));
-  App_WrCoCmd_Buffer(phost, VERTEX2F(0, 50 * 16));  // Convert to 1/16 pixel units
-  App_WrCoCmd_Buffer(phost, VERTEX2F(DispWidth * 16, 50 * 16));
+  App_WrCoCmd_Buffer(phost, VERTEX2F(0, 35 * 16));
+  App_WrCoCmd_Buffer(phost, VERTEX2F(DispWidth * 16, 35 * 16));
   App_WrCoCmd_Buffer(phost, END());
 
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
@@ -66,7 +66,7 @@ void drawDispenseTestScreen(Gpu_Hal_Context_t* phost, const DispenseTestScreenPa
 
   // Calculate layout dimensions
   int32_t row_height = 40;
-  int32_t start_y = 65;
+  int32_t start_y = 50;
   int32_t button_width = 45;
   int32_t button_height = 25;
   int32_t button_spacing = 6;
@@ -149,8 +149,19 @@ void drawDispenseTestScreen(Gpu_Hal_Context_t* phost, const DispenseTestScreenPa
   Gpu_CoCmd_Button(phost, time_start_x + 4 * (button_width + button_spacing), vib_time_y, button_width, button_height,
                    20, 0, "5s");
 
-  // Row 3: Repeat button, Dispense/Stop button, Progress text - 4px gap below vibration time
-  int32_t row3_y = vib_time_y + button_height + 4;
+  // Horizontal divider line
+  int32_t divider_y = vib_time_y + button_height + 8;
+  App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+  App_WrCoCmd_Buffer(phost, COLOR_RGB(128, 128, 128));
+  App_WrCoCmd_Buffer(phost, BEGIN(LINES));
+  App_WrCoCmd_Buffer(phost, VERTEX2F(20 * 16, divider_y * 16));
+  App_WrCoCmd_Buffer(phost, VERTEX2F((DispWidth - 20) * 16, divider_y * 16));
+  App_WrCoCmd_Buffer(phost, END());
+  App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
+  App_WrCoCmd_Buffer(phost, TAG_MASK(255));
+
+  // Row 3: Repeat button, Dispense/Stop button, Progress text - below divider line
+  int32_t row3_y = divider_y + 8;
   int32_t row3_button_height = button_height;  // Same height as other buttons for consistency
   int32_t row3_spacing = 6;  // Same spacing as other rows
 
@@ -191,11 +202,11 @@ void drawDispenseTestScreen(Gpu_Hal_Context_t* phost, const DispenseTestScreenPa
   Gpu_CoCmd_Text(phost, text_x, row3_y + row3_button_height / 2, 20, OPT_CENTERY, buf);
   App_WrCoCmd_Buffer(phost, TAG_MASK(255));
 
-  // Back button
+  // Back button (top left, vertically aligned with title)
   Gpu_CoCmd_FgColor(phost, 0xAA0000);
   App_WrCoCmd_Buffer(phost, TAG(TAG_DISPENSE_BACK));
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
-  Gpu_CoCmd_Button(phost, 10, DispHeight - 30, 50, 22, 20, 0, "Back");
+  Gpu_CoCmd_Button(phost, 10, 4, 50, 22, 20, 0, "Back");
 
   // Finalize display
   Disp_End(phost);

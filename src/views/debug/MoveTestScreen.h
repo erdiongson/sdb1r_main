@@ -64,17 +64,51 @@ void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit
   // Header section
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
-  Gpu_CoCmd_Text(phost, DispWidth / 2, 20, 30, OPT_CENTER | OPT_FORMAT, "Movement Test");
+  Gpu_CoCmd_Text(phost, DispWidth / 2, 15, 28, OPT_CENTER | OPT_FORMAT, "Movement Test");
 
   // Draw separator line
   App_WrCoCmd_Buffer(phost, COLOR_RGB(193, 64, 0));
   App_WrCoCmd_Buffer(phost, BEGIN(LINES));
-  App_WrCoCmd_Buffer(phost, VERTEX2F(0, 50 * 16));  // Convert to 1/16 pixel units
-  App_WrCoCmd_Buffer(phost, VERTEX2F(DispWidth * 16, 50 * 16));
+  App_WrCoCmd_Buffer(phost, VERTEX2F(0, 35 * 16));
+  App_WrCoCmd_Buffer(phost, VERTEX2F(DispWidth * 16, 35 * 16));
   App_WrCoCmd_Buffer(phost, END());
 
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, TAG_MASK(255));
+
+  // Control buttons below title section
+  int32_t control_y = 45;
+  int32_t control_x = 10;
+  int32_t control_width = 55;
+  int32_t control_height = 25;
+  int32_t control_spacing = 6;
+
+  // XY Distance button
+  Gpu_CoCmd_FgColor(phost, 0x00A2E8);
+  App_WrCoCmd_Buffer(phost, TAG(TAG_MOVE_XY_DIST));
+  int xy_int = (int)params.xy_distance_cm;
+  int xy_dec = (int)((params.xy_distance_cm - xy_int) * 10);
+  sprintf(buf, "XY:%d.%d", xy_int, xy_dec);
+  Gpu_CoCmd_Button(phost, control_x, control_y, control_width, control_height, 20, 0, buf);
+
+  // Z Distance button
+  control_x += control_width + control_spacing;
+  App_WrCoCmd_Buffer(phost, TAG(TAG_MOVE_Z_DIST));
+  int z_int = (int)params.z_distance_cm;
+  int z_dec = (int)((params.z_distance_cm - z_int) * 10);
+  sprintf(buf, "Z:%d.%d", z_int, z_dec);
+  Gpu_CoCmd_Button(phost, control_x, control_y, control_width, control_height, 20, 0, buf);
+
+  // Repeat button
+  control_x += control_width + control_spacing;
+  App_WrCoCmd_Buffer(phost, TAG(TAG_MOVE_BOUNCE));
+  sprintf(buf, "Repeat:%d", params.bounce_count);
+  Gpu_CoCmd_Button(phost, control_x, control_y, 70, control_height, 20, 0, buf);
+
+  // Blocking toggle (right of Repeat button)
+  control_x += 70 + control_spacing;
+  Toggle_Button(phost, params.blocking, TAG_MOVE_BLOCKING, control_x + 15, control_y + 6, "BLK", "BLK");
+  App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));  // Reset text color to white
 
   // Calculate dimensions for left 2/3 and right 1/3 sections
   int32_t left_section_width = (DispWidth * 2) / 3;
@@ -84,7 +118,7 @@ void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit
   // Button dimensions for directional controls
   int32_t button_size = 45;
   int32_t center_x = left_section_width / 2;
-  int32_t center_y = (DispHeight + 60) / 2 - 30;  // Moved up to fill empty space
+  int32_t center_y = (DispHeight + 45) / 2 - 10;  // Moved down to accommodate controls at top
 
   // UP button
   Gpu_CoCmd_FgColor(phost, 0x006400);
@@ -197,51 +231,20 @@ void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit
   App_WrCoCmd_Buffer(phost, TAG(TAG_MOVE_STOP));
   Gpu_CoCmd_Button(phost, right_section_start + 10, z_start_y + (z_button_height + z_button_spacing) * 2, z_button_width, z_button_height, 26, 0, "STOP");
 
-  // Back button
+  // Back button (top left, vertically aligned with title)
   Gpu_CoCmd_FgColor(phost, 0xAA0000);
   App_WrCoCmd_Buffer(phost, TAG(TAG_MOVE_BACK));
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
-  Gpu_CoCmd_Button(phost, 10, DispHeight - 35, 60, 25, 26, 0, "Back");
+  Gpu_CoCmd_Button(phost, 10, 4, 50, 22, 20, 0, "Back");
 
-  // Control buttons to the right of Back button
-  int32_t control_x = 80;
-  int32_t control_y = DispHeight - 35;
-  int32_t control_width = 55;
-  int32_t control_height = 25;
-  int32_t control_spacing = 60;
-
-  // XY Distance button
-  Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-  App_WrCoCmd_Buffer(phost, TAG(TAG_MOVE_XY_DIST));
-  int xy_int = (int)params.xy_distance_cm;
-  int xy_dec = (int)((params.xy_distance_cm - xy_int) * 10);
-  sprintf(buf, "XY:%d.%d", xy_int, xy_dec);
-  Gpu_CoCmd_Button(phost, control_x, control_y, control_width, control_height, 21, 0, buf);
-
-  // Z Distance button
-  control_x += control_spacing;
-  App_WrCoCmd_Buffer(phost, TAG(TAG_MOVE_Z_DIST));
-  int z_int = (int)params.z_distance_cm;
-  int z_dec = (int)((params.z_distance_cm - z_int) * 10);
-  sprintf(buf, "Z:%d.%d", z_int, z_dec);
-  Gpu_CoCmd_Button(phost, control_x, control_y, control_width, control_height, 21, 0, buf);
-
-  // Bounce button
-  control_x += control_spacing;
-  App_WrCoCmd_Buffer(phost, TAG(TAG_MOVE_BOUNCE));
-  sprintf(buf, "B:%d", params.bounce_count);
-  Gpu_CoCmd_Button(phost, control_x, control_y, control_width, control_height, 21, 0, buf);
-
-  // Bounce progress text (if bouncing is active)
+  // Repeat progress text at bottom center (if repeating is active)
   if (params.total_bounce_count > 0) {
-    App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
-    sprintf(buf, "%d/%d", params.current_bounce_count, params.total_bounce_count);
-    Gpu_CoCmd_Text(phost, control_x + control_width + 5, control_y + control_height / 2, 21, OPT_CENTERY, buf);
+    App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+    App_WrCoCmd_Buffer(phost, COLOR_RGB(200, 200, 200));
+    sprintf(buf, "Repeating %d/%d", params.current_bounce_count, params.total_bounce_count);
+    Gpu_CoCmd_Text(phost, DispWidth / 2, DispHeight - 10, 20, OPT_CENTER, buf);
+    App_WrCoCmd_Buffer(phost, TAG_MASK(255));
   }
-
-  // Blocking toggle (above Back button) - drawn last to ensure proper tag ordering
-  int32_t blocking_y = DispHeight - 65;
-  Toggle_Button(phost, params.blocking, TAG_MOVE_BLOCKING, 20, blocking_y - 3, "BLK", "BLK");
 
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
