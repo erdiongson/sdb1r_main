@@ -215,6 +215,15 @@ void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
       params.right_tag = 0;
       break;
 
+    case DIALOG_ERROR_PARAMETER:
+      params.title = "Parameter Error";
+      params.subtitle = "One or more parameters are outside the valid range. Please check the highlighted values.";
+      params.left_btn = "Continue";
+      params.right_btn = nullptr;
+      params.left_tag = TAG_CONTINUE;
+      params.right_tag = 0;
+      break;
+
     default:
       params.title = "Unknown Error";
       params.subtitle = "An unknown error occurred.";

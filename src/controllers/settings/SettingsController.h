@@ -7,6 +7,8 @@
 struct VerificationResult {
   bool is_valid;
   InputErrors errors;
+  bool has_parameter_error;  // True if error is due to parameter range violations
+  bool has_dimension_error;  // True if error is due to dimension boundary violations
 };
 
 class SettingsController : public BaseController {

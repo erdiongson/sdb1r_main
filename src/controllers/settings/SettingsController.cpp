@@ -26,7 +26,9 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       {
         VerificationResult verification = verifyParameters();
         if (!verification.is_valid) {
-          drawScreen(DIALOG_ERROR_DIMENSION);
+          // Show appropriate error dialog based on error type
+          int dialog_code = verification.has_parameter_error ? DIALOG_ERROR_PARAMETER : DIALOG_ERROR_DIMENSION;
+          drawScreen(dialog_code);
         } else {
           startNextController(CONTROLLER_READY);
         }
@@ -42,7 +44,9 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       Logger::log(F("Button Pressed: SAVE"));
       VerificationResult verification = verifyParameters();
       if (!verification.is_valid) {
-        drawScreen(DIALOG_ERROR_DIMENSION);
+        // Show appropriate error dialog based on error type
+        int dialog_code = verification.has_parameter_error ? DIALOG_ERROR_PARAMETER : DIALOG_ERROR_DIMENSION;
+        drawScreen(dialog_code);
       } else {
         uint8_t currentNum = profile_manager.getCurrentProfileNum();
         profile_manager.writeCurIDEEPROM(currentNum);
@@ -286,50 +290,63 @@ VerificationResult SettingsController::verifyParameters() {
   VerificationResult result;
   result.is_valid = true;
   result.errors = InputErrors();  // Initialize all to false
+  result.has_parameter_error = false;
+  result.has_dimension_error = false;
 
+  // Check parameter range violations
   if (current_profile->tube_no_x < TUBES_X_MIN || current_profile->tube_no_x > TUBES_X_MAX) {
     result.is_valid = false;
+    result.has_parameter_error = true;
     result.errors.tubes_x = true;
   }
 
   if (current_profile->tube_no_y < TUBES_Y_MIN || current_profile->tube_no_y > TUBES_Y_MAX) {
     result.is_valid = false;
+    result.has_parameter_error = true;
     result.errors.tubes_y = true;
   }
 
   if (current_profile->pitch_x < PITCH_X_MIN || current_profile->pitch_x > PITCH_X_MAX) {
     result.is_valid = false;
+    result.has_parameter_error = true;
     result.errors.pitch_x = true;
   }
 
   if (current_profile->pitch_y < PITCH_Y_MIN || current_profile->pitch_y > PITCH_Y_MAX) {
     result.is_valid = false;
+    result.has_parameter_error = true;
     result.errors.pitch_y = true;
   }
 
   if (current_profile->tray_origin_x < ORIGIN_X_MIN || current_profile->tray_origin_x > ORIGIN_X_MAX) {
     result.is_valid = false;
+    result.has_parameter_error = true;
     result.errors.origin_x = true;
   }
 
   if (current_profile->tray_origin_y < ORIGIN_Y_MIN || current_profile->tray_origin_y > ORIGIN_Y_MAX) {
     result.is_valid = false;
+    result.has_parameter_error = true;
     result.errors.origin_y = true;
   }
 
   if (current_profile->cycles < CYCLES_MIN || current_profile->cycles > CYCLES_MAX) {
     result.is_valid = false;
+    result.has_parameter_error = true;
     result.errors.cycles = true;
   }
 
   if (current_profile->z_dip < Z_DIP_MIN || current_profile->z_dip > Z_DIP_MAX) {
     result.is_valid = false;
+    result.has_parameter_error = true;
     result.errors.z_dip = true;
   }
 
+  // Check dimension boundary violations
   // Validate X-axis: check if tubes exceed tray boundary
   if (current_profile->tray_origin_x + (current_profile->pitch_x * current_profile->tube_no_x) > TRAY_X_MAX) {
     result.is_valid = false;
+    result.has_dimension_error = true;
     result.errors.tubes_x = true;
     result.errors.pitch_x = true;
     result.errors.origin_x = true;
@@ -338,6 +355,7 @@ VerificationResult SettingsController::verifyParameters() {
   // Validate Y-axis: check if tubes exceed tray boundary
   if (current_profile->tray_origin_y + (current_profile->pitch_y * current_profile->tube_no_y) > TRAY_Y_MAX) {
     result.is_valid = false;
+    result.has_dimension_error = true;
     result.errors.tubes_y = true;
     result.errors.pitch_y = true;
     result.errors.origin_y = true;
