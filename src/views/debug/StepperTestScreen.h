@@ -29,6 +29,7 @@ struct StepperTestParams {
   float max_acceleration;
   float move_amount_cm;
   bool blocking;
+  const char* status_message;
 };
 
 // Display the stepper test screen.
@@ -249,11 +250,18 @@ inline void drawStepperTestScreen(Gpu_Hal_Context_t* phost, const StepperTestPar
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_MOVE_PLUS));
   Gpu_CoCmd_Button(phost, start_x, line5_y, move_button_width, move_button_height, 20, 0, "+");
 
-  // Back button
+  // Back button (top left, vertically aligned with title)
   Gpu_CoCmd_FgColor(phost, 0xAA0000);
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_BACK));
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
-  Gpu_CoCmd_Button(phost, 10, DispHeight - 30, 50, 22, 20, 0, "Back");
+  Gpu_CoCmd_Button(phost, 10, 4, 50, 22, 20, 0, "Back");
+
+  // Status message at bottom left
+  if (params.status_message && params.status_message[0] != '\0') {
+    App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+    App_WrCoCmd_Buffer(phost, COLOR_RGB(200, 200, 200));
+    Gpu_CoCmd_Text(phost, 10, DispHeight - 10, 20, 0, params.status_message);
+  }
 
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 

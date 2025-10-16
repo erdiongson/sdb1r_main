@@ -10,6 +10,11 @@ void StepperTestController::onStart() {
   // Load initial axis parameters
   loadAxisParameters();
 
+  // Initialize status message and tracking state
+  status_message[0] = '\0';
+  is_tracking_movement = false;
+  step_count = 0;
+
   updateScreen();
 }
 
@@ -169,7 +174,21 @@ void StepperTestController::onInteraction(const Interaction& interaction) {
           steps = -STEPS_PER_UNIT_Z * move_amount_cm * CM_TO_MM_MULTIPLIER;
         }
         axis.moveBy(steps);
-        if (blocking) axis.runUntilCompleteBlocking();
+        move_start_time = millis();
+        step_count = 0;
+        if (blocking) {
+          step_count = axis.runUntilCompleteBlocking();
+          unsigned long elapsed_ms = millis() - move_start_time;
+          if (elapsed_ms > 0) {
+            float steps_per_sec = (step_count * 1000.0f) / elapsed_ms;
+            sprintf(status_message, "Steps: %lu, Time: %lums, Rate: %.1f steps/s", step_count, elapsed_ms, steps_per_sec);
+          } else {
+            sprintf(status_message, "Steps: %lu, Time: %lums", step_count, elapsed_ms);
+          }
+          updateScreen();
+        } else {
+          is_tracking_movement = true;
+        }
       }
       break;
 
@@ -186,7 +205,21 @@ void StepperTestController::onInteraction(const Interaction& interaction) {
           steps = STEPS_PER_UNIT_Z * move_amount_cm * CM_TO_MM_MULTIPLIER;
         }
         axis.moveBy(steps);
-        if (blocking) axis.runUntilCompleteBlocking();
+        move_start_time = millis();
+        step_count = 0;
+        if (blocking) {
+          step_count = axis.runUntilCompleteBlocking();
+          unsigned long elapsed_ms = millis() - move_start_time;
+          if (elapsed_ms > 0) {
+            float steps_per_sec = (step_count * 1000.0f) / elapsed_ms;
+            sprintf(status_message, "Steps: %lu, Time: %lums, Rate: %.1f steps/s", step_count, elapsed_ms, steps_per_sec);
+          } else {
+            sprintf(status_message, "Steps: %lu, Time: %lums", step_count, elapsed_ms);
+          }
+          updateScreen();
+        } else {
+          is_tracking_movement = true;
+        }
       }
       break;
 
@@ -214,6 +247,29 @@ void StepperTestController::onInteraction(const Interaction& interaction) {
 
 ControllerStepResult StepperTestController::onStep() {
   DispenserProcessResult result = dispenserHead.process();
+  
+  // Track non-blocking movement
+  if (is_tracking_movement) {
+    if (result.steppers == AXIS_STATE_RUNNING) {
+      // Movement is still running, increment step count
+      step_count++;
+    } else if (result.steppers == AXIS_STATE_COMPLETE) {
+      // Movement completed, calculate and display statistics
+      unsigned long elapsed_ms = millis() - move_start_time;
+      if (elapsed_ms > 0) {
+        float steps_per_sec = (step_count * 1000.0f) / elapsed_ms;
+        sprintf(status_message, "Steps: %lu, Time: %lums, Rate: %.1f steps/s", step_count, elapsed_ms, steps_per_sec);
+      } else {
+        sprintf(status_message, "Steps: %lu, Time: %lums", step_count, elapsed_ms);
+      }
+      is_tracking_movement = false;
+      updateScreen();
+    } else {
+      // Movement ended in error or other state
+      is_tracking_movement = false;
+    }
+  }
+  
   return ControllerStepResult(result.steppers == AXIS_STATE_RUNNING);
 }
 
@@ -224,6 +280,7 @@ void StepperTestController::updateScreen() {
   params.max_acceleration = current_max_acceleration;
   params.move_amount_cm = move_amount_cm;
   params.blocking = blocking;
+  params.status_message = status_message;
 
   drawStepperTestScreen(phost, params);
 }

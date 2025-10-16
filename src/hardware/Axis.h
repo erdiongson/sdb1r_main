@@ -229,8 +229,14 @@ class Axis {
 
   AccelStepper& getStepper() { return stepper; }
 
-  void runUntilCompleteBlocking() {
-    while (onStep() == AXIS_STATE_RUNNING) {}
+  // Runs the axis until movement is complete, blocking execution.
+  // @return The number of stepper.run() calls made during the movement.
+  unsigned long runUntilCompleteBlocking() {
+    unsigned long step_count = 0;
+    while (onStep() == AXIS_STATE_RUNNING) {
+      step_count++;
+    }
+    return step_count;
   }
 
   // Gets the maximum speed for the axis.

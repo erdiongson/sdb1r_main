@@ -31,4 +31,8 @@ class StepperTestController : public BaseController {
   float original_max_speed = 0;                    // Original max speed for reset
   float original_max_acceleration = 0;             // Original max acceleration for reset
   bool blocking = false;                           // Whether to block after movement commands
+  char status_message[100];                        // Status message for display
+  unsigned long step_count = 0;                    // Number of stepper.run() calls
+  unsigned long move_start_time = 0;               // Start time of movement (millis)
+  bool is_tracking_movement = false;               // Whether we're currently tracking a non-blocking movement
 };
