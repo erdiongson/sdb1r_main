@@ -91,6 +91,7 @@
 // =============================================================================
 #define DEBUG_NO_LOG 0 // 1 to disable logging
 #define DEBUG_ONLY_SCREEN 0 // 1 to bypass comms with the dispenser / steppers 
+#define DEBUG_MEMORY_MONITOR 0 // 1 to enable memory monitoring
 
 #define DEBUG_MODE_KEYWORD "debug"
 

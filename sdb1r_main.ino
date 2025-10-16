@@ -98,5 +98,5 @@ void loop() {
   }
 
   // Print free memory every 10 seconds
-  MemoryMonitor::printPeriodically(10000);
+  if (DEBUG_MEMORY_MONITOR) MemoryMonitor::printPeriodically(10000);
 }
