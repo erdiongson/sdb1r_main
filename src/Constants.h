@@ -304,12 +304,7 @@ const int KEYBOARD_MAX_PER_LINE = 28;
 const int KEYBOARD_LINE_HEIGHT = 22;
 const int KEYBOARD_MAX_LINES = 3;
 
-const int KEYBOARD_DENSE_FONT = 20;
-const int KEYBOARD_DENSE_LINE_HEIGHT = 15;
-const int KEYBOARD_DENSE_MAX_PER_LINE = 38;
-const int KEYBOARD_DENSE_MAX_LINES = 5;
-
-const int KEYBOARD_MAX_LEN = (KEYBOARD_DENSE_MAX_PER_LINE * KEYBOARD_DENSE_MAX_LINES);
+const int KEYBOARD_MAX_LEN = (KEYBOARD_MAX_PER_LINE * KEYBOARD_MAX_LINES);
 
 // =============================================================================
 // ARRAY LIMITS

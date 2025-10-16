@@ -89,29 +89,20 @@ void drawKeyboard(Gpu_Hal_Context_t* phost, uint8_t keypressed, char* displaytex
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));  // Text Color
 
   // Manual text wrapping - split long text into multiple lines
-  // Automatically use dense mode if text exceeds normal capacity
   uint8_t text_len = strlen(displaytext);
-  const bool dense = (text_len > KEYBOARD_MAX_PER_LINE * KEYBOARD_MAX_LINES);
-  
-  // Dense mode: smaller font, tighter spacing, more chars per line, 5 lines
-  // Normal mode: standard font, standard spacing, standard chars per line, 3 lines
-  const uint8_t display_font = dense ? KEYBOARD_DENSE_FONT : KEYBOARD_FONT;
-  const uint8_t line_height = dense ? KEYBOARD_DENSE_LINE_HEIGHT : KEYBOARD_LINE_HEIGHT;
-  const uint8_t max_per_line = dense ? KEYBOARD_DENSE_MAX_PER_LINE : KEYBOARD_MAX_PER_LINE;
-  const uint8_t max_lines = dense ? KEYBOARD_DENSE_MAX_LINES : KEYBOARD_MAX_LINES;
+  const uint8_t display_font = KEYBOARD_FONT;
+  const uint8_t line_height = KEYBOARD_LINE_HEIGHT;
+  const uint8_t max_per_line = KEYBOARD_MAX_PER_LINE;
+  const uint8_t max_lines = KEYBOARD_MAX_LINES;
   
   // Split text into lines (break at any character)
-  static char line1[KEYBOARD_DENSE_MAX_PER_LINE + 1];
-  static char line2[KEYBOARD_DENSE_MAX_PER_LINE + 1];
-  static char line3[KEYBOARD_DENSE_MAX_PER_LINE + 1];
-  static char line4[KEYBOARD_DENSE_MAX_PER_LINE + 1];
-  static char line5[KEYBOARD_DENSE_MAX_PER_LINE + 1];
+  static char line1[KEYBOARD_MAX_PER_LINE + 1];
+  static char line2[KEYBOARD_MAX_PER_LINE + 1];
+  static char line3[KEYBOARD_MAX_PER_LINE + 1];
   
-  memset(line1, 0, KEYBOARD_DENSE_MAX_PER_LINE + 1);
-  memset(line2, 0, KEYBOARD_DENSE_MAX_PER_LINE + 1);
-  memset(line3, 0, KEYBOARD_DENSE_MAX_PER_LINE + 1);
-  memset(line4, 0, KEYBOARD_DENSE_MAX_PER_LINE + 1);
-  memset(line5, 0, KEYBOARD_DENSE_MAX_PER_LINE + 1);
+  memset(line1, 0, KEYBOARD_MAX_PER_LINE + 1);
+  memset(line2, 0, KEYBOARD_MAX_PER_LINE + 1);
+  memset(line3, 0, KEYBOARD_MAX_PER_LINE + 1);
   
   // Copy first line
   uint8_t line1_len = (text_len < max_per_line) ? text_len : max_per_line;
@@ -134,28 +125,10 @@ void drawKeyboard(Gpu_Hal_Context_t* phost, uint8_t keypressed, char* displaytex
     line3[line3_len] = '\0';
   }
   
-  // Copy fourth line if dense mode and text is longer than three lines
-  if (dense && text_len > max_per_line * 3) {
-    uint8_t remaining = text_len - (max_per_line * 3);
-    uint8_t line4_len = (remaining < max_per_line) ? remaining : max_per_line;
-    memcpy(line4, displaytext + (max_per_line * 3), line4_len);
-    line4[line4_len] = '\0';
-  }
-  
-  // Copy fifth line if dense mode and text is longer than four lines
-  if (dense && text_len > max_per_line * 4) {
-    uint8_t remaining = text_len - (max_per_line * 4);
-    uint8_t line5_len = (remaining < max_per_line) ? remaining : max_per_line;
-    memcpy(line5, displaytext + (max_per_line * 4), line5_len);
-    line5[line5_len] = '\0';
-  }
-  
   // Render all lines
   Gpu_CoCmd_Text(phost, 0, 0, display_font, 0, line1);
   if (line2[0] != '\0') Gpu_CoCmd_Text(phost, 0, line_height, display_font, 0, line2);
   if (line3[0] != '\0') Gpu_CoCmd_Text(phost, 0, line_height * 2, display_font, 0, line3);
-  if (dense && line4[0] != '\0') Gpu_CoCmd_Text(phost, 0, line_height * 3, display_font, 0, line4);
-  if (dense && line5[0] != '\0') Gpu_CoCmd_Text(phost, 0, line_height * 4, display_font, 0, line5);
 
   App_WrCoCmd_Buffer(phost, SCISSOR_XY(0, 77));
   App_WrCoCmd_Buffer(phost, SCISSOR_SIZE(DispWidth, (uint16_t)(DispHeight * 0.1)));
