@@ -1,5 +1,5 @@
 #include "AdvancedSettingsController.h"
-#include "../../views/settings/SettingsScreen.h"
+#include "../../views/settings/AdvancedSettingsScreen.h"
 #include "../../views/common/Keyboards.h"
 #include "../../logic/TrayPositionHandler.h"
 #include "../../logic/SkipUtils.h"
