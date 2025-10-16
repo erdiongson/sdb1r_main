@@ -60,6 +60,8 @@ Revision History:
 #define BACK                 254
 #define KBBACK               248    // Exit Keyboard
 #define NUM_ENTER            247   // Enter Numeric Number
+#define KEYBOARD_SCROLL_UP   246   // Scroll keyboard text up
+#define KEYBOARD_SCROLL_DOWN 245   // Scroll keyboard text down
 
 /******************************************************************************/
 

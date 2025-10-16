@@ -15,7 +15,7 @@ struct {
 } Flag;
 
 void drawKeyboard(Gpu_Hal_Context_t* phost, uint8_t keypressed, char* displaytext, char* displaytitle, bool numlock,
-                  bool caplock, const char* errormsg) {
+                  bool caplock, const char* errormsg, uint8_t scroll_offset) {
   char buf[KEYBOARD_MAX_LEN];
 
   // Display List start
@@ -81,54 +81,105 @@ void drawKeyboard(Gpu_Hal_Context_t* phost, uint8_t keypressed, char* displaytex
   Gpu_CoCmd_Button(phost, (DispWidth * 0.653), (DispHeight * 0.83), (DispWidth * 0.192), (DispHeight * 0.112), font,
                    (keypressed == SAVE_KEY) ? OPT_FLAT : 0, "Enter");
   Gpu_CoCmd_FgColor(phost, 0x703800);
+  
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));  // Disable the tag buffer updates
   App_WrCoCmd_Buffer(phost, SCISSOR_XY(0, 0));
   App_WrCoCmd_Buffer(phost, SCISSOR_SIZE(DispWidth, 100));  // Increased height for wrapped text
   App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(0, 0, 0));
   App_WrCoCmd_Buffer(phost, CLEAR(1, 1, 1));
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));  // Text Color
-
-  // Manual text wrapping - split long text into multiple lines
+  
+  // Manual text wrapping - split long text into multiple lines with scrolling support
   uint8_t text_len = strlen(displaytext);
   const uint8_t display_font = KEYBOARD_FONT;
   const uint8_t line_height = KEYBOARD_LINE_HEIGHT;
   const uint8_t max_per_line = KEYBOARD_MAX_PER_LINE;
   const uint8_t max_lines = KEYBOARD_MAX_LINES;
+  const uint8_t visible_lines = KEYBOARD_VISIBLE_LINES;
   
-  // Split text into lines (break at any character)
-  static char line1[KEYBOARD_MAX_PER_LINE + 1];
-  static char line2[KEYBOARD_MAX_PER_LINE + 1];
-  static char line3[KEYBOARD_MAX_PER_LINE + 1];
+  // Split text into all possible lines
+  static char lines[KEYBOARD_MAX_LINES][KEYBOARD_MAX_PER_LINE + 1];
   
-  memset(line1, 0, KEYBOARD_MAX_PER_LINE + 1);
-  memset(line2, 0, KEYBOARD_MAX_PER_LINE + 1);
-  memset(line3, 0, KEYBOARD_MAX_PER_LINE + 1);
-  
-  // Copy first line
-  uint8_t line1_len = (text_len < max_per_line) ? text_len : max_per_line;
-  memcpy(line1, displaytext, line1_len);
-  line1[line1_len] = '\0';
-  
-  // Copy second line if text is longer than first line
-  if (text_len > max_per_line) {
-    uint8_t remaining = text_len - max_per_line;
-    uint8_t line2_len = (remaining < max_per_line) ? remaining : max_per_line;
-    memcpy(line2, displaytext + max_per_line, line2_len);
-    line2[line2_len] = '\0';
+  // Clear all lines
+  for (uint8_t i = 0; i < max_lines; i++) {
+    memset(lines[i], 0, KEYBOARD_MAX_PER_LINE + 1);
   }
   
-  // Copy third line if text is longer than two lines
-  if (text_len > max_per_line * 2) {
-    uint8_t remaining = text_len - (max_per_line * 2);
-    uint8_t line3_len = (remaining < max_per_line) ? remaining : max_per_line;
-    memcpy(line3, displaytext + (max_per_line * 2), line3_len);
-    line3[line3_len] = '\0';
+  // Calculate total number of lines needed
+  uint8_t total_lines = (text_len + max_per_line - 1) / max_per_line;
+  if (total_lines > max_lines) total_lines = max_lines;
+  
+  // Copy text into lines
+  for (uint8_t i = 0; i < total_lines; i++) {
+    uint8_t start_pos = i * max_per_line;
+    uint8_t remaining = text_len - start_pos;
+    uint8_t line_len = (remaining < max_per_line) ? remaining : max_per_line;
+    memcpy(lines[i], displaytext + start_pos, line_len);
+    lines[i][line_len] = '\0';
   }
   
-  // Render all lines
-  Gpu_CoCmd_Text(phost, 0, 0, display_font, 0, line1);
-  if (line2[0] != '\0') Gpu_CoCmd_Text(phost, 0, line_height, display_font, 0, line2);
-  if (line3[0] != '\0') Gpu_CoCmd_Text(phost, 0, line_height * 2, display_font, 0, line3);
+  // Render visible lines based on scroll offset
+  for (uint8_t i = 0; i < visible_lines; i++) {
+    uint8_t line_idx = scroll_offset + i;
+    if (line_idx < total_lines && lines[line_idx][0] != '\0') {
+      Gpu_CoCmd_Text(phost, 0, i * line_height, display_font, 0, lines[line_idx]);
+    }
+  }
+  
+  // Draw scroll UI if scrolling is needed
+  if (total_lines > visible_lines) {
+    App_WrCoCmd_Buffer(phost, TAG_MASK(1));  // Re-enable tag buffer for scroll buttons
+    
+    bool can_scroll_up = (scroll_offset > 0);
+    bool can_scroll_down = (scroll_offset + visible_lines < total_lines);
+    
+    // Draw scroll up button (disabled if at top)
+    App_WrCoCmd_Buffer(phost, TAG(can_scroll_up ? KEYBOARD_SCROLL_UP : 0));
+    Gpu_CoCmd_FgColor(phost, can_scroll_up ? 0x505050 : 0x080808);
+    Gpu_CoCmd_Button(phost, DispWidth - 35, 2, 33, 20, 20, 
+                     (keypressed == KEYBOARD_SCROLL_UP) ? OPT_FLAT : 0, "^");
+    Gpu_CoCmd_FgColor(phost, 0x703800);
+    
+    // Draw scrollbar between buttons
+    int16_t scrollbar_top = 24;
+    int16_t scrollbar_height = 27;
+    int16_t scrollbar_x = (int16_t)DispWidth - 35;
+    int16_t scrollbar_width = 33;
+    
+    // Background track (full button width)
+    App_WrCoCmd_Buffer(phost, COLOR_RGB(60, 60, 60));
+    App_WrCoCmd_Buffer(phost, BEGIN(RECTS));
+    App_WrCoCmd_Buffer(phost, VERTEX2F(scrollbar_x * 16, scrollbar_top * 16));
+    App_WrCoCmd_Buffer(phost, VERTEX2F((scrollbar_x + scrollbar_width) * 16, (scrollbar_top + scrollbar_height) * 16));
+    App_WrCoCmd_Buffer(phost, END());
+    
+    // Calculate thumb position and size
+    float thumb_ratio = (float)visible_lines / total_lines;
+    int16_t thumb_height = (int16_t)(scrollbar_height * thumb_ratio);
+    if (thumb_height < 8) thumb_height = 8;  // Minimum thumb size
+    
+    float scroll_ratio = (float)scroll_offset / (total_lines - visible_lines);
+    int16_t thumb_offset = (int16_t)((scrollbar_height - thumb_height) * scroll_ratio);
+    int16_t thumb_y = scrollbar_top + thumb_offset;
+    
+    // Draw thumb as rectangle (no rounded ends)
+    App_WrCoCmd_Buffer(phost, COLOR_RGB(180, 180, 180));
+    App_WrCoCmd_Buffer(phost, BEGIN(RECTS));
+    App_WrCoCmd_Buffer(phost, VERTEX2F((scrollbar_x + 2) * 16, thumb_y * 16));
+    App_WrCoCmd_Buffer(phost, VERTEX2F((scrollbar_x + scrollbar_width - 2) * 16, (thumb_y + thumb_height) * 16));
+    App_WrCoCmd_Buffer(phost, END());
+    
+    App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));  // Reset color
+    
+    // Draw scroll down button (disabled if at bottom)
+    App_WrCoCmd_Buffer(phost, TAG(can_scroll_down ? KEYBOARD_SCROLL_DOWN : 0));
+    Gpu_CoCmd_FgColor(phost, can_scroll_down ? 0x505050 : 0x080808);
+    Gpu_CoCmd_Button(phost, DispWidth - 35, 55, 33, 20, 20, 
+                     (keypressed == KEYBOARD_SCROLL_DOWN) ? OPT_FLAT : 0, "v");
+    Gpu_CoCmd_FgColor(phost, 0x703800);
+    
+    App_WrCoCmd_Buffer(phost, TAG_MASK(0));  // Disable tags again
+  }
 
   App_WrCoCmd_Buffer(phost, SCISSOR_XY(0, 77));
   App_WrCoCmd_Buffer(phost, SCISSOR_SIZE(DispWidth, (uint16_t)(DispHeight * 0.1)));
@@ -159,6 +210,7 @@ KeyboardResult getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* c
   memset(buf, 0, KEYBOARD_MAX_LEN);
   
   uint8_t curpos = 0;
+  uint8_t scroll_offset = 0;  // Track scroll position
 
   bool numlock = false;
   bool caplock = false;
@@ -169,7 +221,7 @@ KeyboardResult getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* c
   buf[curpos] = 0;
   Flag.Numeric = OFF;  // Disable the numbers and spcial charaters
 
-  drawKeyboard(phost, 0, buf, curtitle, numlock, caplock, errormsg);
+  drawKeyboard(phost, 0, buf, curtitle, numlock, caplock, errormsg, scroll_offset);
   InteractionsHandler::waitForTouchRelease();
 
   if (errormsg != NULL && errormsg[0] != '\0') {
@@ -182,12 +234,12 @@ KeyboardResult getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* c
     // Only update the keyboard if a key was pressed
     if (keypressed == -1) continue;
 
-    drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, NULL);
+    drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, NULL, scroll_offset);
 
     switch (keypressed) {
       // No key
       case 0:
-        drawKeyboard(phost, 0, buf, curtitle, numlock, caplock, NULL);
+        drawKeyboard(phost, 0, buf, curtitle, numlock, caplock, NULL, scroll_offset);
         break;
 
       case BACK_SPACE:
@@ -196,6 +248,14 @@ KeyboardResult getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* c
           curpos--;  // clear the character in the buffer
           buf[curpos] = 0;
           if (password) curtext[curpos] = 0;
+          
+          // Auto-adjust scroll if we deleted enough to go back a line
+          uint8_t text_len = strlen(buf);
+          uint8_t total_lines = (text_len + KEYBOARD_MAX_PER_LINE - 1) / KEYBOARD_MAX_PER_LINE;
+          if (total_lines == 0) total_lines = 1;
+          if (scroll_offset >= total_lines - KEYBOARD_VISIBLE_LINES + 1 && scroll_offset > 0) {
+            scroll_offset--;
+          }
         }
         break;
 
@@ -206,11 +266,29 @@ KeyboardResult getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* c
       case NUMBER_LOCK:
         numlock = (numlock) ? FALSE : TRUE;  // toggle the number lock on when the key detect
         break;
+        
       case CLEAR_KEY:
         curpos = 0;
         buf[curpos] = 0;
         if (password) curtext[curpos] = 0;
+        scroll_offset = 0;  // Reset scroll when clearing
         break;
+
+      case KEYBOARD_SCROLL_UP:
+        if (scroll_offset > 0) {
+          scroll_offset--;
+        }
+        break;
+        
+      case KEYBOARD_SCROLL_DOWN: {
+        uint8_t text_len = strlen(buf);
+        uint8_t total_lines = (text_len + KEYBOARD_MAX_PER_LINE - 1) / KEYBOARD_MAX_PER_LINE;
+        if (total_lines > KEYBOARD_MAX_LINES) total_lines = KEYBOARD_MAX_LINES;
+        if (scroll_offset + KEYBOARD_VISIBLE_LINES < total_lines) {
+          scroll_offset++;
+        }
+        break;
+      }
 
       case KBBACK:
         return KeyboardResult(ACTION_BACK);
@@ -227,11 +305,22 @@ KeyboardResult getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* c
             curtext[curpos + 1] = 0;
           }
           buf[++curpos] = 0;
-          drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, NULL);
+          
+          // Auto-scroll down if text extends beyond visible area
+          uint8_t text_len = strlen(buf);
+          uint8_t total_lines = (text_len + KEYBOARD_MAX_PER_LINE - 1) / KEYBOARD_MAX_PER_LINE;
+          if (total_lines > KEYBOARD_VISIBLE_LINES) {
+            uint8_t max_scroll = total_lines - KEYBOARD_VISIBLE_LINES;
+            if (scroll_offset < max_scroll) {
+              scroll_offset = max_scroll;
+            }
+          }
+          
+          drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, NULL, scroll_offset);
         } else {
-          drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, "Max length reached");
+          drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, "Max length reached", scroll_offset);
           delay(KEYBOARD_ERROR_DISPLAY_MS);
-          drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, NULL);
+          drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, NULL, scroll_offset);
         }
         break;
     }

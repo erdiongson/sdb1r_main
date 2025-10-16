@@ -34,8 +34,9 @@ struct KeyboardResult {
 // @param numlock Number lock state (true = numeric mode).
 // @param caplock Caps lock state (true = uppercase).
 // @param errormsg Error message string (NULL or empty string = no error).
+// @param scroll_offset Line offset for scrolling (0-based).
 void drawKeyboard(Gpu_Hal_Context_t* phost, uint8_t keypressed, char* displaytext, char* displaytitle, bool numlock,
-                  bool caplock, const char* errormsg);
+                  bool caplock, const char* errormsg, uint8_t scroll_offset = 0);
 
 // Waits for the current key to be released.
 void waitKeyRelease(void);
