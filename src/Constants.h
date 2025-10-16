@@ -248,7 +248,7 @@ const int PROFILE_NAME_MAX_LEN = 30;
 const int PASSWORD_MAX_LEN = 30;
 const int SKIP_STRING_LEN = 45;
 const int SKIP_STRING_INDIVIDUAL_LEN = 200;
-const int MAX_SKIP_POSITIONS = 2;  // 180 bytes / 2 bytes per position (same memory as 3x60 char arrays)
+const int MAX_SKIP_POSITIONS = 100;
 
 const float STAGGERED_OFFSET_FACTOR = 0.5;
 
