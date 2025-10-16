@@ -114,6 +114,7 @@
 #define PROFILE_NAME_MAX_LEN 30
 #define PASSWORD_MAX_LEN 30
 #define SKIP_STRING_LEN 45
+#define SKIP_STRING_INDIVIDUAL_LEN 200
 #define MAX_SKIP_POSITIONS 90  // 180 bytes / 2 bytes per position (same memory as 3x60 char arrays)
 
 #define ORIGIN_DEFAULT 10
@@ -145,10 +146,6 @@
 #define ERROR_DISPLAY_DURATION_MS 3000
 #define KEYBOARD_TRANSITION_DELAY_MS 200
 #define KEYBOARD_ERROR_DISPLAY_MS 1000
-
-#define KEYPAD_MAX_LEN 10
-#define KEYBOARD_MAX_LEN 90
-#define KEYBOARD_MAX_PER_LINE 30
 
 // =============================================================================
 // TEST / PREVIEW SETTINGS

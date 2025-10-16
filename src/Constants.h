@@ -242,6 +242,24 @@
 #define DIALOG_ERROR_SKIP_VALUES 15
 
 // =============================================================================
+// KEYBOARD SETTINGS
+// =============================================================================
+
+#define KEYPAD_MAX_LEN 10
+
+#define KEYBOARD_FONT 27
+#define KEYBOARD_MAX_PER_LINE 28
+#define KEYBOARD_LINE_HEIGHT 22
+#define KEYBOARD_MAX_LINES 3
+
+#define KEYBOARD_DENSE_FONT 20
+#define KEYBOARD_DENSE_LINE_HEIGHT 15
+#define KEYBOARD_DENSE_MAX_PER_LINE 38
+#define KEYBOARD_DENSE_MAX_LINES 5
+
+#define KEYBOARD_MAX_LEN (KEYBOARD_DENSE_MAX_PER_LINE * KEYBOARD_DENSE_MAX_LINES)
+
+// =============================================================================
 // ARRAY LIMITS
 // =============================================================================
 #define MAX_POSITIONS 100

@@ -162,7 +162,7 @@ void AdvancedSettingsController::editSkipIndividual(Gpu_Hal_Context_t* phost) {
   const char* errorMsg = NULL;
   while (true) {
     Logger::log("Length of skip_single_pos: " + String(strlen(skipSinglePos)));
-    KeyboardResult kbResult = getKeyboardValue(phost, skipSinglePos, "Enter positions to skip", false, SKIP_STRING_LEN, errorMsg);
+    KeyboardResult kbResult = getKeyboardValue(phost, skipSinglePos, "Enter positions to skip", false, SKIP_STRING_INDIVIDUAL_LEN, errorMsg);
 
     // Check if user pressed back
     if (kbResult.action == ACTION_BACK) return;
