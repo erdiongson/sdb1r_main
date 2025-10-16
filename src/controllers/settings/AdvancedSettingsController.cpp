@@ -13,8 +13,8 @@ void AdvancedSettingsController::onStart() {
   // Store reference to the current profile
   current_profile = &profile_manager.getCurrentProfile();
 
-  // Display skip screen
-  drawSkipScreen(phost, *current_profile);
+  // Display advanced settings screen
+  drawScreen();
 }
 
 void AdvancedSettingsController::onInteraction(const Interaction& interaction) {
@@ -24,25 +24,25 @@ void AdvancedSettingsController::onInteraction(const Interaction& interaction) {
     case TAG_STAGGERED_TOGGLE:
       Logger::log(F("Toggle staggered mode"));
       current_profile->staggered = !current_profile->staggered;
-      drawSkipScreen(phost, *current_profile);
+      drawScreen();
       break;
 
     case TAG_SKIP_COLUMNS:
       Logger::log(F("Button Pressed: SKIP COLUMNS"));
       editSkipColumn(phost);
-      drawSkipScreen(phost, *current_profile);
+      drawScreen();
       break;
 
     case TAG_SKIP_ROWS:
       Logger::log(F("Button Pressed: SKIP ROWS"));
       editSkipRow(phost);
-      drawSkipScreen(phost, *current_profile);
+      drawScreen();
       break;
 
     case TAG_SKIP_SINGLE_POS:
       Logger::log(F("Button Pressed: SKIP SINGLE POSITION"));
       editSkipIndividual(phost);
-      drawSkipScreen(phost, *current_profile);
+      drawScreen();
       break;
 
     case TAG_ADV_PROF_BACK:  // Back button
@@ -168,10 +168,8 @@ void AdvancedSettingsController::editSkipIndividual(Gpu_Hal_Context_t* phost) {
     if (kbResult.action == ACTION_BACK) return;
 
     // Clean the input with bounds checking
-    Logger::log(F("Cleaning!"));
     SkipUtils::CleanResult result =
         SkipUtils::clean(skipSinglePos, SkipUtils::INDIVIDUAL, dimensions, current_profile->staggered);
-    Logger::log(F("Cleaned!"));
 
     // Check if there was an error
     if (result.error_message[0] != '\0') {
@@ -191,4 +189,47 @@ void AdvancedSettingsController::editSkipIndividual(Gpu_Hal_Context_t* phost) {
 
   // Save back to profile
   profile_manager.setSkipStrings(skipCol, skipRow, skipSinglePos);
+}
+
+// Verifies skip positions and returns validation result with error flags.
+// @return SkipVerificationResult containing validity status and specific error flags.
+SkipVerificationResult AdvancedSettingsController::verifyParameters() {
+  SkipVerificationResult result;
+  result.is_valid = true;
+  result.errors = SkipErrors();  // Initialize all to false
+
+  // Check skip position validity
+  if (current_profile->skip_count > 0) {
+    TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
+    
+    for (uint8_t i = 0; i < current_profile->skip_count && i < MAX_SKIP_POSITIONS; i++) {
+      const SkipPosition& skipPos = current_profile->skip_positions[i];
+      TrayHandler::Position pos(skipPos.x, skipPos.y);
+      
+      // Check if position is valid for current tray configuration using SkipUtils
+      if (!SkipUtils::isValidSkipPosition(pos, dimensions, current_profile->staggered)) {
+        result.is_valid = false;
+        
+        // Determine which type of skip is invalid
+        if (pos.y == 0 && pos.x != 0) {
+          // Column skip
+          result.errors.skip_cols = true;
+        } else if (pos.x == 0 && pos.y != 0) {
+          // Row skip
+          result.errors.skip_rows = true;
+        } else if (pos.x != 0 && pos.y != 0) {
+          // Individual position skip
+          result.errors.skip_cells = true;
+        }
+      }
+    }
+  }
+
+  return result;
+}
+
+// Helper method to draw the advanced settings screen with current profile and errors.
+void AdvancedSettingsController::drawScreen() {
+  SkipVerificationResult verification = verifyParameters();
+  drawAdvancedSettingsScreen(phost, { *current_profile, verification.errors });
 }

@@ -1,6 +1,13 @@
 #pragma once
 
 #include "../BaseController.h"
+#include "../../views/settings/AdvancedSettingsScreen.h"
+
+// Result of skip parameter verification
+struct SkipVerificationResult {
+  bool is_valid;
+  SkipErrors errors;
+};
 
 class AdvancedSettingsController : public BaseController {
  private:
@@ -9,6 +16,13 @@ class AdvancedSettingsController : public BaseController {
   void editSkipColumn(Gpu_Hal_Context_t* phost);
   void editSkipRow(Gpu_Hal_Context_t* phost);
   void editSkipIndividual(Gpu_Hal_Context_t* phost);
+
+  // Verifies skip positions and returns validation result with error flags.
+  // @return SkipVerificationResult containing validity status and specific error flags.
+  SkipVerificationResult verifyParameters();
+
+  // Helper method to draw the advanced settings screen with current profile and errors.
+  void drawScreen();
 
  public:
   AdvancedSettingsController(ControllerParams params);
