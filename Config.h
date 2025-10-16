@@ -27,16 +27,16 @@
 // =============================================================================
 // MOTOR SPEED SETTINGS
 // =============================================================================
-#define MOTOR_X_SPEED 80000  // 8000, 2000
-#define MOTOR_Y_SPEED 800    // 4800, 1000
-#define MOTOR_Z_SPEED 8000  // 4800, 1000
+#define MOTOR_X_SPEED 4000  // Microstep: 2A
+#define MOTOR_Y_SPEED 80000    // Microstep: 16
+#define MOTOR_Z_SPEED 1000  // Microstep: 2B
 
 // =============================================================================
 // MOTOR ACCELERATION SETTINGS
 // =============================================================================
-#define MOTOR_X_ACCELERATION 100000  // 8000, 4800, 3200
-#define MOTOR_Y_ACCELERATION 1000    // 4000, 2400, 1600, 3200
-#define MOTOR_Z_ACCELERATION 100000  // 4000, 2400, 1600, 3200
+#define MOTOR_X_ACCELERATION 40000  // Microstep: 2A
+#define MOTOR_Y_ACCELERATION 100000    // Microstep: 16
+#define MOTOR_Z_ACCELERATION 8000  // Microstep: 2B
 
 // =============================================================================
 // MACHINE DIMENSIONS (in mm)
