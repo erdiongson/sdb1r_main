@@ -21,6 +21,7 @@ void MoveTestController::onStart() {
   params.bounce_count = bounce_count;
   params.current_bounce_count = 0;
   params.total_bounce_count = 0;
+  params.blocking = blocking;
 
   drawMoveTestScreen(phost, limitStates, params);
 }
@@ -37,6 +38,7 @@ void MoveTestController::onInteraction(const Interaction& interaction) {
       bounce_state.axis = BOUNCE_AXIS_Y;
       bounce_state.go_amount = STEPS_PER_UNIT_Y * xy_distance_cm * CM_TO_MM_MULTIPLIER;
       dispenserHead.y().moveBy(bounce_state.go_amount);
+      if (blocking) dispenserHead.y().runUntilCompleteBlocking();
       break;
 
     case TAG_MOVE_DOWN:
@@ -47,6 +49,7 @@ void MoveTestController::onInteraction(const Interaction& interaction) {
       bounce_state.axis = BOUNCE_AXIS_Y;
       bounce_state.go_amount = -STEPS_PER_UNIT_Y * xy_distance_cm * CM_TO_MM_MULTIPLIER;
       dispenserHead.y().moveBy(bounce_state.go_amount);
+      if (blocking) dispenserHead.y().runUntilCompleteBlocking();
       break;
 
     case TAG_MOVE_LEFT:
@@ -57,6 +60,7 @@ void MoveTestController::onInteraction(const Interaction& interaction) {
       bounce_state.axis = BOUNCE_AXIS_X;
       bounce_state.go_amount = STEPS_PER_UNIT_X * xy_distance_cm * CM_TO_MM_MULTIPLIER;
       dispenserHead.x().moveBy(bounce_state.go_amount);
+      if (blocking) dispenserHead.x().runUntilCompleteBlocking();
       break;
 
     case TAG_MOVE_RIGHT:
@@ -67,6 +71,7 @@ void MoveTestController::onInteraction(const Interaction& interaction) {
       bounce_state.axis = BOUNCE_AXIS_X;
       bounce_state.go_amount = -STEPS_PER_UNIT_X * xy_distance_cm * CM_TO_MM_MULTIPLIER;
       dispenserHead.x().moveBy(bounce_state.go_amount);
+      if (blocking) dispenserHead.x().runUntilCompleteBlocking();
       break;
 
     case TAG_Z_UP:
@@ -77,6 +82,7 @@ void MoveTestController::onInteraction(const Interaction& interaction) {
       bounce_state.axis = BOUNCE_AXIS_Z;
       bounce_state.go_amount = STEPS_PER_UNIT_Z * z_distance_cm * CM_TO_MM_MULTIPLIER;
       dispenserHead.z().moveBy(bounce_state.go_amount);
+      if (blocking) dispenserHead.z().runUntilCompleteBlocking();
       break;
 
     case TAG_Z_DOWN:
@@ -87,6 +93,7 @@ void MoveTestController::onInteraction(const Interaction& interaction) {
       bounce_state.axis = BOUNCE_AXIS_Z;
       bounce_state.go_amount = -STEPS_PER_UNIT_Z * z_distance_cm * CM_TO_MM_MULTIPLIER;
       dispenserHead.z().moveBy(bounce_state.go_amount);
+      if (blocking) dispenserHead.z().runUntilCompleteBlocking();
       break;
 
     case TAG_MOVE_XY_DIST:
@@ -99,6 +106,7 @@ void MoveTestController::onInteraction(const Interaction& interaction) {
         params.bounce_count = bounce_count;
         params.current_bounce_count = 0;
         params.total_bounce_count = 0;
+        params.blocking = blocking;
         drawMoveTestScreen(phost, {}, params);
       }
       break;
@@ -113,6 +121,7 @@ void MoveTestController::onInteraction(const Interaction& interaction) {
         params.bounce_count = bounce_count;
         params.current_bounce_count = 0;
         params.total_bounce_count = 0;
+        params.blocking = blocking;
         drawMoveTestScreen(phost, {}, params);
       }
       break;
@@ -127,6 +136,7 @@ void MoveTestController::onInteraction(const Interaction& interaction) {
         params.bounce_count = bounce_count;
         params.current_bounce_count = 0;
         params.total_bounce_count = 0;
+        params.blocking = blocking;
         drawMoveTestScreen(phost, {}, params);
       }
       break;
@@ -140,6 +150,12 @@ void MoveTestController::onInteraction(const Interaction& interaction) {
       bounce_state.total_count = 0;
       updateScreen();
       
+      break;
+
+    case TAG_MOVE_BLOCKING:
+      Logger::log(F("MoveTestController::on_interaction: Toggle blocking"));
+      blocking = !blocking;
+      updateScreen();
       break;
 
     case TAG_MOVE_BACK:
@@ -214,6 +230,7 @@ void MoveTestController::updateScreen() {
   // Calculate current bounce number (total - remaining + 1)
   params.current_bounce_count = bounce_state.total_count > 0 ? (bounce_state.total_count - bounce_state.current_count + 1) : 0;
   params.total_bounce_count = bounce_state.total_count;
+  params.blocking = blocking;
   drawMoveTestScreen(phost, limitStates, params);
 }
 

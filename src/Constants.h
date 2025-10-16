@@ -98,6 +98,7 @@
 #define TAG_MOVE_Z_DIST 58
 #define TAG_MOVE_BOUNCE 59
 #define TAG_MOVE_STOP 100
+#define TAG_MOVE_BLOCKING 103
 
 // =============================================================================
 // UI TAG CONSTANTS - Dispense Test Control
@@ -160,6 +161,7 @@
 #define TAG_STEPPER_MOVE_PLUS 130
 #define TAG_STEPPER_MOVE_AMOUNT 131
 #define TAG_STEPPER_BACK 132
+#define TAG_STEPPER_BLOCKING 133
 
 // =============================================================================
 // INTERACTION INTERVALS (in milliseconds)

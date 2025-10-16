@@ -13,6 +13,7 @@
 #include "../../gpu/App_Common.h"
 #include "../../gpu/Platform.h"
 #include "../../Constants.h"
+#include "../common/ToggleButton.h"
 
 // Limit switch states structure.
 struct LimitSwitchStates {
@@ -31,6 +32,7 @@ struct MoveTestParams {
   int bounce_count;
   int current_bounce_count;
   int total_bounce_count;
+  bool blocking;
 };
 
 // Display the movement test screen.
@@ -236,6 +238,10 @@ void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit
     sprintf(buf, "%d/%d", params.current_bounce_count, params.total_bounce_count);
     Gpu_CoCmd_Text(phost, control_x + control_width + 5, control_y + control_height / 2, 21, OPT_CENTERY, buf);
   }
+
+  // Blocking toggle (above Back button) - drawn last to ensure proper tag ordering
+  int32_t blocking_y = DispHeight - 65;
+  Toggle_Button(phost, params.blocking, TAG_MOVE_BLOCKING, 20, blocking_y - 3, "BLK", "BLK");
 
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 

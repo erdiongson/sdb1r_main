@@ -13,6 +13,7 @@
 #include "../../gpu/App_Common.h"
 #include "../../gpu/Platform.h"
 #include "../../Constants.h"
+#include "../common/ToggleButton.h"
 
 // Axis selection enumeration.
 enum StepperTestAxis {
@@ -27,6 +28,7 @@ struct StepperTestParams {
   float max_speed;
   float max_acceleration;
   float move_amount_cm;
+  bool blocking;
 };
 
 // Display the stepper test screen.
@@ -98,6 +100,12 @@ inline void drawStepperTestScreen(Gpu_Hal_Context_t* phost, const StepperTestPar
   Gpu_CoCmd_FgColor(phost, params.selected_axis == STEPPER_AXIS_Z ? 0x0066CC : 0x808080);
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_AXIS_Z));
   Gpu_CoCmd_Button(phost, button_start_x + (button_width + button_spacing) * 2, line1_y, button_width, button_height, 20, 0, "Z");
+
+  // Blocking toggle on the right side of the first row (right-aligned)
+  int32_t toggle_width = 40;  // Width of toggle button
+  int32_t blocking_x = DispWidth - toggle_width - 10;  // Right-aligned with padding
+  Toggle_Button(phost, params.blocking, TAG_STEPPER_BLOCKING, blocking_x, line1_y + 2, "BLK", "BLK");
+  App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));  // Reset text color to white
 
   // Line 2: Max Speed
   int32_t line2_y = line1_y + button_height + 4;

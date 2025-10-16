@@ -169,6 +169,7 @@ void StepperTestController::onInteraction(const Interaction& interaction) {
           steps = -STEPS_PER_UNIT_Z * move_amount_cm * CM_TO_MM_MULTIPLIER;
         }
         axis.moveBy(steps);
+        if (blocking) axis.runUntilCompleteBlocking();
       }
       break;
 
@@ -185,12 +186,19 @@ void StepperTestController::onInteraction(const Interaction& interaction) {
           steps = STEPS_PER_UNIT_Z * move_amount_cm * CM_TO_MM_MULTIPLIER;
         }
         axis.moveBy(steps);
+        if (blocking) axis.runUntilCompleteBlocking();
       }
       break;
 
     case TAG_STEPPER_MOVE_AMOUNT:
       Logger::log(F("StepperTestController::onInteraction: Set move amount"));
       move_amount_cm = getKeypadValue(phost, move_amount_cm, MIN_MOVE_DISTANCE_CM, MAX_MOVE_DISTANCE_CM, true);
+      updateScreen();
+      break;
+
+    case TAG_STEPPER_BLOCKING:
+      Logger::log(F("StepperTestController::onInteraction: Toggle blocking"));
+      blocking = !blocking;
       updateScreen();
       break;
 
@@ -215,6 +223,7 @@ void StepperTestController::updateScreen() {
   params.max_speed = current_max_speed;
   params.max_acceleration = current_max_acceleration;
   params.move_amount_cm = move_amount_cm;
+  params.blocking = blocking;
 
   drawStepperTestScreen(phost, params);
 }

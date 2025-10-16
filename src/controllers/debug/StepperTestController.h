@@ -30,4 +30,5 @@ class StepperTestController : public BaseController {
   float current_max_acceleration = 0;              // Current max acceleration for selected axis
   float original_max_speed = 0;                    // Original max speed for reset
   float original_max_acceleration = 0;             // Original max acceleration for reset
+  bool blocking = false;                           // Whether to block after movement commands
 };

@@ -43,4 +43,5 @@ class MoveTestController : public BaseController {
   float z_distance_cm = DEFAULT_Z_DISTANCE_CM;    // Z movement distance in cm
   int bounce_count = DEFAULT_BOUNCE_COUNT;        // Number of times to bounce back
   BounceState bounce_state = {0, 0, BOUNCE_STAGE_GO, BOUNCE_AXIS_X, 0};  // Bounce state tracker
+  bool blocking = false;                          // Whether to block after movement commands
 };
