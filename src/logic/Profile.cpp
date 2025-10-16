@@ -43,11 +43,11 @@ void ProfileManager::preLoadEEPROM(void) {
     currentProfile.password_enabled = true;
     currentProfile.vibration_duration = VIBRATION_DURATION_DEFAULT;
     currentProfile.z_dip = Z_DIP_DEFAULT;
+    currentProfile.staggered = false;
     currentProfile.skip_count = 0;
     for (int j = 0; j < MAX_SKIP_POSITIONS; j++) {
       currentProfile.skip_positions[j] = SkipPosition(0, 0);
     }
-    currentProfile.staggered = false;
 
     writeProfileEEPROM(i);
   }
@@ -156,12 +156,12 @@ void ProfileManager::writeProfileEEPROM(int index) {
   address += sizeof(currentProfile.vibration_duration);
   EEPROM.put(address, currentProfile.z_dip);
   address += sizeof(currentProfile.z_dip);
+  EEPROM.put(address, currentProfile.staggered);
+  address += sizeof(currentProfile.staggered);
   EEPROM.put(address, currentProfile.skip_positions);
   address += sizeof(currentProfile.skip_positions);
   EEPROM.put(address, currentProfile.skip_count);
   address += sizeof(currentProfile.skip_count);
-  EEPROM.put(address, currentProfile.staggered);
-  address += sizeof(currentProfile.staggered);
 
   Logger::log("Ending Address = ", (float)address);
 }
@@ -196,12 +196,12 @@ void ProfileManager::readProfileEEPROM(int index) {
   address += sizeof(currentProfile.vibration_duration);
   EEPROM.get(address, currentProfile.z_dip);
   address += sizeof(currentProfile.z_dip);
+  EEPROM.get(address, currentProfile.staggered);
+  address += sizeof(currentProfile.staggered);
   EEPROM.get(address, currentProfile.skip_positions);
   address += sizeof(currentProfile.skip_positions);
   EEPROM.get(address, currentProfile.skip_count);
   address += sizeof(currentProfile.skip_count);
-  EEPROM.get(address, currentProfile.staggered);
-  address += sizeof(currentProfile.staggered);
 
   Logger::log("Ending Address = ", (float)address);
   checkProfile();
