@@ -7,6 +7,7 @@ Date created - 2022.12.14 - XentiQ version
 #include <Arduino.h>
 #include "../gpu/Platform.h"
 #include "../../Config.h"
+#include "../Constants.h"
 
 // SkipPosition struct for compact storage in EEPROM.
 struct SkipPosition {

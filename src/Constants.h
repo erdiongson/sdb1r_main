@@ -208,6 +208,17 @@ const uint8_t VIBMODE_U0 = 0x71;  // Former 0xC2, changed for 1RC
 const uint8_t VIBDUR_1 = 0x81;    // 1 second/s
 
 // =============================================================================
+// DISPENSER SETTINGS
+// =============================================================================
+// Vibration settings
+const int VIBRATION_LEVEL_DEFAULT = 0;
+const int VIBRATION_LEVEL_MAX = 4;
+
+const int VIBRATION_DURATION_DEFAULT = 2;
+const int VIBRATION_DURATION_MIN = 1;
+const int VIBRATION_DURATION_MAX = 5;
+
+// =============================================================================
 // PLC SERIAL PROTOCOL
 // =============================================================================
 const uint8_t PLC_START_BYTE = 0xEF;
@@ -223,6 +234,45 @@ const uint8_t PLC_CMD_LOWER_Z = 0x41;
 
 // PLC Response Codes
 const uint8_t PLC_NAK_BYTE = 0x16;  // Negative acknowledgment byte
+
+// =============================================================================
+// PROFILE SETTINGS
+// =============================================================================
+const int EEPROM_SIZE = 4096;  // For an Arduino Mega
+const int MAX_PROFILES = 10;
+const int RESERVED_PROFILE_SIZE = 300;
+const int PROFILE_START_ADDR = 0;
+const int PASSWORD_EEPROM_ADDR = 4000;
+
+const int PROFILE_NAME_MAX_LEN = 30;
+const int PASSWORD_MAX_LEN = 30;
+const int SKIP_STRING_LEN = 45;
+const int SKIP_STRING_INDIVIDUAL_LEN = 200;
+const int MAX_SKIP_POSITIONS = 2;  // 180 bytes / 2 bytes per position (same memory as 3x60 char arrays)
+
+const float STAGGERED_OFFSET_FACTOR = 0.5;
+
+// =============================================================================
+// TEST / PREVIEW SETTINGS
+// =============================================================================
+const int CM_TO_MM_MULTIPLIER = 10;
+const float MAX_MOVE_DISTANCE_CM = 99.9;
+const float MIN_MOVE_DISTANCE_CM = 0;
+
+const int MIN_BOUNCE_COUNT = 0;
+const int MAX_BOUNCE_COUNT = 9999;
+
+const float DEFAULT_XY_DISTANCE_CM = 5.0;
+const float DEFAULT_Z_DISTANCE_CM = 3.0;
+const int DEFAULT_BOUNCE_COUNT = 0;
+
+const int MIN_DISPENSE_REPEAT_COUNT = 0;
+const int MAX_DISPENSE_REPEAT_COUNT = 9999;
+const int DEFAULT_DISPENSE_REPEAT_COUNT = 0;
+
+const unsigned long MOVE_TEST_REFRESH_INTERVAL_MS = 1000;
+const unsigned long DISPENSE_TEST_REFRESH_INTERVAL_MS = 1000;
+const unsigned long SIMULATION_UPDATE_INTERVAL_MS = 600;
 
 // =============================================================================
 // DIALOG CODES
