@@ -48,7 +48,7 @@ void drawStepperTestScreen(Gpu_Hal_Context_t* phost, const StepperTestParams& pa
 // @param phost Pointer to GPU HAL context.
 // @param params Stepper test parameters.
 inline void drawStepperTestScreen(Gpu_Hal_Context_t* phost, const StepperTestParams& params) {
-  char buf[100];
+  char temp_buffer[20];  // Max: "100000" or "99.9cm"
   Gpu_CoCmd_FlashFast(phost, 0);
   Gpu_CoCmd_Dlstart(phost);
 
@@ -121,7 +121,7 @@ inline void drawStepperTestScreen(Gpu_Hal_Context_t* phost, const StepperTestPar
   App_WrCoCmd_Buffer(phost, TAG_MASK(255));
 
   // Clickable speed value button (aligned to adjustment_buttons_x)
-  sprintf(buf, "%d", (int)params.max_speed);
+  sprintf(temp_buffer, "%ld", (long)params.max_speed);
   Gpu_CoCmd_FgColor(phost, 0x666666);
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_SPEED_VALUE));
   Gpu_CoCmd_Button(phost, adjustment_buttons_x - value_display_width - 5, line2_y, value_display_width, button_height, 20, 0, buf);
@@ -169,10 +169,10 @@ inline void drawStepperTestScreen(Gpu_Hal_Context_t* phost, const StepperTestPar
   App_WrCoCmd_Buffer(phost, TAG_MASK(255));
 
   // Clickable acceleration value button (aligned to adjustment_buttons_x)
-  sprintf(buf, "%ld", (long)params.max_acceleration);
+  sprintf(temp_buffer, "%ld", (long)params.max_acceleration);
   Gpu_CoCmd_FgColor(phost, 0x666666);
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_ACCEL_VALUE));
-  Gpu_CoCmd_Button(phost, adjustment_buttons_x - value_display_width - 5, line3_y, value_display_width, button_height, 20, 0, buf);
+  Gpu_CoCmd_Button(phost, adjustment_buttons_x - value_display_width - 5, line3_y, value_display_width, button_height, 20, 0, temp_buffer);
 
   // Acceleration adjustment buttons - Row 1: -10k, +10k, -1k, +1k
   int32_t accel_button_x = adjustment_buttons_x;
@@ -241,8 +241,8 @@ inline void drawStepperTestScreen(Gpu_Hal_Context_t* phost, const StepperTestPar
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_MOVE_AMOUNT));
   int amount_int = (int)params.move_amount_cm;
   int amount_dec = (int)((params.move_amount_cm - amount_int) * 10);
-  sprintf(buf, "%d.%dcm", amount_int, amount_dec);
-  Gpu_CoCmd_Button(phost, start_x, line5_y, amount_button_width, move_button_height, 20, 0, buf);
+  sprintf(temp_buffer, "%d.%dcm", amount_int, amount_dec);
+  Gpu_CoCmd_Button(phost, start_x, line5_y, amount_button_width, move_button_height, 20, 0, temp_buffer);
 
   // "+" button
   start_x += amount_button_width + button_gap;

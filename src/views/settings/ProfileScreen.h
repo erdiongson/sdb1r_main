@@ -17,7 +17,7 @@ void drawProfileScreen(Gpu_Hal_Context_t* phost, ProfileParams params) {
   uint8_t keypressed = params.keypressed;
   uint8_t cur_prof_num = params.cur_prof_num;
   Profile& profile = params.profile;
-  char buf[100];  // a buffer to format your text before printing.
+  char temp_buffer[35];  // Max: "Vibration Level:    99"
 
   Gpu_CoCmd_FlashFast(phost, 0);
   Gpu_CoCmd_Dlstart(phost);
@@ -68,69 +68,69 @@ void drawProfileScreen(Gpu_Hal_Context_t* phost, ProfileParams params) {
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 127));
 
   // Print profileId
-  sprintf(buf, "Profile ID:    %d", cur_prof_num + 1);
-  Gpu_CoCmd_Text(phost, 8, 65, 21, 0, buf);
+  sprintf(temp_buffer, "Profile ID:    %d", cur_prof_num + 1);
+  Gpu_CoCmd_Text(phost, 8, 65, 21, 0, temp_buffer);
 
   // // Print profileName
   // sprintf(buffer, "Profile Name: %s", curprof.profile_name);
   // Gpu_CoCmd_Text(phost, 84, 56, 27, 0, buffer);
 
   // Print Tube_No_x
-  sprintf(buf, "Columns:     %d", profile.tube_no_x);
-  Gpu_CoCmd_Text(phost, 8, 80, 21, 0, buf);
+  sprintf(temp_buffer, "Columns:     %d", profile.tube_no_x);
+  Gpu_CoCmd_Text(phost, 8, 80, 21, 0, temp_buffer);
 
   // Print Tube_No_y
-  sprintf(buf, "Rows:         %d", profile.tube_no_y);
-  Gpu_CoCmd_Text(phost, 8, 95, 21, 0, buf);
+  sprintf(temp_buffer, "Rows:         %d", profile.tube_no_y);
+  Gpu_CoCmd_Text(phost, 8, 95, 21, 0, temp_buffer);
 
   // Print pitch_x
-  dtostrf(profile.pitch_x, 4, 1, buf);
-  Gpu_CoCmd_Text(phost, 8, 110, 21, 0, "Pitch(Col):");
-  Gpu_CoCmd_Text(phost, 82, 110, 21, 0, buf);
+  dtostrf(profile.pitch_y, 3, 1, temp_buffer);
+  Gpu_CoCmd_Text(phost, 80, 140, 21, 0, temp_buffer);
+  Gpu_CoCmd_Text(phost, 82, 110, 21, 0, "Pitch(Col):");
 
   // Print pitch_y
-  dtostrf(profile.pitch_y, 4, 1, buf);
-  Gpu_CoCmd_Text(phost, 8, 125, 21, 0, "Pitch(Ros):");
-  Gpu_CoCmd_Text(phost, 83, 125, 21, 0, buf);
+  dtostrf(profile.pitch_x, 3, 1, temp_buffer);
+  Gpu_CoCmd_Text(phost, 80, 125, 21, 0, temp_buffer);
+  Gpu_CoCmd_Text(phost, 83, 125, 21, 0, "Pitch(Ros):");
 
   // Print trayOriginX
-  dtostrf(profile.tray_origin_x, 4, 1, buf);
-  Gpu_CoCmd_Text(phost, 8, 140, 21, 0, "OriginX:");
-  Gpu_CoCmd_Text(phost, 80, 140, 21, 0, buf);
+  dtostrf(profile.tray_origin_x, 3, 1, temp_buffer);
+  Gpu_CoCmd_Text(phost, 80, 110, 21, 0, temp_buffer);
+  Gpu_CoCmd_Text(phost, 80, 140, 21, 0, "OriginX:");
 
   // Print trayOriginY
-  dtostrf(profile.tray_origin_y, 4, 1, buf);
-  Gpu_CoCmd_Text(phost, 8, 155, 21, 0, "OriginY:");
-  Gpu_CoCmd_Text(phost, 80, 155, 21, 0, buf);
+  dtostrf(profile.tray_origin_y, 3, 1, temp_buffer);
+  Gpu_CoCmd_Text(phost, 80, 155, 21, 0, temp_buffer);
+  Gpu_CoCmd_Text(phost, 80, 155, 21, 0, "OriginY:");
 
   // Print Cycles
-  sprintf(buf, "Cycles:       %d", profile.cycles);
-  Gpu_CoCmd_Text(phost, 8, 170, 21, 0, buf);
+  sprintf(temp_buffer, "Cycles:       %d", profile.cycles);
+  Gpu_CoCmd_Text(phost, 8, 170, 21, 0, temp_buffer);
 
   // Print vibrationEnabled
   // sprintf(buf, "Vibration:    %s", curprof.vibration_enabled ? "True" : "False");
   // 20240903 - erdiongson: Change in Vibration Level
-  sprintf(buf, "Vibration Level:    %d", profile.vibration_enabled);
-  Gpu_CoCmd_Text(phost, 8, 185, 21, 0, buf);
+  sprintf(temp_buffer, "Vibration Level:    %d", profile.vibration_enabled);
+  Gpu_CoCmd_Text(phost, 8, 185, 21, 0, temp_buffer);
 
   // Print passwordEnabled
-  sprintf(buf, "Password: %s", profile.password_enabled ? "True" : "False");
-  Gpu_CoCmd_Text(phost, 150, 65, 21, 0, buf);
+  sprintf(temp_buffer, "Password: %s", profile.password_enabled ? "True" : "False");
+  Gpu_CoCmd_Text(phost, 150, 65, 21, 0, temp_buffer);
 
   // Print vibrationDuration
   // 20241001 - erdiongson: Change in Vibration Duration
-  sprintf(buf, "Vibration Time: %d", profile.vibration_duration);
-  Gpu_CoCmd_Text(phost, 150, 80, 21, 0, buf);
+  sprintf(temp_buffer, "Vibration Time: %d", profile.vibration_duration);
+  Gpu_CoCmd_Text(phost, 150, 80, 21, 0, temp_buffer);
 
   // Print staggered
-  sprintf(buf, "Staggered: %s", profile.staggered ? "True" : "False");
-  Gpu_CoCmd_Text(phost, 150, 95, 21, 0, buf);
+  sprintf(temp_buffer, "Staggered: %s", profile.staggered ? "True" : "False");
+  Gpu_CoCmd_Text(phost, 150, 95, 21, 0, temp_buffer);
 
   // Print z_dip
   if (!Z_DISABLED) {
-    dtostrf(profile.z_dip, 4, 1, buf);
-    Gpu_CoCmd_Text(phost, 150, 110, 21, 0, "Z Dip:");
-    Gpu_CoCmd_Text(phost, 195, 110, 21, 0, buf);
+    dtostrf(profile.z_dip, 3, 1, temp_buffer);
+    Gpu_CoCmd_Text(phost, 230, 110, 21, 0, temp_buffer);
+    Gpu_CoCmd_Text(phost, 195, 110, 21, 0, "Z Dip:");
   }
 
   // Draw dialog if dialog_code is set

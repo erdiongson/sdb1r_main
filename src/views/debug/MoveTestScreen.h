@@ -50,7 +50,7 @@ void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit
 // @param limitStates Limit switch states for display.
 // @param params Movement control parameters.
 void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limitStates, const MoveTestParams& params) {
-  char buf[100];
+  char temp_buffer[30];  // Max: "Repeating 9999/9999"
   Gpu_CoCmd_FlashFast(phost, 0);
   Gpu_CoCmd_Dlstart(phost);
 
@@ -88,22 +88,22 @@ void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit
   App_WrCoCmd_Buffer(phost, TAG(TAG_MOVE_XY_DIST));
   int xy_int = (int)params.xy_distance_cm;
   int xy_dec = (int)((params.xy_distance_cm - xy_int) * 10);
-  sprintf(buf, "XY:%d.%d", xy_int, xy_dec);
-  Gpu_CoCmd_Button(phost, control_x, control_y, control_width, control_height, 20, 0, buf);
+  sprintf(temp_buffer, "XY:%d.%d", xy_int, xy_dec);
+  Gpu_CoCmd_Button(phost, control_x, control_y, control_width, control_height, 20, 0, temp_buffer);
 
   // Z Distance button
   control_x += control_width + control_spacing;
   App_WrCoCmd_Buffer(phost, TAG(TAG_MOVE_Z_DIST));
   int z_int = (int)params.z_distance_cm;
   int z_dec = (int)((params.z_distance_cm - z_int) * 10);
-  sprintf(buf, "Z:%d.%d", z_int, z_dec);
-  Gpu_CoCmd_Button(phost, control_x, control_y, control_width, control_height, 20, 0, buf);
+  sprintf(temp_buffer, "Z:%d.%d", z_int, z_dec);
+  Gpu_CoCmd_Button(phost, control_x, control_y, control_width, control_height, 20, 0, temp_buffer);
 
   // Repeat button
   control_x += control_width + control_spacing;
   App_WrCoCmd_Buffer(phost, TAG(TAG_MOVE_BOUNCE));
-  sprintf(buf, "Repeat:%d", params.bounce_count);
-  Gpu_CoCmd_Button(phost, control_x, control_y, 70, control_height, 20, 0, buf);
+  sprintf(temp_buffer, "Repeat:%d", params.bounce_count);
+  Gpu_CoCmd_Button(phost, control_x, control_y, 70, control_height, 20, 0, temp_buffer);
 
   // Blocking toggle (right of Repeat button)
   control_x += 70 + control_spacing;
@@ -241,8 +241,8 @@ void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit
   if (params.total_bounce_count > 0) {
     App_WrCoCmd_Buffer(phost, TAG_MASK(0));
     App_WrCoCmd_Buffer(phost, COLOR_RGB(200, 200, 200));
-    sprintf(buf, "Repeating %d/%d", params.current_bounce_count, params.total_bounce_count);
-    Gpu_CoCmd_Text(phost, DispWidth / 2, DispHeight - 10, 20, OPT_CENTER, buf);
+    sprintf(temp_buffer, "Repeating %d/%d", params.current_bounce_count, params.total_bounce_count);
+    Gpu_CoCmd_Text(phost, DispWidth / 2, DispHeight - 10, 20, OPT_CENTER, temp_buffer);
     App_WrCoCmd_Buffer(phost, TAG_MASK(255));
   }
 

@@ -99,7 +99,7 @@ inline void drawMenuButtons(const ButtonsEnabled& buttons) {
 // @param params Parameters containing profile and status information.
 inline void drawBaseMainScreen(Gpu_Hal_Context_t* phost, const ButtonsEnabled& buttons,
                                const MainScreenParams& params) {
-  char buf[100];
+  char temp_buffer[50];  // Max: "Current Tube : R99 C99"
 
   Gpu_CoCmd_FlashFast(phost, 0);
   Gpu_CoCmd_Dlstart(phost);
@@ -130,19 +130,19 @@ inline void drawBaseMainScreen(Gpu_Hal_Context_t* phost, const ButtonsEnabled& b
   drawMenuButtons(buttons);
 
   Profile& profile = params.profile;
-  sprintf(buf, "Profile Name: %s", profile.profile_name);
-  Gpu_CoCmd_Text(phost, 25, 195, 20, OPT_FORMAT, buf);  // OPT_CENTER | OPT_RIGHTX |
-  sprintf(buf, "No. of Cycles: %d", profile.cycles);
-  Gpu_CoCmd_Text(phost, 25, 208, 20, OPT_FORMAT, buf);
+  sprintf(temp_buffer, "Profile Name: %s", profile.profile_name);
+  Gpu_CoCmd_Text(phost, 25, 195, 20, OPT_FORMAT, temp_buffer);  // OPT_CENTER | OPT_RIGHTX |
+  sprintf(temp_buffer, "No. of Cycles: %d", profile.cycles);
+  Gpu_CoCmd_Text(phost, 25, 208, 20, OPT_FORMAT, temp_buffer);
 
-  sprintf(buf, "Filling tube: %d", params.run_status.filling_tube);
-  Gpu_CoCmd_Text(phost, 25, 220, 20, OPT_FORMAT, buf);
+  sprintf(temp_buffer, "Filling tube: %d", params.run_status.filling_tube);
+  Gpu_CoCmd_Text(phost, 25, 220, 20, OPT_FORMAT, temp_buffer);
 
-  sprintf(buf, "Current Tube : R%2d C%2d", params.run_status.current_row, params.run_status.current_column);
-  Gpu_CoCmd_Text(phost, 292, 208, 20, OPT_RIGHTX | OPT_FORMAT, buf);
+  sprintf(temp_buffer, "Current Tube : R%2d C%2d", params.run_status.current_row, params.run_status.current_column);
+  Gpu_CoCmd_Text(phost, 292, 208, 20, OPT_RIGHTX | OPT_FORMAT, temp_buffer);
 
-  sprintf(buf, "Tubes left : %3d", params.run_status.tubes_left);
-  Gpu_CoCmd_Text(phost, 294, 220, 20, OPT_RIGHTX | OPT_FORMAT, buf);
+  sprintf(temp_buffer, "Tubes left : %3d", params.run_status.tubes_left);
+  Gpu_CoCmd_Text(phost, 294, 220, 20, OPT_RIGHTX | OPT_FORMAT, temp_buffer);
 
   // INSERT DIALOG
   if (params.dialog_code > 0) {

@@ -38,7 +38,7 @@ void drawDispenseTestScreen(Gpu_Hal_Context_t* phost, const DispenseTestScreenPa
 // @param phost Pointer to GPU HAL context.
 // @param params Screen parameters including status message.
 void drawDispenseTestScreen(Gpu_Hal_Context_t* phost, const DispenseTestScreenParams& params) {
-  char buf[100];
+  char temp_buffer[60];  // Max: "Repeat: 9999" or status with progress
   Gpu_CoCmd_FlashFast(phost, 0);
   Gpu_CoCmd_Dlstart(phost);
 
@@ -168,10 +168,10 @@ void drawDispenseTestScreen(Gpu_Hal_Context_t* phost, const DispenseTestScreenPa
   // Repeat button (left-aligned with first two rows)
   int32_t repeat_width = 60;
   int32_t row3_start_x = vib_start_x;  // Align with vibration buttons
-  sprintf(buf, "Repeat: %d", params.repeat_count);
+  sprintf(temp_buffer, "Repeat: %d", params.repeat_count);
   Gpu_CoCmd_FgColor(phost, 0x00A2E8);
   App_WrCoCmd_Buffer(phost, TAG(TAG_DISPENSE_REPEAT));
-  Gpu_CoCmd_Button(phost, row3_start_x, row3_y, repeat_width, row3_button_height, 20, 0, buf);
+  Gpu_CoCmd_Button(phost, row3_start_x, row3_y, repeat_width, row3_button_height, 20, 0, temp_buffer);
 
   // Dispense/Stop button (right next to repeat button)
   int32_t dispense_width = 70;
@@ -194,12 +194,12 @@ void drawDispenseTestScreen(Gpu_Hal_Context_t* phost, const DispenseTestScreenPa
   
   // Combine status message with progress count if active
   if (params.total_repeat_count > 0) {
-    sprintf(buf, "%s (%d/%d)", params.status_message, params.current_repeat_count, params.total_repeat_count);
+    sprintf(temp_buffer, "%s (%d/%d)", params.status_message, params.current_repeat_count, params.total_repeat_count);
   } else {
-    sprintf(buf, "%s", params.status_message);
+    sprintf(temp_buffer, "%s", params.status_message);
   }
   
-  Gpu_CoCmd_Text(phost, text_x, row3_y + row3_button_height / 2, 20, OPT_CENTERY, buf);
+  Gpu_CoCmd_Text(phost, text_x, row3_y + row3_button_height / 2, 20, OPT_CENTERY, temp_buffer);
   App_WrCoCmd_Buffer(phost, TAG_MASK(255));
 
   // Back button (top left, vertically aligned with title)

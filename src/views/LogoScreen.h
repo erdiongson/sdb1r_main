@@ -14,7 +14,7 @@ struct LogoScreenParams {
 // @param phost GPU context.
 // @param params Parameters containing dialog code and status message.
 inline void drawLogoScreen(Gpu_Hal_Context_t* phost, const LogoScreenParams& params) {
-  char buf[100];
+  char temp_buffer[50];  // Max: "v4.0 - [status message]"
 
   Gpu_CoCmd_FlashFast(phost, 0);
   Gpu_CoCmd_Dlstart(phost);
@@ -34,8 +34,8 @@ inline void drawLogoScreen(Gpu_Hal_Context_t* phost, const LogoScreenParams& par
 
   // Draw firmware version and status message at bottom of screen
   App_WrCoCmd_Buffer(phost, COLOR_RGB(40, 40, 40));
-  sprintf(buf, "v%s - %s", FWVER, params.status_message);
-  Gpu_CoCmd_Text(phost, 160, 220, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, buf);
+  sprintf(temp_buffer, "v%s - %s", FWVER, params.status_message);
+  Gpu_CoCmd_Text(phost, 160, 220, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, temp_buffer);
 
   if (params.dialog_code != 0) {
     drawDialog(phost, params.dialog_code);

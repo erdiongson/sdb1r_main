@@ -22,20 +22,20 @@ class Logger {
   // @param x The string prefix.
   // @param y The float value to log.
   static void log(String x, float y) {
-    char buf[20];
-    dtostrf(y, 3, 5, buf);
+    char temp_buffer[20];  // Max: "-999.99999"
+    dtostrf(y, 3, 5, temp_buffer);
     Serial.print(x);
-    Serial.println(buf);
+    Serial.println(temp_buffer);
   }
 
   // Logs a string followed by an unsigned 8-bit integer.
   // @param x The string prefix.
   // @param y The uint8_t value to log.
   static void log(String x, uint8_t y) {
-    char buf[20];
-    sprintf(buf, "%d", y);
+    char temp_buffer[4];  // Max: "255"
+    sprintf(temp_buffer, "%d", y);
     Serial.print(x);
-    Serial.println(buf);
+    Serial.println(temp_buffer);
   }
 
   // Logs a string followed by a byte array in hexadecimal format.
@@ -101,10 +101,10 @@ class MemoryMonitor {
     int v;
     int free_memory = (int)&v - (__brkval == 0 ? (int)&__heap_start : (int)__brkval);
 
-    char buf[128];
-    sprintf(buf, "Free memory: %d bytes | Stack: 0x%X | Heap: 0x%X | Uptime: %lus", free_memory, (int)&v,
+    char temp_buffer[80];  // Max: "Free memory: -32768 bytes | Stack: 0xFFFF | Heap: 0xFFFF | Uptime: 4294967295s"
+    sprintf(temp_buffer, "Free memory: %d bytes | Stack: 0x%X | Heap: 0x%X | Uptime: %lus", free_memory, (int)&v,
             __brkval == 0 ? (int)&__heap_start : (int)__brkval, millis() / 1000);
-    Logger::log(String(buf));
+    Logger::log(String(temp_buffer));
   }
 
   // Prints memory stats periodically based on the specified interval.
