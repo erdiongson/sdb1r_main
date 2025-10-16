@@ -50,6 +50,7 @@ PLCMessage PlcSerial::process() {
     // Send 5 NAK bytes instead of mirroring
     uint8_t nakResponse[5] = { PLC_NAK_BYTE, PLC_NAK_BYTE, PLC_NAK_BYTE, PLC_NAK_BYTE, PLC_NAK_BYTE };
     Serial3.write(nakResponse, 5);
+    return { MSG_UNKNOWN, 0 };
   } else {
     // Send acknowledgement (mirror the received message back to PLC)
     Serial3.write(response, PLC_MESSAGE_LENGTH);
