@@ -162,12 +162,13 @@
 #define TAG_STEPPER_MOVE_AMOUNT 131
 #define TAG_STEPPER_BACK 132
 #define TAG_STEPPER_BLOCKING 133
+#define TAG_STEPPER_STOP 134
 
 // =============================================================================
 // INTERACTION INTERVALS (in milliseconds)
 // =============================================================================
 #define INTERACT_INTERVAL_AXIS_IDLE 20
-#define INTERACT_INTERVAL_AXIS_RUNNING 200
+#define INTERACT_INTERVAL_AXIS_RUNNING 1000
 
 // =============================================================================
 // DISPENSER SERIAL PROTOCOL - Message Structure

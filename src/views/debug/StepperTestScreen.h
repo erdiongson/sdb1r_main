@@ -64,6 +64,14 @@ inline void drawStepperTestScreen(Gpu_Hal_Context_t* phost, const StepperTestPar
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   Gpu_CoCmd_Text(phost, DispWidth / 2, 15, 28, OPT_CENTER | OPT_FORMAT, "Stepper Test");
 
+  // Stop button (top right, same level as title)
+  App_WrCoCmd_Buffer(phost, TAG_MASK(255));
+  Gpu_CoCmd_FgColor(phost, 0xCC0000);
+  App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_STOP));
+  App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
+  Gpu_CoCmd_Button(phost, DispWidth - 60, 4, 50, 22, 20, 0, "Stop");
+  App_WrCoCmd_Buffer(phost, TAG_MASK(0));
+
   // Draw separator line
   App_WrCoCmd_Buffer(phost, COLOR_RGB(193, 64, 0));
   App_WrCoCmd_Buffer(phost, BEGIN(LINES));
@@ -124,7 +132,7 @@ inline void drawStepperTestScreen(Gpu_Hal_Context_t* phost, const StepperTestPar
   sprintf(temp_buffer, "%ld", (long)params.max_speed);
   Gpu_CoCmd_FgColor(phost, 0x666666);
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_SPEED_VALUE));
-  Gpu_CoCmd_Button(phost, adjustment_buttons_x - value_display_width - 5, line2_y, value_display_width, button_height, 20, 0, buf);
+  Gpu_CoCmd_Button(phost, adjustment_buttons_x - value_display_width - 5, line2_y, value_display_width, button_height, 20, 0, temp_buffer);
 
   // Speed adjustment buttons - Row 1: -10k, +10k, -1k, +1k
   int32_t speed_button_x = adjustment_buttons_x;
@@ -260,7 +268,30 @@ inline void drawStepperTestScreen(Gpu_Hal_Context_t* phost, const StepperTestPar
   if (params.status_message && params.status_message[0] != '\0') {
     App_WrCoCmd_Buffer(phost, TAG_MASK(0));
     App_WrCoCmd_Buffer(phost, COLOR_RGB(200, 200, 200));
-    Gpu_CoCmd_Text(phost, 10, DispHeight - 10, 20, 0, params.status_message);
+    
+    // Check if message contains "Rate:" to split into two lines
+    char* rate_pos = strstr(params.status_message, "Rate:");
+    if (rate_pos != nullptr) {
+      // Create a copy for the first line (up to "Rate:")
+      char first_line[100];
+      int first_line_len = rate_pos - params.status_message;
+      strncpy(first_line, params.status_message, first_line_len);
+      first_line[first_line_len] = '\0';
+      
+      // Trim trailing comma and space if present
+      if (first_line_len >= 2 && first_line[first_line_len - 2] == ',') {
+        first_line[first_line_len - 2] = '\0';
+      }
+      
+      // Display first line
+      Gpu_CoCmd_Text(phost, 10, DispHeight - 33, 20, 0, first_line);
+      
+      // Display second line (Rate: ...)
+      Gpu_CoCmd_Text(phost, 10, DispHeight - 18, 20, 0, rate_pos);
+    } else {
+      // Single line message
+      Gpu_CoCmd_Text(phost, 10, DispHeight - 18, 20, 0, params.status_message);
+    }
   }
 
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));

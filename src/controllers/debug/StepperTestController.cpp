@@ -181,7 +181,9 @@ void StepperTestController::onInteraction(const Interaction& interaction) {
           unsigned long elapsed_ms = millis() - move_start_time;
           if (elapsed_ms > 0) {
             float steps_per_sec = (step_count * 1000.0f) / elapsed_ms;
-            sprintf(status_message, "Steps: %lu, Time: %lums, Rate: %.1f steps/s", step_count, elapsed_ms, steps_per_sec);
+            long rate_int = (long)steps_per_sec;
+            long rate_dec = (long)((steps_per_sec - rate_int) * 10);
+            sprintf(status_message, "Steps: %lu, Time: %lums, Rate: %ld.%ld steps/s", step_count, elapsed_ms, rate_int, rate_dec);
           } else {
             sprintf(status_message, "Steps: %lu, Time: %lums", step_count, elapsed_ms);
           }
@@ -212,7 +214,9 @@ void StepperTestController::onInteraction(const Interaction& interaction) {
           unsigned long elapsed_ms = millis() - move_start_time;
           if (elapsed_ms > 0) {
             float steps_per_sec = (step_count * 1000.0f) / elapsed_ms;
-            sprintf(status_message, "Steps: %lu, Time: %lums, Rate: %.1f steps/s", step_count, elapsed_ms, steps_per_sec);
+            long rate_int = (long)steps_per_sec;
+            long rate_dec = (long)((steps_per_sec - rate_int) * 10);
+            sprintf(status_message, "Steps: %lu, Time: %lums, Rate: %ld.%ld steps/s", step_count, elapsed_ms, rate_int, rate_dec);
           } else {
             sprintf(status_message, "Steps: %lu, Time: %lums", step_count, elapsed_ms);
           }
@@ -240,6 +244,16 @@ void StepperTestController::onInteraction(const Interaction& interaction) {
       startNextController(CONTROLLER_DEBUG);
       break;
 
+    case TAG_STEPPER_STOP:
+      Logger::log(F("StepperTestController::onInteraction: Stop all axes"));
+      dispenserHead.x().stopRunning();
+      dispenserHead.y().stopRunning();
+      dispenserHead.z().stopRunning();
+      is_tracking_movement = false;
+      strcpy(status_message, "All axes stopped");
+      updateScreen();
+      break;
+
     default:
       break;
   }
@@ -253,20 +267,19 @@ ControllerStepResult StepperTestController::onStep() {
     if (result.steppers == AXIS_STATE_RUNNING) {
       // Movement is still running, increment step count
       step_count++;
-    } else if (result.steppers == AXIS_STATE_COMPLETE) {
+    } else {
       // Movement completed, calculate and display statistics
       unsigned long elapsed_ms = millis() - move_start_time;
       if (elapsed_ms > 0) {
         float steps_per_sec = (step_count * 1000.0f) / elapsed_ms;
-        sprintf(status_message, "Steps: %lu, Time: %lums, Rate: %.1f steps/s", step_count, elapsed_ms, steps_per_sec);
+        long rate_int = (long)steps_per_sec;
+        long rate_dec = (long)((steps_per_sec - rate_int) * 10);
+        sprintf(status_message, "Steps: %lu, Time: %lums, Rate: %ld.%ld steps/s", step_count, elapsed_ms, rate_int, rate_dec);
       } else {
         sprintf(status_message, "Steps: %lu, Time: %lums", step_count, elapsed_ms);
       }
       is_tracking_movement = false;
       updateScreen();
-    } else {
-      // Movement ended in error or other state
-      is_tracking_movement = false;
     }
   }
   
