@@ -2,6 +2,7 @@
 
 #include "../gpu/App_Common.h"
 #include "common/Dialogs.h"
+#include "ViewCommon.h"
 
 // Button enable states for the main screen.
 struct ButtonsEnabled {
@@ -99,7 +100,7 @@ inline void drawMenuButtons(const ButtonsEnabled& buttons) {
 // @param params Parameters containing profile and status information.
 inline void drawBaseMainScreen(Gpu_Hal_Context_t* phost, const ButtonsEnabled& buttons,
                                const MainScreenParams& params) {
-  char temp_buffer[50];  // Max: "Current Tube : R99 C99"
+  char* temp_buffer = g_view_temp_buffer;  // Use shared buffer (50 bytes needed)
 
   Gpu_CoCmd_FlashFast(phost, 0);
   Gpu_CoCmd_Dlstart(phost);

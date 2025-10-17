@@ -1,8 +1,10 @@
 #pragma once
 
-#include "../gpu/Platform.h"
 #include "../gpu/App_Common.h"
+#include "../gpu/Assets.h"
 #include "common/Dialogs.h"
+#include "../../Config.h"
+#include "ViewCommon.h"
 
 // Parameters for Logo Screen display.
 struct LogoScreenParams {
@@ -14,7 +16,7 @@ struct LogoScreenParams {
 // @param phost GPU context.
 // @param params Parameters containing dialog code and status message.
 inline void drawLogoScreen(Gpu_Hal_Context_t* phost, const LogoScreenParams& params) {
-  char temp_buffer[50];  // Max: "v4.0 - [status message]"
+  char* temp_buffer = g_view_temp_buffer;  // Use shared buffer (50 bytes needed)
 
   Gpu_CoCmd_FlashFast(phost, 0);
   Gpu_CoCmd_Dlstart(phost);

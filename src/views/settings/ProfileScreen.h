@@ -1,9 +1,10 @@
 #pragma once
 
 #include "../../gpu/App_Common.h"
-#include "../../gpu/Platform.h"
-#include "../../Constants.h"
+#include "../../logic/Profile.h"
 #include "../common/Dialogs.h"
+#include "../../Constants.h"
+#include "../ViewCommon.h"
 
 // Parameters for Profile_Screen display.
 struct ProfileParams {
@@ -17,7 +18,7 @@ void drawProfileScreen(Gpu_Hal_Context_t* phost, ProfileParams params) {
   uint8_t keypressed = params.keypressed;
   uint8_t cur_prof_num = params.cur_prof_num;
   Profile& profile = params.profile;
-  char temp_buffer[35];  // Max: "Vibration Level:    99"
+  char* temp_buffer = g_view_temp_buffer;  // Use shared buffer (35 bytes needed)
 
   Gpu_CoCmd_FlashFast(phost, 0);
   Gpu_CoCmd_Dlstart(phost);

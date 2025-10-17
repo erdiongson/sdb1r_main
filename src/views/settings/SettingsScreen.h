@@ -1,9 +1,10 @@
 #pragma once
 
 #include "../../gpu/App_Common.h"
-#include "../../Utils.h"
-#include "../common/Keyboards.h"
+#include "../../logic/Profile.h"
+#include "../../Constants.h"
 #include "../common/Dialogs.h"
+#include "../ViewCommon.h"
 #include "../common/ToggleButton.h"
 #include "../../logic/TrayPositionHandler.h"
 
@@ -31,7 +32,7 @@ inline void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams pa
   int16_t vibstatus;
   int16_t passwordStatus;
   int16_t vibtime_status;
-  char temp_buffer[15];  // Max: "999.9" or "999"
+  char* temp_buffer = g_view_temp_buffer;  // Use shared buffer (15 bytes needed)
 
   Gpu_CoCmd_FlashFast(phost, 0);
   Gpu_CoCmd_Dlstart(phost);

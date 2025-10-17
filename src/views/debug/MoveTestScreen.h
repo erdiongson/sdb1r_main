@@ -11,8 +11,9 @@
 #pragma once
 
 #include "../../gpu/App_Common.h"
-#include "../../gpu/Platform.h"
 #include "../../Constants.h"
+#include "../common/Dialogs.h"
+#include "../ViewCommon.h"
 #include "../common/ToggleButton.h"
 
 // Limit switch states structure.
@@ -50,7 +51,7 @@ void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit
 // @param limitStates Limit switch states for display.
 // @param params Movement control parameters.
 void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limitStates, const MoveTestParams& params) {
-  char temp_buffer[30];  // Max: "Repeating 9999/9999"
+  char* temp_buffer = g_view_temp_buffer;  // Use shared buffer (30 bytes needed)
   Gpu_CoCmd_FlashFast(phost, 0);
   Gpu_CoCmd_Dlstart(phost);
 

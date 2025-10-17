@@ -11,8 +11,9 @@
 #pragma once
 
 #include "../../gpu/App_Common.h"
-#include "../../gpu/Platform.h"
 #include "../../Constants.h"
+#include "../common/Dialogs.h"
+#include "../ViewCommon.h"
 
 // Dispense test screen parameters.
 struct DispenseTestScreenParams {
@@ -38,7 +39,7 @@ void drawDispenseTestScreen(Gpu_Hal_Context_t* phost, const DispenseTestScreenPa
 // @param phost Pointer to GPU HAL context.
 // @param params Screen parameters including status message.
 void drawDispenseTestScreen(Gpu_Hal_Context_t* phost, const DispenseTestScreenParams& params) {
-  char temp_buffer[60];  // Max: "Repeat: 9999" or status with progress
+  char* temp_buffer = g_view_temp_buffer;  // Use shared buffer (60 bytes)
   Gpu_CoCmd_FlashFast(phost, 0);
   Gpu_CoCmd_Dlstart(phost);
 

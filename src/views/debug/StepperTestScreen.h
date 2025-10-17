@@ -11,9 +11,10 @@
 #pragma once
 
 #include "../../gpu/App_Common.h"
-#include "../../gpu/Platform.h"
 #include "../../Constants.h"
+#include "../common/Dialogs.h"
 #include "../common/ToggleButton.h"
+#include "../ViewCommon.h"
 
 // Axis selection enumeration.
 enum StepperTestAxis {
@@ -48,7 +49,7 @@ void drawStepperTestScreen(Gpu_Hal_Context_t* phost, const StepperTestParams& pa
 // @param phost Pointer to GPU HAL context.
 // @param params Stepper test parameters.
 inline void drawStepperTestScreen(Gpu_Hal_Context_t* phost, const StepperTestParams& params) {
-  char temp_buffer[20];  // Max: "100000" or "99.9cm"
+  char* temp_buffer = g_view_temp_buffer;  // Use shared buffer (20 bytes needed)
   Gpu_CoCmd_FlashFast(phost, 0);
   Gpu_CoCmd_Dlstart(phost);
 
