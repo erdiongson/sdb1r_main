@@ -1,10 +1,12 @@
 #pragma once
 
+#include <avr/pgmspace.h>
+
 // =============================================================================
 // SECURITY SETTINGS
 // =============================================================================
-const char* const SUPER_PASSWORD = "superXQ";
-const char* const INITIAL_PASSWORD = "init1234";
+const char SUPER_PASSWORD[] PROGMEM = "superXQ";
+const char INITIAL_PASSWORD[] PROGMEM = "init1234";
 
 // =============================================================================
 // UI TIMING SETTINGS
@@ -107,7 +109,7 @@ const int CYCLES_MAX = 99;
 // =============================================================================
 // FIRMWARE VERSION
 // =============================================================================
-const char* const FWVER = "4.0";
+const char FWVER[] PROGMEM = "4.0";
 
 // =============================================================================
 // FEATURE FLAGS
@@ -118,7 +120,7 @@ const bool Z_DISABLED = false;
 // DEBUG SETTINGS
 // =============================================================================
 const int DEBUG_NO_LOG = 0; // 1 to disable logging
-const int DEBUG_ONLY_SCREEN = 0; // 1 to bypass comms with the dispenser / steppers 
+const int DEBUG_ONLY_SCREEN = 1; // 1 to bypass comms with the dispenser / steppers 
 const int DEBUG_MEMORY_MONITOR = 0; // 1 to enable memory monitoring
 
-const char* const DEBUG_MODE_KEYWORD = "debug";
+const char DEBUG_MODE_KEYWORD[] PROGMEM = "debug";

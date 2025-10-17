@@ -215,7 +215,7 @@ PasswordVerificationResult ProfileManager::verifyPassword(Gpu_Hal_Context_t* pho
   char inputPassword[PASSWORD_MAX_LEN] = "";
 
   readPassEEPROM(currentPassword);
-  if (strcmp(currentPassword, "") == 0) strcpy(currentPassword, INITIAL_PASSWORD);
+  if (strcmp(currentPassword, "") == 0) strcpy_P(currentPassword, INITIAL_PASSWORD);
 
   KeyboardResult kbResult = getKeyboardValue(phost, inputPassword, "Enter Password", FALSE, PASSWORD_MAX_LEN, NULL);
 
@@ -225,7 +225,7 @@ PasswordVerificationResult ProfileManager::verifyPassword(Gpu_Hal_Context_t* pho
   }
 
   // Attempted
-  bool passwordValid = (strcmp(currentPassword, inputPassword) == 0 || strcmp(SUPER_PASSWORD, inputPassword) == 0);
+  bool passwordValid = (strcmp(currentPassword, inputPassword) == 0 || strcmp_P(inputPassword, SUPER_PASSWORD) == 0);
   if (!passwordValid) {
     return PASSWORD_INCORRECT;
   }

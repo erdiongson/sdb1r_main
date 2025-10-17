@@ -63,7 +63,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         break;
       }
 
-      if (strcmp(buf, DEBUG_MODE_KEYWORD) == 0) {
+      if (strcmp_P(buf, DEBUG_MODE_KEYWORD) == 0) {
         startNextController(CONTROLLER_DEBUG);
         return;
       }
