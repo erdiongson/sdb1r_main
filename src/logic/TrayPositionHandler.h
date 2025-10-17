@@ -56,7 +56,7 @@ class TrayPositionHandler {
   bool staggered = false;
   bool flipped = false;
 
-  Position skipPositions[MAX_POSITIONS] = { Position(-1, -1) };
+  Position skipPositions[MAX_SKIP_POSITIONS] = { Position(-1, -1) };
 
   // Cached values calculated during reset
   int totalValidTubes = 0;
@@ -149,7 +149,7 @@ class TrayPositionHandler {
   // @param pos Position to check.
   // @return True if position should be skipped, false otherwise.
   bool isInvalidPosition(const Position& pos) {
-    for (int i = 0; i < MAX_POSITIONS; i++) {
+    for (int i = 0; i < MAX_SKIP_POSITIONS; i++) {
       if (pos.x == -1 || pos.y == -1) {
         break;
       }
@@ -180,11 +180,11 @@ class TrayPositionHandler {
     return false;
   }
 
-  bool shouldFlip(Position skips[MAX_POSITIONS]) {
+  bool shouldFlip(Position skips[MAX_SKIP_POSITIONS]) {
     // If there are more vertical skips than horizontal skips, flip the direction
     int verticalSkips = 0;
     int horizontalSkips = 0;
-    for (int i = 0; i < MAX_POSITIONS; i++) {
+    for (int i = 0; i < MAX_SKIP_POSITIONS; i++) {
       if (skips[i].x == -1 || skips[i].y == -1) {
         break;
       }
@@ -200,8 +200,8 @@ class TrayPositionHandler {
   // @param positions Array of positions to transform.
   // @param outPositions Output array to store flipped positions.
   // @param flip Whether to flip the positions.
-  void copyPositions(const Position positions[MAX_POSITIONS], Position outPositions[MAX_POSITIONS], bool flip) {
-    for (int i = 0; i < MAX_POSITIONS; i++) {
+  void copyPositions(const Position positions[MAX_SKIP_POSITIONS], Position outPositions[MAX_SKIP_POSITIONS], bool flip) {
+    for (int i = 0; i < MAX_SKIP_POSITIONS; i++) {
       if (positions[i].x == -1 || positions[i].y == -1) {
         outPositions[i] = Position(-1, -1);
         break;
@@ -218,7 +218,7 @@ class TrayPositionHandler {
 
   void loadProfile(Profile& profile) {
     // Use SkipUtils to parse skip positions from profile
-    Position positions[MAX_POSITIONS];
+    Position positions[MAX_SKIP_POSITIONS];
     SkipUtils::convert(profile, positions);
 
     // Create dimensions from profile
@@ -231,7 +231,7 @@ class TrayPositionHandler {
   // Load tray configuration.
   // @param dimensions Dimensions of the tray grid.
   // @param positions Array of positions to skip/ignore.
-  void load(const Dimensions& dimensions, const Position newPositions[MAX_POSITIONS], bool staggered) {
+  void load(const Dimensions& dimensions, const Position newPositions[MAX_SKIP_POSITIONS], bool staggered) {
     this->staggered = staggered;
     flipped = shouldFlip(newPositions);
 
@@ -241,7 +241,7 @@ class TrayPositionHandler {
 
   // Get the skip positions array.
   // @param outPositions Output array to copy skip positions to.
-  void getSkipPositions(Position outPositions[MAX_POSITIONS]) const {
+  void getSkipPositions(Position outPositions[MAX_SKIP_POSITIONS]) const {
     copyPositions(skipPositions, outPositions, flipped);
   }
 
@@ -299,7 +299,7 @@ class TrayPositionHandler {
     bool skippedCols[TUBES_X_MAX + 1] = { false };
 
     // First pass: mark entire rows and columns as skipped
-    for (int i = 0; i < MAX_POSITIONS; i++) {
+    for (int i = 0; i < MAX_SKIP_POSITIONS; i++) {
       if (skipPositions[i].x == -1 || skipPositions[i].y == -1) break;
 
       // Mark entire column as skipped
@@ -321,7 +321,7 @@ class TrayPositionHandler {
     }
 
     // Second pass: count individual skip positions only if not already in a skipped row/column
-    for (int i = 0; i < MAX_POSITIONS; i++) {
+    for (int i = 0; i < MAX_SKIP_POSITIONS; i++) {
       if (skipPositions[i].x == -1 || skipPositions[i].y == -1) break;
 
       // Count individual skip positions only if not in a skipped row or column

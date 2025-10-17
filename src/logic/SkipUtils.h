@@ -194,17 +194,17 @@ class SkipUtils {
 
   // Converts profile skip data into an array of Position objects for TrayHandler.
   // @param profile The profile containing skip information.
-  // @param outPositions Output array to store parsed positions (must be at least MAX_POSITIONS in size).
+  // @param outPositions Output array to store parsed positions (must be at least MAX_SKIP_POSITIONS in size).
   // @return The number of positions parsed.
-  static int convert(Profile& profile, TrayHandler::Position outPositions[MAX_POSITIONS]) {
+  static int convert(Profile& profile, TrayHandler::Position outPositions[MAX_SKIP_POSITIONS]) {
     // Initialize all positions to -1 to mark unused entries
-    for (int i = 0; i < MAX_POSITIONS; i++) {
+    for (int i = 0; i < MAX_SKIP_POSITIONS; i++) {
       outPositions[i] = TrayHandler::Position(-1, -1);
     }
 
     // Convert from SkipPosition array directly
     int posIndex = 0;
-    for (uint8_t i = 0; i < profile.skip_count && i < MAX_SKIP_POSITIONS && posIndex < MAX_POSITIONS; i++) {
+    for (uint8_t i = 0; i < profile.skip_count && i < MAX_SKIP_POSITIONS && posIndex < MAX_SKIP_POSITIONS; i++) {
       const SkipPosition& skipPos = profile.skip_positions[i];
       outPositions[posIndex++] = TrayHandler::Position(skipPos.x, skipPos.y);
     }

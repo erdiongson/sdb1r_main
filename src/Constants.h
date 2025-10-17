@@ -306,8 +306,3 @@ const int KEYBOARD_VISIBLE_LINES = 3;  // Lines shown at once
 const int KEYBOARD_MAX_LINES = 6;      // Maximum total lines
 
 const int KEYBOARD_MAX_LEN = (KEYBOARD_MAX_PER_LINE * KEYBOARD_MAX_LINES);
-
-// =============================================================================
-// ARRAY LIMITS
-// =============================================================================
-const int MAX_POSITIONS = 100;
