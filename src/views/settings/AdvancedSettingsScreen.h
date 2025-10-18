@@ -19,19 +19,16 @@ struct SkipErrors {
 // Parameters for Advanced Settings Screen display.
 struct AdvancedSettingsScreenParams {
   Profile& profile;
+  const char* skipCol;
+  const char* skipRow;
+  const char* skipSinglePos;
   SkipErrors errors;
   int dialog_code;
 };
 
 inline void drawAdvancedSettingsScreen(Gpu_Hal_Context_t* phost, AdvancedSettingsScreenParams params) {
   Profile& profile = params.profile;
-  char rowBuf[SKIP_STRING_LEN];        // a buffer for skip row entry
-  char colBuf[SKIP_STRING_LEN];        // a buffer for skip column entry
-  char singlePosBuf[SKIP_STRING_LEN];  // a buffer for skip single position entry
   uint8_t keypressed;
-
-  // Convert SkipPosition array to strings for display
-  SkipUtils::convertToStrings(profile.skip_positions, profile.skip_count, colBuf, rowBuf, singlePosBuf);
 
   Gpu_CoCmd_FlashFast(phost, 0);
   Gpu_CoCmd_Dlstart(phost);
@@ -74,15 +71,15 @@ inline void drawAdvancedSettingsScreen(Gpu_Hal_Context_t* phost, AdvancedSetting
 
   // Text - Skip Columns
   App_WrCoCmd_Buffer(phost, params.errors.skip_cols ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
-  Gpu_CoCmd_Text(phost, 15, 36, 21, 0, (const char*)colBuf);
+  Gpu_CoCmd_Text(phost, 15, 36, 21, 0, params.skipCol);
 
   // Text - Skip Rows
   App_WrCoCmd_Buffer(phost, params.errors.skip_rows ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
-  Gpu_CoCmd_Text(phost, 15, 84, 21, 0, (const char*)rowBuf);
+  Gpu_CoCmd_Text(phost, 15, 84, 21, 0, params.skipRow);
 
   // Text - Skip Single Positions
   App_WrCoCmd_Buffer(phost, params.errors.skip_cells ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
-  Gpu_CoCmd_Text(phost, 15, 132, 21, 0, (const char*)singlePosBuf);
+  Gpu_CoCmd_Text(phost, 15, 132, 21, 0, params.skipSinglePos);
 
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
