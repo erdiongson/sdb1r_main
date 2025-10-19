@@ -1,5 +1,57 @@
 #include "Dialogs.h"
 
+// Dialog strings stored in PROGMEM to save RAM
+const char DIALOG_TITLE_IR_SENSOR[] PROGMEM = "IR Sensor Error";
+const char DIALOG_SUBTITLE_IR_SENSOR[] PROGMEM = "Could not detect the dispenser head. Please restart the device.";
+
+const char DIALOG_TITLE_MARKER[] PROGMEM = "IR Marker Error";
+const char DIALOG_SUBTITLE_MARKER[] PROGMEM = "Could not detect the dispenser head. Please restart the device.";
+
+const char DIALOG_TITLE_LIMIT_SWITCH[] PROGMEM = "Limit Switch Triggered";
+const char DIALOG_SUBTITLE_LIMIT_SWITCH[] PROGMEM = "Possible movement boundary collision. Please check the head position and resume.";
+
+const char DIALOG_SUBTITLE_LIMIT_SWITCH_HOMING[] PROGMEM = "Possible movement boundary collision. Please check the head position.";
+
+const char DIALOG_TITLE_DISPENSER_ERROR[] PROGMEM = "Dispenser Error";
+const char DIALOG_SUBTITLE_DISPENSER_ERROR[] PROGMEM = "Could not detect the dispenser head. Please restart the device.";
+
+const char DIALOG_TITLE_TIMEOUT[] PROGMEM = "Dispenser Timeout Error";
+const char DIALOG_SUBTITLE_TIMEOUT[] PROGMEM = "Did not receive response from the dispenser head. Please restart the device.";
+
+const char DIALOG_TITLE_PROFILE_SAVED[] PROGMEM = "Profile Saved";
+const char DIALOG_SUBTITLE_PROFILE_SAVED[] PROGMEM = "Profile has been saved successfully.";
+
+const char DIALOG_TITLE_PROFILE_LOADED[] PROGMEM = "Profile Loaded";
+const char DIALOG_SUBTITLE_PROFILE_LOADED[] PROGMEM = "Profile has been loaded successfully!";
+
+const char DIALOG_TITLE_PASSWORD_MISMATCH[] PROGMEM = "Password Mismatch";
+const char DIALOG_SUBTITLE_PASSWORD_MISMATCH[] PROGMEM = "Different passwords were entered, please try again.";
+
+const char DIALOG_TITLE_PASSWORD_CHANGED[] PROGMEM = "Password Changed";
+const char DIALOG_SUBTITLE_PASSWORD_CHANGED[] PROGMEM = "Password has been changed successfully!";
+
+const char DIALOG_TITLE_WRONG_PASSWORD[] PROGMEM = "Incorrect Password";
+const char DIALOG_SUBTITLE_WRONG_PASSWORD[] PROGMEM = "The password you entered is incorrect. Please try again.";
+
+const char DIALOG_TITLE_DIMENSION_ERROR[] PROGMEM = "Dimension Error";
+const char DIALOG_SUBTITLE_DIMENSION_ERROR[] PROGMEM = "The parameters exceed the tray boundaries. Please ensure the values are correct.";
+
+const char DIALOG_TITLE_PARAMETER_ERROR[] PROGMEM = "Parameter Error";
+const char DIALOG_SUBTITLE_PARAMETER_ERROR[] PROGMEM = "One or more parameters are outside the valid range. Please check the highlighted values.";
+
+const char DIALOG_TITLE_SKIP_VALUES[] PROGMEM = "Skip Values Error";
+const char DIALOG_SUBTITLE_SKIP_VALUES[] PROGMEM = "Skip positions are invalid for current tray configuration. Please update in Advanced settings.";
+
+const char DIALOG_TITLE_SKIP_COUNT[] PROGMEM = "Too Many Skip Positions";
+const char DIALOG_SUBTITLE_SKIP_COUNT[] PROGMEM = "The total number of skip positions exceeds the maximum allowed. Please reduce the number of skips.";
+
+const char DIALOG_TITLE_UNKNOWN[] PROGMEM = "Unknown Error";
+const char DIALOG_SUBTITLE_UNKNOWN[] PROGMEM = "An unknown error occurred.";
+
+const char DIALOG_BTN_RESUME[] PROGMEM = "Resume";
+const char DIALOG_BTN_STOP[] PROGMEM = "Stop";
+const char DIALOG_BTN_CONTINUE[] PROGMEM = "Continue";
+
 // Displays a dialog with a black box, white outline, title, subtitle, and optional buttons.
 // @param phost GPU context.
 // @param params DialogParams structure containing title, subtitle, button labels and tags.
@@ -104,12 +156,18 @@ void drawBaseDialog(Gpu_Hal_Context_t* phost, const DialogParams& params) {
 // @param phost GPU context.
 // @param dialog_code The dialog code to display.
 void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
+  // Temporary RAM buffers to copy PROGMEM strings into
+  static char title_buffer[30];
+  static char subtitle_buffer[120];
+  static char left_btn_buffer[15];
+  static char right_btn_buffer[15];
+  
   DialogParams params;
 
   switch (dialog_code) {
     case DIALOG_ERROR_IR_SENSOR:
-      params.title = "IR Sensor Error";
-      params.subtitle = "Could not detect the dispenser head. Please restart the device.";
+      params.title = DIALOG_TITLE_IR_SENSOR;
+      params.subtitle = DIALOG_SUBTITLE_IR_SENSOR;
       params.left_btn = nullptr;
       params.right_btn = nullptr;
       params.left_tag = 0;
@@ -117,8 +175,8 @@ void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
       break;
 
     case DIALOG_ERROR_MARKER_NOT_DETECTED:
-      params.title = "IR Marker Error";
-      params.subtitle = "Could not detect the dispenser head. Please restart the device.";
+      params.title = DIALOG_TITLE_MARKER;
+      params.subtitle = DIALOG_SUBTITLE_MARKER;
       params.left_btn = nullptr;
       params.right_btn = nullptr;
       params.left_tag = 0;
@@ -126,26 +184,26 @@ void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
       break;
 
     case DIALOG_ERROR_LIMIT_SWITCH:
-      params.title = "Limit Switch Triggered";
-      params.subtitle = "Possible movement boundary collision. Please check the head position and resume.";
-      params.left_btn = "Resume";
-      params.right_btn = "Stop";
+      params.title = DIALOG_TITLE_LIMIT_SWITCH;
+      params.subtitle = DIALOG_SUBTITLE_LIMIT_SWITCH;
+      params.left_btn = DIALOG_BTN_RESUME;
+      params.right_btn = DIALOG_BTN_STOP;
       params.left_tag = TAG_START;
       params.right_tag = TAG_STOP;
       break;
 
     case DIALOG_ERROR_LIMIT_SWITCH_HOMING:
-      params.title = "Limit Switch Triggered";
-      params.subtitle = "Possible movement boundary collision. Please check the head position.";
-      params.left_btn = "Continue";
+      params.title = DIALOG_TITLE_LIMIT_SWITCH;
+      params.subtitle = DIALOG_SUBTITLE_LIMIT_SWITCH_HOMING;
+      params.left_btn = DIALOG_BTN_CONTINUE;
       params.right_btn = nullptr;
       params.left_tag = TAG_CONTINUE;
       params.right_tag = 0;
       break;
 
     case DIALOG_ERROR_ACK_ERROR:
-      params.title = "Dispenser Error";
-      params.subtitle = "Could not detect the dispenser head. Please restart the device.";
+      params.title = DIALOG_TITLE_DISPENSER_ERROR;
+      params.subtitle = DIALOG_SUBTITLE_DISPENSER_ERROR;
       params.left_btn = nullptr;
       params.right_btn = nullptr;
       params.left_tag = 0;
@@ -153,8 +211,8 @@ void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
       break;
 
     case DIALOG_ERROR_CYCLE_TIMEOUT:
-      params.title = "Dispenser Timeout Error";
-      params.subtitle = "Did not receive response from the dispenser head. Please restart the device.";
+      params.title = DIALOG_TITLE_TIMEOUT;
+      params.subtitle = DIALOG_SUBTITLE_TIMEOUT;
       params.left_btn = nullptr;
       params.right_btn = nullptr;
       params.left_tag = 0;
@@ -162,8 +220,8 @@ void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
       break;
 
     case DIALOG_PROFILE_SAVED:
-      params.title = "Profile Saved";
-      params.subtitle = "Profile has been saved successfully.";
+      params.title = DIALOG_TITLE_PROFILE_SAVED;
+      params.subtitle = DIALOG_SUBTITLE_PROFILE_SAVED;
       params.left_btn = nullptr;
       params.right_btn = nullptr;
       params.left_tag = 0;
@@ -171,8 +229,8 @@ void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
       break;
 
     case DIALOG_PROFILE_LOADED:
-      params.title = "Profile Loaded";
-      params.subtitle = "Profile has been loaded successfully!";
+      params.title = DIALOG_TITLE_PROFILE_LOADED;
+      params.subtitle = DIALOG_SUBTITLE_PROFILE_LOADED;
       params.left_btn = nullptr;
       params.right_btn = nullptr;
       params.left_tag = 0;
@@ -180,8 +238,8 @@ void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
       break;
 
     case DIALOG_ERROR_PASSWORD_MISMATCH:
-      params.title = "Password Mismatch";
-      params.subtitle = "Different passwords were entered, please try again.";
+      params.title = DIALOG_TITLE_PASSWORD_MISMATCH;
+      params.subtitle = DIALOG_SUBTITLE_PASSWORD_MISMATCH;
       params.left_btn = nullptr;
       params.right_btn = nullptr;
       params.left_tag = 0;
@@ -189,8 +247,8 @@ void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
       break;
 
     case DIALOG_PASSWORD_CHANGED:
-      params.title = "Password Changed";
-      params.subtitle = "Password has been changed successfully!";
+      params.title = DIALOG_TITLE_PASSWORD_CHANGED;
+      params.subtitle = DIALOG_SUBTITLE_PASSWORD_CHANGED;
       params.left_btn = nullptr;
       params.right_btn = nullptr;
       params.left_tag = 0;
@@ -198,8 +256,8 @@ void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
       break;
 
     case DIALOG_ERROR_WRONG_PASSWORD:
-      params.title = "Incorrect Password";
-      params.subtitle = "The password you entered is incorrect. Please try again.";
+      params.title = DIALOG_TITLE_WRONG_PASSWORD;
+      params.subtitle = DIALOG_SUBTITLE_WRONG_PASSWORD;
       params.left_btn = nullptr;
       params.right_btn = nullptr;
       params.left_tag = 0;
@@ -207,49 +265,70 @@ void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
       break;
 
     case DIALOG_ERROR_DIMENSION:
-      params.title = "Dimension Error";
-      params.subtitle = "The parameters exceed the tray boundaries. Please ensure the values are correct.";
-      params.left_btn = "Continue";
+      params.title = DIALOG_TITLE_DIMENSION_ERROR;
+      params.subtitle = DIALOG_SUBTITLE_DIMENSION_ERROR;
+      params.left_btn = DIALOG_BTN_CONTINUE;
       params.right_btn = nullptr;
       params.left_tag = TAG_CONTINUE;
       params.right_tag = 0;
       break;
 
     case DIALOG_ERROR_PARAMETER:
-      params.title = "Parameter Error";
-      params.subtitle = "One or more parameters are outside the valid range. Please check the highlighted values.";
-      params.left_btn = "Continue";
+      params.title = DIALOG_TITLE_PARAMETER_ERROR;
+      params.subtitle = DIALOG_SUBTITLE_PARAMETER_ERROR;
+      params.left_btn = DIALOG_BTN_CONTINUE;
       params.right_btn = nullptr;
       params.left_tag = TAG_CONTINUE;
       params.right_tag = 0;
       break;
 
     case DIALOG_ERROR_SKIP_VALUES:
-      params.title = "Skip Values Error";
-      params.subtitle = "Skip positions are invalid for current tray configuration. Please update in Advanced settings.";
-      params.left_btn = "Continue";
+      params.title = DIALOG_TITLE_SKIP_VALUES;
+      params.subtitle = DIALOG_SUBTITLE_SKIP_VALUES;
+      params.left_btn = DIALOG_BTN_CONTINUE;
       params.right_btn = nullptr;
       params.left_tag = TAG_CONTINUE;
       params.right_tag = 0;
       break;
 
     case DIALOG_ERROR_SKIP_COUNT_EXCEEDED:
-      params.title = "Too Many Skip Positions";
-      params.subtitle = "The total number of skip positions exceeds the maximum allowed. Please reduce the number of skips.";
-      params.left_btn = "Continue";
+      params.title = DIALOG_TITLE_SKIP_COUNT;
+      params.subtitle = DIALOG_SUBTITLE_SKIP_COUNT;
+      params.left_btn = DIALOG_BTN_CONTINUE;
       params.right_btn = nullptr;
       params.left_tag = TAG_CONTINUE;
       params.right_tag = 0;
       break;
 
     default:
-      params.title = "Unknown Error";
-      params.subtitle = "An unknown error occurred.";
+      params.title = DIALOG_TITLE_UNKNOWN;
+      params.subtitle = DIALOG_SUBTITLE_UNKNOWN;
       params.left_btn = nullptr;
       params.right_btn = nullptr;
       params.left_tag = 0;
       params.right_tag = 0;
       break;
+  }
+
+  // Copy PROGMEM strings to RAM buffers for GPU rendering
+  if (params.title != nullptr) {
+    strcpy_P(title_buffer, params.title);
+    params.title = title_buffer;
+  }
+  
+  if (params.subtitle != nullptr) {
+    strcpy_P(subtitle_buffer, params.subtitle);
+    params.subtitle = subtitle_buffer;
+  }
+  
+  if (params.left_btn != nullptr) {
+    strcpy_P(left_btn_buffer, params.left_btn);
+    params.left_btn = left_btn_buffer;
+  }
+  
+  if (params.right_btn != nullptr) {
+    strcpy_P(right_btn_buffer, params.right_btn);
+    params.right_btn = right_btn_buffer;
   }
 
   drawBaseDialog(phost, params);
