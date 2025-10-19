@@ -101,8 +101,8 @@ class ProfileManager {
   uint8_t getCurrentProfileNum(void);
 
   // Sets the current profile number/ID.
-  // @param profileNum The profile number to set as current.
-  void setCurrentProfileNum(uint8_t profileNum);
+  // @param profile_num The profile number to set as current.
+  void setCurrentProfileNum(uint8_t profile_num);
 
   // Gets skip data as char strings for UI display.
   // @param out_skip_col Output buffer for column skip string (must be at least SKIP_STRING_LEN).

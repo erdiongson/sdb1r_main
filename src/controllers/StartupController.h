@@ -13,7 +13,7 @@ class StartupController : public BaseController {
   int stage = STAGE_HANDSHAKE;
   bool running = true;
   DispenserHead& dispenserHead;
-  LogoScreenParams logoParams = {0, ""};
+  LogoScreenParams logo_params = {0, ""};
 
  public:
   StartupController(ControllerParams params);

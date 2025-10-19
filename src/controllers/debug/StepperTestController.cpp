@@ -275,9 +275,9 @@ ControllerStepResult StepperTestController::onStep() {
         float steps_per_sec = (step_count * 1000.0f) / elapsed_ms;
         long rate_int = (long)steps_per_sec;
         long rate_dec = (long)((steps_per_sec - rate_int) * 10);
-        sprintf(status_message, "Steps: %lu, Time: %lums, Rate: %ld.%ld steps/s", step_count, elapsed_ms, rate_int, rate_dec);
+        snprintf_P(status_message, sizeof(status_message), PSTR("Steps: %lu, Time: %lums, Rate: %ld.%ld steps/s"), step_count, elapsed_ms, rate_int, rate_dec);
       } else {
-        sprintf(status_message, "Steps: %lu, Time: %lums", step_count, elapsed_ms);
+        snprintf_P(status_message, sizeof(status_message), PSTR("Steps: %lu, Time: %lums"), step_count, elapsed_ms);
       }
       is_tracking_movement = false;
       updateScreen();

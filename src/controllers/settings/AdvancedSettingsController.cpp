@@ -1,6 +1,7 @@
 #include "AdvancedSettingsController.h"
 #include "../../views/settings/AdvancedSettingsScreen.h"
 #include "../../views/common/Keyboards.h"
+#include "../../views/ViewCommon.h"
 #include "../../logic/TrayPositionHandler.h"
 #include "../../logic/SkipUtils.h"
 
@@ -107,28 +108,28 @@ void AdvancedSettingsController::editSkipColumn(Gpu_Hal_Context_t* phost) {
   TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
 
   // Load current skip_col into input buffer
-  strncpy(skipInputBuffer, skip_col, SKIP_STRING_LEN - 1);
-  skipInputBuffer[SKIP_STRING_LEN - 1] = '\0';
+  strncpy(skip_input_buffer, skip_col, SKIP_STRING_LEN - 1);
+  skip_input_buffer[SKIP_STRING_LEN - 1] = '\0';
 
-  const char* errorMsg = NULL;
+  const char* error_msg = NULL;
   while (true) {
-    KeyboardResult kbResult = getKeyboardValue(phost, skipInputBuffer, "Enter columns to skip", false, SKIP_STRING_LEN, errorMsg);
+    KeyboardResult kb_result = getKeyboardValue(phost, skip_input_buffer, PROGMEM_STR(F("Enter columns to skip")), false, SKIP_STRING_LEN, error_msg);
 
     // Check if user pressed back
-    if (kbResult.action == ACTION_BACK) return;
+    if (kb_result.action == ACTION_BACK) return;
 
     // Clean the input with bounds checking
-    SkipUtils::CleanResult result = SkipUtils::clean(skipInputBuffer, SkipUtils::COLUMN, dimensions);
+    SkipUtils::CleanResult result = SkipUtils::clean(skip_input_buffer, SkipUtils::COLUMN, dimensions);
 
     // Check if there was an error
     if (result.error_message[0] != '\0') {
-      errorMsg = result.error_message;
+      error_msg = result.error_message;
       snprintf(g_log_buffer, sizeof(g_log_buffer), "Error Message: %s", result.error_message);
       Logger::log(g_log_buffer);
       // Use the cleaned text (capitalized) even with error
       if (result.cleaned[0] != '\0') {
-        strncpy(skipInputBuffer, result.cleaned, SKIP_STRING_LEN - 1);
-        skipInputBuffer[SKIP_STRING_LEN - 1] = '\0';
+        strncpy(skip_input_buffer, result.cleaned, SKIP_STRING_LEN - 1);
+        skip_input_buffer[SKIP_STRING_LEN - 1] = '\0';
       }
       continue;
     }
@@ -146,28 +147,28 @@ void AdvancedSettingsController::editSkipRow(Gpu_Hal_Context_t* phost) {
   TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
 
   // Load current skip_row into input buffer
-  strncpy(skipInputBuffer, skip_row, SKIP_STRING_LEN - 1);
-  skipInputBuffer[SKIP_STRING_LEN - 1] = '\0';
+  strncpy(skip_input_buffer, skip_row, SKIP_STRING_LEN - 1);
+  skip_input_buffer[SKIP_STRING_LEN - 1] = '\0';
 
-  const char* errorMsg = NULL;
+  const char* error_msg = NULL;
   while (true) {
-    KeyboardResult kbResult = getKeyboardValue(phost, skipInputBuffer, "Enter rows to skip", false, SKIP_STRING_LEN, errorMsg);
+    KeyboardResult kb_result = getKeyboardValue(phost, skip_input_buffer, PROGMEM_STR(F("Enter rows to skip")), false, SKIP_STRING_LEN, error_msg);
 
     // Check if user pressed back
-    if (kbResult.action == ACTION_BACK) return;
+    if (kb_result.action == ACTION_BACK) return;
 
     // Clean the input with bounds checking
-    SkipUtils::CleanResult result = SkipUtils::clean(skipInputBuffer, SkipUtils::ROW, dimensions);
+    SkipUtils::CleanResult result = SkipUtils::clean(skip_input_buffer, SkipUtils::ROW, dimensions);
 
     // Check if there was an error
     if (result.error_message[0] != '\0') {
-      errorMsg = result.error_message;
+      error_msg = result.error_message;
       snprintf(g_log_buffer, sizeof(g_log_buffer), "Error: %s", result.error_message);
       Logger::log(g_log_buffer);
       // Use the cleaned text (capitalized) even with error
       if (result.cleaned[0] != '\0') {
-        strncpy(skipInputBuffer, result.cleaned, SKIP_STRING_LEN - 1);
-        skipInputBuffer[SKIP_STRING_LEN - 1] = '\0';
+        strncpy(skip_input_buffer, result.cleaned, SKIP_STRING_LEN - 1);
+        skip_input_buffer[SKIP_STRING_LEN - 1] = '\0';
       }
       continue;
     }
@@ -183,31 +184,30 @@ void AdvancedSettingsController::editSkipIndividual(Gpu_Hal_Context_t* phost) {
   TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
 
   // Load current skip_single_pos into input buffer
-  strncpy(skipInputBuffer, skip_single_pos, SKIP_STRING_LEN - 1);
-  skipInputBuffer[SKIP_STRING_LEN - 1] = '\0';
+  strncpy(skip_input_buffer, skip_single_pos, SKIP_STRING_LEN - 1);
+  skip_input_buffer[SKIP_STRING_LEN - 1] = '\0';
 
-  const char* errorMsg = NULL;
+  const char* error_msg = NULL;
   while (true) {
-    snprintf(g_log_buffer, sizeof(g_log_buffer), "Length of skip_single_pos: %d", strlen(skipInputBuffer));
+    snprintf(g_log_buffer, sizeof(g_log_buffer), "Length of skip_single_pos: %d", strlen(skip_input_buffer));
     Logger::log(g_log_buffer);
-    KeyboardResult kbResult = getKeyboardValue(phost, skipInputBuffer, "Enter positions to skip", false, SKIP_STRING_INDIVIDUAL_LEN, errorMsg);
+    KeyboardResult keyboard_result = getKeyboardValue(phost, skip_input_buffer, PROGMEM_STR(F("Enter positions to skip")), false, SKIP_STRING_INDIVIDUAL_LEN, error_msg);
 
     // Check if user pressed back
-    if (kbResult.action == ACTION_BACK) return;
+    if (keyboard_result.action == ACTION_BACK) return;
 
-    // Clean the input with bounds checking
-    SkipUtils::CleanResult result =
-        SkipUtils::clean(skipInputBuffer, SkipUtils::INDIVIDUAL, dimensions, current_profile->staggered);
+    // Clean and validate the input
+    SkipUtils::CleanResult result = SkipUtils::clean(skip_input_buffer, SkipUtils::INDIVIDUAL, dimensions, current_profile->staggered);
 
     // Check if there was an error
     if (result.error_message[0] != '\0') {
-      errorMsg = result.error_message;
+      error_msg = result.error_message;
       snprintf(g_log_buffer, sizeof(g_log_buffer), "Error: %s", result.error_message);
       Logger::log(g_log_buffer);
       // Use the cleaned text (capitalized) even with error
       if (result.cleaned[0] != '\0') {
-        strncpy(skipInputBuffer, result.cleaned, SKIP_STRING_LEN - 1);
-        skipInputBuffer[SKIP_STRING_LEN - 1] = '\0';
+        strncpy(skip_input_buffer, result.cleaned, SKIP_STRING_LEN - 1);
+        skip_input_buffer[SKIP_STRING_LEN - 1] = '\0';
       }
       continue;
     }
@@ -228,24 +228,24 @@ SkipVerificationResult AdvancedSettingsController::verifyParameters() {
   // Convert skip strings to positions to get actual count
   // Allow +1 to be returned, to detect if the user is trying to enter more than MAX_SKIP_POSITIONS
 
-  SkipPosition tempPositions[MAX_SKIP_POSITIONS + 1];
-  uint8_t skipCount = SkipUtils::convertFromStrings(skip_col, skip_row, skip_single_pos, tempPositions, MAX_SKIP_POSITIONS + 1);
+  SkipPosition temp_positions[MAX_SKIP_POSITIONS + 1];
+  uint8_t skip_count = SkipUtils::convertFromStrings(skip_col, skip_row, skip_single_pos, temp_positions, MAX_SKIP_POSITIONS + 1);
 
   // Check if skip count exceeds maximum
-  snprintf(g_log_buffer, sizeof(g_log_buffer), "skipCount from buffers: %d, MAX_SKIP_POSITIONS: %d", skipCount, MAX_SKIP_POSITIONS);
+  snprintf(g_log_buffer, sizeof(g_log_buffer), "skip_count from buffers: %d, MAX_SKIP_POSITIONS: %d", skip_count, MAX_SKIP_POSITIONS);
   Logger::log(g_log_buffer);
-  if (skipCount > MAX_SKIP_POSITIONS) {
+  if (skip_count > MAX_SKIP_POSITIONS) {
     result.is_valid = false;
     result.errors.skip_count_exceeded = true;
   }
 
   // Check skip position validity
-  if (skipCount > 0) {
+  if (skip_count > 0) {
     TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
     
-    for (uint8_t i = 0; i < skipCount && i < MAX_SKIP_POSITIONS; i++) {
-      const SkipPosition& skipPos = tempPositions[i];
-      TrayHandler::Position pos(skipPos.x, skipPos.y);
+    for (uint8_t i = 0; i < skip_count && i < MAX_SKIP_POSITIONS; i++) {
+      const SkipPosition& skip_pos = temp_positions[i];
+      TrayHandler::Position pos(skip_pos.x, skip_pos.y);
       
       // Check if position is valid for current tray configuration using SkipUtils
       if (!SkipUtils::isValidSkipPosition(pos, dimensions, current_profile->staggered)) {

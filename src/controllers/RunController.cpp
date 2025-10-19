@@ -9,9 +9,9 @@ RunController::RunController(ControllerParams params) : BaseController(params) {
 void RunController::onStart() {
   this->profile = profile_manager.getCurrentProfile();
   trayHandler.loadProfile(profile_manager.getCurrentProfile());
-  TrayHandler::Position firstPosition = trayHandler.reset();
+  TrayHandler::Position first_position = trayHandler.reset();
 
-  if (firstPosition.x == -1 || firstPosition.y == -1) {
+  if (first_position.x == -1 || first_position.y == -1) {
     Logger::log(F("MODE: No valid positions found, ending run mode"));
     startNextController(CONTROLLER_READY);
     return;
@@ -73,8 +73,8 @@ void RunController::stop() {
 
 // Starts a new stage of the run
 // The funcitonality must be idempotent, since it may be called again after a "pause"
-void RunController::startStage(Stage newStage) {
-  switch (newStage) {
+void RunController::startStage(Stage new_stage) {
+  switch (new_stage) {
     case STAGE_IDLE:
       dispenserHead.x().stopRunning();
       dispenserHead.y().stopRunning();
@@ -158,14 +158,14 @@ void RunController::startStage(Stage newStage) {
 ControllerStepResult RunController::onStep() {
   if (paused) return ControllerStepResult(false);
 
-  DispenserProcessResult dispenserProcessResult = dispenserHead.process();
-  if (dispenserProcessResult.steppers == AXIS_STATE_RUNNING) {
+  DispenserProcessResult dispenser_process_result = dispenserHead.process();
+  if (dispenser_process_result.steppers == AXIS_STATE_RUNNING) {
     return ControllerStepResult(true);
   }
 
   MainScreenParams params = { profile, getRunStatus(), 0 };
 
-  if (dispenserProcessResult.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
+  if (dispenser_process_result.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
     Logger::log(F("MODE: Stepper error - limit switch triggered"));
     params.dialog_code = DIALOG_ERROR_LIMIT_SWITCH;
     drawRunScreen(params);
@@ -173,7 +173,7 @@ ControllerStepResult RunController::onStep() {
     return ControllerStepResult(false);
   }
 
-  if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE) {
+  if (dispenser_process_result.dispenser == DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE) {
     Logger::log(F("MODE: Dispenser error - IR sensor failure"));
     params.dialog_code = DIALOG_ERROR_IR_SENSOR;
     drawRunScreen(params);
@@ -181,7 +181,7 @@ ControllerStepResult RunController::onStep() {
     return ControllerStepResult(false);
   }
 
-  if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
+  if (dispenser_process_result.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
     Logger::log(F("MODE: Dispenser error - Acknowledgment error"));
     params.dialog_code = DIALOG_ERROR_ACK_ERROR;
     drawRunScreen(params);
@@ -189,7 +189,7 @@ ControllerStepResult RunController::onStep() {
     return ControllerStepResult(false);
   }
 
-  if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
+  if (dispenser_process_result.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
     Logger::log(F("MODE: Dispenser error - marker not detected"));
     params.dialog_code = DIALOG_ERROR_MARKER_NOT_DETECTED;
     drawRunScreen(params);
@@ -198,7 +198,7 @@ ControllerStepResult RunController::onStep() {
     return ControllerStepResult(false);
   }
 
-  if (dispenserProcessResult.dispenser == DISPENSER_STATE_ERROR_CYCLES_TIMEOUT) {
+  if (dispenser_process_result.dispenser == DISPENSER_STATE_ERROR_CYCLES_TIMEOUT) {
     Logger::log(F("MODE: Dispenser error - cycle timeout"));
     params.dialog_code = DIALOG_ERROR_CYCLE_TIMEOUT;
     drawRunScreen(params);
@@ -208,7 +208,7 @@ ControllerStepResult RunController::onStep() {
   }
 
   // Perform logic after all axis are idle (all movement is completed)
-  processStageLogic(dispenserProcessResult);
+  processStageLogic(dispenser_process_result);
 
   return ControllerStepResult(false);
 }
@@ -246,22 +246,22 @@ void RunController::onInteraction(const Interaction& interaction) {
 }
 
 // Processes the stage logic based on current stage and dispenser state
-void RunController::processStageLogic(DispenserProcessResult& dispenserProcessResult) {
+void RunController::processStageLogic(DispenserProcessResult& dispenser_process_result) {
   switch (stage) {
     case STAGE_SET_VIB_LEVEL:
-      if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING) break;
+      if (dispenser_process_result.dispenser != DISPENSER_STATE_IDLING) break;
       Logger::log(F("Vibration Level set, setting Vibration Duration"));
       startStage(STAGE_SET_VIB_DURATION);
       break;
 
     case STAGE_SET_VIB_DURATION:
-      if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING) break;
+      if (dispenser_process_result.dispenser != DISPENSER_STATE_IDLING) break;
       Logger::log(F("Vibration Duration set, moving to zero position"));
       startStage(STAGE_ZERO);
       break;
 
     case STAGE_ZERO:
-      if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
+      if (dispenser_process_result.steppers != AXIS_STATE_COMPLETE) break;
       Logger::log(F("Zero position reached, starting prime"));
       dispenserHead.x().reset();
       dispenserHead.y().reset();
@@ -271,19 +271,19 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
       break;
 
     case STAGE_WAIT_PRIME: {
-      if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING) break;
+      if (dispenser_process_result.dispenser != DISPENSER_STATE_IDLING) break;
       cycle++;
 
       // Check if priming should end
       if (cycle >= PRIME_DISPENSE_NUM) {
         Logger::log(F("Prime completed, moving to first position"));
         // Calculate the first position and move to it
-        TrayHandler::Position firstPosition = trayHandler.reset();
+        TrayHandler::Position first_position = trayHandler.reset();
         target_x =
             (profile.tray_origin_x +
-             ((firstPosition.x - 1 + ((profile.staggered && firstPosition.y % 2 == 0) ? STAGGERED_OFFSET_FACTOR : 0)) * profile.pitch_x)) *
+             ((first_position.x - 1 + ((profile.staggered && first_position.y % 2 == 0) ? STAGGERED_OFFSET_FACTOR : 0)) * profile.pitch_x)) *
             -STEPS_PER_UNIT_X;
-        target_y = (profile.tray_origin_y + ((firstPosition.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
+        target_y = (profile.tray_origin_y + ((first_position.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
         startStage(STAGE_MOVE);
       } else {
         Logger::log(F("Prime not completed, starting next prime"));
@@ -293,13 +293,13 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
     }
 
     case STAGE_MOVE:
-      if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
+      if (dispenser_process_result.steppers != AXIS_STATE_COMPLETE) break;
       Logger::log(F("Move completed, lowering head"));
       startStage(STAGE_LOWER_HEAD);
       break;
 
     case STAGE_LOWER_HEAD: {
-      if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
+      if (dispenser_process_result.steppers != AXIS_STATE_COMPLETE) break;
       Logger::log(F("Head lowered, starting dispensing"));
       cycle = 0;
       startStage(STAGE_START_DISPENSE);
@@ -309,7 +309,7 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
     }
 
     case STAGE_WAIT_DISPENSE: {
-      if (dispenserProcessResult.dispenser != DISPENSER_STATE_IDLING) break;
+      if (dispenser_process_result.dispenser != DISPENSER_STATE_IDLING) break;
       cycle++;
 
       // Check if dispensing should end
@@ -325,7 +325,7 @@ void RunController::processStageLogic(DispenserProcessResult& dispenserProcessRe
     }
 
     case STAGE_RAISE_HEAD: {
-      if (dispenserProcessResult.steppers != AXIS_STATE_COMPLETE) break;
+      if (dispenser_process_result.steppers != AXIS_STATE_COMPLETE) break;
       TrayHandler::PositionResult result = trayHandler.goToNextValidPosition();
       snprintf(g_log_buffer, sizeof(g_log_buffer), "Has next: %d", result.has_next);
       Logger::log(g_log_buffer);

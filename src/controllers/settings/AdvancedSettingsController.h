@@ -15,7 +15,7 @@ class AdvancedSettingsController : public BaseController {
   char skip_col[SKIP_STRING_LEN];
   char skip_row[SKIP_STRING_LEN];
   char skip_single_pos[SKIP_STRING_LEN];
-  char skipInputBuffer[SKIP_STRING_INDIVIDUAL_LEN];  // Shared input buffer for all skip editing
+  char skip_input_buffer[SKIP_STRING_INDIVIDUAL_LEN];  // Shared input buffer for all skip editing
   void editSkipColumn(Gpu_Hal_Context_t* phost);
   void editSkipRow(Gpu_Hal_Context_t* phost);
   void editSkipIndividual(Gpu_Hal_Context_t* phost);

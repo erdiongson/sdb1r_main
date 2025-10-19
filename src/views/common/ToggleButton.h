@@ -8,12 +8,12 @@
 // @param tag The tag ID for the toggle button.
 // @param x The x-coordinate of the toggle button.
 // @param y The y-coordinate of the toggle button.
-// @param enabledLabel The label to display when enabled.
-// @param disabledLabel The label to display when disabled.
-inline void Toggle_Button(Gpu_Hal_Context_t* phost, bool enabled, uint8_t tag, int16_t x, int16_t y, const char* enabledLabel,
-                          const char* disabledLabel) {
+// @param enabled_label The label to display when enabled.
+// @param disabled_label The label to display when disabled.
+inline void Toggle_Button(Gpu_Hal_Context_t* phost, bool enabled, uint8_t tag, int16_t x, int16_t y, const char* enabled_label,
+                          const char* disabled_label) {
   char labels[50];
-  snprintf(labels, sizeof(labels), "%s\xFF%s", disabledLabel, enabledLabel);
+  snprintf(labels, sizeof(labels), "%s\xFF%s", disabled_label, enabled_label);
 
   int16_t toggleState = enabled ? 65535 : 0;
 

@@ -73,9 +73,9 @@ void PreviewController::onInteraction(const Interaction& interaction) {
 ControllerStepResult PreviewController::onStep() {
   // Handle simulation updates every SIMULATION_UPDATE_INTERVAL_MS
   if (simulating) {
-    unsigned long currentTime = millis();
-    if (currentTime - last_simulation_time >= SIMULATION_UPDATE_INTERVAL_MS) {
-      last_simulation_time = currentTime;
+    unsigned long current_time = millis();
+    if (current_time - last_simulation_time >= SIMULATION_UPDATE_INTERVAL_MS) {
+      last_simulation_time = current_time;
       stepSimulation();
     }
   }
@@ -95,16 +95,16 @@ void PreviewController::startSimulation() {
 
   // Reset handler and get first position
   simulation_handler.loadProfile(*current_profile);
-  TrayHandler::Position firstPosition = simulation_handler.reset();
+  TrayHandler::Position first_position = simulation_handler.reset();
 
-  if (firstPosition.x == -1 || firstPosition.y == -1) {
+  if (first_position.x == -1 || first_position.y == -1) {
     Logger::log(F("No valid positions found, ending simulation"));
     endSimulation();
     return;
   }
 
-  simulate_col = firstPosition.x;
-  simulate_row = firstPosition.y;
+  simulate_col = first_position.x;
+  simulate_row = first_position.y;
 
   // Redraw preview screen
   TrayHandler::Position skip_positions[MAX_SKIP_POSITIONS];

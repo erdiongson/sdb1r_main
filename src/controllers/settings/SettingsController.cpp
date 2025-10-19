@@ -1,6 +1,7 @@
 #include "SettingsController.h"
 #include "../../views/settings/SettingsScreen.h"
 #include "../../views/common/Keyboards.h"
+#include "../../views/ViewCommon.h"
 #include "../../views/common/Dialogs.h"
 #include "../../logic/TrayPositionHandler.h"
 #include "../../logic/SkipUtils.h"
@@ -40,9 +41,9 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       if (!verification.is_valid) {
         drawScreen(verification.dialog_code);
       } else {
-        uint8_t currentNum = profile_manager.getCurrentProfileNum();
-        profile_manager.writeCurIDEEPROM(currentNum);
-        profile_manager.writeProfileEEPROM(currentNum);
+        uint8_t current_num = profile_manager.getCurrentProfileNum();
+        profile_manager.writeCurIDEEPROM(current_num);
+        profile_manager.writeProfileEEPROM(current_num);
 
         // Show profile saved dialog
         drawScreen(DIALOG_PROFILE_SAVED);
@@ -56,9 +57,9 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       Logger::log(F("Button Pressed: PROFILE"));
       char buf[PROFILE_NAME_MAX_LEN];
       strcpy(buf, current_profile->profile_name);
-      KeyboardResult kbResult = getKeyboardValue(phost, buf, "Enter Profile Name", false, PROFILE_NAME_MAX_LEN, NULL);
+      KeyboardResult kb_result = getKeyboardValue(phost, buf, PROGMEM_STR(F("Enter Profile Name")), false, PROFILE_NAME_MAX_LEN, NULL);
 
-      if (kbResult.action == ACTION_BACK) {
+      if (kb_result.action == ACTION_BACK) {
         drawScreen();
         break;
       }
@@ -78,11 +79,11 @@ void SettingsController::onInteraction(const Interaction& interaction) {
       float maxval = (int)((TRAY_X_MAX - current_profile->tray_origin_x) / current_profile->pitch_x) + 1;
       if (maxval > TUBES_X_MAX) maxval = TUBES_X_MAX;
 
-      int oldTubeNoX = current_profile->tube_no_x;
+      int old_tube_no_x = current_profile->tube_no_x;
       current_profile->tube_no_x = getKeypadValue(&host, current_profile->tube_no_x, TUBES_X_MIN, TUBES_X_MAX, FALSE);
 
       // If rows decreased, clean skip strings to remove out-of-bounds positions
-      if (current_profile->tube_no_x < oldTubeNoX) {
+      if (current_profile->tube_no_x < old_tube_no_x) {
         TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
 
         // Get current skip strings
@@ -287,8 +288,8 @@ VerificationResult SettingsController::verifyParameters() {
     TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
     
     for (uint8_t i = 0; i < current_profile->skip_count && i < MAX_SKIP_POSITIONS; i++) {
-      const SkipPosition& skipPos = current_profile->skip_positions[i];
-      TrayHandler::Position pos(skipPos.x, skipPos.y);
+      const SkipPosition& skip_pos = current_profile->skip_positions[i];
+      TrayHandler::Position pos(skip_pos.x, skip_pos.y);
       
       // Check if position is valid for current tray configuration using SkipUtils
       if (!SkipUtils::isValidSkipPosition(pos, dimensions, current_profile->staggered)) {

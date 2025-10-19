@@ -51,36 +51,36 @@ void drawPreviewScreen(Gpu_Hal_Context_t* phost, const TrayHandler::Position ski
 
   // Calculate dot size and spacing to fit the grid
   // We need to fit TUBES_X_MAX x TUBES_Y_MAX grid
-  int minDotSpacingX = AVAILABLE_WIDTH / (TUBES_X_MAX + 1);
-  int minDotSpacingY = AVAILABLE_HEIGHT / (TUBES_Y_MAX + 1);
+  int min_dot_spacing_x = AVAILABLE_WIDTH / (TUBES_X_MAX + 1);
+  int min_dot_spacing_y = AVAILABLE_HEIGHT / (TUBES_Y_MAX + 1);
 
-  int maxDotSpacingX = minDotSpacingX * 2;
-  int maxDotSpacingY = minDotSpacingY * 2;
+  int max_dot_spacing_x = min_dot_spacing_x * 2;
+  int max_dot_spacing_y = min_dot_spacing_y * 2;
 
-  int dotSpacingX = AVAILABLE_WIDTH / (grid_cols + 1);
-  int dotSpacingY = AVAILABLE_HEIGHT / (grid_rows + 1);
+  int dot_spacing_x = AVAILABLE_WIDTH / (grid_cols + 1);
+  int dot_spacing_y = AVAILABLE_HEIGHT / (grid_rows + 1);
 
-  if (dotSpacingX > maxDotSpacingX) dotSpacingX = maxDotSpacingX;
-  if (dotSpacingY > maxDotSpacingY) dotSpacingY = maxDotSpacingY;
+  if (dot_spacing_x > max_dot_spacing_x) dot_spacing_x = max_dot_spacing_x;
+  if (dot_spacing_y > max_dot_spacing_y) dot_spacing_y = max_dot_spacing_y;
 
   // Use the smaller spacing to ensure grid fits
-  int dotSpacing = (dotSpacingX < dotSpacingY) ? dotSpacingX : dotSpacingY;
+  int dot_spacing = (dot_spacing_x < dot_spacing_y) ? dot_spacing_x : dot_spacing_y;
 
   // Dot radius (leave space between dots)
-  int dotRadius = (dotSpacing / 2) - 1;
-  if (dotRadius < 2) dotRadius = 2;  // Minimum radius
-  if (dotRadius > 6) dotRadius = 6;  // Maximum radius for visibility
+  int dot_radius = (dot_spacing / 2) - 1;
+  if (dot_radius < 2) dot_radius = 2;  // Minimum radius
+  if (dot_radius > 6) dot_radius = 6;  // Maximum radius for visibility
 
   // Calculate grid dimensions
-  int gridWidth = grid_cols * dotSpacing;
-  int gridHeight = grid_rows * dotSpacing;
+  int grid_width = grid_cols * dot_spacing;
+  int grid_height = grid_rows * dot_spacing;
 
   // Center the grid
-  int gridStartX = (SCREEN_WIDTH - gridWidth) / 2;
-  int gridStartY = GRID_TOP_MARGIN + (AVAILABLE_HEIGHT - gridHeight) / 2;
+  int grid_start_x = (SCREEN_WIDTH - grid_width) / 2;
+  int grid_start_y = GRID_TOP_MARGIN + (AVAILABLE_HEIGHT - grid_height) / 2;
 
   // Helper lambda to check if position should be skipped
-  auto isSkipPosition = [&](int x, int y) -> bool {
+  auto is_skip_position = [&](int x, int y) -> bool {
     TrayHandler::Position pos(x, y);
     for (int i = 0; i < MAX_SKIP_POSITIONS; i++) {
       if (skip_positions[i].x == -1 || skip_positions[i].y == -1) {
@@ -103,7 +103,7 @@ void drawPreviewScreen(Gpu_Hal_Context_t* phost, const TrayHandler::Position ski
   };
 
   // Helper lambda to check if position is being simulated
-  auto isSimulatedPosition = [&](int x, int y) -> bool {
+  auto is_simulated_position = [&](int x, int y) -> bool {
     return params.simulate_col != 0 && params.simulate_row != 0 && x == params.simulate_col && y == params.simulate_row;
   };
 
@@ -120,22 +120,22 @@ void drawPreviewScreen(Gpu_Hal_Context_t* phost, const TrayHandler::Position ski
   // Draw all grid positions - BATCHED for efficiency
   // Draw all enabled positions in one batch (white dots)
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
-  App_WrCoCmd_Buffer(phost, POINT_SIZE(dotRadius * 16));
+  App_WrCoCmd_Buffer(phost, POINT_SIZE(dot_radius * 16));
   App_WrCoCmd_Buffer(phost, BEGIN(POINTS));
 
-  int enabledCount = 0;
+  int enabled_count = 0;
   for (int row = 1; row <= grid_rows; row++) {
     // Check if this is an even row and staggered mode is enabled
-    bool isEvenRow = (row % 2 == 0);
-    int xOffset = (params.staggered && isEvenRow) ? (dotSpacing / 2) : 0;
-    int maxCol = (params.staggered && isEvenRow) ? (grid_cols - 1) : grid_cols;
+    bool is_even_row = (row % 2 == 0);
+    int x_offset = (params.staggered && is_even_row) ? (dot_spacing / 2) : 0;
+    int max_col = (params.staggered && is_even_row) ? (grid_cols - 1) : grid_cols;
 
-    for (int col = 1; col <= maxCol; col++) {
-      if (!isSkipPosition(col, row)) {
-        int centerX = gridStartX + (col * dotSpacing) + xOffset;
-        int centerY = gridStartY + (grid_rows - row + 1) * dotSpacing;
-        App_WrCoCmd_Buffer(phost, VERTEX2F(centerX * 16, centerY * 16));
-        enabledCount++;
+    for (int col = 1; col <= max_col; col++) {
+      if (!is_skip_position(col, row)) {
+        int center_x = grid_start_x + (col * dot_spacing) + x_offset;
+        int center_y = grid_start_y + (grid_rows - row + 1) * dot_spacing;
+        App_WrCoCmd_Buffer(phost, VERTEX2F(center_x * 16, center_y * 16));
+        enabled_count++;
       }
     }
   }
@@ -144,37 +144,37 @@ void drawPreviewScreen(Gpu_Hal_Context_t* phost, const TrayHandler::Position ski
   // Draw simulated position (green dot)
   if (params.simulate_col != 0 && params.simulate_row != 0) {
     App_WrCoCmd_Buffer(phost, COLOR_RGB(0, 255, 0));
-    App_WrCoCmd_Buffer(phost, POINT_SIZE(dotRadius * 16));
+    App_WrCoCmd_Buffer(phost, POINT_SIZE(dot_radius * 16));
     App_WrCoCmd_Buffer(phost, BEGIN(POINTS));
 
     // Apply stagger offset for even rows
-    bool isEvenRow = (params.simulate_row % 2 == 0);
-    int xOffset = (params.staggered && isEvenRow) ? (dotSpacing / 2) : 0;
+    bool is_even_row = (params.simulate_row % 2 == 0);
+    int x_offset = (params.staggered && is_even_row) ? (dot_spacing / 2) : 0;
 
-    int centerX = gridStartX + (params.simulate_col * dotSpacing) + xOffset;
-    int centerY = gridStartY + ((grid_rows - params.simulate_row + 1) * dotSpacing);
-    App_WrCoCmd_Buffer(phost, VERTEX2F(centerX * 16, centerY * 16));
+    int center_x = grid_start_x + (params.simulate_col * dot_spacing) + x_offset;
+    int center_y = grid_start_y + ((grid_rows - params.simulate_row + 1) * dot_spacing);
+    App_WrCoCmd_Buffer(phost, VERTEX2F(center_x * 16, center_y * 16));
     App_WrCoCmd_Buffer(phost, END());
   }
 
   // Draw all skipped positions in one batch (gray dots)
   App_WrCoCmd_Buffer(phost, COLOR_RGB(128, 128, 128));
-  App_WrCoCmd_Buffer(phost, POINT_SIZE(dotRadius * 16));
+  App_WrCoCmd_Buffer(phost, POINT_SIZE(dot_radius * 16));
   App_WrCoCmd_Buffer(phost, BEGIN(POINTS));
 
-  int skippedCount = 0;
+  int skipped_count = 0;
   for (int row = 1; row <= grid_rows; row++) {
     // Check if this is an even row and staggered mode is enabled
-    bool isEvenRow = (row % 2 == 0);
-    int xOffset = (params.staggered && isEvenRow) ? (dotSpacing / 2) : 0;
-    int maxCol = (params.staggered && isEvenRow) ? (grid_cols - 1) : grid_cols;
+    bool is_even_row = (row % 2 == 0);
+    int x_offset = (params.staggered && is_even_row) ? (dot_spacing / 2) : 0;
+    int max_col = (params.staggered && is_even_row) ? (grid_cols - 1) : grid_cols;
 
-    for (int col = 1; col <= maxCol; col++) {
-      if (isSkipPosition(col, row)) {
-        int centerX = gridStartX + (col * dotSpacing) + xOffset;
-        int centerY = gridStartY + (grid_rows - row + 1) * dotSpacing;
-        App_WrCoCmd_Buffer(phost, VERTEX2F(centerX * 16, centerY * 16));
-        skippedCount++;
+    for (int col = 1; col <= max_col; col++) {
+      if (is_skip_position(col, row)) {
+        int center_x = grid_start_x + (col * dot_spacing) + x_offset;
+        int center_y = grid_start_y + (grid_rows - row + 1) * dot_spacing;
+        App_WrCoCmd_Buffer(phost, VERTEX2F(center_x * 16, center_y * 16));
+        skipped_count++;
       }
     }
   }

@@ -12,29 +12,29 @@ void StartupController::onStart() {
   Logger::log(F("Loading profile.."));
   profile_manager.loadProfile();
 
-  logoParams = {0, PROGMEM_STR(F("Initializing.."))};
-  drawLogoScreen(phost, logoParams);
+  logo_params = {0, PROGMEM_STR(F("Initializing.."))};
+  drawLogoScreen(phost, logo_params);
   delay(500);
 
   // Check if dispenser is online and responding
   dispenserHead.sendHandshake();
-  logoParams.status_message = PROGMEM_STR(F("Pending Response.."));
-  drawLogoScreen(phost, logoParams);
+  logo_params.status_message = PROGMEM_STR(F("Pending Response.."));
+  drawLogoScreen(phost, logo_params);
 }
 
 void StartupController::onInteraction(const Interaction& interaction) {
   // Handle "Continue" button pressed in an error dialog
   if (interaction.key_pressed == TAG_CONTINUE) {
-    logoParams.dialog_code = 0;
+    logo_params.dialog_code = 0;
     running = true;
 
     if (stage == STAGE_CLEAR) {
-      logoParams.status_message = PROGMEM_STR(F("Unlatching.."));
-      drawLogoScreen(phost, logoParams);
+      logo_params.status_message = PROGMEM_STR(F("Unlatching.."));
+      drawLogoScreen(phost, logo_params);
       dispenserHead.clearLimits();
     } else if (stage == STAGE_HOME) {
-      logoParams.status_message = PROGMEM_STR(F("Homing.."));
-      drawLogoScreen(phost, logoParams);
+      logo_params.status_message = PROGMEM_STR(F("Homing.."));
+      drawLogoScreen(phost, logo_params);
       dispenserHead.x().moveToMin();
       dispenserHead.y().moveToMin();
       dispenserHead.z().moveToMax();
@@ -50,34 +50,34 @@ void StartupController::onInteraction(const Interaction& interaction) {
 
   // Handle possible errors
   if (result.dispenser == DISPENSER_STATE_ERROR_ACK_ERROR) {
-    logoParams.dialog_code = DIALOG_ERROR_ACK_ERROR;
-    drawLogoScreen(phost, logoParams);
+    logo_params.dialog_code = DIALOG_ERROR_ACK_ERROR;
+    drawLogoScreen(phost, logo_params);
     running = false;
     return ControllerStepResult(false);
   }
   if (result.dispenser == DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED) {
-    logoParams.dialog_code = DIALOG_ERROR_MARKER_NOT_DETECTED;
-    drawLogoScreen(phost, logoParams);
+    logo_params.dialog_code = DIALOG_ERROR_MARKER_NOT_DETECTED;
+    drawLogoScreen(phost, logo_params);
     running = false;
     return ControllerStepResult(false);
   }
   if (result.dispenser == DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE) {
-    logoParams.dialog_code = DIALOG_ERROR_IR_SENSOR;
-    drawLogoScreen(phost, logoParams);
+    logo_params.dialog_code = DIALOG_ERROR_IR_SENSOR;
+    drawLogoScreen(phost, logo_params);
     running = false;
     return ControllerStepResult(false);
   }
   if (result.steppers == AXIS_STATE_ERROR_LIMIT_SWITCH) {
-    logoParams.dialog_code = DIALOG_ERROR_LIMIT_SWITCH_HOMING;
-    drawLogoScreen(phost, logoParams);
+    logo_params.dialog_code = DIALOG_ERROR_LIMIT_SWITCH_HOMING;
+    drawLogoScreen(phost, logo_params);
     running = false;
     return ControllerStepResult(false);
   }
 
   if (stage == STAGE_HANDSHAKE && result.dispenser == DISPENSER_STATE_IDLING) {
     Logger::log(F("Handshake acknowledged 👍"));
-    logoParams.status_message = "Unlatching..";
-    drawLogoScreen(phost, logoParams);
+    logo_params.status_message = "Unlatching..";
+    drawLogoScreen(phost, logo_params);
     dispenserHead.clearLimits();
     stage = STAGE_CLEAR;
     return ControllerStepResult(false);
@@ -85,8 +85,8 @@ void StartupController::onInteraction(const Interaction& interaction) {
 
   if (stage == STAGE_CLEAR && result.steppers == AXIS_STATE_COMPLETE) {
     Logger::log(F("Axis cleared 👍"));
-    logoParams.status_message = "Homing..";
-    drawLogoScreen(phost, logoParams);
+    logo_params.status_message = "Homing..";
+    drawLogoScreen(phost, logo_params);
     dispenserHead.x().moveToMin();
     dispenserHead.y().moveToMin();
     dispenserHead.z().moveToMax();

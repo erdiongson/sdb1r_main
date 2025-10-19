@@ -44,9 +44,9 @@ class SkipUtils {
 
     // Individual position skip: both x and y should be within bounds
     if (pos.x != 0 && pos.y != 0) {
-      bool withinBounds = (pos.x >= 1 && pos.x <= dimensions.columns && pos.y >= 1 && pos.y <= dimensions.rows);
+      bool within_bounds = (pos.x >= 1 && pos.x <= dimensions.columns && pos.y >= 1 && pos.y <= dimensions.rows);
       
-      if (!withinBounds) return false;
+      if (!within_bounds) return false;
       
       // If staggered mode is enabled, last column of every even row is invalid
       if (staggered && pos.y % 2 == 0 && pos.x == dimensions.columns) {
@@ -86,7 +86,7 @@ class SkipUtils {
 
     if (!skip_positions || count == 0) return;
 
-    bool firstCol = true, firstRow = true, firstPos = true;
+    bool first_col = true, first_row = true, first_pos = true;
     char temp[20];
 
     for (uint8_t i = 0; i < count && i < MAX_SKIP_POSITIONS; i++) {
@@ -94,24 +94,24 @@ class SkipUtils {
 
       // Column skip: x != 0, y == 0
       if (pos.x != 0 && pos.y == 0) {
-        if (!firstCol && out_skip_col) strcat(out_skip_col, ",");
+        if (!first_col && out_skip_col) strcat(out_skip_col, ",");
         sprintf(temp, "C%d", pos.x);
         if (out_skip_col) strcat(out_skip_col, temp);
-        firstCol = false;
+        first_col = false;
       }
       // Row skip: x == 0, y != 0
       else if (pos.x == 0 && pos.y != 0) {
-        if (!firstRow && out_skip_row) strcat(out_skip_row, ",");
+        if (!first_row && out_skip_row) strcat(out_skip_row, ",");
         sprintf(temp, "R%d", pos.y);
         if (out_skip_row) strcat(out_skip_row, temp);
-        firstRow = false;
+        first_row = false;
       }
       // Individual position skip: x != 0, y != 0
       else if (pos.x != 0 && pos.y != 0) {
-        if (!firstPos && out_skip_single_pos) strcat(out_skip_single_pos, ",");
+        if (!first_pos && out_skip_single_pos) strcat(out_skip_single_pos, ",");
         sprintf(temp, "C%dR%d", pos.x, pos.y);
         if (out_skip_single_pos) strcat(out_skip_single_pos, temp);
-        firstPos = false;
+        first_pos = false;
       }
     }
   }
@@ -127,20 +127,20 @@ class SkipUtils {
                                      SkipPosition* out_positions, uint8_t max_positions) {
     if (!out_positions || max_positions == 0) return 0;
 
-    uint8_t posIndex = 0;
+    uint8_t pos_index = 0;
 
     // Parse skip_col string (format: "C1,C9,...")
     if (skip_col && skip_col[0] != '\0') {
-      char tempCol[SKIP_STRING_LEN];
-      strncpy(tempCol, skip_col, SKIP_STRING_LEN - 1);
-      tempCol[SKIP_STRING_LEN - 1] = '\0';
+      char temp_col[SKIP_STRING_LEN];
+      strncpy(temp_col, skip_col, SKIP_STRING_LEN - 1);
+      temp_col[SKIP_STRING_LEN - 1] = '\0';
 
-      char* token = strtok(tempCol, ",");
-      while (token != nullptr && posIndex < max_positions) {
+      char* token = strtok(temp_col, ",");
+      while (token != nullptr && pos_index < max_positions) {
         if (token[0] == 'C') {
           int col = atoi(token + 1);
           if (col > 0 && col <= 255) {
-            out_positions[posIndex++] = SkipPosition(col, 0);
+            out_positions[pos_index++] = SkipPosition(col, 0);
           }
         }
         token = strtok(nullptr, ",");
@@ -149,16 +149,16 @@ class SkipUtils {
 
     // Parse skip_row string (format: "R1,R9,...")
     if (skip_row && skip_row[0] != '\0') {
-      char tempRow[SKIP_STRING_LEN];
-      strncpy(tempRow, skip_row, SKIP_STRING_LEN - 1);
-      tempRow[SKIP_STRING_LEN - 1] = '\0';
+      char temp_row[SKIP_STRING_LEN];
+      strncpy(temp_row, skip_row, SKIP_STRING_LEN - 1);
+      temp_row[SKIP_STRING_LEN - 1] = '\0';
 
-      char* token = strtok(tempRow, ",");
-      while (token != nullptr && posIndex < max_positions) {
+      char* token = strtok(temp_row, ",");
+      while (token != nullptr && pos_index < max_positions) {
         if (token[0] == 'R') {
           int row = atoi(token + 1);
           if (row > 0 && row <= 255) {
-            out_positions[posIndex++] = SkipPosition(0, row);
+            out_positions[pos_index++] = SkipPosition(0, row);
           }
         }
         token = strtok(nullptr, ",");
@@ -167,29 +167,29 @@ class SkipUtils {
 
     // Parse skip_single_pos string (format: "C2R4,C3R4,...")
     if (skip_single_pos && skip_single_pos[0] != '\0') {
-      char tempPos[SKIP_STRING_LEN];
-      strncpy(tempPos, skip_single_pos, SKIP_STRING_LEN - 1);
-      tempPos[SKIP_STRING_LEN - 1] = '\0';
+      char temp_pos[SKIP_STRING_LEN];
+      strncpy(temp_pos, skip_single_pos, SKIP_STRING_LEN - 1);
+      temp_pos[SKIP_STRING_LEN - 1] = '\0';
 
-      char* token = strtok(tempPos, ",");
-      while (token != nullptr && posIndex < max_positions) {
+      char* token = strtok(temp_pos, ",");
+      while (token != nullptr && pos_index < max_positions) {
         int col = 0, row = 0;
-        char* colStr = strstr(token, "C");
-        char* rowStr = strstr(token, "R");
+        char* col_str = strstr(token, "C");
+        char* row_str = strstr(token, "R");
 
-        if (colStr && rowStr) {
-          col = atoi(colStr + 1);
-          row = atoi(rowStr + 1);
+        if (col_str && row_str) {
+          col = atoi(col_str + 1);
+          row = atoi(row_str + 1);
 
           if (col > 0 && col <= 255 && row > 0 && row <= 255) {
-            out_positions[posIndex++] = SkipPosition(col, row);
+            out_positions[pos_index++] = SkipPosition(col, row);
           }
         }
         token = strtok(nullptr, ",");
       }
     }
 
-    return posIndex;
+    return pos_index;
   }
 
   // Converts profile skip data into an array of Position objects for TrayHandler.
@@ -203,13 +203,13 @@ class SkipUtils {
     }
 
     // Convert from SkipPosition array directly
-    int posIndex = 0;
-    for (uint8_t i = 0; i < profile.skip_count && i < MAX_SKIP_POSITIONS && posIndex < MAX_SKIP_POSITIONS; i++) {
-      const SkipPosition& skipPos = profile.skip_positions[i];
-      out_positions[posIndex++] = TrayHandler::Position(skipPos.x, skipPos.y);
+    int pos_index = 0;
+    for (uint8_t i = 0; i < profile.skip_count && i < MAX_SKIP_POSITIONS && pos_index < MAX_SKIP_POSITIONS; i++) {
+      const SkipPosition& skip_pos = profile.skip_positions[i];
+      out_positions[pos_index++] = TrayHandler::Position(skip_pos.x, skip_pos.y);
     }
 
-    return posIndex;
+    return pos_index;
   }
 
   // Converts a single skip element string to a Position.
@@ -240,17 +240,17 @@ class SkipUtils {
     } else if (type == INDIVIDUAL) {
       // Format: C<number>R<number>
       if (element[0] == 'C') {
-        char* rowStr = strchr(element + 1, 'R');
-        if (rowStr != nullptr) {
-          int colNumLen = rowStr - (element + 1);
-          if (colNumLen > 0) {
-            char colNum[SKIP_STRING_LEN];
-            strncpy(colNum, element + 1, colNumLen);
-            colNum[colNumLen] = '\0';
+        char* row_str = strchr(element + 1, 'R');
+        if (row_str != nullptr) {
+          int col_num_len = row_str - (element + 1);
+          if (col_num_len > 0) {
+            char col_num[SKIP_STRING_LEN];
+            strncpy(col_num, element + 1, col_num_len);
+            col_num[col_num_len] = '\0';
 
-            if (isAllDigits(colNum) && isAllDigits(rowStr + 1)) {
-              int col = atoi(colNum);
-              int row = atoi(rowStr + 1);
+            if (isAllDigits(col_num) && isAllDigits(row_str + 1)) {
+              int col = atoi(col_num);
+              int row = atoi(row_str + 1);
 
               if (col > 0 && row > 0) {
                 return TrayHandler::Position(col, row);
@@ -282,56 +282,56 @@ class SkipUtils {
 
     // Step 1: Capitalize 'c' to 'C' and 'r' to 'R'
     char capitalized[SKIP_STRING_LEN];
-    int capitalizedIdx = 0;
+    int capitalized_idx = 0;
 
-    for (int i = 0; input[i] != '\0' && capitalizedIdx < SKIP_STRING_LEN - 1; i++) {
+    for (int i = 0; input[i] != '\0' && capitalized_idx < SKIP_STRING_LEN - 1; i++) {
       char c = input[i];
 
       // Capitalize c to C and r to R
       if (c == 'c') c = 'C';
       if (c == 'r') c = 'R';
 
-      capitalized[capitalizedIdx++] = c;
+      capitalized[capitalized_idx++] = c;
     }
-    capitalized[capitalizedIdx] = '\0';
+    capitalized[capitalized_idx] = '\0';
 
     strncpy(output, capitalized, SKIP_STRING_LEN - 1);
     output[SKIP_STRING_LEN - 1] = '\0';
 
     // Step 2: Remove all unnecessary characters
     char normalized[SKIP_STRING_LEN];
-    int normalizedIdx = 0;
-    bool hasInvalidChar = false;
-    char firstInvalidChar = '\0';
+    int normalized_idx = 0;
+    bool has_invalid_char = false;
+    char first_invalid_char = '\0';
 
-    for (int i = 0; capitalized[i] != '\0' && normalizedIdx < SKIP_STRING_LEN - 1; i++) {
+    for (int i = 0; capitalized[i] != '\0' && normalized_idx < SKIP_STRING_LEN - 1; i++) {
       char c = capitalized[i];
 
       // Keep only valid characters based on type
-      bool isValidChar = false;
+      bool is_valid_char = false;
       if (type == COLUMN) {
         // Valid characters: C, digits, comma
-        isValidChar = (c == 'C' || (c >= '0' && c <= '9') || c == ',');
+        is_valid_char = (c == 'C' || (c >= '0' && c <= '9') || c == ',');
       } else if (type == ROW) {
         // Valid characters: R, digits, comma
-        isValidChar = (c == 'R' || (c >= '0' && c <= '9') || c == ',');
+        is_valid_char = (c == 'R' || (c >= '0' && c <= '9') || c == ',');
       } else if (type == INDIVIDUAL) {
         // Valid characters: C, R, digits, comma
-        isValidChar = (c == 'C' || c == 'R' || (c >= '0' && c <= '9') || c == ',');
+        is_valid_char = (c == 'C' || c == 'R' || (c >= '0' && c <= '9') || c == ',');
       }
 
-      if (isValidChar) {
-        normalized[normalizedIdx++] = c;
-      } else if (!hasInvalidChar) {
+      if (is_valid_char) {
+        normalized[normalized_idx++] = c;
+      } else if (!has_invalid_char) {
         // Record first invalid character for error message
-        hasInvalidChar = true;
-        firstInvalidChar = c;
+        has_invalid_char = true;
+        first_invalid_char = c;
       }
     }
-    normalized[normalizedIdx] = '\0';
+    normalized[normalized_idx] = '\0';
 
-    if (hasInvalidChar && error_message != nullptr) {
-      sprintf(error_message, "Error: Invalid character \"%c\" detected.", firstInvalidChar);
+    if (has_invalid_char && error_message != nullptr) {
+      sprintf(error_message, "Error: Invalid character \"%c\" detected.", first_invalid_char);
       return;
     }
 
@@ -342,10 +342,10 @@ class SkipUtils {
     // Step 3: Parse and validate format (CXX, RXX, or CXRX where X is a digit)
     char result[SKIP_STRING_LEN];
     result[0] = '\0';
-    bool firstEntry = true;
-    bool hasInvalidFormat = false;
-    char firstInvalidToken[SKIP_STRING_LEN];
-    firstInvalidToken[0] = '\0';
+    bool first_entry = true;
+    bool has_invalid_format = false;
+    char first_invalid_token[SKIP_STRING_LEN];
+    first_invalid_token[0] = '\0';
 
     char temp[SKIP_STRING_LEN];
     strncpy(temp, normalized, SKIP_STRING_LEN - 1);
@@ -359,17 +359,17 @@ class SkipUtils {
         continue;
       }
 
-      bool isValid = false;
+      bool is_valid = false;
 
       if (type == COLUMN) {
         // Format: C followed by digits (CXX where X is a digit)
         if (token[0] == 'C' && strlen(token) > 1 && isAllDigits(token + 1)) {
           int num = atoi(token + 1);
           if (num > 0) {
-            isValid = true;
-            if (!firstEntry) strcat(result, ",");
+            is_valid = true;
+            if (!first_entry) strcat(result, ",");
             strcat(result, token);
-            firstEntry = false;
+            first_entry = false;
           }
         }
       } else if (type == ROW) {
@@ -377,34 +377,34 @@ class SkipUtils {
         if (token[0] == 'R' && strlen(token) > 1 && isAllDigits(token + 1)) {
           int num = atoi(token + 1);
           if (num > 0) {
-            isValid = true;
-            if (!firstEntry) strcat(result, ",");
+            is_valid = true;
+            if (!first_entry) strcat(result, ",");
             strcat(result, token);
-            firstEntry = false;
+            first_entry = false;
           }
         }
       } else if (type == INDIVIDUAL) {
         // Format: C followed by digits, then R followed by digits (CXRX where X is a digit)
         if (token[0] == 'C') {
-          char* rowStr = strchr(token + 1, 'R');
-          if (rowStr != nullptr) {
+          char* row_str = strchr(token + 1, 'R');
+          if (row_str != nullptr) {
             // Extract column number between C and R
-            int colNumLen = rowStr - (token + 1);
-            if (colNumLen > 0) {
-              char colNum[SKIP_STRING_LEN];
-              strncpy(colNum, token + 1, colNumLen);
-              colNum[colNumLen] = '\0';
+            int col_num_len = row_str - (token + 1);
+            if (col_num_len > 0) {
+              char col_num[SKIP_STRING_LEN];
+              strncpy(col_num, token + 1, col_num_len);
+              col_num[col_num_len] = '\0';
 
               // Verify both parts are all digits
-              if (isAllDigits(colNum) && isAllDigits(rowStr + 1)) {
-                int col = atoi(colNum);
-                int row = atoi(rowStr + 1);
+              if (isAllDigits(col_num) && isAllDigits(row_str + 1)) {
+                int col = atoi(col_num);
+                int row = atoi(row_str + 1);
 
                 if (col > 0 && row > 0) {
-                  isValid = true;
-                  if (!firstEntry) strcat(result, ",");
+                  is_valid = true;
+                  if (!first_entry) strcat(result, ",");
                   strcat(result, token);
-                  firstEntry = false;
+                  first_entry = false;
                 }
               }
             }
@@ -413,18 +413,18 @@ class SkipUtils {
       }
 
       // Record first invalid token for error message
-      if (!isValid && !hasInvalidFormat) {
-        hasInvalidFormat = true;
-        strncpy(firstInvalidToken, token, SKIP_STRING_LEN - 1);
-        firstInvalidToken[SKIP_STRING_LEN - 1] = '\0';
+      if (!is_valid && !has_invalid_format) {
+        has_invalid_format = true;
+        strncpy(first_invalid_token, token, SKIP_STRING_LEN - 1);
+        first_invalid_token[SKIP_STRING_LEN - 1] = '\0';
       }
 
       token = strtok(nullptr, ",");
     }
 
     // Set error message for invalid format if no invalid character was detected
-    if (hasInvalidFormat && error_message != nullptr && error_message[0] == '\0') {
-      sprintf(error_message, "Error: Invalid format \"%s\" detected.", firstInvalidToken);
+    if (has_invalid_format && error_message != nullptr && error_message[0] == '\0') {
+      sprintf(error_message, "Error: Invalid format \"%s\" detected.", first_invalid_token);
       return;
     }
 
@@ -447,8 +447,8 @@ class SkipUtils {
 
     // Step 1: Format the string (remove invalid characters, validate format)
     char formatted[SKIP_STRING_LEN];
-    char formatError[SKIP_STRING_LEN];
-    format(input, type, formatted, formatError);
+    char format_error[SKIP_STRING_LEN];
+    format(input, type, formatted, format_error);
 
     // As long as provided a formatted string, return it later
     if (formatted[0] != '\0') {
@@ -457,8 +457,8 @@ class SkipUtils {
     }
 
     // If there was a format error, return it with the formatted (capitalized) string
-    if (formatError[0] != '\0') {
-      strncpy(result.error_message, formatError, SKIP_STRING_LEN - 1);
+    if (format_error[0] != '\0') {
+      strncpy(result.error_message, format_error, SKIP_STRING_LEN - 1);
       result.error_message[SKIP_STRING_LEN - 1] = '\0';
       return result;
     }
@@ -468,12 +468,12 @@ class SkipUtils {
     strncpy(temp, formatted, SKIP_STRING_LEN - 1);
     temp[SKIP_STRING_LEN - 1] = '\0';
 
-    char finalResult[SKIP_STRING_LEN];
-    finalResult[0] = '\0';
-    bool firstEntry = true;
-    bool hasOutOfBounds = false;
-    char firstOutOfBoundsToken[SKIP_STRING_LEN];
-    firstOutOfBoundsToken[0] = '\0';
+    char final_result[SKIP_STRING_LEN];
+    final_result[0] = '\0';
+    bool first_entry = true;
+    bool has_out_of_bounds = false;
+    char first_out_of_bounds_token[SKIP_STRING_LEN];
+    first_out_of_bounds_token[0] = '\0';
 
     char* token = strtok(temp, ",");
     while (token != nullptr) {
@@ -482,27 +482,27 @@ class SkipUtils {
 
       // Check if position is valid and within bounds
       if (isValidSkipPosition(pos, dimensions, staggered)) {
-        if (!firstEntry) strcat(finalResult, ",");
-        strcat(finalResult, token);
-        firstEntry = false;
-      } else if (!hasOutOfBounds) {
+        if (!first_entry) strcat(final_result, ",");
+        strcat(final_result, token);
+        first_entry = false;
+      } else if (!has_out_of_bounds) {
         // Record first out-of-bounds token for error message
-        hasOutOfBounds = true;
-        strncpy(firstOutOfBoundsToken, token, SKIP_STRING_LEN - 1);
-        firstOutOfBoundsToken[SKIP_STRING_LEN - 1] = '\0';
+        has_out_of_bounds = true;
+        strncpy(first_out_of_bounds_token, token, SKIP_STRING_LEN - 1);
+        first_out_of_bounds_token[SKIP_STRING_LEN - 1] = '\0';
       }
 
       token = strtok(nullptr, ",");
     }
 
     // If there was an out-of-bounds error, return it with the cleaned string
-    if (hasOutOfBounds) {
-      sprintf(result.error_message, "Error: Position \"%s\" is out of bounds.", firstOutOfBoundsToken);
+    if (has_out_of_bounds) {
+      sprintf(result.error_message, "Error: Position \"%s\" is out of bounds.", first_out_of_bounds_token);
       return result;
     }
 
     // Copy final result to output
-    strncpy(result.cleaned, finalResult, SKIP_STRING_LEN - 1);
+    strncpy(result.cleaned, final_result, SKIP_STRING_LEN - 1);
     result.cleaned[SKIP_STRING_LEN - 1] = '\0';
 
     // Check if input was modified

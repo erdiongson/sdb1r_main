@@ -59,69 +59,69 @@ class TrayPositionHandler {
   Position skip_positions[MAX_SKIP_POSITIONS] = { Position(-1, -1) };
 
   // Cached values calculated during reset
-  int totalValidTubes = 0;
-  int tubesDispensed = 0;
+  int total_valid_tubes = 0;
+  int tubes_dispensed = 0;
 
   // Calculate the next valid position within the current row.
   // @return PositionResult.
-  PositionResult getNextInRow(const Position& startPos, const int dir) {
-    Position nextPos = startPos;
+  PositionResult getNextInRow(const Position& start_pos, const int dir) {
+    Position next_pos = start_pos;
     do {
       // Advance to next position based on current direction
-      nextPos.x += dir;
+      next_pos.x += dir;
 
       // Handle reaching the end of the row
-      if (nextPos.x > dimensions.columns || nextPos.x < 1) {
+      if (next_pos.x > dimensions.columns || next_pos.x < 1) {
         // Reached end of row without finding a valid position
         return PositionResult::Done();
       }
 
-    } while (isInvalidPosition(nextPos));
+    } while (isInvalidPosition(next_pos));
 
     // Return the next valid position
-    return PositionResult::Valid(nextPos, dir);
+    return PositionResult::Valid(next_pos, dir);
   }
 
-  PositionResult getNextInNewRow(const Position& startPos) {
+  PositionResult getNextInNewRow(const Position& start_pos) {
     // Find first and last non-skipped positions in the row directly
-    Position first(0, startPos.y);
-    Position last(0, startPos.y);
-    int validCount = 0;
+    Position first(0, start_pos.y);
+    Position last(0, start_pos.y);
+    int valid_count = 0;
 
     // Single pass through the row to find first and last valid positions
     for (int x = 1; x <= dimensions.columns; x++) {
-      Position currentPos(x, startPos.y);
-      if (!isInvalidPosition(currentPos)) {
+      Position current_pos(x, start_pos.y);
+      if (!isInvalidPosition(current_pos)) {
         // If this is the first valid position found, set both first and last
-        if (validCount == 0) {
-          first = currentPos;
-          last = currentPos;
+        if (valid_count == 0) {
+          first = current_pos;
+          last = current_pos;
         } else {
           // Otherwise, update only the last position
-          last = currentPos;
+          last = current_pos;
         }
-        validCount++;
+        valid_count++;
       }
     }
 
     // Return based on the number of valid positions found
-    if (validCount == 0) {
+    if (valid_count == 0) {
       // No valid positions in this row
       return PositionResult::Done();
-    } else if (validCount == 1) {
+    } else if (valid_count == 1) {
       // Only one valid position, return it
       return PositionResult::Valid(first, direction);
     } else {
       // Multiple valid positions, find closest one
       // Calculate distances from current position to first and last
-      int distToFirst = startPos.x - first.x;
-      if (distToFirst < 0) distToFirst = -distToFirst;
+      int dist_to_first = start_pos.x - first.x;
+      if (dist_to_first < 0) dist_to_first = -dist_to_first;
 
-      int distToLast = startPos.x - last.x;
-      if (distToLast < 0) distToLast = -distToLast;
+      int dist_to_last = start_pos.x - last.x;
+      if (dist_to_last < 0) dist_to_last = -dist_to_last;
 
       // Return the closest one and set direction accordingly
-      if (distToFirst <= distToLast) {
+      if (dist_to_first <= dist_to_last) {
         return PositionResult::Valid(first, 1);  // Moving right
       } else {
         return PositionResult::Valid(last, -1);  // Moving left
@@ -182,16 +182,16 @@ class TrayPositionHandler {
 
   bool shouldFlip(Position skips[MAX_SKIP_POSITIONS]) {
     // If there are more vertical skips than horizontal skips, flip the direction
-    int verticalSkips = 0;
-    int horizontalSkips = 0;
+    int vertical_skips = 0;
+    int horizontal_skips = 0;
     for (int i = 0; i < MAX_SKIP_POSITIONS; i++) {
       if (skips[i].x == -1 || skips[i].y == -1) {
         break;
       }
-      if (skips[i].x == 0) horizontalSkips++;
-      if (skips[i].y == 0) verticalSkips++;
+      if (skips[i].x == 0) horizontal_skips++;
+      if (skips[i].y == 0) vertical_skips++;
     }
-    return verticalSkips > horizontalSkips;
+    return vertical_skips > horizontal_skips;
   }
 
   Position flipPosition(const Position& pos) const { return Position(pos.y, pos.x); }
@@ -231,12 +231,12 @@ class TrayPositionHandler {
   // Load tray configuration.
   // @param dimensions Dimensions of the tray grid.
   // @param positions Array of positions to skip/ignore.
-  void load(const Dimensions& dimensions, const Position newPositions[MAX_SKIP_POSITIONS], bool staggered) {
+  void load(const Dimensions& dimensions, const Position new_positions[MAX_SKIP_POSITIONS], bool staggered) {
     this->staggered = staggered;
-    flipped = shouldFlip(newPositions);
+    flipped = shouldFlip(new_positions);
 
     this->dimensions = flipped ? flipDimensions(dimensions) : dimensions;
-    copyPositions(newPositions, skip_positions, flipped);
+    copyPositions(new_positions, skip_positions, flipped);
   }
 
   // Get the skip positions array.
@@ -249,8 +249,8 @@ class TrayPositionHandler {
   // @return PositionResult containing the new position
   PositionResult goToNextValidPosition() {
     // Store the previous position before updating
-    Position previousPosition = current_position;
-    Position previousPositionTransformed = flipped ? flipPosition(previousPosition) : previousPosition;
+    Position previous_position = current_position;
+    Position previous_position_transformed = flipped ? flipPosition(previous_position) : previous_position;
 
     PositionResult result = getNext();
 
@@ -261,17 +261,17 @@ class TrayPositionHandler {
       direction = result.direction;
 
       // Increment tubes dispensed counter
-      tubesDispensed++;
+      tubes_dispensed++;
 
       // Transform the result position if the grid is flipped
-      Position newPosition;
+      Position new_position;
       if (flipped) {
-        newPosition = flipPosition(result.position);
+        new_position = flipPosition(result.position);
       } else {
-        newPosition = result.position;
+        new_position = result.position;
       }
 
-      result.position = newPosition;
+      result.position = new_position;
     }
 
     return result;
@@ -287,16 +287,16 @@ class TrayPositionHandler {
       current_position = getNext().position;
     }
 
-    tubesDispensed = 0;
+    tubes_dispensed = 0;
 
     // Calculate total valid tubes once
-    int staggeredRows = staggered ? dimensions.rows / 2 : 0;
-    int totalTubes = dimensions.rows * dimensions.columns - staggeredRows;
-    int skipCount = 0;
+    int staggered_rows = staggered ? dimensions.rows / 2 : 0;
+    int total_tubes = dimensions.rows * dimensions.columns - staggered_rows;
+    int skip_count = 0;
 
     // Count skip positions - track which rows/columns are already skipped to avoid double-counting
-    bool skippedRows[TUBES_Y_MAX + 1] = { false };
-    bool skippedCols[TUBES_X_MAX + 1] = { false };
+    bool skipped_rows[TUBES_Y_MAX + 1] = { false };
+    bool skipped_cols[TUBES_X_MAX + 1] = { false };
 
     // First pass: mark entire rows and columns as skipped
     for (int i = 0; i < MAX_SKIP_POSITIONS; i++) {
@@ -304,18 +304,18 @@ class TrayPositionHandler {
 
       // Mark entire column as skipped
       if (skip_positions[i].y == 0 && skip_positions[i].x > 0) {
-        if (!skippedCols[skip_positions[i].x]) {
-          skippedCols[skip_positions[i].x] = true;
-          int rowsInCol = staggered && skip_positions[i].x == dimensions.columns ? dimensions.rows / 2 : dimensions.rows;
-          skipCount += rowsInCol;
+        if (!skipped_cols[skip_positions[i].x]) {
+          skipped_cols[skip_positions[i].x] = true;
+          int rows_in_col = staggered && skip_positions[i].x == dimensions.columns ? dimensions.rows / 2 : dimensions.rows;
+          skip_count += rows_in_col;
         }
       }
       // Mark entire row as skipped
       else if (skip_positions[i].x == 0 && skip_positions[i].y > 0) {
-        if (!skippedRows[skip_positions[i].y]) {
-          skippedRows[skip_positions[i].y] = true;
-          int colsInRow = staggered && skip_positions[i].y % 2 == 0 ? dimensions.columns - 1 : dimensions.columns;
-          skipCount += colsInRow;
+        if (!skipped_rows[skip_positions[i].y]) {
+          skipped_rows[skip_positions[i].y] = true;
+          int cols_in_row = staggered && skip_positions[i].y % 2 == 0 ? dimensions.columns - 1 : dimensions.columns;
+          skip_count += cols_in_row;
         }
       }
     }
@@ -326,13 +326,13 @@ class TrayPositionHandler {
 
       // Count individual skip positions only if not in a skipped row or column
       if (skip_positions[i].x > 0 && skip_positions[i].y > 0) {
-        if (!skippedRows[skip_positions[i].y] && !skippedCols[skip_positions[i].x]) {
-          skipCount++;
+        if (!skipped_rows[skip_positions[i].y] && !skipped_cols[skip_positions[i].x]) {
+          skip_count++;
         }
       }
     }
 
-    totalValidTubes = totalTubes - skipCount;
+    total_valid_tubes = total_tubes - skip_count;
 
     return current_position;
   }
@@ -353,11 +353,11 @@ class TrayPositionHandler {
 
   // Calculate the number of tubes left to process.
   // @return Number of remaining tubes.
-  int getTubesLeft() const { return totalValidTubes - tubesDispensed; }
+  int getTubesLeft() const { return total_valid_tubes - tubes_dispensed; }
 
   // Get the number of tubes dispensed so far.
   // @return Number of tubes dispensed.
-  int getTubesDispensed() const { return tubesDispensed; }
+  int getTubesDispensed() const { return tubes_dispensed; }
 };
 
 }  // namespace TrayHandler

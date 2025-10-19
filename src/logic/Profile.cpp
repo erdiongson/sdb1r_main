@@ -12,8 +12,9 @@ Date created - 2022.12.14 - XentiQ version
 #include "../gpu/Platform.h"
 #include "../Utils.h"
 #include "../Constants.h"
-#include "../../Config.h"
+#include "Profile.h"
 #include "../views/common/Keyboards.h"
+#include "../views/ViewCommon.h"
 #include "TrayPositionHandler.h"
 
 const int PROFILE_SIZE = sizeof(Profile);
@@ -208,10 +209,10 @@ PasswordVerificationResult ProfileManager::verifyPassword(Gpu_Hal_Context_t* pho
   readPassEEPROM(currentPassword);
   if (strcmp(currentPassword, "") == 0) strcpy_P(currentPassword, INITIAL_PASSWORD);
 
-  KeyboardResult kbResult = getKeyboardValue(phost, inputPassword, "Enter Password", FALSE, PASSWORD_MAX_LEN, NULL);
+  KeyboardResult kb_result = getKeyboardValue(phost, inputPassword, PROGMEM_STR(F("Enter Password")), FALSE, PASSWORD_MAX_LEN, NULL);
 
   // Cancelled
-  if (kbResult.action == ACTION_BACK || strcmp(inputPassword, "") == 0) {
+  if (kb_result.action == ACTION_BACK || strcmp(inputPassword, "") == 0) {
     return PASSWORD_CANCELLED;
   }
 
@@ -244,10 +245,10 @@ uint8_t ProfileManager::getCurrentProfileNum(void) {
 }
 
 // Sets the current profile number/ID.
-// @param profileNum The profile number to set as current.
-void ProfileManager::setCurrentProfileNum(uint8_t profileNum) {
-  if (profileNum < MAX_PROFILES) {
-    currentProfileIndex = profileNum;
+// @param profile_num The profile number to set as current.
+void ProfileManager::setCurrentProfileNum(uint8_t profile_num) {
+  if (profile_num < MAX_PROFILES) {
+    currentProfileIndex = profile_num;
   }
 }
 

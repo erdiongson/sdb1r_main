@@ -1,6 +1,7 @@
 #include "ProfileController.h"
 #include "../../views/settings/ProfileScreen.h"
 #include "../../views/common/Keyboards.h"
+#include "../../views/ViewCommon.h"
 
 ProfileController::ProfileController(ControllerParams params) : BaseController(params), selected_profile_num(0) {}
 
@@ -70,7 +71,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
       char new_password_1[PASSWORD_MAX_LEN] = "";
       char new_password_2[PASSWORD_MAX_LEN] = "";
 
-      KeyboardResult kbResult1 = getKeyboardValue(phost, new_password_1, "Enter New Password", FALSE, PASSWORD_MAX_LEN, NULL);
+      KeyboardResult kbResult1 = getKeyboardValue(phost, new_password_1, PROGMEM_STR(F("Enter New Password")), FALSE, PASSWORD_MAX_LEN, NULL);
       if (kbResult1.action == ACTION_BACK || new_password_1[0] == 0) {
         params.keypressed = 0;
         params.cur_prof_num = selected_profile_num;
@@ -79,7 +80,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
         break;
       }
 
-      KeyboardResult kbResult2 = getKeyboardValue(phost, new_password_2, "Enter New Password again", FALSE, PASSWORD_MAX_LEN, NULL);
+      KeyboardResult kbResult2 = getKeyboardValue(phost, new_password_2, PROGMEM_STR(F("Enter New Password again")), FALSE, PASSWORD_MAX_LEN, NULL);
 
       if (kbResult2.action == ACTION_BACK || new_password_2[0] == 0) {
         params.keypressed = 0;

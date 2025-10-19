@@ -102,13 +102,13 @@ class Axis {
 
   void moveTo(long position) {
     if (!enabled) return;
-    bool wouldMovePositive = (position > stepper.currentPosition());
-    if (wouldMovePositive && isAtMax()) return;   // Trying to move positive but at max limit
-    if (!wouldMovePositive && isAtMin()) return;  // Trying to move negative but at min limit
+    bool would_move_positive = (position > stepper.currentPosition());
+    if (would_move_positive && isAtMax()) return;   // Trying to move positive but at max limit
+    if (!would_move_positive && isAtMin()) return;  // Trying to move negative but at min limit
     running = true;
     to_limit = false;
     stepper.moveTo(position);
-    moving_positive = wouldMovePositive;
+    moving_positive = would_move_positive;
 
     prev_min_state = isAtMin();
     prev_max_state = isAtMax();
@@ -128,27 +128,27 @@ class Axis {
   // Updates the stored previous state.
   // @return True if switch just got hit, false otherwise.
   bool didHitMin() {
-    bool rawState = isAtMin();
+    bool raw_state = isAtMin();
     
     // Update counter based on raw state
-    if (rawState) {
+    if (raw_state) {
       if (min_counter < 3) min_counter++;
     } else {
       if (min_counter > -3) min_counter--;
     }
     
     // Determine debounced current state
-    bool currentState = prev_min_state;
+    bool current_state = prev_min_state;
     if (min_counter >= 3) {
-      currentState = true;
+      current_state = true;
     } else if (min_counter <= -3) {
-      currentState = false;
+      current_state = false;
     }
     
     // Detect transition from not-hit to hit
-    bool justHit = !prev_min_state && currentState;
-    prev_min_state = currentState;
-    return justHit;
+    bool just_hit = !prev_min_state && current_state;
+    prev_min_state = current_state;
+    return just_hit;
   }
 
   // Returns true if the max limit switch transitioned from not-hit to hit.
@@ -156,27 +156,27 @@ class Axis {
   // Updates the stored previous state.
   // @return True if switch just got hit, false otherwise.
   bool didHitMax() {
-    bool rawState = isAtMax();
+    bool raw_state = isAtMax();
     
     // Update counter based on raw state
-    if (rawState) {
+    if (raw_state) {
       if (max_counter < 3) max_counter++;
     } else {
       if (max_counter > -3) max_counter--;
     }
     
     // Determine debounced current state
-    bool currentState = prev_max_state;
+    bool current_state = prev_max_state;
     if (max_counter >= 3) {
-      currentState = true;
+      current_state = true;
     } else if (max_counter <= -3) {
-      currentState = false;
+      current_state = false;
     }
     
     // Detect transition from not-hit to hit
-    bool justHit = !prev_max_state && currentState;
-    prev_max_state = currentState;
-    return justHit;
+    bool just_hit = !prev_max_state && current_state;
+    prev_max_state = current_state;
+    return just_hit;
   }
 
   // Process one step of the motor movement.
@@ -223,8 +223,8 @@ class Axis {
     if (!enabled) return;
     running = false;
     // Force immediate stop by setting target to current position
-    long currentPos = stepper.currentPosition();
-    stepper.setCurrentPosition(currentPos);  // Resets both current and target to same value
+    long current_pos = stepper.currentPosition();
+    stepper.setCurrentPosition(current_pos);  // Resets both current and target to same value
   }
 
   AccelStepper& getStepper() { return stepper; }

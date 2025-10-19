@@ -30,8 +30,8 @@ class RunController : public BaseController {
   int32_t target_y = 0;
   int cycle = 0;
 
-  void processStageLogic(DispenserProcessResult& dispenserProcessResult);
-  void startStage(Stage newStage);
+  void processStageLogic(DispenserProcessResult& dispenser_process_result);
+  void startStage(Stage new_stage);
   void pause();
   void resume();
   void stop();
