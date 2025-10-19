@@ -16,7 +16,6 @@ struct {
 
 void drawKeyboard(Gpu_Hal_Context_t* phost, uint8_t keypressed, char* displaytext, char* displaytitle, bool numlock,
                   bool caplock, const char* errormsg, uint8_t scroll_offset) {
-  char buf[KEYBOARD_MAX_LEN];
 
   // Display List start
   Gpu_CoCmd_Dlstart(phost);
@@ -206,8 +205,8 @@ KeyboardResult getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* c
   uint8_t font = 27;
   
   // Use static buffer to avoid VLA and stack issues
-  static char buf[KEYBOARD_MAX_LEN];
-  memset(buf, 0, KEYBOARD_MAX_LEN);
+  static char keypad_value_buffer[KEYBOARD_MAX_LEN];
+  memset(keypad_value_buffer, 0, KEYBOARD_MAX_LEN);
   
   uint8_t curpos = 0;
   uint8_t scroll_offset = 0;  // Track scroll position
@@ -215,13 +214,13 @@ KeyboardResult getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* c
   bool numlock = false;
   bool caplock = false;
 
-  strcpy(buf, curtext);
+  strcpy(keypad_value_buffer, curtext);
 
-  curpos = strlen(buf);  // starting pos
-  buf[curpos] = 0;
+  curpos = strlen(keypad_value_buffer);  // starting pos
+  keypad_value_buffer[curpos] = 0;
   Flag.Numeric = OFF;  // Disable the numbers and spcial charaters
 
-  drawKeyboard(phost, 0, buf, curtitle, numlock, caplock, errormsg, scroll_offset);
+  drawKeyboard(phost, 0, keypad_value_buffer, curtitle, numlock, caplock, errormsg, scroll_offset);
   InteractionsHandler::waitForTouchRelease();
 
   if (errormsg != NULL && errormsg[0] != '\0') {
@@ -234,23 +233,23 @@ KeyboardResult getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* c
     // Only update the keyboard if a key was pressed
     if (keypressed == -1) continue;
 
-    drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, NULL, scroll_offset);
+    drawKeyboard(phost, keypressed, keypad_value_buffer, curtitle, numlock, caplock, NULL, scroll_offset);
 
     switch (keypressed) {
       // No key
       case 0:
-        drawKeyboard(phost, 0, buf, curtitle, numlock, caplock, NULL, scroll_offset);
+        drawKeyboard(phost, 0, keypad_value_buffer, curtitle, numlock, caplock, NULL, scroll_offset);
         break;
 
       case BACK_SPACE:
         // check in the line there is any characters are present, cursor not included
         if (curpos > 0) {
           curpos--;  // clear the character in the buffer
-          buf[curpos] = 0;
+          keypad_value_buffer[curpos] = 0;
           if (password) curtext[curpos] = 0;
           
           // Auto-adjust scroll if we deleted enough to go back a line
-          uint8_t text_len = strlen(buf);
+          uint8_t text_len = strlen(keypad_value_buffer);
           uint8_t total_lines = (text_len + KEYBOARD_MAX_PER_LINE - 1) / KEYBOARD_MAX_PER_LINE;
           if (total_lines == 0) total_lines = 1;
           if (scroll_offset >= total_lines - KEYBOARD_VISIBLE_LINES + 1 && scroll_offset > 0) {
@@ -269,7 +268,7 @@ KeyboardResult getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* c
         
       case CLEAR_KEY:
         curpos = 0;
-        buf[curpos] = 0;
+        keypad_value_buffer[curpos] = 0;
         if (password) curtext[curpos] = 0;
         scroll_offset = 0;  // Reset scroll when clearing
         break;
@@ -281,7 +280,7 @@ KeyboardResult getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* c
         break;
         
       case KEYBOARD_SCROLL_DOWN: {
-        uint8_t text_len = strlen(buf);
+        uint8_t text_len = strlen(keypad_value_buffer);
         uint8_t total_lines = (text_len + KEYBOARD_MAX_PER_LINE - 1) / KEYBOARD_MAX_PER_LINE;
         if (total_lines > KEYBOARD_MAX_LINES) total_lines = KEYBOARD_MAX_LINES;
         if (scroll_offset + KEYBOARD_VISIBLE_LINES < total_lines) {
@@ -294,20 +293,20 @@ KeyboardResult getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* c
         return KeyboardResult(ACTION_BACK);
 
       case SAVE_KEY:
-        strcpy(curtext, buf);
+        strcpy(curtext, keypad_value_buffer);
         return KeyboardResult(ACTION_ENTER);
 
       default:
         if (curpos < maxlen - 1 && curpos < KEYBOARD_MAX_LEN - 1) {
-          buf[curpos] = keypressed;
+          keypad_value_buffer[curpos] = keypressed;
           if (password) {
             curtext[curpos] = '*';
             curtext[curpos + 1] = 0;
           }
-          buf[++curpos] = 0;
+          keypad_value_buffer[++curpos] = 0;
           
           // Auto-scroll down if text extends beyond visible area
-          uint8_t text_len = strlen(buf);
+          uint8_t text_len = strlen(keypad_value_buffer);
           uint8_t total_lines = (text_len + KEYBOARD_MAX_PER_LINE - 1) / KEYBOARD_MAX_PER_LINE;
           if (total_lines > KEYBOARD_VISIBLE_LINES) {
             uint8_t max_scroll = total_lines - KEYBOARD_VISIBLE_LINES;
@@ -316,27 +315,18 @@ KeyboardResult getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* c
             }
           }
           
-          drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, NULL, scroll_offset);
+          drawKeyboard(phost, keypressed, keypad_value_buffer, curtitle, numlock, caplock, NULL, scroll_offset);
         } else {
-          drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, "Max length reached", scroll_offset);
+          drawKeyboard(phost, keypressed, keypad_value_buffer, curtitle, numlock, caplock, "Max length reached", scroll_offset);
           delay(KEYBOARD_ERROR_DISPLAY_MS);
-          drawKeyboard(phost, keypressed, buf, curtitle, numlock, caplock, NULL, scroll_offset);
+          drawKeyboard(phost, keypressed, keypad_value_buffer, curtitle, numlock, caplock, NULL, scroll_offset);
         }
         break;
     }
   }
 }
 
-void roundOneDecimal(float* x) {
-  char buf[KEYPAD_MAX_LEN];
-
-  dtostrf(*x, 3, 1, buf);
-  *x = atof(buf);
-}
-
 void drawKeypad(Gpu_Hal_Context_t* phost, int32_t keypressed, char* displaynum, int8_t errorcode) {
-  char buf[KEYPAD_MAX_LEN];
-
   Gpu_CoCmd_Dlstart(phost);
   App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(120, 120, 120));
   App_WrCoCmd_Buffer(phost, CLEAR(1, 1, 1));
@@ -375,8 +365,7 @@ void drawKeypad(Gpu_Hal_Context_t* phost, int32_t keypressed, char* displaynum, 
   App_WrCoCmd_Buffer(phost, CLEAR(1, 1, 1));
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));  // Text Color
 
-  sprintf(buf, "%s", displaynum);
-  Gpu_CoCmd_Text(phost, 0, 0, 30, 0, buf);
+  Gpu_CoCmd_Text(phost, 0, 0, 30, 0, displaynum);
 
   App_WrCoCmd_Buffer(phost, DISPLAY());
   Gpu_CoCmd_Swap(phost);
@@ -385,17 +374,19 @@ void drawKeypad(Gpu_Hal_Context_t* phost, int32_t keypressed, char* displaynum, 
 
 float getKeypadValue(Gpu_Hal_Context_t* phost, float curval, float minval, float maxval, bool isfloat) {
   phost = &host;
-  char buf[KEYPAD_MAX_LEN] = "";
+  // Use static buffer to avoid stack issues
+  static char keypad_render_buffer[KEYPAD_MAX_LEN];
+  memset(keypad_render_buffer, 0, KEYPAD_MAX_LEN);
   int8_t curpos;
   int8_t lastKeyPressed = 0;
 
-  // Load buf with curval
-  dtostrf(curval, 2, isfloat ? 1 : 0, buf);
-  curpos = strlen(buf);
+  // Load keypad_render_buffer with curval
+  dtostrf(curval, 2, isfloat ? 1 : 0, keypad_render_buffer);
+  curpos = strlen(keypad_render_buffer);
 
   InteractionsHandler::waitForTouchRelease();
 
-  drawKeypad(phost, 0, buf, 0);
+  drawKeypad(phost, 0, keypad_render_buffer, 0);
 
   while (true) {
     int keypressed = InteractionsHandler::getTouchStateChanged();
@@ -408,13 +399,13 @@ float getKeypadValue(Gpu_Hal_Context_t* phost, float curval, float minval, float
     switch (keypressed) {
       // No key
       case 0:
-        drawKeypad(phost, 0, buf, 0);
+        drawKeypad(phost, 0, keypad_render_buffer, 0);
         break;
 
       case BACK_SPACE:
         if (curpos >= 0) {
           if (curpos > 0) curpos--;
-          buf[curpos] = 0;
+          keypad_render_buffer[curpos] = 0;
         }
         break;
 
@@ -422,13 +413,13 @@ float getKeypadValue(Gpu_Hal_Context_t* phost, float curval, float minval, float
         return curval;
 
       case NUM_ENTER: {
-        float tempval = atof(buf);
+        float tempval = atof(keypad_render_buffer);
 
         // Check if the value is within the range
         if (tempval > maxval || tempval < minval) {
           // If no, load the max or min value and show it on the keypad
-          dtostrf(tempval > maxval ? maxval : minval, 2, isfloat ? 1 : 0, buf);
-          curpos = strlen(buf);
+          dtostrf(tempval > maxval ? maxval : minval, 2, isfloat ? 1 : 0, keypad_render_buffer);
+          curpos = strlen(keypad_render_buffer);
           break;
         }
 
@@ -438,11 +429,11 @@ float getKeypadValue(Gpu_Hal_Context_t* phost, float curval, float minval, float
       // Any other key
       default:
         if (curpos < KEYPAD_MAX_LEN - 1) {
-          buf[curpos] = keypressed;
-          buf[++curpos] = 0;
-          drawKeypad(phost, keypressed, buf, 0);
+          keypad_render_buffer[curpos] = keypressed;
+          keypad_render_buffer[++curpos] = 0;
+          drawKeypad(phost, keypressed, keypad_render_buffer, 0);
         } else {  // max entry
-          drawKeypad(phost, keypressed, buf, 1);
+          drawKeypad(phost, keypressed, keypad_render_buffer, 1);
         }
         break;
     }

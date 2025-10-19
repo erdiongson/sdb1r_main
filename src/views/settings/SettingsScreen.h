@@ -152,25 +152,25 @@ inline void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams pa
   App_WrCoCmd_Buffer(phost, params.errors.pitch_x ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
 
   dtostrf(profile.pitch_x, 3, 1, temp_buffer);
-  Gpu_CoCmd_Text(phost, 180, 110, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, temp_buffer);
+  Gpu_CoCmd_Text(phost, 180, 119, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, temp_buffer);
 
   // Text - Pitch Column
   App_WrCoCmd_Buffer(phost, params.errors.pitch_y ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
 
   dtostrf(profile.pitch_y, 3, 1, temp_buffer);
-  Gpu_CoCmd_Text(phost, 122, 110, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, temp_buffer);
+  Gpu_CoCmd_Text(phost, 122, 119, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, temp_buffer);
 
   // Text - Origin X
   App_WrCoCmd_Buffer(phost, params.errors.origin_x ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
 
   dtostrf(profile.tray_origin_x, 3, 1, temp_buffer);
-  Gpu_CoCmd_Text(phost, 180, 125, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, temp_buffer);
+  Gpu_CoCmd_Text(phost, 180, 143, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, temp_buffer);
 
   // Text - Origin Y
   App_WrCoCmd_Buffer(phost, params.errors.origin_y ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
 
   dtostrf(profile.tray_origin_y, 3, 1, temp_buffer);
-  Gpu_CoCmd_Text(phost, 122, 125, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, temp_buffer);
+  Gpu_CoCmd_Text(phost, 122, 143, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, temp_buffer);
 
   // Text - Cycles
   App_WrCoCmd_Buffer(phost, params.errors.cycles ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
@@ -180,7 +180,7 @@ inline void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams pa
   // Text - Z Dip
   App_WrCoCmd_Buffer(phost, params.errors.z_dip ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
   dtostrf(profile.z_dip, 3, 1, temp_buffer);
-  Gpu_CoCmd_Text(phost, 255, 110, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, temp_buffer);
+  Gpu_CoCmd_Text(phost, 255, 133, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, temp_buffer);
 
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));

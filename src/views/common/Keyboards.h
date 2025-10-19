@@ -51,10 +51,6 @@ void waitKeyRelease(void);
 // @return KeyboardResult containing the action taken (ACTION_ENTER or ACTION_BACK).
 KeyboardResult getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* curtitle, bool password, uint8_t maxlen, const char* errormsg);
 
-// Rounds a float value to one decimal place.
-// @param x Pointer to the float value to round.
-void roundOneDecimal(float* x);
-
 // Displays the numeric keypad interface.
 // @param phost GPU context pointer.
 // @param keypressed Currently pressed key code.

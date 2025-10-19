@@ -26,11 +26,8 @@ void ProfileManager::blankEEPROM(void) {
 }
 
 void ProfileManager::preLoadEEPROM(void) {
-  char buf[20];
-
   for (int i = 0; i < MAX_PROFILES; i++) {
-    sprintf(buf, "profile %d", i + 1);
-    strcpy(currentProfile.profile_name, buf);
+    snprintf(currentProfile.profile_name, sizeof(currentProfile.profile_name), "profile %d", i + 1);
 
     currentProfile.tube_no_x = TUBES_X_MAX;
     currentProfile.tube_no_y = TUBES_Y_MAX;
@@ -167,8 +164,6 @@ void ProfileManager::writeProfileEEPROM(int index) {
 }
 
 void ProfileManager::readProfileEEPROM(int index) {
-  char buf[10];
-
   int address = (index * RESERVED_PROFILE_SIZE) + sizeof(uint8_t);
   Logger::log("Starting Address = ", (float)address);
 
