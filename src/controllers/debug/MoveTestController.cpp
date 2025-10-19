@@ -7,13 +7,13 @@ MoveTestController::MoveTestController(ControllerParams params) : BaseController
 void MoveTestController::onStart() {
   Logger::log(F("MoveTestController::on_start"));
 
-  LimitSwitchStates limitStates = {};
-  limitStates.x_max_limit = false;
-  limitStates.x_min_limit = false;
-  limitStates.y_max_limit = false;
-  limitStates.y_min_limit = false;
-  limitStates.z_max_limit = false;
-  limitStates.z_min_limit = false;
+  LimitSwitchStates limit_states = {};
+  limit_states.x_max_limit = false;
+  limit_states.x_min_limit = false;
+  limit_states.y_max_limit = false;
+  limit_states.y_min_limit = false;
+  limit_states.z_max_limit = false;
+  limit_states.z_min_limit = false;
 
   MoveTestParams params;
   params.xy_distance_cm = xy_distance_cm;
@@ -23,7 +23,7 @@ void MoveTestController::onStart() {
   params.total_bounce_count = 0;
   params.blocking = blocking;
 
-  drawMoveTestScreen(phost, limitStates, params);
+  drawMoveTestScreen(phost, limit_states, params);
 }
 
 void MoveTestController::onInteraction(const Interaction& interaction) {
@@ -215,13 +215,13 @@ ControllerStepResult MoveTestController::onStep() {
 }
 
 void MoveTestController::updateScreen() {
-  LimitSwitchStates limitStates;
-  limitStates.x_max_limit = dispenserHead.x().isAtMax();
-  limitStates.x_min_limit = dispenserHead.x().isAtMin();
-  limitStates.y_max_limit = dispenserHead.y().isAtMax();
-  limitStates.y_min_limit = dispenserHead.y().isAtMin();
-  limitStates.z_max_limit = dispenserHead.z().isAtMax();
-  limitStates.z_min_limit = dispenserHead.z().isAtMin();
+  LimitSwitchStates limit_states;
+  limit_states.x_max_limit = dispenserHead.x().isAtMax();
+  limit_states.x_min_limit = dispenserHead.x().isAtMin();
+  limit_states.y_max_limit = dispenserHead.y().isAtMax();
+  limit_states.y_min_limit = dispenserHead.y().isAtMin();
+  limit_states.z_max_limit = dispenserHead.z().isAtMax();
+  limit_states.z_min_limit = dispenserHead.z().isAtMin();
 
   MoveTestParams params;
   params.xy_distance_cm = xy_distance_cm;
@@ -231,7 +231,7 @@ void MoveTestController::updateScreen() {
   params.current_bounce_count = bounce_state.total_count > 0 ? (bounce_state.total_count - bounce_state.current_count + 1) : 0;
   params.total_bounce_count = bounce_state.total_count;
   params.blocking = blocking;
-  drawMoveTestScreen(phost, limitStates, params);
+  drawMoveTestScreen(phost, limit_states, params);
 }
 
 int MoveTestController::getModeType() const {

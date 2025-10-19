@@ -256,19 +256,19 @@ void ProfileManager::setCurrentProfileNum(uint8_t profileNum) {
 }
 
 // Gets skip data as char strings for UI display.
-// @param outSkipCol Output buffer for column skip string (must be at least SKIP_STRING_LEN).
-// @param outSkipRow Output buffer for row skip string (must be at least SKIP_STRING_LEN).
-// @param outSkipSinglePos Output buffer for individual position skip string (must be at least SKIP_STRING_LEN).
-void ProfileManager::getSkipStrings(char* outSkipCol, char* outSkipRow, char* outSkipSinglePos) {
+// @param out_skip_col Output buffer for column skip string (must be at least SKIP_STRING_LEN).
+// @param out_skip_row Output buffer for row skip string (must be at least SKIP_STRING_LEN).
+// @param out_skip_single_pos Output buffer for individual position skip string (must be at least SKIP_STRING_LEN).
+void ProfileManager::getSkipStrings(char* out_skip_col, char* out_skip_row, char* out_skip_single_pos) {
   SkipUtils::convertToStrings(currentProfile.skip_positions, currentProfile.skip_count,
-                              outSkipCol, outSkipRow, outSkipSinglePos);
+                              out_skip_col, out_skip_row, out_skip_single_pos);
 }
 
 // Sets skip data from char strings (from UI).
-// @param skipCol Column skip string (format: "C1,C9,...").
-// @param skipRow Row skip string (format: "R1,R9,...").
-// @param skipSinglePos Individual position skip string (format: "C2R4,C3R4,...").
-void ProfileManager::setSkipStrings(const char* skipCol, const char* skipRow, const char* skipSinglePos) {
-  currentProfile.skip_count = SkipUtils::convertFromStrings(skipCol, skipRow, skipSinglePos,
+// @param skip_col Column skip string (format: "C1,C9,...").
+// @param skip_row Row skip string (format: "R1,R9,...").
+// @param skip_single_pos Individual position skip string (format: "C2R4,C3R4,...").
+void ProfileManager::setSkipStrings(const char* skip_col, const char* skip_row, const char* skip_single_pos) {
+  currentProfile.skip_count = SkipUtils::convertFromStrings(skip_col, skip_row, skip_single_pos,
                                                              currentProfile.skip_positions, MAX_SKIP_POSITIONS);
 }

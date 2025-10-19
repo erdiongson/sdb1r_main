@@ -69,8 +69,8 @@ class ControllerManager {
   }
 
   // Transitions to the next controller based on the controller type.
-  // @param nextControllerType The type of controller to transition to.
-  void startNextController(int nextControllerType) {
+  // @param next_controller_type The type of controller to transition to.
+  void startNextController(int next_controller_type) {
     // Destroy the current controller if it exists (call destructor)
     if (controller != nullptr) {
       controller->~BaseController();
@@ -81,7 +81,7 @@ class ControllerManager {
     ControllerParams params = { dispenserHead, phost, callback, profile_manager };
 
     // Create the new controller in the static buffer using placement new
-    switch (nextControllerType) {
+    switch (next_controller_type) {
       case CONTROLLER_READY:
         controller = new (controllerBuffer.data) ReadyController(params);
         break;
@@ -119,7 +119,7 @@ class ControllerManager {
         controller = new (controllerBuffer.data) StepperTestController(params);
         break;
       default:
-        Logger::log("Unknown controller type: ", (uint8_t)nextControllerType);
+        Logger::log("Unknown controller type: ", (uint8_t)next_controller_type);
         return;
     }
 

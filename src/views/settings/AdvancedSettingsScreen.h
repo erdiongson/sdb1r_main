@@ -19,9 +19,9 @@ struct SkipErrors {
 // Parameters for Advanced Settings Screen display.
 struct AdvancedSettingsScreenParams {
   Profile& profile;
-  const char* skipCol;
-  const char* skipRow;
-  const char* skipSinglePos;
+  const char* skip_col;
+  const char* skip_row;
+  const char* skip_single_pos;
   SkipErrors errors;
   int dialog_code;
 };
@@ -71,15 +71,15 @@ inline void drawAdvancedSettingsScreen(Gpu_Hal_Context_t* phost, AdvancedSetting
 
   // Text - Skip Columns
   App_WrCoCmd_Buffer(phost, params.errors.skip_cols ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
-  Gpu_CoCmd_Text(phost, 15, 36, 21, 0, params.skipCol);
+  Gpu_CoCmd_Text(phost, 15, 36, 21, 0, params.skip_col);
 
   // Text - Skip Rows
   App_WrCoCmd_Buffer(phost, params.errors.skip_rows ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
-  Gpu_CoCmd_Text(phost, 15, 84, 21, 0, params.skipRow);
+  Gpu_CoCmd_Text(phost, 15, 84, 21, 0, params.skip_row);
 
   // Text - Skip Single Positions
   App_WrCoCmd_Buffer(phost, params.errors.skip_cells ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
-  Gpu_CoCmd_Text(phost, 15, 132, 21, 0, params.skipSinglePos);
+  Gpu_CoCmd_Text(phost, 15, 132, 21, 0, params.skip_single_pos);
 
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));

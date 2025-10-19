@@ -21,8 +21,8 @@ struct MaxSize<T> {
 };
 
 // Callback type for controller completion.
-// @param nextModeType The mode type to transition to.
-typedef void (*ControllerCompletionCallback)(int nextModeType);
+// @param next_mode_type The mode type to transition to.
+typedef void (*ControllerCompletionCallback)(int next_mode_type);
 
 // Struct for mode step result indicating if steppers moved.
 struct ControllerStepResult {
@@ -69,9 +69,9 @@ class BaseController {
 
  protected:
   // Helper method for modes to complete and transition to next mode
-  void startNextController(int nextModeType) {
+  void startNextController(int next_mode_type) {
     if (completionCallback) {
-      completionCallback(nextModeType);
+      completionCallback(next_mode_type);
     }
   }
 };

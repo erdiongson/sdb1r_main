@@ -41,16 +41,16 @@ struct MoveTestParams {
 // - Left 2/3: Square directional buttons (Up, Down, Left, Right)
 // - Right 1/3: Z-axis controls (Up, Down)
 // @param phost Pointer to GPU HAL context.
-// @param limitStates Limit switch states for display.
+// @param limit_states Limit switch states for display.
 // @param params Movement control parameters.
-void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limitStates, const MoveTestParams& params);
+void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit_states, const MoveTestParams& params);
 
 // Display the movement test screen.
 // Creates a test interface with directional controls for manual movement testing.
 // @param phost Pointer to GPU HAL context.
-// @param limitStates Limit switch states for display.
+// @param limit_states Limit switch states for display.
 // @param params Movement control parameters.
-void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limitStates, const MoveTestParams& params) {
+void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit_states, const MoveTestParams& params) {
   char* temp_buffer = g_view_temp_buffer;  // Use shared buffer (30 bytes needed)
   Gpu_CoCmd_FlashFast(phost, 0);
   Gpu_CoCmd_Dlstart(phost);
@@ -129,8 +129,8 @@ void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit
 
   // UP button limit switch dot (Y max limit)
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
-  App_WrCoCmd_Buffer(phost, COLOR_RGB(limitStates.y_max_limit ? 255 : 128, limitStates.y_max_limit ? 0 : 128,
-                                      limitStates.y_max_limit ? 0 : 128));
+  App_WrCoCmd_Buffer(phost, COLOR_RGB(limit_states.y_max_limit ? 255 : 128, limit_states.y_max_limit ? 0 : 128,
+                                      limit_states.y_max_limit ? 0 : 128));
   App_WrCoCmd_Buffer(phost, POINT_SIZE(4 * 16));
   App_WrCoCmd_Buffer(phost, BEGIN(POINTS));
   App_WrCoCmd_Buffer(phost, VERTEX2F((center_x - button_size / 2 + 8) * 16, (center_y - button_size - 2) * 16));
@@ -145,8 +145,8 @@ void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit
 
   // DOWN button limit switch dot (Y min limit)
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
-  App_WrCoCmd_Buffer(phost, COLOR_RGB(limitStates.y_min_limit ? 255 : 128, limitStates.y_min_limit ? 0 : 128,
-                                      limitStates.y_min_limit ? 0 : 128));
+  App_WrCoCmd_Buffer(phost, COLOR_RGB(limit_states.y_min_limit ? 255 : 128, limit_states.y_min_limit ? 0 : 128,
+                                      limit_states.y_min_limit ? 0 : 128));
   App_WrCoCmd_Buffer(phost, POINT_SIZE(4 * 16));
   App_WrCoCmd_Buffer(phost, BEGIN(POINTS));
   App_WrCoCmd_Buffer(phost, VERTEX2F((center_x - button_size / 2 + 8) * 16, (center_y + 18) * 16));
@@ -162,8 +162,8 @@ void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit
 
   // LEFT button limit switch dot (X max limit)
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
-  App_WrCoCmd_Buffer(phost, COLOR_RGB(limitStates.x_max_limit ? 255 : 128, limitStates.x_max_limit ? 0 : 128,
-                                      limitStates.x_max_limit ? 0 : 128));
+  App_WrCoCmd_Buffer(phost, COLOR_RGB(limit_states.x_max_limit ? 255 : 128, limit_states.x_max_limit ? 0 : 128,
+                                      limit_states.x_max_limit ? 0 : 128));
   App_WrCoCmd_Buffer(phost, POINT_SIZE(4 * 16));
   App_WrCoCmd_Buffer(phost, BEGIN(POINTS));
   App_WrCoCmd_Buffer(phost, VERTEX2F((center_x - button_size - 32) * 16, (center_y - button_size / 2 + 8) * 16));
@@ -178,8 +178,8 @@ void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit
 
   // RIGHT button limit switch dot (X min limit)
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
-  App_WrCoCmd_Buffer(phost, COLOR_RGB(limitStates.x_min_limit ? 255 : 128, limitStates.x_min_limit ? 0 : 128,
-                                      limitStates.x_min_limit ? 0 : 128));
+  App_WrCoCmd_Buffer(phost, COLOR_RGB(limit_states.x_min_limit ? 255 : 128, limit_states.x_min_limit ? 0 : 128,
+                                      limit_states.x_min_limit ? 0 : 128));
   App_WrCoCmd_Buffer(phost, POINT_SIZE(4 * 16));
   App_WrCoCmd_Buffer(phost, BEGIN(POINTS));
   App_WrCoCmd_Buffer(phost, VERTEX2F((center_x + 48) * 16, (center_y - button_size / 2 + 8) * 16));
@@ -202,8 +202,8 @@ void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit
 
   // Z UP button limit switch dot (Z max limit)
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
-  App_WrCoCmd_Buffer(phost, COLOR_RGB(limitStates.z_max_limit ? 255 : 128, limitStates.z_max_limit ? 0 : 128,
-                                      limitStates.z_max_limit ? 0 : 128));
+  App_WrCoCmd_Buffer(phost, COLOR_RGB(limit_states.z_max_limit ? 255 : 128, limit_states.z_max_limit ? 0 : 128,
+                                      limit_states.z_max_limit ? 0 : 128));
   App_WrCoCmd_Buffer(phost, POINT_SIZE(4 * 16));
   App_WrCoCmd_Buffer(phost, BEGIN(POINTS));
   App_WrCoCmd_Buffer(phost, VERTEX2F((right_section_start + 18) * 16, (z_start_y + 8) * 16));
@@ -218,8 +218,8 @@ void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit
 
   // Z DOWN button limit switch dot (Z min limit)
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
-  App_WrCoCmd_Buffer(phost, COLOR_RGB(limitStates.z_min_limit ? 255 : 128, limitStates.z_min_limit ? 0 : 128,
-                                      limitStates.z_min_limit ? 0 : 128));
+  App_WrCoCmd_Buffer(phost, COLOR_RGB(limit_states.z_min_limit ? 255 : 128, limit_states.z_min_limit ? 0 : 128,
+                                      limit_states.z_min_limit ? 0 : 128));
   App_WrCoCmd_Buffer(phost, POINT_SIZE(4 * 16));
   App_WrCoCmd_Buffer(phost, BEGIN(POINTS));
   App_WrCoCmd_Buffer(phost, VERTEX2F((right_section_start + 18) * 16, (z_start_y + z_button_height + z_button_spacing + 8) * 16));

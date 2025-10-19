@@ -26,8 +26,8 @@ void PreviewController::onStart() {
   simulation_handler.reset();
 
   // Parse skip positions from the current profile
-  TrayHandler::Position skipPositions[MAX_SKIP_POSITIONS];
-  simulation_handler.getSkipPositions(skipPositions);
+  TrayHandler::Position skip_positions[MAX_SKIP_POSITIONS];
+  simulation_handler.getSkipPositions(skip_positions);
 
   // Create preview screen parameters
   PreviewScreenParams params;
@@ -42,7 +42,7 @@ void PreviewController::onStart() {
   params.info_text = preview_info_text;
 
   // Display the preview screen
-  drawPreviewScreen(phost, skipPositions, params);
+  drawPreviewScreen(phost, skip_positions, params);
 }
 
 void PreviewController::onInteraction(const Interaction& interaction) {
@@ -107,8 +107,8 @@ void PreviewController::startSimulation() {
   simulate_row = firstPosition.y;
 
   // Redraw preview screen
-  TrayHandler::Position skipPositions[MAX_SKIP_POSITIONS];
-  simulation_handler.getSkipPositions(skipPositions);
+  TrayHandler::Position skip_positions[MAX_SKIP_POSITIONS];
+  simulation_handler.getSkipPositions(skip_positions);
 
   PreviewScreenParams params;
   params.grid_cols = current_profile->tube_no_x;
@@ -122,7 +122,7 @@ void PreviewController::startSimulation() {
   snprintf(preview_info_text, sizeof(preview_info_text), "Position = %dx%d", simulate_col, simulate_row);
   params.info_text = preview_info_text;
 
-  drawPreviewScreen(phost, skipPositions, params);
+  drawPreviewScreen(phost, skip_positions, params);
 }
 
 void PreviewController::endSimulation() {
@@ -132,8 +132,8 @@ void PreviewController::endSimulation() {
   simulate_row = 0;
 
   // Redraw preview screen
-  TrayHandler::Position skipPositions[MAX_SKIP_POSITIONS];
-  simulation_handler.getSkipPositions(skipPositions);
+  TrayHandler::Position skip_positions[MAX_SKIP_POSITIONS];
+  simulation_handler.getSkipPositions(skip_positions);
 
   PreviewScreenParams params;
   params.grid_cols = current_profile->tube_no_x;
@@ -147,7 +147,7 @@ void PreviewController::endSimulation() {
   snprintf(preview_info_text, sizeof(preview_info_text), "Preview (Grid %dx%d)", params.grid_cols, params.grid_rows);
   params.info_text = preview_info_text;
 
-  drawPreviewScreen(phost, skipPositions, params);
+  drawPreviewScreen(phost, skip_positions, params);
 }
 
 void PreviewController::stepSimulation() {
@@ -163,8 +163,8 @@ void PreviewController::stepSimulation() {
   }
 
   // Redraw preview screen with updated position
-  TrayHandler::Position skipPositions[MAX_SKIP_POSITIONS];
-  simulation_handler.getSkipPositions(skipPositions);
+  TrayHandler::Position skip_positions[MAX_SKIP_POSITIONS];
+  simulation_handler.getSkipPositions(skip_positions);
 
   PreviewScreenParams params;
   params.grid_cols = current_profile->tube_no_x;
@@ -178,5 +178,5 @@ void PreviewController::stepSimulation() {
   snprintf(preview_info_text, sizeof(preview_info_text), "Position = %dx%d", simulate_col, simulate_row);
   params.info_text = preview_info_text;
 
-  drawPreviewScreen(phost, skipPositions, params);
+  drawPreviewScreen(phost, skip_positions, params);
 }

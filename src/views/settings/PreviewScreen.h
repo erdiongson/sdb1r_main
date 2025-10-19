@@ -19,7 +19,7 @@ struct PreviewScreenParams {
  * @brief Display a grid preview screen showing enabled/disabled positions
  *
  * @param phost GPU context
- * @param skipPositions Array of positions to skip (disabled)
+ * @param skip_positions Array of positions to skip (disabled)
  * @param params Preview screen parameters (grid size, simulation state)
  *
  * Grid dots are displayed as:
@@ -30,7 +30,7 @@ struct PreviewScreenParams {
  * The grid is automatically centered on the screen and scaled to fit
  * the maximum grid size (MAX_TUBES_X x MAX_TUBES_Y)
  */
-void drawPreviewScreen(Gpu_Hal_Context_t* phost, const TrayHandler::Position skipPositions[MAX_SKIP_POSITIONS],
+void drawPreviewScreen(Gpu_Hal_Context_t* phost, const TrayHandler::Position skip_positions[MAX_SKIP_POSITIONS],
                        const PreviewScreenParams& params) {
   int grid_cols = params.grid_cols;
   int grid_rows = params.grid_rows;
@@ -83,19 +83,19 @@ void drawPreviewScreen(Gpu_Hal_Context_t* phost, const TrayHandler::Position ski
   auto isSkipPosition = [&](int x, int y) -> bool {
     TrayHandler::Position pos(x, y);
     for (int i = 0; i < MAX_SKIP_POSITIONS; i++) {
-      if (skipPositions[i].x == -1 || skipPositions[i].y == -1) {
+      if (skip_positions[i].x == -1 || skip_positions[i].y == -1) {
         break;
       }
       // Exact position match
-      if (pos.x == skipPositions[i].x && pos.y == skipPositions[i].y) {
+      if (pos.x == skip_positions[i].x && pos.y == skip_positions[i].y) {
         return true;
       }
       // Skip entire column (y == 0 means entire column)
-      if (pos.x == skipPositions[i].x && skipPositions[i].y == 0) {
+      if (pos.x == skip_positions[i].x && skip_positions[i].y == 0) {
         return true;
       }
       // Skip entire row (x == 0 means entire row)
-      if (pos.y == skipPositions[i].y && skipPositions[i].x == 0) {
+      if (pos.y == skip_positions[i].y && skip_positions[i].x == 0) {
         return true;
       }
     }

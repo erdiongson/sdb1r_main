@@ -73,106 +73,106 @@ class SkipUtils {
   };
 
   // Converts SkipPosition array to char string arrays (for UI display).
-  // @param skipPositions Array of SkipPosition from EEPROM.
+  // @param skip_positions Array of SkipPosition from EEPROM.
   // @param count Number of positions in the array.
-  // @param outSkipCol Output buffer for column skip string (format: "C1,C9,...").
-  // @param outSkipRow Output buffer for row skip string (format: "R1,R9,...").
-  // @param outSkipSinglePos Output buffer for individual position skip string (format: "C2R4,C3R4,...").
-  static void convertToStrings(const SkipPosition* skipPositions, uint8_t count,
-                                char* outSkipCol, char* outSkipRow, char* outSkipSinglePos) {
-    if (outSkipCol) outSkipCol[0] = '\0';
-    if (outSkipRow) outSkipRow[0] = '\0';
-    if (outSkipSinglePos) outSkipSinglePos[0] = '\0';
+  // @param out_skip_col Output buffer for column skip string (format: "C1,C9,...").
+  // @param out_skip_row Output buffer for row skip string (format: "R1,R9,...").
+  // @param out_skip_single_pos Output buffer for individual position skip string (format: "C2R4,C3R4,...").
+  static void convertToStrings(const SkipPosition* skip_positions, uint8_t count,
+                                char* out_skip_col, char* out_skip_row, char* out_skip_single_pos) {
+    if (out_skip_col) out_skip_col[0] = '\0';
+    if (out_skip_row) out_skip_row[0] = '\0';
+    if (out_skip_single_pos) out_skip_single_pos[0] = '\0';
 
-    if (!skipPositions || count == 0) return;
+    if (!skip_positions || count == 0) return;
 
     bool firstCol = true, firstRow = true, firstPos = true;
     char temp[20];
 
     for (uint8_t i = 0; i < count && i < MAX_SKIP_POSITIONS; i++) {
-      const SkipPosition& pos = skipPositions[i];
+      const SkipPosition& pos = skip_positions[i];
 
       // Column skip: x != 0, y == 0
       if (pos.x != 0 && pos.y == 0) {
-        if (!firstCol && outSkipCol) strcat(outSkipCol, ",");
+        if (!firstCol && out_skip_col) strcat(out_skip_col, ",");
         sprintf(temp, "C%d", pos.x);
-        if (outSkipCol) strcat(outSkipCol, temp);
+        if (out_skip_col) strcat(out_skip_col, temp);
         firstCol = false;
       }
       // Row skip: x == 0, y != 0
       else if (pos.x == 0 && pos.y != 0) {
-        if (!firstRow && outSkipRow) strcat(outSkipRow, ",");
+        if (!firstRow && out_skip_row) strcat(out_skip_row, ",");
         sprintf(temp, "R%d", pos.y);
-        if (outSkipRow) strcat(outSkipRow, temp);
+        if (out_skip_row) strcat(out_skip_row, temp);
         firstRow = false;
       }
       // Individual position skip: x != 0, y != 0
       else if (pos.x != 0 && pos.y != 0) {
-        if (!firstPos && outSkipSinglePos) strcat(outSkipSinglePos, ",");
+        if (!firstPos && out_skip_single_pos) strcat(out_skip_single_pos, ",");
         sprintf(temp, "C%dR%d", pos.x, pos.y);
-        if (outSkipSinglePos) strcat(outSkipSinglePos, temp);
+        if (out_skip_single_pos) strcat(out_skip_single_pos, temp);
         firstPos = false;
       }
     }
   }
 
   // Converts char string arrays to SkipPosition array (for EEPROM storage).
-  // @param skipCol Column skip string (format: "C1,C9,...").
-  // @param skipRow Row skip string (format: "R1,R9,...").
-  // @param skipSinglePos Individual position skip string (format: "C2R4,C3R4,...").
-  // @param outPositions Output array to store SkipPosition objects.
-  // @param maxPositions Maximum number of positions to store.
+  // @param skip_col Column skip string (format: "C1,C9,...").
+  // @param skip_row Row skip string (format: "R1,R9,...").
+  // @param skip_single_pos Individual position skip string (format: "C2R4,C3R4,...").
+  // @param out_positions Output array to store SkipPosition objects.
+  // @param max_positions Maximum number of positions to store.
   // @return The number of positions stored.
-  static uint8_t convertFromStrings(const char* skipCol, const char* skipRow, const char* skipSinglePos,
-                                     SkipPosition* outPositions, uint8_t maxPositions) {
-    if (!outPositions || maxPositions == 0) return 0;
+  static uint8_t convertFromStrings(const char* skip_col, const char* skip_row, const char* skip_single_pos,
+                                     SkipPosition* out_positions, uint8_t max_positions) {
+    if (!out_positions || max_positions == 0) return 0;
 
     uint8_t posIndex = 0;
 
-    // Parse skipCol string (format: "C1,C9,...")
-    if (skipCol && skipCol[0] != '\0') {
+    // Parse skip_col string (format: "C1,C9,...")
+    if (skip_col && skip_col[0] != '\0') {
       char tempCol[SKIP_STRING_LEN];
-      strncpy(tempCol, skipCol, SKIP_STRING_LEN - 1);
+      strncpy(tempCol, skip_col, SKIP_STRING_LEN - 1);
       tempCol[SKIP_STRING_LEN - 1] = '\0';
 
       char* token = strtok(tempCol, ",");
-      while (token != nullptr && posIndex < maxPositions) {
+      while (token != nullptr && posIndex < max_positions) {
         if (token[0] == 'C') {
           int col = atoi(token + 1);
           if (col > 0 && col <= 255) {
-            outPositions[posIndex++] = SkipPosition(col, 0);
+            out_positions[posIndex++] = SkipPosition(col, 0);
           }
         }
         token = strtok(nullptr, ",");
       }
     }
 
-    // Parse skipRow string (format: "R1,R9,...")
-    if (skipRow && skipRow[0] != '\0') {
+    // Parse skip_row string (format: "R1,R9,...")
+    if (skip_row && skip_row[0] != '\0') {
       char tempRow[SKIP_STRING_LEN];
-      strncpy(tempRow, skipRow, SKIP_STRING_LEN - 1);
+      strncpy(tempRow, skip_row, SKIP_STRING_LEN - 1);
       tempRow[SKIP_STRING_LEN - 1] = '\0';
 
       char* token = strtok(tempRow, ",");
-      while (token != nullptr && posIndex < maxPositions) {
+      while (token != nullptr && posIndex < max_positions) {
         if (token[0] == 'R') {
           int row = atoi(token + 1);
           if (row > 0 && row <= 255) {
-            outPositions[posIndex++] = SkipPosition(0, row);
+            out_positions[posIndex++] = SkipPosition(0, row);
           }
         }
         token = strtok(nullptr, ",");
       }
     }
 
-    // Parse skipSinglePos string (format: "C2R4,C3R4,...")
-    if (skipSinglePos && skipSinglePos[0] != '\0') {
+    // Parse skip_single_pos string (format: "C2R4,C3R4,...")
+    if (skip_single_pos && skip_single_pos[0] != '\0') {
       char tempPos[SKIP_STRING_LEN];
-      strncpy(tempPos, skipSinglePos, SKIP_STRING_LEN - 1);
+      strncpy(tempPos, skip_single_pos, SKIP_STRING_LEN - 1);
       tempPos[SKIP_STRING_LEN - 1] = '\0';
 
       char* token = strtok(tempPos, ",");
-      while (token != nullptr && posIndex < maxPositions) {
+      while (token != nullptr && posIndex < max_positions) {
         int col = 0, row = 0;
         char* colStr = strstr(token, "C");
         char* rowStr = strstr(token, "R");
@@ -182,7 +182,7 @@ class SkipUtils {
           row = atoi(rowStr + 1);
 
           if (col > 0 && col <= 255 && row > 0 && row <= 255) {
-            outPositions[posIndex++] = SkipPosition(col, row);
+            out_positions[posIndex++] = SkipPosition(col, row);
           }
         }
         token = strtok(nullptr, ",");
@@ -194,19 +194,19 @@ class SkipUtils {
 
   // Converts profile skip data into an array of Position objects for TrayHandler.
   // @param profile The profile containing skip information.
-  // @param outPositions Output array to store parsed positions (must be at least MAX_SKIP_POSITIONS in size).
+  // @param out_positions Output array to store parsed positions (must be at least MAX_SKIP_POSITIONS in size).
   // @return The number of positions parsed.
-  static int convert(Profile& profile, TrayHandler::Position outPositions[MAX_SKIP_POSITIONS]) {
+  static int convert(Profile& profile, TrayHandler::Position out_positions[MAX_SKIP_POSITIONS]) {
     // Initialize all positions to -1 to mark unused entries
     for (int i = 0; i < MAX_SKIP_POSITIONS; i++) {
-      outPositions[i] = TrayHandler::Position(-1, -1);
+      out_positions[i] = TrayHandler::Position(-1, -1);
     }
 
     // Convert from SkipPosition array directly
     int posIndex = 0;
     for (uint8_t i = 0; i < profile.skip_count && i < MAX_SKIP_POSITIONS && posIndex < MAX_SKIP_POSITIONS; i++) {
       const SkipPosition& skipPos = profile.skip_positions[i];
-      outPositions[posIndex++] = TrayHandler::Position(skipPos.x, skipPos.y);
+      out_positions[posIndex++] = TrayHandler::Position(skipPos.x, skipPos.y);
     }
 
     return posIndex;
