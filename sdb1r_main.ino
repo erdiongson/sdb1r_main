@@ -65,7 +65,7 @@ void setup() {
   App_Common_Init(&host);  //* Init HW Hal */
   // App_Calibrate_Screen(&host); ///*Screen Calibration*//
 
-  Serial.begin(19200);   // Serial printing
+  Serial.begin(9600);   // Serial printing
   Serial2.begin(19200);  // UART for Arduino-PIC18 communications
   Serial3.begin(19200);  // UART for PLC communication
 
