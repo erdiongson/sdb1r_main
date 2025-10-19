@@ -26,10 +26,10 @@ typedef struct {
   float pitch_y = 0.0;
   float tray_origin_x = 0.0;
   float tray_origin_y = 0.0;
-  int16_t cycles = 1;
-  int16_t password_enabled = 0;
-  int16_t vibration_duration = 2;
-  int16_t vibration_level = 0;
+  int8_t cycles = 1;
+  int8_t vibration_level = 0;
+  int8_t vibration_duration = 2;
+  bool password_enabled = 0;
   float z_dip = 0.0;
   SkipPosition skip_positions[MAX_SKIP_POSITIONS];  // Compact storage for EEPROM
   uint8_t skip_count = 0;                           // Number of active skip positions
