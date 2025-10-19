@@ -73,7 +73,8 @@ void ProfileManager::checkProfile(void) {
 }
 
 uint8_t ProfileManager::loadProfile(void) {
-  Logger::log("PROFILE SIZE: " + String(PROFILE_SIZE));
+  snprintf(g_log_buffer, sizeof(g_log_buffer), "PROFILE SIZE: %d", PROFILE_SIZE);
+  Logger::log(g_log_buffer);
 
   this->currentProfileIndex = readCurIDEEPROM();
   if (this->currentProfileIndex >= MAX_PROFILES)

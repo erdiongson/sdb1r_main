@@ -1,6 +1,10 @@
 #pragma once
 #include "../Config.h"
 
+// Shared buffer for logging to avoid String concatenations and heap allocations
+// Size is set to accommodate the longest log message in the codebase
+static char g_log_buffer[100];
+
 #if DEBUG_NO_LOG == 0
 
 // Static class for simple logging via Serial.
