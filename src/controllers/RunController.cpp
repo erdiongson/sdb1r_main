@@ -84,7 +84,7 @@ void RunController::startStage(Stage new_stage) {
     case STAGE_SET_VIB_LEVEL:
       Logger::log(F("STAGE: Setting vibration level"));
       this->stage = STAGE_SET_VIB_LEVEL;
-      dispenserHead.setVibrationLevel(profile.vibration_enabled);
+      dispenserHead.setVibrationLevel(profile.vibration_level);
       break;
 
     case STAGE_SET_VIB_DURATION:

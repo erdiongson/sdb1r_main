@@ -200,7 +200,7 @@ inline void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams pa
   Gpu_CoCmd_Button(phost, 233, 205, 76, 26, 21, 0, PROGMEM_STR(F("Advanced")));
 
   // 20240903: erdiongson - add the variation of vibration U1 - U4
-  vibstatus = profile.vibration_enabled;
+  vibstatus = profile.vibration_level;
   if (vibstatus == 1) {
     App_WrCoCmd_Buffer(phost, TAG(TAG_VIBRATION_LEVEL));  // U1 Button
     Gpu_CoCmd_Button(phost, 101, 175, 44, 20, 27, 0, PROGMEM_STR(F("1")));

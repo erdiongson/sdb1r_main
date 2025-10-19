@@ -109,9 +109,9 @@ void drawProfileScreen(Gpu_Hal_Context_t* phost, ProfileParams params) {
   Gpu_CoCmd_Text(phost, 8, 170, 21, 0, temp_buffer);
 
   // Print vibrationEnabled
-  // sprintf(buf, "Vibration:    %s", curprof.vibration_enabled ? "True" : "False");
+  // sprintf(buf, "Vibration:    %s", curprof.vibration_level ? "True" : "False");
   // 20240903 - erdiongson: Change in Vibration Level
-  snprintf_P(temp_buffer, sizeof(g_view_temp_buffer), PSTR("Vibration Level:    %d"), profile.vibration_enabled);
+  snprintf_P(temp_buffer, sizeof(g_view_temp_buffer), PSTR("Vibration Level:    %d"), profile.vibration_level);
   Gpu_CoCmd_Text(phost, 8, 185, 21, 0, temp_buffer);
 
   // Print passwordEnabled

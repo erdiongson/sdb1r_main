@@ -37,7 +37,7 @@ void ProfileManager::preLoadEEPROM(void) {
     currentProfile.tray_origin_x = ORIGIN_DEFAULT;
     currentProfile.tray_origin_y = ORIGIN_DEFAULT;
     currentProfile.cycles = CYCLES_DEFAULT;
-    currentProfile.vibration_enabled = VIBRATION_LEVEL_DEFAULT;
+    currentProfile.vibration_level = VIBRATION_LEVEL_DEFAULT;
     currentProfile.password_enabled = true;
     currentProfile.vibration_duration = VIBRATION_DURATION_DEFAULT;
     currentProfile.z_dip = Z_DIP_DEFAULT;
@@ -146,8 +146,8 @@ void ProfileManager::writeProfileEEPROM(int index) {
   address += sizeof(currentProfile.tray_origin_y);
   EEPROM.put(address, currentProfile.cycles);
   address += sizeof(currentProfile.cycles);
-  EEPROM.put(address, currentProfile.vibration_enabled);
-  address += sizeof(currentProfile.vibration_enabled);
+  EEPROM.put(address, currentProfile.vibration_level);
+  address += sizeof(currentProfile.vibration_level);
   EEPROM.put(address, currentProfile.password_enabled);
   address += sizeof(currentProfile.password_enabled);
   EEPROM.put(address, currentProfile.vibration_duration);
@@ -181,8 +181,8 @@ void ProfileManager::readProfileEEPROM(int index) {
   address += sizeof(currentProfile.tray_origin_y);
   EEPROM.get(address, currentProfile.cycles);
   address += sizeof(currentProfile.cycles);
-  EEPROM.get(address, currentProfile.vibration_enabled);
-  address += sizeof(currentProfile.vibration_enabled);
+  EEPROM.get(address, currentProfile.vibration_level);
+  address += sizeof(currentProfile.vibration_level);
   EEPROM.get(address, currentProfile.password_enabled);
   address += sizeof(currentProfile.password_enabled);
   EEPROM.get(address, currentProfile.vibration_duration);

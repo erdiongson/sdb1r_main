@@ -190,9 +190,9 @@ int SettingsController::getModeType() const {
 }
 
 void SettingsController::incrementVibrationLevel() {
-  int next_level = current_profile->vibration_enabled + 1;
+  int next_level = current_profile->vibration_level + 1;
   if (next_level > VIBRATION_LEVEL_MAX) next_level = 0;
-  current_profile->vibration_enabled = next_level;
+  current_profile->vibration_level = next_level;
 }
 
 void SettingsController::incrementVibrationTime() {
