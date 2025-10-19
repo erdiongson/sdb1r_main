@@ -24,11 +24,20 @@
 Gpu_Hal_Context_t host, *phost;
 ProfileManager profile_manager;
 
-AxisParams axis_x(MOTOR_X_CLK, MOTOR_X_CW, LIMIT_S_X_MIN, LIMIT_S_X_MAX, MOTOR_X_SPEED, MOTOR_X_ACCELERATION);
+AxisParams axis_x(MOTOR_X_CLK, MOTOR_X_CW, LIMIT_S_X_MIN, LIMIT_S_X_MAX, 
+                  &LIMIT_S_X_MIN_PORT, LIMIT_S_X_MIN_BIT, 
+                  &LIMIT_S_X_MAX_PORT, LIMIT_S_X_MAX_BIT,
+                  MOTOR_X_SPEED, MOTOR_X_ACCELERATION);
 
-AxisParams axis_y(MOTOR_Y_CLK, MOTOR_Y_CW, LIMIT_S_Y_MIN, LIMIT_S_Y_MAX, MOTOR_Y_SPEED, MOTOR_Y_ACCELERATION);
+AxisParams axis_y(MOTOR_Y_CLK, MOTOR_Y_CW, LIMIT_S_Y_MIN, LIMIT_S_Y_MAX, 
+                  &LIMIT_S_Y_MIN_PORT, LIMIT_S_Y_MIN_BIT, 
+                  &LIMIT_S_Y_MAX_PORT, LIMIT_S_Y_MAX_BIT,
+                  MOTOR_Y_SPEED, MOTOR_Y_ACCELERATION);
 
-AxisParams axis_z(MOTOR_Z_CLK, MOTOR_z_CW, LIMIT_S_Z_MIN, LIMIT_S_Z_MAX, MOTOR_Z_SPEED, MOTOR_Z_ACCELERATION);
+AxisParams axis_z(MOTOR_Z_CLK, MOTOR_z_CW, LIMIT_S_Z_MIN, LIMIT_S_Z_MAX, 
+                  &LIMIT_S_Z_MIN_PORT, LIMIT_S_Z_MIN_BIT, 
+                  &LIMIT_S_Z_MAX_PORT, LIMIT_S_Z_MAX_BIT,
+                  MOTOR_Z_SPEED, MOTOR_Z_ACCELERATION);
 
 DispenserHeadParams params = { axis_x, axis_y, axis_z };
 DispenserHead dispenser_head(params);

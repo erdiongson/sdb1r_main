@@ -39,6 +39,27 @@ const int LIMIT_S_Y_MAX = 44;
 const int LIMIT_S_Z_MIN = 38;
 const int LIMIT_S_Z_MAX = 36;
 
+// Port/bit mappings for direct port access (Arduino Mega 2560)
+// Pin 22 -> PA0, Pin 32 -> PC5, Pin 36 -> PC1
+// Pin 38 -> PD7, Pin 44 -> PL5, Pin 46 -> PL3
+#define LIMIT_S_X_MIN_PORT PINL
+#define LIMIT_S_X_MIN_BIT 3
+
+#define LIMIT_S_X_MAX_PORT PINA
+#define LIMIT_S_X_MAX_BIT 0
+
+#define LIMIT_S_Y_MIN_PORT PINC
+#define LIMIT_S_Y_MIN_BIT 5
+
+#define LIMIT_S_Y_MAX_PORT PINL
+#define LIMIT_S_Y_MAX_BIT 5
+
+#define LIMIT_S_Z_MIN_PORT PIND
+#define LIMIT_S_Z_MIN_BIT 7
+
+#define LIMIT_S_Z_MAX_PORT PINC
+#define LIMIT_S_Z_MAX_BIT 1
+
 // =============================================================================
 // STEPPER MOTOR CONTROL PINS
 // =============================================================================

@@ -11,14 +11,25 @@ struct AxisParams {
   int dir_pin;
   int min_pin;
   int max_pin;
+  volatile uint8_t* min_port;  // Port register for min limit (e.g., &PINL)
+  uint8_t min_bit;              // Bit position in port (0-7)
+  volatile uint8_t* max_port;  // Port register for max limit (e.g., &PINA)
+  uint8_t max_bit;              // Bit position in port (0-7)
   float max_speed;
   float acceleration;
 
-  AxisParams(int step_pin, int dir_pin, int min_pin, int max_pin, float max_speed = 1000.0, float acceleration = 500.0)
+  AxisParams(int step_pin, int dir_pin, int min_pin, int max_pin, 
+             volatile uint8_t* min_port, uint8_t min_bit,
+             volatile uint8_t* max_port, uint8_t max_bit,
+             float max_speed = 1000.0, float acceleration = 500.0)
       : step_pin(step_pin),
         dir_pin(dir_pin),
         min_pin(min_pin),
         max_pin(max_pin),
+        min_port(min_port),
+        min_bit(min_bit),
+        max_port(max_port),
+        max_bit(max_bit),
         max_speed(max_speed),
         acceleration(acceleration) {}
 };
@@ -28,6 +39,10 @@ class Axis {
   AccelStepper stepper;
   int min_limit_pin;
   int max_limit_pin;
+  volatile uint8_t* min_limit_port;  // Port register for direct access
+  uint8_t min_limit_bit;             // Bit position in port
+  volatile uint8_t* max_limit_port;  // Port register for direct access
+  uint8_t max_limit_bit;             // Bit position in port
   bool moving_positive;  // true if moving in positive direction, false if negative
   bool enabled;          // true if axis is enabled, false if disabled
   bool running = false;
@@ -46,6 +61,10 @@ class Axis {
       : stepper(1, params.step_pin, params.dir_pin),  // 1 = DRIVER interface (step/dir)
         min_limit_pin(params.min_pin),
         max_limit_pin(params.max_pin),
+        min_limit_port(params.min_port),
+        min_limit_bit(params.min_bit),
+        max_limit_port(params.max_port),
+        max_limit_bit(params.max_bit),
         moving_positive(false),
         enabled(true),
         max_speed(params.max_speed),
@@ -119,9 +138,13 @@ class Axis {
     stepper.stop();
   }
 
-  bool isAtMin() { return digitalRead(min_limit_pin) == LOW; }
+  // Checks if min limit switch is triggered using direct port access.
+  // @return True if limit switch is active (LOW), false otherwise.
+  bool isAtMin() { return !(*min_limit_port & _BV(min_limit_bit)); }
 
-  bool isAtMax() { return digitalRead(max_limit_pin) == LOW; }
+  // Checks if max limit switch is triggered using direct port access.
+  // @return True if limit switch is active (LOW), false otherwise.
+  bool isAtMax() { return !(*max_limit_port & _BV(max_limit_bit)); }
 
   // Returns true if the min limit switch transitioned from not-hit to hit.
   // Uses debouncing logic requiring 3 steady states before transitioning.
