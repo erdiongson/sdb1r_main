@@ -86,26 +86,26 @@ void SettingsController::onInteraction(const Interaction& interaction) {
         TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
 
         // Get current skip strings
-        char skipCol[SKIP_STRING_LEN], skipRow[SKIP_STRING_LEN], skipSinglePos[SKIP_STRING_LEN];
-        profile_manager.getSkipStrings(skipCol, skipRow, skipSinglePos);
+        char skip_col[SKIP_STRING_LEN], skip_row[SKIP_STRING_LEN], skip_single_pos[SKIP_STRING_LEN];
+        profile_manager.getSkipStrings(skip_col, skip_row, skip_single_pos);
 
         // Clean skip rows
-        SkipUtils::CleanResult rowResult = SkipUtils::clean(skipRow, SkipUtils::ROW, dimensions);
+        SkipUtils::CleanResult rowResult = SkipUtils::clean(skip_row, SkipUtils::ROW, dimensions);
         if (rowResult.was_cleaned) {
-          strncpy(skipRow, rowResult.cleaned, SKIP_STRING_LEN - 1);
-          skipRow[SKIP_STRING_LEN - 1] = '\0';
+          strncpy(skip_row, rowResult.cleaned, SKIP_STRING_LEN - 1);
+          skip_row[SKIP_STRING_LEN - 1] = '\0';
         }
 
         // Clean skip individual positions
         SkipUtils::CleanResult posResult =
-            SkipUtils::clean(skipSinglePos, SkipUtils::INDIVIDUAL, dimensions);
+            SkipUtils::clean(skip_single_pos, SkipUtils::INDIVIDUAL, dimensions);
         if (posResult.was_cleaned) {
-          strncpy(skipSinglePos, posResult.cleaned, SKIP_STRING_LEN - 1);
-          skipSinglePos[SKIP_STRING_LEN - 1] = '\0';
+          strncpy(skip_single_pos, posResult.cleaned, SKIP_STRING_LEN - 1);
+          skip_single_pos[SKIP_STRING_LEN - 1] = '\0';
         }
 
         // Save back to profile
-        profile_manager.setSkipStrings(skipCol, skipRow, skipSinglePos);
+        profile_manager.setSkipStrings(skip_col, skip_row, skip_single_pos);
       }
 
       drawScreen();

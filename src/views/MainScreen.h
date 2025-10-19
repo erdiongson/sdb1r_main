@@ -43,7 +43,7 @@ inline void drawMenuButtons(const ButtonsEnabled& buttons) {
     App_WrCoCmd_Buffer(phost, TAG_MASK(0));
   }
   Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-  Gpu_CoCmd_Button(phost, 208, 5, 90, 36, 28, OPT_FORMAT, "Settings");
+  Gpu_CoCmd_Button(phost, 208, 5, 90, 36, 28, OPT_FORMAT, PROGMEM_STR(F("Settings")));
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // Draw START button
@@ -57,9 +57,9 @@ inline void drawMenuButtons(const ButtonsEnabled& buttons) {
   }
   Gpu_CoCmd_FgColor(phost, 0x006400);
   if (buttons.show_resume)
-    Gpu_CoCmd_Button(phost, 25, 112, 90, 36, 28, 0, "RESUME");
+    Gpu_CoCmd_Button(phost, 25, 112, 90, 36, 28, 0, PROGMEM_STR(F("RESUME")));
   else
-    Gpu_CoCmd_Button(phost, 25, 112, 90, 36, 28, 0, "START");
+    Gpu_CoCmd_Button(phost, 25, 112, 90, 36, 28, 0, PROGMEM_STR(F("START")));
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // Draw PAUSE button
@@ -72,7 +72,7 @@ inline void drawMenuButtons(const ButtonsEnabled& buttons) {
     App_WrCoCmd_Buffer(phost, TAG_MASK(0));
   }
   Gpu_CoCmd_FgColor(phost, 0xADAF3C);
-  Gpu_CoCmd_Button(phost, 207, 112, 90, 36, 28, 0, "PAUSE");
+  Gpu_CoCmd_Button(phost, 207, 112, 90, 36, 28, 0, PROGMEM_STR(F("PAUSE")));
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // Draw STOP button
@@ -86,11 +86,11 @@ inline void drawMenuButtons(const ButtonsEnabled& buttons) {
   }
   Gpu_CoCmd_FgColor(phost, 0xAA0000);
   if (buttons.show_homing)
-    Gpu_CoCmd_Button(phost, 25, 157, 273, 36, 28, 0, "HOMING");
+    Gpu_CoCmd_Button(phost, 25, 157, 273, 36, 28, 0, PROGMEM_STR(F("HOMING")));
   else if (buttons.show_stopping)
-    Gpu_CoCmd_Button(phost, 25, 157, 273, 36, 28, 0, "STOPPING");
+    Gpu_CoCmd_Button(phost, 25, 157, 273, 36, 28, 0, PROGMEM_STR(F("STOPPING")));
   else
-    Gpu_CoCmd_Button(phost, 25, 157, 273, 36, 28, 0, "STOP");
+    Gpu_CoCmd_Button(phost, 25, 157, 273, 36, 28, 0, PROGMEM_STR(F("STOP")));
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 }
 
@@ -117,7 +117,7 @@ inline void drawBaseMainScreen(Gpu_Hal_Context_t* phost, const ButtonsEnabled& b
   //    Gpu_CoCmd_Text(phost, 160, 52, 31, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, "XQ");
   App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(0, 0, 0));
   App_WrCoCmd_Buffer(phost, COLOR_RGB(128, 128, 128));
-  Gpu_CoCmd_Text(phost, 159, 80, 30, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, "SDB-1R");
+  Gpu_CoCmd_Text(phost, 159, 80, 30, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, PROGMEM_STR(F("SDB-1R")));
   App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(0, 0, 0));
   App_WrCoCmd_Buffer(phost, COLOR_RGB(193, 64, 0));
   App_WrCoCmd_Buffer(phost, BEGIN(LINES));
@@ -131,18 +131,18 @@ inline void drawBaseMainScreen(Gpu_Hal_Context_t* phost, const ButtonsEnabled& b
   drawMenuButtons(buttons);
 
   Profile& profile = params.profile;
-  sprintf(temp_buffer, "Profile Name: %s", profile.profile_name);
+  snprintf_P(temp_buffer, sizeof(g_view_temp_buffer), PSTR("Profile Name: %s"), profile.profile_name);
   Gpu_CoCmd_Text(phost, 25, 195, 20, OPT_FORMAT, temp_buffer);  // OPT_CENTER | OPT_RIGHTX |
-  sprintf(temp_buffer, "No. of Cycles: %d", profile.cycles);
+  snprintf_P(temp_buffer, sizeof(g_view_temp_buffer), PSTR("No. of Cycles: %d"), profile.cycles);
   Gpu_CoCmd_Text(phost, 25, 208, 20, OPT_FORMAT, temp_buffer);
 
-  sprintf(temp_buffer, "Filling tube: %d", params.run_status.filling_tube);
+  snprintf_P(temp_buffer, sizeof(g_view_temp_buffer), PSTR("Filling tube: %d"), params.run_status.filling_tube);
   Gpu_CoCmd_Text(phost, 25, 220, 20, OPT_FORMAT, temp_buffer);
 
-  sprintf(temp_buffer, "Current Tube : R%2d C%2d", params.run_status.current_row, params.run_status.current_column);
+  snprintf_P(temp_buffer, sizeof(g_view_temp_buffer), PSTR("Current Tube : R%2d C%2d"), params.run_status.current_row, params.run_status.current_column);
   Gpu_CoCmd_Text(phost, 292, 208, 20, OPT_RIGHTX | OPT_FORMAT, temp_buffer);
 
-  sprintf(temp_buffer, "Tubes left : %3d", params.run_status.tubes_left);
+  snprintf_P(temp_buffer, sizeof(g_view_temp_buffer), PSTR("Tubes left : %3d"), params.run_status.tubes_left);
   Gpu_CoCmd_Text(phost, 294, 220, 20, OPT_RIGHTX | OPT_FORMAT, temp_buffer);
 
   // INSERT DIALOG

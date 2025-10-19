@@ -1,6 +1,7 @@
 #include "StartupController.h"
 #include "../views/LogoScreen.h"
 #include "../views/MainScreen.h"
+#include "../views/ViewCommon.h"
 
 StartupController::StartupController(ControllerParams params) : BaseController(params), dispenserHead(params.head) {}
 
@@ -11,13 +12,13 @@ void StartupController::onStart() {
   Logger::log(F("Loading profile.."));
   profile_manager.loadProfile();
 
-  logoParams = {0, "Initializing.."};
+  logoParams = {0, PROGMEM_STR(F("Initializing.."))};
   drawLogoScreen(phost, logoParams);
   delay(500);
 
   // Check if dispenser is online and responding
   dispenserHead.sendHandshake();
-  logoParams.status_message = "Pending Response..";
+  logoParams.status_message = PROGMEM_STR(F("Pending Response.."));
   drawLogoScreen(phost, logoParams);
 }
 
@@ -28,11 +29,11 @@ void StartupController::onInteraction(const Interaction& interaction) {
     running = true;
 
     if (stage == STAGE_CLEAR) {
-      logoParams.status_message = "Unlatching..";
+      logoParams.status_message = PROGMEM_STR(F("Unlatching.."));
       drawLogoScreen(phost, logoParams);
       dispenserHead.clearLimits();
     } else if (stage == STAGE_HOME) {
-      logoParams.status_message = "Homing..";
+      logoParams.status_message = PROGMEM_STR(F("Homing.."));
       drawLogoScreen(phost, logoParams);
       dispenserHead.x().moveToMin();
       dispenserHead.y().moveToMin();

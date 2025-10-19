@@ -63,14 +63,14 @@ inline void drawStepperTestScreen(Gpu_Hal_Context_t* phost, const StepperTestPar
   // Header section
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
-  Gpu_CoCmd_Text(phost, DispWidth / 2, 15, 28, OPT_CENTER | OPT_FORMAT, "Stepper Test");
+  Gpu_CoCmd_Text(phost, DispWidth / 2, 15, 28, OPT_CENTER | OPT_FORMAT, PROGMEM_STR(F("Stepper Test")));
 
   // Stop button (top right, same level as title)
   App_WrCoCmd_Buffer(phost, TAG_MASK(255));
   Gpu_CoCmd_FgColor(phost, 0xCC0000);
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_STOP));
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
-  Gpu_CoCmd_Button(phost, DispWidth - 60, 4, 50, 22, 20, 0, "Stop");
+  Gpu_CoCmd_Button(phost, DispWidth - 60, 4, 50, 22, 20, 0, PROGMEM_STR(F("Stop")));
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // Draw separator line
@@ -93,23 +93,23 @@ inline void drawStepperTestScreen(Gpu_Hal_Context_t* phost, const StepperTestPar
 
   // "Axis:" label
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
-  Gpu_CoCmd_Text(phost, label_x, line1_y + button_height / 2, 20, OPT_CENTERY, "Axis:");
+  Gpu_CoCmd_Text(phost, label_x, line1_y + button_height / 2, 20, OPT_CENTERY, PROGMEM_STR(F("Axis:")));
   App_WrCoCmd_Buffer(phost, TAG_MASK(255));
 
   // X button
   Gpu_CoCmd_FgColor(phost, params.selected_axis == STEPPER_AXIS_X ? 0x0066CC : 0x808080);
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_AXIS_X));
-  Gpu_CoCmd_Button(phost, button_start_x, line1_y, button_width, button_height, 20, 0, "X");
+  Gpu_CoCmd_Button(phost, button_start_x, line1_y, button_width, button_height, 20, 0, PROGMEM_STR(F("X")));
 
   // Y button
   Gpu_CoCmd_FgColor(phost, params.selected_axis == STEPPER_AXIS_Y ? 0x0066CC : 0x808080);
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_AXIS_Y));
-  Gpu_CoCmd_Button(phost, button_start_x + button_width + button_spacing, line1_y, button_width, button_height, 20, 0, "Y");
+  Gpu_CoCmd_Button(phost, button_start_x + button_width + button_spacing, line1_y, button_width, button_height, 20, 0, PROGMEM_STR(F("Y")));
 
   // Z button
   Gpu_CoCmd_FgColor(phost, params.selected_axis == STEPPER_AXIS_Z ? 0x0066CC : 0x808080);
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_AXIS_Z));
-  Gpu_CoCmd_Button(phost, button_start_x + (button_width + button_spacing) * 2, line1_y, button_width, button_height, 20, 0, "Z");
+  Gpu_CoCmd_Button(phost, button_start_x + (button_width + button_spacing) * 2, line1_y, button_width, button_height, 20, 0, PROGMEM_STR(F("Z")));
 
   // Blocking toggle on the right side of the first row (right-aligned)
   int32_t toggle_width = 40;  // Width of toggle button
@@ -126,11 +126,11 @@ inline void drawStepperTestScreen(Gpu_Hal_Context_t* phost, const StepperTestPar
 
   // "MaxSp:" label with clickable value button
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
-  Gpu_CoCmd_Text(phost, label_x, line2_y + button_height / 2, 20, OPT_CENTERY, "MaxSp:");
+  Gpu_CoCmd_Text(phost, label_x, line2_y + button_height / 2, 20, OPT_CENTERY, PROGMEM_STR(F("MaxSp:")));
   App_WrCoCmd_Buffer(phost, TAG_MASK(255));
 
   // Clickable speed value button (aligned to adjustment_buttons_x)
-  sprintf(temp_buffer, "%ld", (long)params.max_speed);
+  snprintf_P(temp_buffer, sizeof(g_view_temp_buffer), PSTR("%ld"), (long)params.max_speed);
   Gpu_CoCmd_FgColor(phost, 0x666666);
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_SPEED_VALUE));
   Gpu_CoCmd_Button(phost, adjustment_buttons_x - value_display_width - 5, line2_y, value_display_width, button_height, 20, 0, temp_buffer);
@@ -140,45 +140,45 @@ inline void drawStepperTestScreen(Gpu_Hal_Context_t* phost, const StepperTestPar
   Gpu_CoCmd_FgColor(phost, 0x00A2E8);
 
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_SPEED_MINUS_10K));
-  Gpu_CoCmd_Button(phost, speed_button_x, line2_y, value_button_width, button_height, 20, 0, "-10k");
+  Gpu_CoCmd_Button(phost, speed_button_x, line2_y, value_button_width, button_height, 20, 0, PROGMEM_STR(F("-10k")));
 
   speed_button_x += value_button_width + value_button_spacing;
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_SPEED_PLUS_10K));
-  Gpu_CoCmd_Button(phost, speed_button_x, line2_y, value_button_width, button_height, 20, 0, "+10k");
+  Gpu_CoCmd_Button(phost, speed_button_x, line2_y, value_button_width, button_height, 20, 0, PROGMEM_STR(F("+10k")));
 
   speed_button_x += value_button_width + value_button_spacing;
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_SPEED_MINUS_1K));
-  Gpu_CoCmd_Button(phost, speed_button_x, line2_y, value_button_width, button_height, 20, 0, "-1k");
+  Gpu_CoCmd_Button(phost, speed_button_x, line2_y, value_button_width, button_height, 20, 0, PROGMEM_STR(F("-1k")));
 
   speed_button_x += value_button_width + value_button_spacing;
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_SPEED_PLUS_1K));
-  Gpu_CoCmd_Button(phost, speed_button_x, line2_y, value_button_width, button_height, 20, 0, "+1k");
+  Gpu_CoCmd_Button(phost, speed_button_x, line2_y, value_button_width, button_height, 20, 0, PROGMEM_STR(F("+1k")));
 
   // Speed adjustment buttons - Row 2: -100, +100, Reset
   int32_t line2b_y = line2_y + button_height + 4;
   speed_button_x = adjustment_buttons_x;
 
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_SPEED_MINUS_100));
-  Gpu_CoCmd_Button(phost, speed_button_x, line2b_y, value_button_width, button_height, 20, 0, "-100");
+  Gpu_CoCmd_Button(phost, speed_button_x, line2b_y, value_button_width, button_height, 20, 0, PROGMEM_STR(F("-100")));
 
   speed_button_x += value_button_width + value_button_spacing;
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_SPEED_PLUS_100));
-  Gpu_CoCmd_Button(phost, speed_button_x, line2b_y, value_button_width, button_height, 20, 0, "+100");
+  Gpu_CoCmd_Button(phost, speed_button_x, line2b_y, value_button_width, button_height, 20, 0, PROGMEM_STR(F("+100")));
 
   speed_button_x += value_button_width + value_button_spacing;
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_SPEED_RESET));
-  Gpu_CoCmd_Button(phost, speed_button_x, line2b_y, value_button_width + 5, button_height, 20, 0, "Reset");
+  Gpu_CoCmd_Button(phost, speed_button_x, line2b_y, value_button_width + 5, button_height, 20, 0, PROGMEM_STR(F("Reset")));
 
   // Line 3: Max Acceleration
   int32_t line3_y = line2b_y + button_height + 4;
 
   // "MaxAcc:" label with clickable value button
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
-  Gpu_CoCmd_Text(phost, label_x, line3_y + button_height / 2, 20, OPT_CENTERY, "MaxAcc:");
+  Gpu_CoCmd_Text(phost, label_x, line3_y + button_height / 2, 20, OPT_CENTERY, PROGMEM_STR(F("MaxAcc:")));
   App_WrCoCmd_Buffer(phost, TAG_MASK(255));
 
   // Clickable acceleration value button (aligned to adjustment_buttons_x)
-  sprintf(temp_buffer, "%ld", (long)params.max_acceleration);
+  snprintf_P(temp_buffer, sizeof(g_view_temp_buffer), PSTR("%ld"), (long)params.max_acceleration);
   Gpu_CoCmd_FgColor(phost, 0x666666);
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_ACCEL_VALUE));
   Gpu_CoCmd_Button(phost, adjustment_buttons_x - value_display_width - 5, line3_y, value_display_width, button_height, 20, 0, temp_buffer);
@@ -188,34 +188,34 @@ inline void drawStepperTestScreen(Gpu_Hal_Context_t* phost, const StepperTestPar
   Gpu_CoCmd_FgColor(phost, 0x00A2E8);
 
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_ACCEL_MINUS_10K));
-  Gpu_CoCmd_Button(phost, accel_button_x, line3_y, value_button_width, button_height, 20, 0, "-10k");
+  Gpu_CoCmd_Button(phost, accel_button_x, line3_y, value_button_width, button_height, 20, 0, PROGMEM_STR(F("-10k")));
 
   accel_button_x += value_button_width + value_button_spacing;
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_ACCEL_PLUS_10K));
-  Gpu_CoCmd_Button(phost, accel_button_x, line3_y, value_button_width, button_height, 20, 0, "+10k");
+  Gpu_CoCmd_Button(phost, accel_button_x, line3_y, value_button_width, button_height, 20, 0, PROGMEM_STR(F("+10k")));
 
   accel_button_x += value_button_width + value_button_spacing;
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_ACCEL_MINUS_1K));
-  Gpu_CoCmd_Button(phost, accel_button_x, line3_y, value_button_width, button_height, 20, 0, "-1k");
+  Gpu_CoCmd_Button(phost, accel_button_x, line3_y, value_button_width, button_height, 20, 0, PROGMEM_STR(F("-1k")));
 
   accel_button_x += value_button_width + value_button_spacing;
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_ACCEL_PLUS_1K));
-  Gpu_CoCmd_Button(phost, accel_button_x, line3_y, value_button_width, button_height, 20, 0, "+1k");
+  Gpu_CoCmd_Button(phost, accel_button_x, line3_y, value_button_width, button_height, 20, 0, PROGMEM_STR(F("+1k")));
 
   // Acceleration adjustment buttons - Row 2: -100, +100, Reset
   int32_t line3b_y = line3_y + button_height + 4;
   accel_button_x = adjustment_buttons_x;
 
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_ACCEL_MINUS_100));
-  Gpu_CoCmd_Button(phost, accel_button_x, line3b_y, value_button_width, button_height, 20, 0, "-100");
+  Gpu_CoCmd_Button(phost, accel_button_x, line3b_y, value_button_width, button_height, 20, 0, PROGMEM_STR(F("-100")));
 
   accel_button_x += value_button_width + value_button_spacing;
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_ACCEL_PLUS_100));
-  Gpu_CoCmd_Button(phost, accel_button_x, line3b_y, value_button_width, button_height, 20, 0, "+100");
+  Gpu_CoCmd_Button(phost, accel_button_x, line3b_y, value_button_width, button_height, 20, 0, PROGMEM_STR(F("+100")));
 
   accel_button_x += value_button_width + value_button_spacing;
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_ACCEL_RESET));
-  Gpu_CoCmd_Button(phost, accel_button_x, line3b_y, value_button_width + 5, button_height, 20, 0, "Reset");
+  Gpu_CoCmd_Button(phost, accel_button_x, line3b_y, value_button_width + 5, button_height, 20, 0, PROGMEM_STR(F("Reset")));
 
   // Line 4: Horizontal divider
   int32_t divider_y = line3b_y + button_height + 10;
@@ -242,7 +242,7 @@ inline void drawStepperTestScreen(Gpu_Hal_Context_t* phost, const StepperTestPar
   // "-" button
   Gpu_CoCmd_FgColor(phost, 0x00A2E8);
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_MOVE_MINUS));
-  Gpu_CoCmd_Button(phost, start_x, line5_y, move_button_width, move_button_height, 20, 0, "-");
+  Gpu_CoCmd_Button(phost, start_x, line5_y, move_button_width, move_button_height, 20, 0, PROGMEM_STR(F("-")));
 
   // Amount input button
   start_x += move_button_width + button_gap;
@@ -250,20 +250,20 @@ inline void drawStepperTestScreen(Gpu_Hal_Context_t* phost, const StepperTestPar
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_MOVE_AMOUNT));
   int amount_int = (int)params.move_amount_cm;
   int amount_dec = (int)((params.move_amount_cm - amount_int) * 10);
-  sprintf(temp_buffer, "%d.%dcm", amount_int, amount_dec);
+  snprintf_P(temp_buffer, sizeof(g_view_temp_buffer), PSTR("%d.%dcm"), amount_int, amount_dec);
   Gpu_CoCmd_Button(phost, start_x, line5_y, amount_button_width, move_button_height, 20, 0, temp_buffer);
 
   // "+" button
   start_x += amount_button_width + button_gap;
   Gpu_CoCmd_FgColor(phost, 0x00A2E8);
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_MOVE_PLUS));
-  Gpu_CoCmd_Button(phost, start_x, line5_y, move_button_width, move_button_height, 20, 0, "+");
+  Gpu_CoCmd_Button(phost, start_x, line5_y, move_button_width, move_button_height, 20, 0, PROGMEM_STR(F("+")));
 
   // Back button (top left, vertically aligned with title)
   Gpu_CoCmd_FgColor(phost, 0xAA0000);
   App_WrCoCmd_Buffer(phost, TAG(TAG_STEPPER_BACK));
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
-  Gpu_CoCmd_Button(phost, 10, 4, 50, 22, 20, 0, "Back");
+  Gpu_CoCmd_Button(phost, 10, 4, 50, 22, 20, 0, PROGMEM_STR(F("Back")));
 
   // Status message at bottom left
   if (params.status_message && params.status_message[0] != '\0') {

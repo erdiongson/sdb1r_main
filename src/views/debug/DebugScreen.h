@@ -3,6 +3,7 @@
 #include "../../gpu/App_Common.h"
 #include "../../Constants.h"
 #include "../common/Dialogs.h"
+#include "../ViewCommon.h"
 
 // Parameters for Debug Screen display.
 struct DebugScreenParams {
@@ -27,7 +28,7 @@ inline void drawDebugScreen(Gpu_Hal_Context_t* phost, DebugScreenParams params) 
   // Title
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 165, 0));
-  Gpu_CoCmd_Text(phost, 159, 15, 28, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, "DEBUG MENU");
+  Gpu_CoCmd_Text(phost, 159, 15, 28, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, PROGMEM_STR(F("DEBUG MENU")));
 
   // Divider line
   App_WrCoCmd_Buffer(phost, COLOR_RGB(193, 64, 0));
@@ -47,21 +48,21 @@ inline void drawDebugScreen(Gpu_Hal_Context_t* phost, DebugScreenParams params) 
   // Move Test and Stepper Test buttons side-by-side (50% width each)
   App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_MOVE_TEST));
   Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-  Gpu_CoCmd_Button(phost, 25, button_y, 130, button_height, 26, 0, "Move Test");
+  Gpu_CoCmd_Button(phost, 25, button_y, 130, button_height, 26, 0, PROGMEM_STR(F("Move Test")));
 
   App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_STEPPER_TEST));
   Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-  Gpu_CoCmd_Button(phost, 165, button_y, 130, button_height, 26, 0, "Stepper Test");
+  Gpu_CoCmd_Button(phost, 165, button_y, 130, button_height, 26, 0, PROGMEM_STR(F("Stepper Test")));
   button_y += button_spacing;
 
   // Dispenser Test and Dialog Test buttons side-by-side (50% width each)
   App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_DISPENSER_TEST));
   Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-  Gpu_CoCmd_Button(phost, 25, button_y, 130, button_height, 26, 0, "Dispenser Test");
+  Gpu_CoCmd_Button(phost, 25, button_y, 130, button_height, 26, 0, PROGMEM_STR(F("Dispenser Test")));
 
   App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_DIALOG_TEST));
   Gpu_CoCmd_FgColor(phost, 0x00A2E8);
-  Gpu_CoCmd_Button(phost, 165, button_y, 130, button_height, 26, 0, "Dialog Test");
+  Gpu_CoCmd_Button(phost, 165, button_y, 130, button_height, 26, 0, PROGMEM_STR(F("Dialog Test")));
   button_y += button_spacing;
 
   // Add spacing before utility buttons
@@ -71,9 +72,9 @@ inline void drawDebugScreen(Gpu_Hal_Context_t* phost, DebugScreenParams params) 
   App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_BLANK_EEPROM));
   Gpu_CoCmd_FgColor(phost, 0xFF6600);
   if (params.blanked_eeprom) {
-    Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, "Blank EEPROM (Done)");
+    Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, PROGMEM_STR(F("Blank EEPROM (Done)")));
   } else {
-    Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, "Blank EEPROM");
+    Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, PROGMEM_STR(F("Blank EEPROM")));
   }
   button_y += button_spacing;
 
@@ -81,16 +82,16 @@ inline void drawDebugScreen(Gpu_Hal_Context_t* phost, DebugScreenParams params) 
   App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_RESET_PROFILES));
   Gpu_CoCmd_FgColor(phost, 0xFF6600);
   if (params.profiles_reset) {
-    Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, "Reset Profiles (Done)");
+    Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, PROGMEM_STR(F("Reset Profiles (Done)")));
   } else {
-    Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, "Reset Profiles");
+    Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, PROGMEM_STR(F("Reset Profiles")));
   }
   button_y += button_spacing;
 
   // Back button at bottom left
   App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_BACK));
   Gpu_CoCmd_FgColor(phost, 0xAA0000);
-  Gpu_CoCmd_Button(phost, 10, 210, 50, 22, 20, 0, "Back");
+  Gpu_CoCmd_Button(phost, 10, 210, 50, 22, 20, 0, PROGMEM_STR(F("Back")));
 
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 

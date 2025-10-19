@@ -1,13 +1,14 @@
 #include "DispenseTestController.h"
 #include "../../views/debug/DispenseTestScreen.h"
 #include "../../views/common/Keyboards.h"
+#include "../../views/ViewCommon.h"
 
 DispenseTestController::DispenseTestController(ControllerParams params) : BaseController(params) {}
 
 void DispenseTestController::onStart() {
   Logger::log(F("DispenseTestController::on_start"));
 
-  updateScreen("READY");
+  updateScreen(PROGMEM_STR(F("READY")));
 }
 
 void DispenseTestController::updateScreen(const char* status_message) {
@@ -40,7 +41,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
         repeat_state.current_count = 0;
         repeat_state.total_count = 0;
       }
-      updateScreen("SENT DISPENSE");
+      updateScreen(PROGMEM_STR(F("SENT DISPENSE")));
       dispenserHead.sendDispense();
       state = WAITING_FOR_RESPONSE;
       break;
@@ -152,35 +153,36 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
   DispenserProcessResult result = dispenserHead.process();
 
   if (state == WAITING_FOR_RESPONSE && result.dispenser == DISPENSER_STATE_ACKNOWLEDGED) {
-    updateScreen("ACK");
+    updateScreen(PROGMEM_STR(F("ACK")));
     return ControllerStepResult(false);
   }
 
   if (state == WAITING_FOR_RESPONSE && result.dispenser != DISPENSER_STATE_SENT) {
-    const char* message = "";
+    const char* message = nullptr;
     bool is_error = false;
     
     switch (result.dispenser) {
       case DISPENSER_STATE_IDLING:
-        message = "COMPLETED";
+        message = PROGMEM_STR(F("COMPLETED"));
         break;
       case DISPENSER_STATE_ERROR_ACK_ERROR:
-        message = "ACK TIMEOUT";
+        message = PROGMEM_STR(F("ACK TIMEOUT"));
         is_error = true;
         break;
       case DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE:
-        message = "IR SENSOR FAILURE";
+        message = PROGMEM_STR(F("IR SENSOR FAILURE"));
         is_error = true;
         break;
       case DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED:
-        message = "MARKER NOT DETECTED";
+        message = PROGMEM_STR(F("MARKER NOT DETECTED"));
         is_error = true;
         break;
       case DISPENSER_STATE_ERROR_CYCLES_TIMEOUT:
-        message = "CYCLE TIMEOUT";
+        message = PROGMEM_STR(F("CYCLE TIMEOUT"));
         is_error = true;
         break;
       default:
+        message = PROGMEM_STR(F(""));
         break;
     }
 
@@ -192,12 +194,12 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
       if (repeat_state.current_count < repeat_state.total_count) {
         // Increment and send next dispense command
         repeat_state.current_count++;
-        updateScreen("SENT DISPENSE");
+        updateScreen(PROGMEM_STR(F("SENT DISPENSE")));
         dispenserHead.sendDispense();
         state = WAITING_FOR_RESPONSE;
       } else {
         // Last dispense completed - reset and show completion
-        updateScreen("ALL DONE");
+        updateScreen(PROGMEM_STR(F("ALL DONE")));
       }
     } else {
       // Error occurred or single dispense completed
@@ -212,7 +214,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
   if (current_time - last_update_time >= DISPENSE_TEST_REFRESH_INTERVAL_MS) {
     last_update_time = current_time;
     if (state == WAITING_FOR_RESPONSE) {
-      updateScreen("WAITING..");
+      updateScreen(PROGMEM_STR(F("WAITING..")));
     }
   }
 

@@ -7,6 +7,7 @@
 #include "../common/ToggleButton.h"
 #include "../common/Dialogs.h"
 #include "../../Constants.h"
+#include "../ViewCommon.h"
 
 // Parameters for whether to highlight skip fields in red
 struct SkipErrors {
@@ -39,9 +40,9 @@ inline void drawAdvancedSettingsScreen(Gpu_Hal_Context_t* phost, AdvancedSetting
 
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, CLEAR_COLOR_RGB(0, 0, 0));
-  Gpu_CoCmd_Text(phost, 10, 12, 21, 0, "Skipped Columns:");
-  Gpu_CoCmd_Text(phost, 10, 60, 21, 0, "Skipped Rows:");
-  Gpu_CoCmd_Text(phost, 10, 108, 21, 0, "Skipped Single Position:");
+  Gpu_CoCmd_Text(phost, 10, 12, 21, 0, PROGMEM_STR(F("Skipped Columns:")));
+  Gpu_CoCmd_Text(phost, 10, 60, 21, 0, PROGMEM_STR(F("Skipped Rows:")));
+  Gpu_CoCmd_Text(phost, 10, 108, 21, 0, PROGMEM_STR(F("Skipped Single Position:")));
 
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, BEGIN(RECTS));
@@ -87,15 +88,15 @@ inline void drawAdvancedSettingsScreen(Gpu_Hal_Context_t* phost, AdvancedSetting
 
   // Back Button
   App_WrCoCmd_Buffer(phost, TAG(TAG_ADV_PROF_BACK));
-  Gpu_CoCmd_Button(phost, 10, 196, 62, 26, 21, 0, "Back");
+  Gpu_CoCmd_Button(phost, 10, 196, 62, 26, 21, 0, PROGMEM_STR(F("Back")));
 
   // Preview Button
   App_WrCoCmd_Buffer(phost, TAG(TAG_CONFIG_PREVIEW));
-  Gpu_CoCmd_Button(phost, 247, 196, 62, 26, 21, 0, "Preview");
+  Gpu_CoCmd_Button(phost, 247, 196, 62, 26, 21, 0, PROGMEM_STR(F("Preview")));
 
   // Staggered Mode Toggle
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
-  Gpu_CoCmd_Text(phost, 10, 165, 21, 0, "Staggered:");
+  Gpu_CoCmd_Text(phost, 10, 165, 21, 0, PROGMEM_STR(F("Staggered:")));
   Toggle_Button(phost, profile.staggered, TAG_STAGGERED_TOGGLE, 92, 168, "On", "Off");
 
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));

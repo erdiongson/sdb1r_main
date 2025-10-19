@@ -56,7 +56,7 @@ class TrayPositionHandler {
   bool staggered = false;
   bool flipped = false;
 
-  Position skipPositions[MAX_SKIP_POSITIONS] = { Position(-1, -1) };
+  Position skip_positions[MAX_SKIP_POSITIONS] = { Position(-1, -1) };
 
   // Cached values calculated during reset
   int totalValidTubes = 0;
@@ -153,15 +153,15 @@ class TrayPositionHandler {
       if (pos.x == -1 || pos.y == -1) {
         break;
       }
-      if (pos.x == skipPositions[i].x && pos.y == skipPositions[i].y) {
+      if (pos.x == skip_positions[i].x && pos.y == skip_positions[i].y) {
         return true;
       }
       // Skip entire column
-      if (pos.x == skipPositions[i].x && skipPositions[i].y == 0) {
+      if (pos.x == skip_positions[i].x && skip_positions[i].y == 0) {
         return true;
       }
       // Skip entire row
-      if (pos.y == skipPositions[i].y && skipPositions[i].x == 0) {
+      if (pos.y == skip_positions[i].y && skip_positions[i].x == 0) {
         return true;
       }
       // If stagger is enabled, skip every last position in even rows (or even columns if flipped)
@@ -198,15 +198,15 @@ class TrayPositionHandler {
 
   // Copy skip positions and flip them if needed.
   // @param positions Array of positions to transform.
-  // @param outPositions Output array to store flipped positions.
+  // @param out_positions Output array to store flipped positions.
   // @param flip Whether to flip the positions.
-  void copyPositions(const Position positions[MAX_SKIP_POSITIONS], Position outPositions[MAX_SKIP_POSITIONS], bool flip) {
+  void copyPositions(const Position positions[MAX_SKIP_POSITIONS], Position out_positions[MAX_SKIP_POSITIONS], bool flip) {
     for (int i = 0; i < MAX_SKIP_POSITIONS; i++) {
       if (positions[i].x == -1 || positions[i].y == -1) {
-        outPositions[i] = Position(-1, -1);
+        out_positions[i] = Position(-1, -1);
         break;
       }
-      outPositions[i] = flip ? flipPosition(positions[i]) : positions[i];
+      out_positions[i] = flip ? flipPosition(positions[i]) : positions[i];
     }
   }
 
@@ -236,13 +236,13 @@ class TrayPositionHandler {
     flipped = shouldFlip(newPositions);
 
     this->dimensions = flipped ? flipDimensions(dimensions) : dimensions;
-    copyPositions(newPositions, skipPositions, flipped);
+    copyPositions(newPositions, skip_positions, flipped);
   }
 
   // Get the skip positions array.
-  // @param outPositions Output array to copy skip positions to.
-  void getSkipPositions(Position outPositions[MAX_SKIP_POSITIONS]) const {
-    copyPositions(skipPositions, outPositions, flipped);
+  // @param out_positions Output array to copy skip positions to.
+  void getSkipPositions(Position out_positions[MAX_SKIP_POSITIONS]) const {
+    copyPositions(skip_positions, out_positions, flipped);
   }
 
   // Get the next valid position and update the current position.
@@ -300,21 +300,21 @@ class TrayPositionHandler {
 
     // First pass: mark entire rows and columns as skipped
     for (int i = 0; i < MAX_SKIP_POSITIONS; i++) {
-      if (skipPositions[i].x == -1 || skipPositions[i].y == -1) break;
+      if (skip_positions[i].x == -1 || skip_positions[i].y == -1) break;
 
       // Mark entire column as skipped
-      if (skipPositions[i].y == 0 && skipPositions[i].x > 0) {
-        if (!skippedCols[skipPositions[i].x]) {
-          skippedCols[skipPositions[i].x] = true;
-          int rowsInCol = staggered && skipPositions[i].x == dimensions.columns ? dimensions.rows / 2 : dimensions.rows;
+      if (skip_positions[i].y == 0 && skip_positions[i].x > 0) {
+        if (!skippedCols[skip_positions[i].x]) {
+          skippedCols[skip_positions[i].x] = true;
+          int rowsInCol = staggered && skip_positions[i].x == dimensions.columns ? dimensions.rows / 2 : dimensions.rows;
           skipCount += rowsInCol;
         }
       }
       // Mark entire row as skipped
-      else if (skipPositions[i].x == 0 && skipPositions[i].y > 0) {
-        if (!skippedRows[skipPositions[i].y]) {
-          skippedRows[skipPositions[i].y] = true;
-          int colsInRow = staggered && skipPositions[i].y % 2 == 0 ? dimensions.columns - 1 : dimensions.columns;
+      else if (skip_positions[i].x == 0 && skip_positions[i].y > 0) {
+        if (!skippedRows[skip_positions[i].y]) {
+          skippedRows[skip_positions[i].y] = true;
+          int colsInRow = staggered && skip_positions[i].y % 2 == 0 ? dimensions.columns - 1 : dimensions.columns;
           skipCount += colsInRow;
         }
       }
@@ -322,11 +322,11 @@ class TrayPositionHandler {
 
     // Second pass: count individual skip positions only if not already in a skipped row/column
     for (int i = 0; i < MAX_SKIP_POSITIONS; i++) {
-      if (skipPositions[i].x == -1 || skipPositions[i].y == -1) break;
+      if (skip_positions[i].x == -1 || skip_positions[i].y == -1) break;
 
       // Count individual skip positions only if not in a skipped row or column
-      if (skipPositions[i].x > 0 && skipPositions[i].y > 0) {
-        if (!skippedRows[skipPositions[i].y] && !skippedCols[skipPositions[i].x]) {
+      if (skip_positions[i].x > 0 && skip_positions[i].y > 0) {
+        if (!skippedRows[skip_positions[i].y] && !skippedCols[skip_positions[i].x]) {
           skipCount++;
         }
       }

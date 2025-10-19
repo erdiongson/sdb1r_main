@@ -1,6 +1,7 @@
 #include "StepperTestController.h"
 #include "../../views/debug/StepperTestScreen.h"
 #include "../../views/common/Keyboards.h"
+#include "../../views/ViewCommon.h"
 
 StepperTestController::StepperTestController(ControllerParams params) : BaseController(params) {}
 
@@ -250,7 +251,7 @@ void StepperTestController::onInteraction(const Interaction& interaction) {
       dispenserHead.y().stopRunning();
       dispenserHead.z().stopRunning();
       is_tracking_movement = false;
-      strcpy(status_message, "All axes stopped");
+      strcpy(status_message, PROGMEM_STR(F("All axes stopped")));
       updateScreen();
       break;
 

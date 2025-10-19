@@ -38,7 +38,7 @@ inline void drawLogoScreen(Gpu_Hal_Context_t* phost, const LogoScreenParams& par
   App_WrCoCmd_Buffer(phost, COLOR_RGB(40, 40, 40));
   char fwver_buf[10];
   strcpy_P(fwver_buf, FWVER);
-  sprintf(temp_buffer, "v%s - %s", fwver_buf, params.status_message);
+  snprintf_P(temp_buffer, sizeof(g_view_temp_buffer), PSTR("v%s - %s"), fwver_buf, params.status_message);
   Gpu_CoCmd_Text(phost, 160, 220, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, temp_buffer);
 
   if (params.dialog_code != 0) {

@@ -34,7 +34,7 @@ DispenserHeadParams params = { axis_x, axis_y, axis_z };
 DispenserHead dispenser_head(params);
 
 // Forward declaration of startNextController for callback
-void startNextController(int nextControllerType);
+void startNextController(int next_controller_type);
 
 // Controller manager instance
 static uint8_t controller_manager_buffer[sizeof(ControllerManager)];
@@ -45,9 +45,9 @@ ControllerManager& controller_manager =
 unsigned long last_interaction_check = 0;
 
 // Transitions to the next controller based on the controller type.
-// @param nextControllerType The type of controller to transition to.
-void startNextController(int nextControllerType) {
-  controller_manager.startNextController(nextControllerType);
+// @param next_controller_type The type of controller to transition to.
+void startNextController(int next_controller_type) {
+  controller_manager.startNextController(next_controller_type);
 }
 
 void setup() {
