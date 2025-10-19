@@ -7,9 +7,9 @@
 
 // Parameters for Debug Screen display.
 struct DebugScreenParams {
-  bool blanked_eeprom;  // true = show (Done) on Blank EEPROM button
-  bool profiles_reset;  // true = show (Done) on Reset Profiles button
-  int dialog_code;      // dialog code to display (0 = no dialog)
+  bool blanked_eeprom;   // true = show (Done) on Blank EEPROM button
+  bool profiles_reset;   // true = show (Done) on Reset Profiles button
+  uint8_t dialog_code;   // Dialog codes are < 50
 };
 
 // Draws the debug screen with test and utility buttons.

@@ -203,22 +203,22 @@ void ProfileManager::readProfileEEPROM(int index) {
 // @param phost GPU context for displaying the keyboard.
 // @return PasswordVerificationResult indicating success, incorrect, or cancelled.
 PasswordVerificationResult ProfileManager::verifyPassword(Gpu_Hal_Context_t* phost) {
-  char currentPassword[PASSWORD_MAX_LEN] = "";
-  char inputPassword[PASSWORD_MAX_LEN] = "";
+  char current_password[PASSWORD_MAX_LEN] = "";
+  char input_password[PASSWORD_MAX_LEN] = "";
 
-  readPassEEPROM(currentPassword);
-  if (strcmp(currentPassword, "") == 0) strcpy_P(currentPassword, INITIAL_PASSWORD);
+  readPassEEPROM(current_password);
+  if (strcmp(current_password, "") == 0) strcpy_P(current_password, INITIAL_PASSWORD);
 
-  KeyboardResult kb_result = getKeyboardValue(phost, inputPassword, PROGMEM_STR(F("Enter Password")), FALSE, PASSWORD_MAX_LEN, NULL);
+  KeyboardResult kb_result = getKeyboardValue(phost, input_password, "Enter Password", FALSE, PASSWORD_MAX_LEN, NULL);
 
   // Cancelled
-  if (kb_result.action == ACTION_BACK || strcmp(inputPassword, "") == 0) {
+  if (kb_result.action == ACTION_BACK || strcmp(input_password, "") == 0) {
     return PASSWORD_CANCELLED;
   }
 
   // Attempted
-  bool passwordValid = (strcmp(currentPassword, inputPassword) == 0 || strcmp_P(inputPassword, SUPER_PASSWORD) == 0);
-  if (!passwordValid) {
+  bool password_valid = (strcmp(current_password, input_password) == 0 || strcmp_P(input_password, SUPER_PASSWORD) == 0);
+  if (!password_valid) {
     return PASSWORD_INCORRECT;
   }
 

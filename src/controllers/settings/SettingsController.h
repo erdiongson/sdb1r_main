@@ -7,7 +7,7 @@
 struct VerificationResult {
   bool is_valid;
   InputErrors errors;
-  int dialog_code;  // The appropriate dialog code to show (0 if valid)
+  uint8_t dialog_code;  // Dialog codes are < 50
 };
 
 class SettingsController : public BaseController {
@@ -23,7 +23,7 @@ class SettingsController : public BaseController {
   
   // Helper method to draw the settings screen with current profile and errors.
   // @param dialog_code Optional dialog code to display (default 0).
-  void drawScreen(int dialog_code = 0);
+  void drawScreen(uint8_t dialog_code = 0);
 
  public:
   SettingsController(ControllerParams params);

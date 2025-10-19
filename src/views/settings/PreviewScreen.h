@@ -6,11 +6,11 @@
 
 // Parameters for Preview_Screen display
 struct PreviewScreenParams {
-  int grid_cols;          // Number of columns in the grid
-  int grid_rows;          // Number of rows in the grid
+  uint8_t grid_cols;      // Number of columns in the grid (max 42)
+  uint8_t grid_rows;      // Number of rows in the grid (max 33)
   bool simulating;        // Whether simulation mode is active
-  int simulate_col;       // Column being simulated (0 = none)
-  int simulate_row;       // Row being simulated (0 = none)
+  uint8_t simulate_col;   // Column being simulated (0 = none, max 42)
+  uint8_t simulate_row;   // Row being simulated (0 = none, max 33)
   const char* info_text;  // Text to display in bottom right (e.g., "Preview (Grid 10x10)" or "Position = 5x3")
   bool staggered;         // If true, even rows are shifted right by half a step with last cell removed
 };

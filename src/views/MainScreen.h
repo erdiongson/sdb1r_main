@@ -17,17 +17,17 @@ struct ButtonsEnabled {
 
 // Run status information.
 struct RunStatus {
-  uint16_t current_row;
-  uint16_t current_column;
-  uint16_t tubes_left;
-  uint16_t filling_tube;
+  uint8_t current_row;     // Max 42 rows (< 255)
+  uint8_t current_column;  // Max 42 columns (< 255)
+  uint16_t tubes_left;     // Can exceed 255 (max 1386)
+  uint16_t filling_tube;   // Can exceed 255 (max 1386)
 };
 
 // Parameters for Home_Screen display.
 struct MainScreenParams {
   Profile& profile;
   RunStatus run_status;
-  int dialog_code;
+  uint8_t dialog_code;  // Dialog codes are < 50
 };
 
 // Draws menu buttons based on the button enable states.

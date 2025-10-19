@@ -24,7 +24,7 @@ struct InputErrors {
 struct SettingsScreenParams {
   Profile& profile;
   InputErrors errors;
-  int dialog_code;
+  uint8_t dialog_code;  // Dialog codes are < 50
 };
 
 inline void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams params) {

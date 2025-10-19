@@ -9,8 +9,8 @@ class PreviewController : public BaseController {
   bool simulating;
   unsigned long last_simulation_time;
   TrayHandler::TrayPositionHandler simulation_handler;
-  int simulate_col;
-  int simulate_row;
+  uint8_t simulate_col;  // Max 42 columns
+  uint8_t simulate_row;  // Max 33 rows
   char preview_info_text[50];
 
   void startSimulation();

@@ -270,7 +270,7 @@ SkipVerificationResult AdvancedSettingsController::verifyParameters() {
 }
 
 // Helper method to draw the advanced settings screen with current profile and errors.
-void AdvancedSettingsController::drawScreen(int dialog_code) {
+void AdvancedSettingsController::drawScreen(uint8_t dialog_code) {
   SkipVerificationResult verification = verifyParameters();
   drawAdvancedSettingsScreen(phost, { *current_profile, skip_col, skip_row, skip_single_pos, verification.errors, dialog_code });
 }

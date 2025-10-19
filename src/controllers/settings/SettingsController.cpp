@@ -316,7 +316,7 @@ VerificationResult SettingsController::verifyParameters() {
 
 // Helper method to draw the settings screen with current profile and errors.
 // @param dialog_code Optional dialog code to display (default 0).
-void SettingsController::drawScreen(int dialog_code) {
+void SettingsController::drawScreen(uint8_t dialog_code) {
   VerificationResult verification = verifyParameters();
   drawSettingsScreen(phost, { *current_profile, verification.errors, dialog_code });
 }

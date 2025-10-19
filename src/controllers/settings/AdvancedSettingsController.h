@@ -25,7 +25,7 @@ class AdvancedSettingsController : public BaseController {
   SkipVerificationResult verifyParameters();
 
   // Helper method to draw the advanced settings screen with current profile and errors.
-  void drawScreen(int dialog_code = 0);
+  void drawScreen(uint8_t dialog_code = 0);
 
  public:
   AdvancedSettingsController(ControllerParams params);

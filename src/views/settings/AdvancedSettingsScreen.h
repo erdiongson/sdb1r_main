@@ -24,7 +24,7 @@ struct AdvancedSettingsScreenParams {
   const char* skip_row;
   const char* skip_single_pos;
   SkipErrors errors;
-  int dialog_code;
+  uint8_t dialog_code;  // Dialog codes are < 50
 };
 
 inline void drawAdvancedSettingsScreen(Gpu_Hal_Context_t* phost, AdvancedSettingsScreenParams params) {

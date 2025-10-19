@@ -11,7 +11,7 @@ struct ProfileParams {
   uint8_t keypressed;
   uint8_t cur_prof_num;
   Profile& profile;
-  int dialog_code;
+  uint8_t dialog_code;  // Dialog codes are < 50
 };
 
 void drawProfileScreen(Gpu_Hal_Context_t* phost, ProfileParams params) {

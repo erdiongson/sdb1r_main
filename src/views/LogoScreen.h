@@ -8,7 +8,7 @@
 
 // Parameters for Logo Screen display.
 struct LogoScreenParams {
-  int dialog_code;
+  uint8_t dialog_code;  // Dialog codes are < 50
   const char* status_message;
 };
 
