@@ -73,7 +73,7 @@ void ProfileManager::checkProfile(void) {
 }
 
 uint8_t ProfileManager::loadProfile(void) {
-  snprintf(g_log_buffer, sizeof(g_log_buffer), "PROFILE SIZE: %d", PROFILE_SIZE);
+  snprintf(g_log_buffer, sizeof(g_log_buffer), "ProfSz:%d", PROFILE_SIZE);
   Logger::log(g_log_buffer);
 
   this->currentProfileIndex = readCurIDEEPROM();
@@ -128,7 +128,6 @@ uint8_t ProfileManager::readCurIDEEPROM(void) {
 
 void ProfileManager::writeProfileEEPROM(int index) {
   int address = (index * RESERVED_PROFILE_SIZE) + sizeof(uint8_t);
-  Logger::log("Starting Address = ", (float)address);
 
   EEPROM.put(address, currentProfile.profile_name);
   address += sizeof(currentProfile.profile_name);
@@ -160,13 +159,10 @@ void ProfileManager::writeProfileEEPROM(int index) {
   address += sizeof(currentProfile.skip_positions);
   EEPROM.put(address, currentProfile.skip_count);
   address += sizeof(currentProfile.skip_count);
-
-  Logger::log("Ending Address = ", (float)address);
 }
 
 void ProfileManager::readProfileEEPROM(int index) {
   int address = (index * RESERVED_PROFILE_SIZE) + sizeof(uint8_t);
-  Logger::log("Starting Address = ", (float)address);
 
   EEPROM.get(address, currentProfile.profile_name);
   address += sizeof(currentProfile.profile_name);
@@ -199,7 +195,6 @@ void ProfileManager::readProfileEEPROM(int index) {
   EEPROM.get(address, currentProfile.skip_count);
   address += sizeof(currentProfile.skip_count);
 
-  Logger::log("Ending Address = ", (float)address);
   checkProfile();
 }
 

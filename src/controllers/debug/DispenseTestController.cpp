@@ -64,7 +64,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
     // Vibration level buttons (U0-U4)
     case TAG_VIB_U0: {
       Logger::log(F("DispenseTestController: Vibration level set to U0"));
-      updateScreen("SETTING VIB LEVEL U0");
+      updateScreen("SET U0");
       dispenserHead.setVibrationLevel(0);
       state = WAITING_FOR_RESPONSE;
       break;
@@ -72,7 +72,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
 
     case TAG_VIB_U1: {
       Logger::log(F("DispenseTestController: Vibration level set to U1"));
-      updateScreen("SETTING VIB LEVEL U1");
+      updateScreen("SET U1");
       dispenserHead.setVibrationLevel(1);
       state = WAITING_FOR_RESPONSE;
       break;
@@ -80,7 +80,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
 
     case TAG_VIB_U2: {
       Logger::log(F("DispenseTestController: Vibration level set to U2"));
-      updateScreen("SETTING VIB LEVEL U2");
+      updateScreen("SET U2");
       dispenserHead.setVibrationLevel(2);
       state = WAITING_FOR_RESPONSE;
       break;
@@ -88,7 +88,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
 
     case TAG_VIB_U3: {
       Logger::log(F("DispenseTestController: Vibration level set to U3"));
-      updateScreen("SETTING VIB LEVEL U3");
+      updateScreen("SET U3");
       dispenserHead.setVibrationLevel(3);
       state = WAITING_FOR_RESPONSE;
       break;
@@ -96,7 +96,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
 
     case TAG_VIB_U4: {
       Logger::log(F("DispenseTestController: Vibration level set to U4"));
-      updateScreen("SETTING VIB LEVEL U4");
+      updateScreen("SET U4");
       dispenserHead.setVibrationLevel(4);
       state = WAITING_FOR_RESPONSE;
       break;
@@ -105,7 +105,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
     // Vibration time buttons (1-5s)
     case TAG_VIB_TIME_1: {
       Logger::log(F("DispenseTestController: Vibration time set to 1s"));
-      updateScreen("SETTING VIB TIME 1s");
+      updateScreen("SET 1s");
       dispenserHead.setVibrationTime(1);
       state = WAITING_FOR_RESPONSE;
       break;
@@ -113,7 +113,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
 
     case TAG_VIB_TIME_2: {
       Logger::log(F("DispenseTestController: Vibration time set to 2s"));
-      updateScreen("SETTING VIB TIME 2s");
+      updateScreen("SET 2s");
       dispenserHead.setVibrationTime(2);
       state = WAITING_FOR_RESPONSE;
       break;
@@ -121,7 +121,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
 
     case TAG_VIB_TIME_3: {
       Logger::log(F("DispenseTestController: Vibration time set to 3s"));
-      updateScreen("SETTING VIB TIME 3s");
+      updateScreen("SET 3s");
       dispenserHead.setVibrationTime(3);
       state = WAITING_FOR_RESPONSE;
       break;
@@ -129,7 +129,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
 
     case TAG_VIB_TIME_4: {
       Logger::log(F("DispenseTestController: Vibration time set to 4s"));
-      updateScreen("SETTING VIB TIME 4s");
+      updateScreen("SET 4s");
       dispenserHead.setVibrationTime(4);
       state = WAITING_FOR_RESPONSE;
       break;
@@ -137,7 +137,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
 
     case TAG_VIB_TIME_5: {
       Logger::log(F("DispenseTestController: Vibration time set to 5s"));
-      updateScreen("SETTING VIB TIME 5s");
+      updateScreen("SET 5s");
       dispenserHead.setVibrationTime(5);
       state = WAITING_FOR_RESPONSE;
       break;
@@ -152,7 +152,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
   DispenserProcessResult result = dispenserHead.process();
 
   if (state == WAITING_FOR_RESPONSE && result.dispenser == DISPENSER_STATE_ACKNOWLEDGED) {
-    updateScreen("ACKNOWLEGED");
+    updateScreen("ACK");
     return ControllerStepResult(false);
   }
 
@@ -212,7 +212,7 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
   if (current_time - last_update_time >= DISPENSE_TEST_REFRESH_INTERVAL_MS) {
     last_update_time = current_time;
     if (state == WAITING_FOR_RESPONSE) {
-      updateScreen("WAITING...");
+      updateScreen("WAITING..");
     }
   }
 
