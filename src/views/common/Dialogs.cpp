@@ -43,7 +43,7 @@ const char DIALOG_TITLE_SKIP_VALUES[] PROGMEM = "Skip Values Error";
 const char DIALOG_SUBTITLE_SKIP_VALUES[] PROGMEM = "Skip positions are invalid for current tray configuration. Please update in Advanced settings.";
 
 const char DIALOG_TITLE_SKIP_COUNT[] PROGMEM = "Too Many Skip Positions";
-const char DIALOG_SUBTITLE_SKIP_COUNT[] PROGMEM = "The total number of skip positions exceeds the maximum allowed. Please reduce the number of skips.";
+const char DIALOG_SUBTITLE_SKIP_COUNT[] PROGMEM = "The total number of skip positions exceeds the maximum allowed (%d). Please reduce the number of skips.";
 
 const char DIALOG_TITLE_UNKNOWN[] PROGMEM = "Unknown Error";
 const char DIALOG_SUBTITLE_UNKNOWN[] PROGMEM = "An unknown error occurred.";
@@ -293,7 +293,10 @@ void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
 
     case DIALOG_ERROR_SKIP_COUNT_EXCEEDED:
       params.title = DIALOG_TITLE_SKIP_COUNT;
-      params.subtitle = DIALOG_SUBTITLE_SKIP_COUNT;
+      // Format the subtitle with the actual MAX_SKIP_POSITIONS value
+      strcpy_P(subtitle_buffer, params.subtitle);
+      sprintf(subtitle_buffer, subtitle_buffer, MAX_SKIP_POSITIONS);
+      params.subtitle = subtitle_buffer;
       params.left_btn = DIALOG_BTN_CONTINUE;
       params.right_btn = nullptr;
       params.left_tag = TAG_CONTINUE;
