@@ -34,12 +34,9 @@ inline void drawLogoScreen(Gpu_Hal_Context_t* phost, const LogoScreenParams& par
   App_WrCoCmd_Buffer(phost, VERTEX2F(1856, 1152));
   App_WrCoCmd_Buffer(phost, END());
 
-  // Draw firmware version and status message at bottom of screen
+  // Draw status message at bottom of screen
   App_WrCoCmd_Buffer(phost, COLOR_RGB(40, 40, 40));
-  char fwver_buf[10];
-  strcpy_P(fwver_buf, FWVER);
-  snprintf_P(temp_buffer, sizeof(g_view_temp_buffer), PSTR("v%s - %s"), fwver_buf, params.status_message);
-  Gpu_CoCmd_Text(phost, 160, 220, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, temp_buffer);
+  Gpu_CoCmd_Text(phost, 160, 220, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, params.status_message);
 
   if (params.dialog_code != 0) {
     drawDialog(phost, params.dialog_code);
