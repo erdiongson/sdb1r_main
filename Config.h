@@ -84,8 +84,8 @@ const long MOTOR_Y_ACCELERATION = 100000;    // Microstep: 16
 const long MOTOR_Z_ACCELERATION = 8000;  // Microstep: 2B
 
 const long STEPS_PER_UNIT_X = 100L;
-const long STEPS_PER_UNIT_Y = 100L;
-const long STEPS_PER_UNIT_Z = 450L;
+const long STEPS_PER_UNIT_Y = 330;
+const long STEPS_PER_UNIT_Z = 90L;
 
 // =============================================================================
 // MACHINE DIMENSIONS (in mm)
