@@ -155,16 +155,16 @@ class Axis {
     
     // Update counter based on raw state
     if (raw_state) {
-      if (min_counter < 3) min_counter++;
+      if (min_counter < 10) min_counter++;
     } else {
-      if (min_counter > -3) min_counter--;
+      if (min_counter > -10) min_counter--;
     }
     
     // Determine debounced current state
     bool current_state = prev_min_state;
-    if (min_counter >= 3) {
+    if (min_counter >= 10) {
       current_state = true;
-    } else if (min_counter <= -3) {
+    } else if (min_counter <= -10) {
       current_state = false;
     }
     
@@ -183,16 +183,16 @@ class Axis {
     
     // Update counter based on raw state
     if (raw_state) {
-      if (max_counter < 3) max_counter++;
+      if (max_counter < 10) max_counter++;
     } else {
-      if (max_counter > -3) max_counter--;
+      if (max_counter > -10) max_counter--;
     }
     
     // Determine debounced current state
     bool current_state = prev_max_state;
-    if (max_counter >= 3) {
+    if (max_counter >= 10) {
       current_state = true;
-    } else if (max_counter <= -3) {
+    } else if (max_counter <= -10) {
       current_state = false;
     }
     
