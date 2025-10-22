@@ -76,11 +76,11 @@ const int MOTOR_Z_CLK = 37;
 // STEPPER MOTOR PARAMETERS
 // =============================================================================
 const long MOTOR_X_SPEED = 4000;  // Microstep: 2A
-const long MOTOR_Y_SPEED = 80000;    // Microstep: 16
+const long MOTOR_Y_SPEED = 4500;    // Microstep: 16
 const long MOTOR_Z_SPEED = 1000;  // Microstep: 2B
 
 const long MOTOR_X_ACCELERATION = 40000;  // Microstep: 2A
-const long MOTOR_Y_ACCELERATION = 100000;    // Microstep: 16
+const long MOTOR_Y_ACCELERATION = 20000;    // Microstep: 16
 const long MOTOR_Z_ACCELERATION = 8000;  // Microstep: 2B
 
 const long STEPS_PER_UNIT_X = 100L;
