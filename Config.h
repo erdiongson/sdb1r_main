@@ -140,7 +140,7 @@ const bool Z_DISABLED = false;
 // =============================================================================
 // DEBUG SETTINGS
 // =============================================================================
-const int DEBUG_NO_LOG = 0; // 1 to disable logging
+#define DEBUG_NO_LOG 0  // 1 to disable logging
 const int DEBUG_ONLY_SCREEN = 1; // 1 to bypass comms with the dispenser / steppers 
 const int DEBUG_MEMORY_MONITOR = 0; // 1 to enable memory monitoring
 

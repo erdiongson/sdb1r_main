@@ -4,6 +4,7 @@
 #include "../../Config.h"
 #include "../serial/PicSerial.h"
 #include "../Utils.h"
+#include "../Constants.h"
 
 // Struct for dispenser process result containing state and error information.
 struct DispenserProcessResult {
@@ -75,9 +76,7 @@ class DispenserHead {
   // Process incoming data from the dispenser.
   // @return DispenserProcessResult containing the updated state and any error code.
   DispenserProcessResult process() {
-#if DEBUG_ONLY_SCREEN
-    return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_IDLING);
-#endif
+    if (DEBUG_ONLY_SCREEN) return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_IDLING);
 
     // Process stepper motors
     int z_result = this->z_axis.onStep();
