@@ -15,7 +15,7 @@ const char DIALOG_SUBTITLE_IR_SENSOR[] PROGMEM = "Could not detect the dispenser
 const char DIALOG_TITLE_MARKER[] PROGMEM = "IR Marker Error (E02)";
 const char DIALOG_SUBTITLE_MARKER[] PROGMEM = "Could not detect the dispenser head. Please restart the device.";
 
-const char DIALOG_TITLE_LIMIT_SWITCH[] PROGMEM = "Limit Switch Triggered (E13)";
+const char DIALOG_TITLE_LIMIT_SWITCH[] PROGMEM = "Limit Switch Error (E13)";
 const char DIALOG_SUBTITLE_LIMIT_SWITCH[] PROGMEM = "Possible movement boundary collision. Please check the head position and resume.";
 
 const char DIALOG_SUBTITLE_LIMIT_SWITCH_HOMING[] PROGMEM = "Possible movement boundary collision. Please check the head position.";
