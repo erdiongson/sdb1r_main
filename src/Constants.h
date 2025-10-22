@@ -1,6 +1,19 @@
 #pragma once
 
 // =============================================================================
+// KEYBOARD SETTINGS
+// =============================================================================
+const int KEYBOARD_FONT = 27;
+const int KEYBOARD_MAX_PER_LINE = 25;
+const int KEYBOARD_LINE_HEIGHT = 22;
+const int KEYBOARD_VISIBLE_LINES = 3;  // Lines shown at once
+const int KEYBOARD_MAX_LINES = 9;     // Maximum total lines
+
+const int KEYBOARD_MAX_LEN = (KEYBOARD_MAX_PER_LINE * KEYBOARD_MAX_LINES);
+
+const int KEYPAD_MAX_LEN = 10;
+
+// =============================================================================
 // AXIS STATES
 // =============================================================================
 const int AXIS_STATE_COMPLETE = 0;

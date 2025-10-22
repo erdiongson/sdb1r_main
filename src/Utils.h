@@ -1,9 +1,10 @@
 #pragma once
 #include "../Config.h"
+#include "Constants.h"
 
 // Shared buffer for logging to avoid String concatenations and heap allocations
 // Size is set to accommodate the longest log message in the codebase
-static char g_log_buffer[100];
+static char g_log_buffer[KEYBOARD_MAX_LEN];
 
 #if DEBUG_NO_LOG == 0
 
