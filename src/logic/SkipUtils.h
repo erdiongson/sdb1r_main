@@ -474,6 +474,7 @@ class SkipUtils {
     bool has_out_of_bounds = false;
     char first_out_of_bounds_token[SKIP_STRING_LEN];
     first_out_of_bounds_token[0] = '\0';
+    int valid_count = 0;
 
     char* token = strtok(temp, ",");
     while (token != nullptr) {
@@ -482,6 +483,12 @@ class SkipUtils {
 
       // Check if position is valid and within bounds
       if (isValidSkipPosition(pos, dimensions, staggered)) {
+        valid_count++;
+        if (valid_count > MAX_SKIP_POSITIONS_EACH) {
+          const char* type_name = (type == ROW) ? "row" : (type == COLUMN) ? "column" : "individual";
+          sprintf(result.error_message, "Error: Exceeded %d %s skip positions.", MAX_SKIP_POSITIONS_EACH, type_name);
+          return result;
+        }
         if (!first_entry) strcat(final_result, ",");
         strcat(final_result, token);
         first_entry = false;
