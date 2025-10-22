@@ -34,7 +34,7 @@ AxisParams axis_y(MOTOR_Y_CLK, MOTOR_Y_CW, LIMIT_S_Y_MIN, LIMIT_S_Y_MAX,
                   &LIMIT_S_Y_MAX_PORT, LIMIT_S_Y_MAX_BIT,
                   MOTOR_Y_SPEED, MOTOR_Y_ACCELERATION);
 
-AxisParams axis_z(MOTOR_Z_CLK, MOTOR_z_CW, LIMIT_S_Z_MIN, LIMIT_S_Z_MAX, 
+AxisParams axis_z(MOTOR_Z_CLK, MOTOR_Z_CW, LIMIT_S_Z_MIN, LIMIT_S_Z_MAX, 
                   &LIMIT_S_Z_MIN_PORT, LIMIT_S_Z_MIN_BIT, 
                   &LIMIT_S_Z_MAX_PORT, LIMIT_S_Z_MAX_BIT,
                   MOTOR_Z_SPEED, MOTOR_Z_ACCELERATION);

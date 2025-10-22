@@ -69,7 +69,7 @@ const int MOTOR_X_CLK = 25;
 const int MOTOR_Y_CW = 29;
 const int MOTOR_Y_CLK = 31;
 
-const int MOTOR_z_CW = 35;
+const int MOTOR_Z_CW = 35;
 const int MOTOR_Z_CLK = 37;
 
 // =============================================================================
