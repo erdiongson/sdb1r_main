@@ -289,52 +289,32 @@ class TrayPositionHandler {
 
     tubes_dispensed = 0;
 
-    // Calculate total valid tubes once
-    int staggered_rows = staggered ? dimensions.rows / 2 : 0;
-    int total_tubes = dimensions.rows * dimensions.columns - staggered_rows;
-    int skip_count = 0;
-
-    // Count skip positions - track which rows/columns are already skipped to avoid double-counting
-    bool skipped_rows[TUBES_Y_MAX + 1] = { false };
-    bool skipped_cols[TUBES_X_MAX + 1] = { false };
-
-    // First pass: mark entire rows and columns as skipped
-    for (int i = 0; i < MAX_SKIP_POSITIONS; i++) {
-      if (skip_positions[i].x == -1 || skip_positions[i].y == -1) break;
-
-      // Mark entire column as skipped
-      if (skip_positions[i].y == 0 && skip_positions[i].x > 0) {
-        if (!skipped_cols[skip_positions[i].x]) {
-          skipped_cols[skip_positions[i].x] = true;
-          int rows_in_col = staggered && skip_positions[i].x == dimensions.columns ? dimensions.rows / 2 : dimensions.rows;
-          skip_count += rows_in_col;
+    // Calculate total valid tubes by iterating through all positions
+    total_valid_tubes = 0;
+    if (current_position.x != -1 && current_position.y != -1) {
+      // Count the first position if it's valid
+      total_valid_tubes = 1;
+      
+      // Iterate through all positions
+      Position result;
+      while (true) {
+        result = getNext().position;
+        if (result.x == -1 && result.y == -1) {
+          break;
         }
+        current_position = getNext().position;
+        total_valid_tubes++;
       }
-      // Mark entire row as skipped
-      else if (skip_positions[i].x == 0 && skip_positions[i].y > 0) {
-        if (!skipped_rows[skip_positions[i].y]) {
-          skipped_rows[skip_positions[i].y] = true;
-          int cols_in_row = staggered && skip_positions[i].y % 2 == 0 ? dimensions.columns - 1 : dimensions.columns;
-          skip_count += cols_in_row;
-        }
+
+      // Reset to initial position after counting
+      current_position = Position(1, 1);
+      direction = 1;
+      if (isInvalidPosition(current_position)) {
+        current_position = getNext().position;
       }
     }
 
-    // Second pass: count individual skip positions only if not already in a skipped row/column
-    for (int i = 0; i < MAX_SKIP_POSITIONS; i++) {
-      if (skip_positions[i].x == -1 || skip_positions[i].y == -1) break;
-
-      // Count individual skip positions only if not in a skipped row or column
-      if (skip_positions[i].x > 0 && skip_positions[i].y > 0) {
-        if (!skipped_rows[skip_positions[i].y] && !skipped_cols[skip_positions[i].x]) {
-          skip_count++;
-        }
-      }
-    }
-
-    total_valid_tubes = total_tubes - skip_count;
-
-    return current_position;
+    return flipped ? flipPosition(current_position) : current_position;
   }
 
   // Get the current row (1-indexed).
