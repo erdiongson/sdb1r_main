@@ -181,7 +181,7 @@ const int TAG_STEPPER_STOP = 134;
 // INTERACTION INTERVALS (in milliseconds)
 // =============================================================================
 const int INTERACT_INTERVAL_AXIS_IDLE = 20;
-const int INTERACT_INTERVAL_AXIS_RUNNING = 1000;
+const int INTERACT_INTERVAL_AXIS_RUNNING = 100;
 
 // =============================================================================
 // DISPENSER SERIAL PROTOCOL - Message Structure
