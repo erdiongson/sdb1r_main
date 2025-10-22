@@ -477,6 +477,10 @@ class SkipUtils {
     first_out_of_bounds_token[0] = '\0';
     int elements_count = 0;
 
+    // Track seen tokens to detect duplicates
+    g_log_buffer[0] = ',';
+    g_log_buffer[1] = '\0';
+
     char* token = strtok(temp, ",");
     while (token != nullptr) {
       // Convert element to Position
@@ -484,6 +488,19 @@ class SkipUtils {
 
       // Check if position is valid and within bounds
       if (isValidSkipPosition(pos, dimensions, staggered)) {
+        // Check for duplicate by searching in seen tokens
+        char search_pattern[SKIP_STRING_LEN];
+        snprintf(search_pattern, sizeof(search_pattern), "%s,", token);
+        
+        if (strstr(g_log_buffer, search_pattern) != nullptr) {
+          sprintf(result.error_message, "Duplicate position: %s", token);
+          return result;
+        }
+
+        // Add to seen tokens
+        strcat(g_log_buffer, token);
+        strcat(g_log_buffer, ",");
+
         if (!first_entry) strcat(final_result, ",");
         strcat(final_result, token);
         first_entry = false;
