@@ -37,9 +37,9 @@ void RunController::onStart() {
 void RunController::pause() {
   Logger::log(F("MODE: Paused"));
   paused = true;
-  dispenserHead.x().stop();
-  dispenserHead.y().stop();
-  dispenserHead.z().stop();
+  dispenserHead.x().stopRunning();
+  dispenserHead.y().stopRunning();
+  dispenserHead.z().stopRunning();
 
   // Clear busy state
   PlcSerial::setBusy(false);
