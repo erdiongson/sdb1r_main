@@ -1,13 +1,3 @@
-/*
- * Keyboards.h
- *
- * Keyboard and Keypad input handling for touchscreen interface.
- * Provides on-screen keyboard and numeric keypad functionality.
- *
- * Author: XentiQ
- * Date: 2025-10-07
- */
-
 #pragma once
 
 #include "../../gpu/Platform.h"

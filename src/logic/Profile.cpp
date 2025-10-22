@@ -1,12 +1,3 @@
-/* Author : XentiQ
-Date created - 2022.12.14 - XentiQ version
-
-* Author: erdiongson
-* Date Created: 2024.02.26
-* Version 2.04: i. Changed the logic for the ReadPassEEPROM and WritePassEEPROM
-*                  to read and write the characters of the password;
-*/
-
 #include "Profile.h"
 #include <EEPROM.h>
 #include "../gpu/Platform.h"

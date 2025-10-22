@@ -1,9 +1,3 @@
-/* Author : Ryan Y.
- * Date created - 2024.08.27 - PLC Message Parsing Module
- * Created for: Message type identification and data extraction
- * Modified - 2025.09.30 - Converted to class-based implementation
- */
-
 #include "PlcSerial.h"
 
 // Initialize static member
