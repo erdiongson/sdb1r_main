@@ -242,9 +242,9 @@ void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
 
     case DIALOG_ERROR_SKIP_COUNT_EXCEEDED:
       params.title = DIALOG_TITLE_SKIP_COUNT;
-      // Format the subtitle with the actual MAX_SKIP_POSITIONS value
+      // Format the subtitle with the actual MAX_SKIP_POSITIONS_TOTAL value
       strcpy_P(subtitle_buffer, params.subtitle);
-      sprintf(subtitle_buffer, subtitle_buffer, MAX_SKIP_POSITIONS);
+      sprintf(subtitle_buffer, subtitle_buffer, MAX_SKIP_POSITIONS_TOTAL);
       params.subtitle = subtitle_buffer;
       params.left_btn = DIALOG_BTN_CONTINUE;
       params.right_btn = nullptr;

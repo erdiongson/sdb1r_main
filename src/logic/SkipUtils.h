@@ -89,7 +89,7 @@ class SkipUtils {
     bool first_col = true, first_row = true, first_pos = true;
     char temp[20];
 
-    for (uint8_t i = 0; i < count && i < MAX_SKIP_POSITIONS; i++) {
+    for (uint8_t i = 0; i < count && i < MAX_SKIP_POSITIONS_TOTAL; i++) {
       const SkipPosition& pos = skip_positions[i];
 
       // Column skip: x != 0, y == 0
@@ -194,17 +194,17 @@ class SkipUtils {
 
   // Converts profile skip data into an array of Position objects for TrayHandler.
   // @param profile The profile containing skip information.
-  // @param out_positions Output array to store parsed positions (must be at least MAX_SKIP_POSITIONS in size).
+  // @param out_positions Output array to store parsed positions (must be at least MAX_SKIP_POSITIONS_TOTAL in size).
   // @return The number of positions parsed.
-  static int convert(Profile& profile, TrayHandler::Position out_positions[MAX_SKIP_POSITIONS]) {
+  static int convert(Profile& profile, TrayHandler::Position out_positions[MAX_SKIP_POSITIONS_TOTAL]) {
     // Initialize all positions to -1 to mark unused entries
-    for (int i = 0; i < MAX_SKIP_POSITIONS; i++) {
+    for (int i = 0; i < MAX_SKIP_POSITIONS_TOTAL; i++) {
       out_positions[i] = TrayHandler::Position(-1, -1);
     }
 
     // Convert from SkipPosition array directly
     int pos_index = 0;
-    for (uint8_t i = 0; i < profile.skip_count && i < MAX_SKIP_POSITIONS && pos_index < MAX_SKIP_POSITIONS; i++) {
+    for (uint8_t i = 0; i < profile.skip_count && i < MAX_SKIP_POSITIONS_TOTAL && pos_index < MAX_SKIP_POSITIONS_TOTAL; i++) {
       const SkipPosition& skip_pos = profile.skip_positions[i];
       out_positions[pos_index++] = TrayHandler::Position(skip_pos.x, skip_pos.y);
     }
@@ -440,6 +440,7 @@ class SkipUtils {
   // @return CleanResult containing the cleaned string, error message (if any), and whether it was modified.
   static CleanResult clean(const char* input, SkipType type, const TrayHandler::Dimensions& dimensions, bool staggered = false) {
     CleanResult result;
+    int max_skip_positions = type == INDIVIDUAL ? MAX_SKIP_POSITIONS_INDIVIDUAL : type == ROW ? MAX_SKIP_POSITIONS_ROWS : MAX_SKIP_POSITIONS_COLUMNS;
 
     if (input == nullptr) {
       return result;
@@ -474,7 +475,7 @@ class SkipUtils {
     bool has_out_of_bounds = false;
     char first_out_of_bounds_token[SKIP_STRING_LEN];
     first_out_of_bounds_token[0] = '\0';
-    int valid_count = 0;
+    int elements_count = 0;
 
     char* token = strtok(temp, ",");
     while (token != nullptr) {
@@ -483,12 +484,6 @@ class SkipUtils {
 
       // Check if position is valid and within bounds
       if (isValidSkipPosition(pos, dimensions, staggered)) {
-        valid_count++;
-        if (valid_count > MAX_SKIP_POSITIONS_EACH) {
-          const char* type_name = (type == ROW) ? "row" : (type == COLUMN) ? "column" : "individual";
-          sprintf(result.error_message, "Error: Exceeded %d %s skip positions.", MAX_SKIP_POSITIONS_EACH, type_name);
-          return result;
-        }
         if (!first_entry) strcat(final_result, ",");
         strcat(final_result, token);
         first_entry = false;
@@ -499,12 +494,19 @@ class SkipUtils {
         first_out_of_bounds_token[SKIP_STRING_LEN - 1] = '\0';
       }
 
+      elements_count++;
+      if (elements_count > max_skip_positions) {
+        const char* type_name = (type == ROW) ? "row" : (type == COLUMN) ? "column" : "individual";
+        sprintf(result.error_message, "Exceeded %d %s skip positions.", max_skip_positions, type_name);
+        return result;
+      }
+
       token = strtok(nullptr, ",");
     }
 
     // If there was an out-of-bounds error, return it with the cleaned string
     if (has_out_of_bounds) {
-      sprintf(result.error_message, "Error: Position \"%s\" is out of bounds.", first_out_of_bounds_token);
+      sprintf(result.error_message, "Position \"%s\" is out of bounds.", first_out_of_bounds_token);
       return result;
     }
 

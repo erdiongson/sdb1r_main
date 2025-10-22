@@ -287,7 +287,7 @@ VerificationResult SettingsController::verifyParameters() {
   if (current_profile->skip_count > 0) {
     TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
     
-    for (uint8_t i = 0; i < current_profile->skip_count && i < MAX_SKIP_POSITIONS; i++) {
+    for (uint8_t i = 0; i < current_profile->skip_count && i < MAX_SKIP_POSITIONS_TOTAL; i++) {
       const SkipPosition& skip_pos = current_profile->skip_positions[i];
       TrayHandler::Position pos(skip_pos.x, skip_pos.y);
       

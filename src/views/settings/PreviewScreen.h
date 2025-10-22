@@ -30,7 +30,7 @@ struct PreviewScreenParams {
  * The grid is automatically centered on the screen and scaled to fit
  * the maximum grid size (MAX_TUBES_X x MAX_TUBES_Y)
  */
-void drawPreviewScreen(Gpu_Hal_Context_t* phost, const TrayHandler::Position skip_positions[MAX_SKIP_POSITIONS],
+void drawPreviewScreen(Gpu_Hal_Context_t* phost, const TrayHandler::Position skip_positions[MAX_SKIP_POSITIONS_TOTAL],
                        const PreviewScreenParams& params) {
   int grid_cols = params.grid_cols;
   int grid_rows = params.grid_rows;
@@ -82,7 +82,7 @@ void drawPreviewScreen(Gpu_Hal_Context_t* phost, const TrayHandler::Position ski
   // Helper lambda to check if position should be skipped
   auto is_skip_position = [&](int x, int y) -> bool {
     TrayHandler::Position pos(x, y);
-    for (int i = 0; i < MAX_SKIP_POSITIONS; i++) {
+    for (int i = 0; i < MAX_SKIP_POSITIONS_TOTAL; i++) {
       if (skip_positions[i].x == -1 || skip_positions[i].y == -1) {
         break;
       }

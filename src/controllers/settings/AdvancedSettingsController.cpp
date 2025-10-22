@@ -226,15 +226,15 @@ SkipVerificationResult AdvancedSettingsController::verifyParameters() {
   result.errors = SkipErrors();  // Initialize all to false
 
   // Convert skip strings to positions to get actual count
-  // Allow +1 to be returned, to detect if the user is trying to enter more than MAX_SKIP_POSITIONS
+  // Allow +1 to be returned, to detect if the user is trying to enter more than MAX_SKIP_POSITIONS_TOTAL
 
-  SkipPosition temp_positions[MAX_SKIP_POSITIONS + 1];
-  uint8_t skip_count = SkipUtils::convertFromStrings(skip_col, skip_row, skip_single_pos, temp_positions, MAX_SKIP_POSITIONS + 1);
+  SkipPosition temp_positions[MAX_SKIP_POSITIONS_TOTAL + 1];
+  uint8_t skip_count = SkipUtils::convertFromStrings(skip_col, skip_row, skip_single_pos, temp_positions, MAX_SKIP_POSITIONS_TOTAL + 1);
 
   // Check if skip count exceeds maximum
-  snprintf(g_log_buffer, sizeof(g_log_buffer), "skip_count from buffers: %d, MAX_SKIP_POSITIONS: %d", skip_count, MAX_SKIP_POSITIONS);
+  snprintf(g_log_buffer, sizeof(g_log_buffer), "skip_count from buffers: %d, MAX_SKIP_POSITIONS_TOTAL: %d", skip_count, MAX_SKIP_POSITIONS_TOTAL);
   Logger::log(g_log_buffer);
-  if (skip_count > MAX_SKIP_POSITIONS) {
+  if (skip_count > MAX_SKIP_POSITIONS_TOTAL) {
     result.is_valid = false;
     result.errors.skip_count_exceeded = true;
   }
@@ -243,7 +243,7 @@ SkipVerificationResult AdvancedSettingsController::verifyParameters() {
   if (skip_count > 0) {
     TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
     
-    for (uint8_t i = 0; i < skip_count && i < MAX_SKIP_POSITIONS; i++) {
+    for (uint8_t i = 0; i < skip_count && i < MAX_SKIP_POSITIONS_TOTAL; i++) {
       const SkipPosition& skip_pos = temp_positions[i];
       TrayHandler::Position pos(skip_pos.x, skip_pos.y);
       

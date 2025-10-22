@@ -26,7 +26,7 @@ void PreviewController::onStart() {
   simulation_handler.reset();
 
   // Parse skip positions from the current profile
-  TrayHandler::Position skip_positions[MAX_SKIP_POSITIONS];
+  TrayHandler::Position skip_positions[MAX_SKIP_POSITIONS_TOTAL];
   simulation_handler.getSkipPositions(skip_positions);
 
   // Create preview screen parameters
@@ -107,7 +107,7 @@ void PreviewController::startSimulation() {
   simulate_row = first_position.y;
 
   // Redraw preview screen
-  TrayHandler::Position skip_positions[MAX_SKIP_POSITIONS];
+  TrayHandler::Position skip_positions[MAX_SKIP_POSITIONS_TOTAL];
   simulation_handler.getSkipPositions(skip_positions);
 
   PreviewScreenParams params;
@@ -132,7 +132,7 @@ void PreviewController::endSimulation() {
   simulate_row = 0;
 
   // Redraw preview screen
-  TrayHandler::Position skip_positions[MAX_SKIP_POSITIONS];
+  TrayHandler::Position skip_positions[MAX_SKIP_POSITIONS_TOTAL];
   simulation_handler.getSkipPositions(skip_positions);
 
   PreviewScreenParams params;
@@ -163,7 +163,7 @@ void PreviewController::stepSimulation() {
   }
 
   // Redraw preview screen with updated position
-  TrayHandler::Position skip_positions[MAX_SKIP_POSITIONS];
+  TrayHandler::Position skip_positions[MAX_SKIP_POSITIONS_TOTAL];
   simulation_handler.getSkipPositions(skip_positions);
 
   PreviewScreenParams params;

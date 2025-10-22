@@ -34,7 +34,7 @@ void ProfileManager::preLoadEEPROM(void) {
     currentProfile.z_dip = Z_DIP_DEFAULT;
     currentProfile.staggered = false;
     currentProfile.skip_count = 0;
-    for (int j = 0; j < MAX_SKIP_POSITIONS; j++) {
+    for (int j = 0; j < MAX_SKIP_POSITIONS_TOTAL; j++) {
       currentProfile.skip_positions[j] = SkipPosition(0, 0);
     }
 
@@ -258,5 +258,5 @@ void ProfileManager::getSkipStrings(char* out_skip_col, char* out_skip_row, char
 // @param skip_single_pos Individual position skip string (format: "C2R4,C3R4,...").
 void ProfileManager::setSkipStrings(const char* skip_col, const char* skip_row, const char* skip_single_pos) {
   currentProfile.skip_count = SkipUtils::convertFromStrings(skip_col, skip_row, skip_single_pos,
-                                                             currentProfile.skip_positions, MAX_SKIP_POSITIONS);
+                                                             currentProfile.skip_positions, MAX_SKIP_POSITIONS_TOTAL);
 }

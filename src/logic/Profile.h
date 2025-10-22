@@ -27,7 +27,7 @@ typedef struct {
   int8_t vibration_duration = 2;
   bool password_enabled = 0;
   float z_dip = 0.0;
-  SkipPosition skip_positions[MAX_SKIP_POSITIONS];  // Compact storage for EEPROM
+  SkipPosition skip_positions[MAX_SKIP_POSITIONS_TOTAL];  // Compact storage for EEPROM
   uint8_t skip_count = 0;                           // Number of active skip positions
   bool staggered = false;
 } Profile;
