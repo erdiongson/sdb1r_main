@@ -252,6 +252,15 @@ void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
       params.right_tag = 0;
       break;
 
+    case DIALOG_ERROR_NO_VALID_POSITIONS:
+      params.title = DIALOG_TITLE_NO_VALID;
+      params.subtitle = DIALOG_SUBTITLE_NO_VALID;
+      params.left_btn = DIALOG_BTN_CONTINUE;
+      params.right_btn = nullptr;
+      params.left_tag = TAG_STOP;
+      params.right_tag = 0;
+      break;
+
     default:
       params.title = DIALOG_TITLE_UNKNOWN;
       params.subtitle = DIALOG_SUBTITLE_UNKNOWN;

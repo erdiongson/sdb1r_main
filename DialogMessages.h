@@ -54,8 +54,11 @@ const char DIALOG_TITLE_SKIP_COUNT[] PROGMEM = "Excessive Skips Error";
 const char DIALOG_SUBTITLE_SKIP_COUNT[] PROGMEM = "The total number of skip positions exceeds the maximum allowed (%d). Please reduce the number of skips. (E24)";
 // The %d is replaced with the maximum number of skip positions allowed.
 
-const char DIALOG_TITLE_UNKNOWN[] PROGMEM = "Unknown Error (E99)";
-const char DIALOG_SUBTITLE_UNKNOWN[] PROGMEM = "An unknown error occurred.";
+const char DIALOG_TITLE_NO_VALID[] PROGMEM = "No Valid Positions Error";
+const char DIALOG_SUBTITLE_NO_VALID[] PROGMEM = "All positions on the grid are skipped. Please ensure at least one position is available for dispensing. (E25)";
+
+const char DIALOG_TITLE_UNKNOWN[] PROGMEM = "Unknown Error";
+const char DIALOG_SUBTITLE_UNKNOWN[] PROGMEM = "An unknown error occurred. (E99)";
 
 const char DIALOG_BTN_RESUME[] PROGMEM = "Resume";
 const char DIALOG_BTN_STOP[] PROGMEM = "Stop";

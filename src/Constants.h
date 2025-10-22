@@ -194,12 +194,12 @@ const uint8_t SDB_DISPENSE_START = 0x46;  // Command to start dispensing
 // =============================================================================
 // DISPENSER SERIAL PROTOCOL - Response Values
 // =============================================================================
-const uint16_t ACKNOWLEDGE = 0x46;          // Acknowledgment response
-const uint16_t DISPENSE_DONE = 0xF9;        // Dispense operation completed
-const uint16_t IR_SENSOR_FAILURE = 0xE1;    // Error: IR sensor failure
-const uint16_t MARKER_NOT_DETECTED = 0xE2;  // Error: Marker not detected
-const uint16_t ACK_ERROR = 0xE0;            // Error: Acknowledgment error
-const uint16_t CYCLE_TIMEOUT_ERROR = 0xE10; // Error: Cycle timeout
+const uint16_t ACKNOWLEDGE = 0x46;           // Acknowledgment response
+const uint16_t DISPENSE_DONE = 0xF9;         // Dispense operation completed
+const uint16_t IR_SENSOR_FAILURE = 0xE1;     // Error: IR sensor failure
+const uint16_t MARKER_NOT_DETECTED = 0xE2;   // Error: Marker not detected
+const uint16_t ACK_ERROR = 0xE0;             // Error: Acknowledgment error
+const uint16_t CYCLE_TIMEOUT_ERROR = 0xE10;  // Error: Cycle timeout
 
 // =============================================================================
 // DISPENSER SERIAL PROTOCOL - Vibration Settings
@@ -292,17 +292,4 @@ const int DIALOG_ERROR_CYCLE_TIMEOUT = 13;
 const int DIALOG_ERROR_PARAMETER = 14;
 const int DIALOG_ERROR_SKIP_VALUES = 15;
 const int DIALOG_ERROR_SKIP_COUNT_EXCEEDED = 16;
-
-// =============================================================================
-// KEYBOARD SETTINGS
-// =============================================================================
-
-const int KEYPAD_MAX_LEN = 10;
-
-const int KEYBOARD_FONT = 27;
-const int KEYBOARD_MAX_PER_LINE = 25;
-const int KEYBOARD_LINE_HEIGHT = 22;
-const int KEYBOARD_VISIBLE_LINES = 3;  // Lines shown at once
-const int KEYBOARD_MAX_LINES = 6;      // Maximum total lines
-
-const int KEYBOARD_MAX_LEN = (KEYBOARD_MAX_PER_LINE * KEYBOARD_MAX_LINES);
+const int DIALOG_ERROR_NO_VALID_POSITIONS = 17;

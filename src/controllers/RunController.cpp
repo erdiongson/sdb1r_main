@@ -12,8 +12,10 @@ void RunController::onStart() {
   TrayHandler::Position first_position = trayHandler.reset();
 
   if (first_position.x == -1 || first_position.y == -1) {
-    Logger::log(F("MODE: No valid positions found, ending run mode"));
-    startNextController(CONTROLLER_READY);
+    Logger::log(F("MODE: No valid positions found"));
+    MainScreenParams params = { profile, { 0, 0, 0, 0 }, DIALOG_ERROR_NO_VALID_POSITIONS };
+    drawRunScreen(params);
+    pause();
     return;
   }
 
