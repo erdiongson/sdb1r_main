@@ -25,7 +25,7 @@ void DebugController::onInteraction(const Interaction& interaction) {
     case TAG_DEBUG_DIALOG_TEST: {
       Logger::log(F("Debug: Dialog Test button pressed"));
       // Get dialog code from user using keypad (0-11 range for existing dialogs)
-      float dialog_num = getKeypadValue(phost, 0, 0, 11, false);
+      float dialog_num = getKeypadValue(phost, 0, 0, 20, false);
       int dialog_code = (int)dialog_num;
       // Redraw screen with the selected dialog
       drawDebugScreen(phost, { false, false, dialog_code });
