@@ -312,3 +312,14 @@ const int DIALOG_ERROR_PARAMETER = 14;
 const int DIALOG_ERROR_SKIP_VALUES = 15;
 const int DIALOG_ERROR_SKIP_COUNT_EXCEEDED = 16;
 const int DIALOG_ERROR_NO_VALID_POSITIONS = 17;
+
+// =============================================================================
+// MODEL IDENTIFIERS AND MACROS
+// =============================================================================
+#define MODEL_S 1
+#define MODEL_M 2
+#define MODEL_L 3
+
+// Stringify macros to convert preprocessor tokens to strings
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)

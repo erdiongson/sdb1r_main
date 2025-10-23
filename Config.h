@@ -1,6 +1,30 @@
 #pragma once
 
 #include <avr/pgmspace.h>
+#include "src/Constants.h"
+
+// =============================================================================
+// FIRMWARE VERSION & MODEL CONFIGURATION
+// =============================================================================
+#define FWVER_STR "4.0"
+#define MODEL MODEL_M // MODEL_S, MODEL_M, or MODEL_L
+
+// Extract model letter for display
+#if MODEL == MODEL_S
+#define MODEL_NAME "S"
+#elif MODEL == MODEL_M
+#define MODEL_NAME "M"
+#elif MODEL == MODEL_L
+#define MODEL_NAME "L"
+#endif
+
+const char FWVER[] PROGMEM = FWVER_STR;
+const char FWVERM[] PROGMEM = FWVER_STR MODEL_NAME;
+
+// =============================================================================
+// FEATURE FLAGS
+// =============================================================================
+const bool Z_DISABLED = false;
 
 // =============================================================================
 // SECURITY SETTINGS
@@ -84,26 +108,38 @@ const long MOTOR_Y_ACCELERATION = 20000;    // Microstep: 16
 const long MOTOR_Z_ACCELERATION = 8000;  // Microstep: 2B
 
 const long STEPS_PER_UNIT_X = 100L;
-const long STEPS_PER_UNIT_Y = 330;
+const long STEPS_PER_UNIT_Y = 330L;
 const long STEPS_PER_UNIT_Z = 90L;
 
 // =============================================================================
 // MACHINE DIMENSIONS (in mm)
 // =============================================================================
-// VERSION SPECIFIC: Change based on machine size
-// (L) Large 300x300: TRAY_X_MAX = 400, TRAY_Y_MAX = 330
-// (S) Small 200x300: TRAY_X_MAX = 190, TRAY_Y_MAX = 250
+#if MODEL == MODEL_S
+const int TRAY_X_MAX = 190;
+const int TRAY_Y_MAX = 250;
+#elif MODEL == MODEL_M
 const int TRAY_X_MAX = 400;
 const int TRAY_Y_MAX = 330;
+#elif MODEL == MODEL_L
+const int TRAY_X_MAX = 400;
+const int TRAY_Y_MAX = 330;
+#endif
 
 // =============================================================================
 // PROFILE SETTINGS
 // =============================================================================
-// VERSION SPECIFIC: Change based on machine size
-// (L) Large 300x300: TUBES_X_MAX = 33, TUBES_Y_MAX = 33
-// (S) Small 200x300: TUBES_X_MAX = 20, TUBES_Y_MAX = 27
+
+#if MODEL == MODEL_S
+const int TUBES_X_MAX = 12;
+const int TUBES_Y_MAX = 8;
+#elif MODEL == MODEL_M
 const int TUBES_X_MAX = 42;
 const int TUBES_Y_MAX = 33;
+#elif MODEL == MODEL_L
+const int TUBES_X_MAX = 33;
+const int TUBES_Y_MAX = 33;
+#endif
+
 const int TUBES_X_MIN = 1;
 const int TUBES_Y_MIN = 1;
 
@@ -128,20 +164,10 @@ const int CYCLES_MIN = 1;
 const int CYCLES_MAX = 99;
 
 // =============================================================================
-// FIRMWARE VERSION
-// =============================================================================
-const char FWVER[] PROGMEM = "4.0";
-
-// =============================================================================
-// FEATURE FLAGS
-// =============================================================================
-const bool Z_DISABLED = false;
-
-// =============================================================================
 // DEBUG SETTINGS
 // =============================================================================
 #define DEBUG_NO_LOG 0  // 1 to disable logging
-const int DEBUG_ONLY_SCREEN = 1; // 1 to bypass comms with the dispenser / steppers 
+const int DEBUG_ONLY_SCREEN = 0; // 1 to bypass comms with the dispenser / steppers 
 const int DEBUG_MEMORY_MONITOR = 0; // 1 to enable memory monitoring
 
 const char DEBUG_MODE_KEYWORD[] PROGMEM = "debug";

@@ -12,13 +12,13 @@ void StartupController::onStart() {
   Logger::log(F("Loading profile.."));
   profile_manager.loadProfile();
 
-  logo_params = {0, PROGMEM_STR_CONCAT(F("%s - %s"), FWVER, F("Starting.."))};
+  logo_params = {0, PROGMEM_STR_CONCAT(F("%s - %s"), FWVERM, F("Starting.."))};
   drawLogoScreen(phost, logo_params);
   delay(500);
 
   // Check if dispenser is online and responding
   dispenserHead.sendHandshake();
-  logo_params.status_message = PROGMEM_STR_CONCAT(F("%s - %s"), FWVER, F("Pending Response.."));
+  logo_params.status_message = PROGMEM_STR_CONCAT(F("%s - %s"), FWVERM, F("Pending Response.."));
   drawLogoScreen(phost, logo_params);
 }
 
@@ -29,11 +29,11 @@ void StartupController::onInteraction(const Interaction& interaction) {
     running = true;
 
     if (stage == STAGE_CLEAR) {
-      logo_params.status_message = PROGMEM_STR_CONCAT(F("%s - %s"), FWVER, F("Unlatching.."));
+      logo_params.status_message = PROGMEM_STR_CONCAT(F("%s - %s"), FWVERM, F("Unlatching.."));
       drawLogoScreen(phost, logo_params);
       dispenserHead.clearLimits();
     } else if (stage == STAGE_HOME) {
-      logo_params.status_message = PROGMEM_STR_CONCAT(F("%s - %s"), FWVER, F("Homing.."));
+      logo_params.status_message = PROGMEM_STR_CONCAT(F("%s - %s"), FWVERM, F("Homing.."));
       drawLogoScreen(phost, logo_params);
       dispenserHead.x().moveToMin();
       dispenserHead.y().moveToMin();
@@ -76,7 +76,7 @@ void StartupController::onInteraction(const Interaction& interaction) {
 
   if (stage == STAGE_HANDSHAKE && result.dispenser == DISPENSER_STATE_IDLING) {
     Logger::log(F("Handshake acknowledged 👍"));
-    logo_params.status_message = PROGMEM_STR_CONCAT(F("%s - %s"), FWVER, F("Unlatching.."));
+    logo_params.status_message = PROGMEM_STR_CONCAT(F("%s - %s"), FWVERM, F("Unlatching.."));
     drawLogoScreen(phost, logo_params);
     dispenserHead.clearLimits();
     stage = STAGE_CLEAR;
@@ -85,7 +85,7 @@ void StartupController::onInteraction(const Interaction& interaction) {
 
   if (stage == STAGE_CLEAR && result.steppers == AXIS_STATE_COMPLETE) {
     Logger::log(F("Axis cleared 👍"));
-    logo_params.status_message = PROGMEM_STR_CONCAT(F("%s - %s"), FWVER, F("Homing.."));
+    logo_params.status_message = PROGMEM_STR_CONCAT(F("%s - %s"), FWVERM, F("Homing.."));
     drawLogoScreen(phost, logo_params);
     dispenserHead.x().moveToMin();
     dispenserHead.y().moveToMin();
