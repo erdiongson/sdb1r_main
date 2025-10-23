@@ -110,6 +110,7 @@ void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit
   control_x += 70 + control_spacing;
   Toggle_Button(phost, params.blocking, TAG_MOVE_BLOCKING, control_x + 15, control_y + 6, "BLK", "BLK");
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));  // Reset text color to white
+  App_WrCoCmd_Buffer(phost, TAG_MASK(255));  // Re-enable tag tracking after Toggle_Button
 
   // Calculate dimensions for left 2/3 and right 1/3 sections
   int32_t left_section_width = (DispWidth * 2) / 3;
@@ -119,7 +120,7 @@ void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit
   // Button dimensions for directional controls
   int32_t button_size = 45;
   int32_t center_x = left_section_width / 2;
-  int32_t center_y = (DispHeight + 45) / 2 - 10;  // Moved down to accommodate controls at top
+  int32_t center_y = (DispHeight + 45) / 2 - 10 + 20;  // Moved down by 80 pixels
 
   // UP button
   Gpu_CoCmd_FgColor(phost, 0x006400);
@@ -246,8 +247,6 @@ void drawMoveTestScreen(Gpu_Hal_Context_t* phost, const LimitSwitchStates& limit
     Gpu_CoCmd_Text(phost, DispWidth / 2, DispHeight - 10, 20, OPT_CENTER, temp_buffer);
     App_WrCoCmd_Buffer(phost, TAG_MASK(255));
   }
-
-  App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // Finalize display
   Disp_End(phost);
