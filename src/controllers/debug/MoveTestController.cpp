@@ -201,14 +201,14 @@ ControllerStepResult MoveTestController::onStep() {
         }
       }
     }
-  }
 
-  // Update screen at regular intervals regardless of stepper state
-  static unsigned long last_update_time = 0;
-  unsigned long current_time = millis();
-  if (current_time - last_update_time >= MOVE_TEST_REFRESH_INTERVAL_MS) {
-    last_update_time = current_time;
-    updateScreen();
+    // Update screen at regular intervals regardless of stepper state
+    static unsigned long last_update_time = 0;
+    unsigned long current_time = millis();
+    if (current_time - last_update_time >= MOVE_TEST_REFRESH_INTERVAL_MS) {
+      last_update_time = current_time;
+      updateScreen();
+    }
   }
 
   return ControllerStepResult(result.steppers == AXIS_STATE_RUNNING);
