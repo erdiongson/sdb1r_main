@@ -51,6 +51,7 @@ CHECKSUM = (COMMAND + DATA) & 0xFF
 
 ---
 
+\newpage
 ## Available Commands
 
 ### Command Reference Table
@@ -110,8 +111,7 @@ The system will **not respond** if:
 
 **Action:** Verify message format and retransmit.
 
----
-
+\newpage
 ## System Status Messages
 
 ### COMPLETED Message

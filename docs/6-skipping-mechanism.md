@@ -34,6 +34,7 @@ Users can specify individual cell positions to skip using coordinate notation. E
 
 **Maximum:** Up to 30 individual positions can be skipped (defined by `MAX_SKIP_POSITIONS_INDIVIDUAL` in `Constants.h`).
 
+\newpage
 ## Total Skip Limit
 
 The system enforces a **total maximum of 100 skip positions** across all three skip types combined (defined by `MAX_SKIP_POSITIONS_TOTAL` in `Constants.h`). This limit (and the individual limits) primarily arises from limited memory resources for the string buffer used to store the skip parameters, and the limited storage space available in the microcontroller's EEPROM.
@@ -43,7 +44,8 @@ The system enforces a **total maximum of 100 skip positions** across all three s
 The total skip count is calculated as:
 
 ```
-Total Skips = (Number of Skipped Columns) + (Number of Skipped Rows) + (Number of Individual Positions)
+Total Skips = (Number of Skipped Columns) + (Number of Skipped Rows) +
+(Number of Individual Positions)
 ```
 
 **Note:** When a column or row is skipped, it counts as a single skip position regardless of how many cells it contains. Individual cell skips each count as one position.
