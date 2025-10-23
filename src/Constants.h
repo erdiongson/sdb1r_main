@@ -246,7 +246,8 @@ const uint8_t PLC_CMD_RAISE_Z = 0x42;
 const uint8_t PLC_CMD_LOWER_Z = 0x41;
 
 // PLC Response Codes
-const uint8_t PLC_NAK_BYTE = 0x16;  // Negative acknowledgment byte
+const uint8_t PLC_BUSY_BYTE = 0x16;  // Busy response byte
+const uint8_t PLC_NAK_BYTE = 0x15;   // Negative acknowledgment byte
 
 // =============================================================================
 // PROFILE SETTINGS

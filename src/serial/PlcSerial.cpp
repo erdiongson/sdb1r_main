@@ -31,6 +31,9 @@ PLCMessage PlcSerial::process() {
 
   // Validate checksum (byte [3] should equal sum of byte [1] and [2])
   if (response[3] != ((response[1] + response[2]) & 0xFF)) {
+    // Send NAK response for invalid checksum
+    uint8_t nakResponse[5] = { PLC_NAK_BYTE, PLC_NAK_BYTE, PLC_NAK_BYTE, PLC_NAK_BYTE, PLC_NAK_BYTE };
+    Serial3.write(nakResponse, 5);
     return result;
   }
 
@@ -41,9 +44,9 @@ PLCMessage PlcSerial::process() {
 
   // Check if this is a START command and system is busy
   if (response[1] == PLC_CMD_START && isBusy) {
-    // Send 5 NAK bytes instead of mirroring
-    uint8_t nakResponse[5] = { PLC_NAK_BYTE, PLC_NAK_BYTE, PLC_NAK_BYTE, PLC_NAK_BYTE, PLC_NAK_BYTE };
-    Serial3.write(nakResponse, 5);
+    // Send 5 BUSY bytes instead of mirroring
+    uint8_t busyResponse[5] = { PLC_BUSY_BYTE, PLC_BUSY_BYTE, PLC_BUSY_BYTE, PLC_BUSY_BYTE, PLC_BUSY_BYTE };
+    Serial3.write(busyResponse, 5);
     return { MSG_UNKNOWN, 0 };
   } else {
     // Send acknowledgement (mirror the received message back to PLC)
@@ -71,8 +74,11 @@ PLCMessage PlcSerial::process() {
       result.type = MSG_LOWER_Z;
       break;
     default:
+      // Unknown command - send NAK response
       result.type = MSG_UNKNOWN;
-      break;
+      uint8_t nakResponse[5] = { PLC_NAK_BYTE, PLC_NAK_BYTE, PLC_NAK_BYTE, PLC_NAK_BYTE, PLC_NAK_BYTE };
+      Serial3.write(nakResponse, 5);
+      return result;
   }
 
   return result;
