@@ -282,7 +282,7 @@ const int MIN_BOUNCE_COUNT = 0;
 const int MAX_BOUNCE_COUNT = 9999;
 
 const float DEFAULT_XY_DISTANCE_CM = 5.0;
-const float DEFAULT_Z_DISTANCE_CM = 3.0;
+const float DEFAULT_Z_DISTANCE_CM = 1.0;
 const int DEFAULT_BOUNCE_COUNT = 0;
 
 const int MIN_DISPENSE_REPEAT_COUNT = 0;
