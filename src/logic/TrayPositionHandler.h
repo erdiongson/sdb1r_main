@@ -282,37 +282,36 @@ class TrayPositionHandler {
   Position reset() {
     current_position = Position(1, 1);
     direction = 1;
+    tubes_dispensed = 0;
+    total_valid_tubes = 0;
 
+    // If (1, 1) is invalid
     if (isInvalidPosition(current_position)) {
-      current_position = getNext().position;
+      PositionResult result = goToNextValidPosition();
+
+      // if there is no valid position
+      if (result.position.x == -1 && result.position.y == -1) {
+        return result.position;
+      }
     }
 
-    tubes_dispensed = 0;
+    // At this point, we are at a valid position. Save it for later
+    Position first_valid_position = current_position;
+    int first_direction = direction;
+    total_valid_tubes = 1;
 
     // Calculate total valid tubes by iterating through all positions
-    total_valid_tubes = 0;
-    if (current_position.x != -1 && current_position.y != -1) {
-      // Count the first position if it's valid
-      total_valid_tubes = 1;
-      
-      // Iterate through all positions
-      Position result;
-      while (true) {
-        result = getNext().position;
-        if (result.x == -1 && result.y == -1) {
-          break;
-        }
-        current_position = getNext().position;
-        total_valid_tubes++;
-      }
-
-      // Reset to initial position after counting
-      current_position = Position(1, 1);
-      direction = 1;
-      if (isInvalidPosition(current_position)) {
-        current_position = getNext().position;
-      }
+    // Iterate through all positions
+    while (true) {
+      PositionResult result = goToNextValidPosition();
+      if (!result.has_next) { break; }
+      total_valid_tubes++;
     }
+
+    // Reset to initial position after counting
+    direction = first_direction;
+    current_position = first_valid_position;
+    tubes_dispensed = 0;
 
     return flipped ? flipPosition(current_position) : current_position;
   }
