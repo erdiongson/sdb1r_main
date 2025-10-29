@@ -43,6 +43,8 @@ void ProfileManager::preLoadEEPROM(void) {
 
   writeCurIDEEPROM(0);  // reset current profile in eeprom to 0
   readProfileEEPROM(0);  // reload profile 0 into memory
+
+  setCurrentProfileNum(0); // set current profile to 0
 }
 
 void ProfileManager::checkProfile(void) {
@@ -190,6 +192,42 @@ void ProfileManager::readProfileEEPROM(int index) {
   checkProfile();
 }
 
+// Reads a preview profile from EEPROM at the specified index (without skip data).
+// @param index The profile index.
+void ProfileManager::readPreviewProfileEEPROM(int index) {
+  int address = (index * RESERVED_PROFILE_SIZE) + sizeof(uint8_t);
+
+  EEPROM.get(address, previewProfile.profile_name);
+  address += sizeof(previewProfile.profile_name);
+  EEPROM.get(address, previewProfile.tube_no_x);
+  address += sizeof(previewProfile.tube_no_x);
+  EEPROM.get(address, previewProfile.tube_no_y);
+  address += sizeof(previewProfile.tube_no_y);
+  EEPROM.get(address, previewProfile.pitch_x);
+  address += sizeof(previewProfile.pitch_x);
+  EEPROM.get(address, previewProfile.pitch_y);
+  address += sizeof(previewProfile.pitch_y);
+  EEPROM.get(address, previewProfile.tray_origin_x);
+  address += sizeof(previewProfile.tray_origin_x);
+  EEPROM.get(address, previewProfile.tray_origin_y);
+  address += sizeof(previewProfile.tray_origin_y);
+  EEPROM.get(address, previewProfile.cycles);
+  address += sizeof(previewProfile.cycles);
+  EEPROM.get(address, previewProfile.vibration_level);
+  address += sizeof(previewProfile.vibration_level);
+  EEPROM.get(address, previewProfile.password_enabled);
+  address += sizeof(previewProfile.password_enabled);
+  EEPROM.get(address, previewProfile.vibration_duration);
+  address += sizeof(previewProfile.vibration_duration);
+  EEPROM.get(address, previewProfile.z_dip);
+  address += sizeof(previewProfile.z_dip);
+  EEPROM.get(address, previewProfile.staggered);
+  address += sizeof(previewProfile.staggered);
+  // Skip reading skip_positions and skip_count to save memory
+
+  previewProfileIndex = index;
+}
+
 // Verifies the password by prompting the user for input.
 // @param phost GPU context for displaying the keyboard.
 // @return PasswordVerificationResult indicating success, incorrect, or cancelled.
@@ -259,4 +297,16 @@ void ProfileManager::getSkipStrings(char* out_skip_col, char* out_skip_row, char
 void ProfileManager::setSkipStrings(const char* skip_col, const char* skip_row, const char* skip_single_pos) {
   currentProfile.skip_count = SkipUtils::convertFromStrings(skip_col, skip_row, skip_single_pos,
                                                              currentProfile.skip_positions, MAX_SKIP_POSITIONS_TOTAL);
+}
+
+// Gets the preview profile number/ID.
+// @return The preview profile ID.
+uint8_t ProfileManager::getPreviewProfileNum(void) {
+  return previewProfileIndex;
+}
+
+// Gets a reference to the preview profile.
+// @return Reference to the preview profile.
+PreviewProfile& ProfileManager::getPreviewProfile(void) {
+  return previewProfile;
 }

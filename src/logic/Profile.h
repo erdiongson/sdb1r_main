@@ -27,10 +27,27 @@ typedef struct {
   int8_t vibration_duration = 2;
   bool password_enabled = 0;
   float z_dip = 0.0;
+  bool staggered = false;
   SkipPosition skip_positions[MAX_SKIP_POSITIONS_TOTAL];  // Compact storage for EEPROM
   uint8_t skip_count = 0;                           // Number of active skip positions
-  bool staggered = false;
 } Profile;
+
+// Lightweight preview profile without skip data for browsing profiles.
+typedef struct {
+  char profile_name[PROFILE_NAME_MAX_LEN];
+  int8_t tube_no_x = 0;
+  int8_t tube_no_y = 0;
+  float pitch_x = 0.0;
+  float pitch_y = 0.0;
+  float tray_origin_x = 0.0;
+  float tray_origin_y = 0.0;
+  int8_t cycles = 1;
+  int8_t vibration_level = 0;
+  int8_t vibration_duration = 2;
+  bool password_enabled = 0;
+  float z_dip = 0.0;
+  bool staggered = false;
+} PreviewProfile;
 
 // Password verification result enum.
 enum PasswordVerificationResult { PASSWORD_SUCCESS, PASSWORD_INCORRECT, PASSWORD_CANCELLED };
@@ -40,6 +57,8 @@ class ProfileManager {
  private:
   Profile currentProfile;
   uint8_t currentProfileIndex;
+  PreviewProfile previewProfile;
+  uint8_t previewProfileIndex;
 
  public:
   // Loads the current profile from EEPROM.
@@ -76,6 +95,10 @@ class ProfileManager {
   // @param index The profile index.
   void readProfileEEPROM(int index);
 
+  // Reads a preview profile from EEPROM at the specified index (without skip data).
+  // @param index The profile index.
+  void readPreviewProfileEEPROM(int index);
+
   // Verifies the password by prompting the user for input.
   // @param phost GPU context for displaying the keyboard.
   // @return PasswordVerificationResult indicating success, incorrect, or cancelled.
@@ -99,6 +122,14 @@ class ProfileManager {
   // Sets the current profile number/ID.
   // @param profile_num The profile number to set as current.
   void setCurrentProfileNum(uint8_t profile_num);
+
+  // Gets the preview profile number/ID.
+  // @return The preview profile ID.
+  uint8_t getPreviewProfileNum(void);
+
+  // Gets a reference to the preview profile.
+  // @return Reference to the preview profile.
+  PreviewProfile& getPreviewProfile(void);
 
   // Gets skip data as char strings for UI display.
   // @param out_skip_col Output buffer for column skip string (must be at least SKIP_STRING_LEN).

@@ -7,19 +7,18 @@ ProfileController::ProfileController(ControllerParams params) : BaseController(p
 
 void ProfileController::onStart() {
   selected_profile_num = profile_manager.getCurrentProfileNum();
-  profile_manager.readProfileEEPROM(selected_profile_num);
-  ProfileParams params = { 0, selected_profile_num, profile_manager.getCurrentProfile(), 0 };
+  profile_manager.readPreviewProfileEEPROM(selected_profile_num);
+  ProfileParams params = { 0, selected_profile_num, profile_manager.getPreviewProfile(), 0 };
   drawProfileScreen(phost, params);
 }
 
 void ProfileController::onInteraction(const Interaction& interaction) {
   if (interaction.key_pressed == 0) return;
 
-  static ProfileParams params = { 0, profile_manager.getCurrentProfileNum(), profile_manager.getCurrentProfile(), 0 };
+  static ProfileParams params = { 0, profile_manager.getPreviewProfileNum(), profile_manager.getPreviewProfile(), 0 };
 
   switch (interaction.key_pressed) {
     case TAG_PROFILE_BACK:
-      profile_manager.readProfileEEPROM(profile_manager.getCurrentProfileNum());
       startNextController(CONTROLLER_SETTINGS);
       break;
 
@@ -45,7 +44,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
         selected_profile_num = 0;
       }
 
-      profile_manager.readProfileEEPROM(selected_profile_num);
+      profile_manager.readPreviewProfileEEPROM(selected_profile_num);
       params.keypressed = interaction.key_pressed;
       params.cur_prof_num = selected_profile_num;
       params.dialog_code = 0;
@@ -59,7 +58,7 @@ void ProfileController::onInteraction(const Interaction& interaction) {
       } else {
         selected_profile_num = MAX_PROFILES - 1;
       }
-      profile_manager.readProfileEEPROM(selected_profile_num);
+      profile_manager.readPreviewProfileEEPROM(selected_profile_num);
       params.keypressed = interaction.key_pressed;
       params.cur_prof_num = selected_profile_num;
       params.dialog_code = 0;
