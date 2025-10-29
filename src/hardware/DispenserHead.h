@@ -73,6 +73,20 @@ class DispenserHead {
     dispensing_state = DISPENSER_STATE_SENT;
   }
 
+  // Query firmware version from the dispenser.
+  void queryFirmwareVersion() {
+    if (dispensing_state != DISPENSER_STATE_IDLING) return;
+
+    PicSerial::sendQueryFirmwareVersion();
+    dispensing_state = DISPENSER_STATE_SENT;
+  }
+
+  // Get the last received firmware version data.
+  // @return FirmwareVersionData structure with version information.
+  FirmwareVersionData getFirmwareVersionData() {
+    return PicSerial::getFirmwareVersionData();
+  }
+
   // Process incoming data from the dispenser.
   // @return DispenserProcessResult containing the updated state and any error code.
   DispenserProcessResult process() {
@@ -116,6 +130,9 @@ class DispenserHead {
         dispensing_state = DISPENSER_STATE_IDLING;
         return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_IDLING);
       case SDB_VIBRATE_TIME:
+        dispensing_state = DISPENSER_STATE_IDLING;
+        return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_IDLING);
+      case SDB_QUERY_STATUS2:
         dispensing_state = DISPENSER_STATE_IDLING;
         return DispenserProcessResult(AXIS_STATE_COMPLETE, DISPENSER_STATE_IDLING);
       case ACKNOWLEDGE:

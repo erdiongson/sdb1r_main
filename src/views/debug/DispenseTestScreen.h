@@ -203,6 +203,13 @@ void drawDispenseTestScreen(Gpu_Hal_Context_t* phost, const DispenseTestScreenPa
   Gpu_CoCmd_Text(phost, text_x, row3_y + row3_button_height / 2, 20, OPT_CENTERY, temp_buffer);
   App_WrCoCmd_Buffer(phost, TAG_MASK(255));
 
+  // Row 4: Get Firmware Version button - below row 3
+  int32_t row4_y = row3_y + row3_button_height + 6;
+  int32_t fw_button_width = 100;
+  Gpu_CoCmd_FgColor(phost, 0x0066CC);  // Blue color for firmware button
+  App_WrCoCmd_Buffer(phost, TAG(TAG_GET_FW_VERSION));
+  Gpu_CoCmd_Button(phost, row3_start_x, row4_y, fw_button_width, row3_button_height, 20, 0, PROGMEM_STR(F("Get FW Ver")));
+
   // Back button (top left, vertically aligned with title)
   Gpu_CoCmd_FgColor(phost, 0xAA0000);
   App_WrCoCmd_Buffer(phost, TAG(TAG_DISPENSE_BACK));

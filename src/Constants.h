@@ -130,6 +130,7 @@ const int TAG_VIB_TIME_5 = 70;
 const int TAG_DISPENSE_BACK = 71;
 const int TAG_DISPENSE_REPEAT = 72;
 const int TAG_DISPENSE_STOP = 73;
+const int TAG_GET_FW_VERSION = 74;
 
 // =============================================================================
 // UI TAG CONSTANTS - Preview Screen
@@ -199,10 +200,11 @@ const uint8_t DISPENSER_END_BYTE = 0xFE;
 // =============================================================================
 // DISPENSER SERIAL PROTOCOL - Command Values
 // =============================================================================
-const uint8_t SDB_HANDSHAKE = 0x06;       // Handshake command
-const uint8_t SDB_VIBRATE_LEVEL = 0x54;   // Command to set vibration mode ON
-const uint8_t SDB_VIBRATE_TIME = 0x65;    // Command to set vibration time
-const uint8_t SDB_DISPENSE_START = 0x46;  // Command to start dispensing
+const uint8_t SDB_HANDSHAKE = 0x06;         // Handshake command
+const uint8_t SDB_VIBRATE_LEVEL = 0x54;     // Command to set vibration mode ON
+const uint8_t SDB_VIBRATE_TIME = 0x65;      // Command to set vibration time
+const uint8_t SDB_DISPENSE_START = 0x46;    // Command to start dispensing
+const uint8_t SDB_QUERY_STATUS2 = 0x52;     // Query Status 2 (firmware version)
 
 // =============================================================================
 // DISPENSER SERIAL PROTOCOL - Response Values

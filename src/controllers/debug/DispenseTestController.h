@@ -21,6 +21,7 @@ class DispenseTestController : public BaseController {
   State state;
   int repeat_count = DEFAULT_DISPENSE_REPEAT_COUNT;  // Number of times to repeat dispense
   RepeatDispenseState repeat_state = {false, 0, 0};         // Repeat state tracker
+  char status_message_buffer[50];  // Buffer for status messages that need to persist
 
   // Updates the screen with current state.
   void updateScreen(const char* status_message);

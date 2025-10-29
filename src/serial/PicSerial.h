@@ -7,6 +7,14 @@
 #define START_BYTE DISPENSER_START_BYTE
 #define END_BYTE DISPENSER_END_BYTE
 
+// Structure to hold firmware version query response data.
+struct FirmwareVersionData {
+  uint8_t product_type;      // Product type identifier
+  uint8_t firmware_version;  // Firmware version number
+  uint8_t cycles_number;     // Number of cycles
+  bool valid;                // Whether the data is valid
+};
+
 // PicSerial class for handling dispenser communication.
 class PicSerial {
  public:
@@ -23,6 +31,13 @@ class PicSerial {
   // Set the vibration time for the dispenser.
   // @param seconds The vibration time in seconds (1-5).
   static void sendVibrationTime(uint8_t seconds);
+
+  // Send a query for firmware version information.
+  static void sendQueryFirmwareVersion();
+
+  // Get the last received firmware version data.
+  // @return FirmwareVersionData structure with version information.
+  static FirmwareVersionData getFirmwareVersionData();
 
   // Process incoming data from the dispenser.
   // @return Command code if valid message received, 0 if no message, -1 if error.
@@ -45,4 +60,10 @@ class PicSerial {
 
   // Timeout timestamp in milliseconds for cycle completion.
   static unsigned long cycle_complete_timeout_at;
+
+  // Flag to track if we're waiting for firmware version data packet.
+  static bool waiting_for_fw_data;
+
+  // Storage for firmware version data.
+  static FirmwareVersionData fw_version_data;
 };

@@ -12,8 +12,15 @@ void DispenseTestController::onStart() {
 }
 
 void DispenseTestController::updateScreen(const char* status_message) {
+  // Copy message to persistent buffer to avoid g_view_temp_buffer conflicts
+  // Check if message is already in our buffer to avoid unnecessary copy
+  if (status_message != status_message_buffer) {
+    strncpy(status_message_buffer, status_message, sizeof(status_message_buffer) - 1);
+    status_message_buffer[sizeof(status_message_buffer) - 1] = '\0';
+  }
+  
   DispenseTestScreenParams params;
-  params.status_message = status_message;
+  params.status_message = status_message_buffer;
   params.repeat_count = repeat_count;
 
   params.is_dispensing = repeat_state.enabled;
@@ -155,6 +162,15 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
       break;
     }
 
+    case TAG_GET_FW_VERSION: {
+      Logger::log(F("DispenseTestController: Querying firmware version"));
+      updateScreen("QUERYING FW..");
+      delay(100);
+      dispenserHead.queryFirmwareVersion();
+      state = WAITING_FOR_RESPONSE;
+      break;
+    }
+
     default:
       break;
   }
@@ -169,31 +185,38 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
   }
 
   if (state == WAITING_FOR_RESPONSE && result.dispenser != DISPENSER_STATE_SENT) {
-    const char* message = nullptr;
     bool is_error = false;
     
     switch (result.dispenser) {
-      case DISPENSER_STATE_IDLING:
-        message = "COMPLETED";
+      case DISPENSER_STATE_IDLING: {
+        // Check if this was a firmware version query
+        FirmwareVersionData fw_data = dispenserHead.getFirmwareVersionData();
+        if (fw_data.valid) {
+          // Format into controller's persistent buffer
+          snprintf_P(status_message_buffer, sizeof(status_message_buffer), PSTR("FW:%d"), fw_data.firmware_version);
+        } else {
+          strcpy_P(status_message_buffer, PSTR("COMPLETED"));
+        }
         break;
+      }
       case DISPENSER_STATE_ERROR_ACK_ERROR:
-        message = PROGMEM_STR(F("ACK TIMEOUT"));
+        strcpy_P(status_message_buffer, PSTR("ACK TIMEOUT"));
         is_error = true;
         break;
       case DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE:
-        message = PROGMEM_STR(F("IR SENSOR FAILURE"));
+        strcpy_P(status_message_buffer, PSTR("IR SENSOR FAILURE"));
         is_error = true;
         break;
       case DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED:
-        message = PROGMEM_STR(F("MARKER NOT DETECTED"));
+        strcpy_P(status_message_buffer, PSTR("MARKER NOT DETECTED"));
         is_error = true;
         break;
       case DISPENSER_STATE_ERROR_CYCLES_TIMEOUT:
-        message = PROGMEM_STR(F("CYCLE TIMEOUT"));
+        strcpy_P(status_message_buffer, PSTR("CYCLE TIMEOUT"));
         is_error = true;
         break;
       default:
-        message = PROGMEM_STR(F(""));
+        status_message_buffer[0] = '\0';
         break;
     }
 
@@ -205,17 +228,19 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
       if (repeat_state.current_count < repeat_state.total_count) {
         // Increment and send next dispense command
         repeat_state.current_count++;
-        updateScreen(PROGMEM_STR(F("SENT DISPENSE")));
+        strcpy_P(status_message_buffer, PSTR("SENT DISPENSE"));
+        updateScreen(status_message_buffer);
         dispenserHead.sendDispense();
         state = WAITING_FOR_RESPONSE;
       } else {
         // Last dispense completed - reset and show completion
-        updateScreen(PROGMEM_STR(F("ALL DONE")));
+        strcpy_P(status_message_buffer, PSTR("ALL DONE"));
+        updateScreen(status_message_buffer);
       }
     } else {
       // Error occurred or single dispense completed
       repeat_state.enabled = false;
-      updateScreen(message);
+      updateScreen(status_message_buffer);
     }
   }
 
