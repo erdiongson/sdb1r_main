@@ -37,6 +37,11 @@ class RunController : public BaseController {
   void stop();
   void start();
   
+  // Handles limit switch error by logging, displaying error dialog, and pausing.
+  // @param result The axis movement result code to check.
+  // @return True if a limit switch error occurred, false otherwise.
+  bool handleLimitSwitchError(int result);
+  
   // Prepares the current run status for display.
   // @return RunStatus struct with current position and progress information.
   RunStatus getRunStatus();

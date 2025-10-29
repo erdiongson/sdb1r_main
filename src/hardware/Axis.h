@@ -82,9 +82,9 @@ class Axis {
 
   void setDisabled(bool disabled) { enabled = !disabled; }
 
-  void moveToMax() {
-    if (!enabled) return;
-    if (isAtMax()) return;  // Already at max limit
+  int moveToMax() {
+    if (!enabled) return AXIS_STATE_COMPLETE;
+    if (isAtMax()) return AXIS_STATE_ERROR_LIMIT_SWITCH;  // Already at max limit
     running = true;
     to_limit = true;
     stepper.move(999999999);
@@ -92,11 +92,12 @@ class Axis {
 
     prev_min_state = isAtMin();
     prev_max_state = isAtMax();
+    return AXIS_STATE_RUNNING;
   }
 
-  void moveToMin() {
-    if (!enabled) return;
-    if (isAtMin()) return;  // Already at min limit
+  int moveToMin() {
+    if (!enabled) return AXIS_STATE_COMPLETE;
+    if (isAtMin()) return AXIS_STATE_ERROR_LIMIT_SWITCH;  // Already at min limit
     running = true;
     to_limit = true;
     stepper.move(-999999999);
@@ -104,12 +105,13 @@ class Axis {
 
     prev_min_state = isAtMin();
     prev_max_state = isAtMax();
+    return AXIS_STATE_RUNNING;
   }
 
-  void moveBy(long position) {
-    if (!enabled) return;
-    if (position > 0 && isAtMax()) return;  // Trying to move positive but at max limit
-    if (position < 0 && isAtMin()) return;  // Trying to move negative but at min limit
+int moveBy(long position) {
+    if (!enabled) return AXIS_STATE_COMPLETE;
+    if (position > 0 && isAtMax()) return AXIS_STATE_ERROR_LIMIT_SWITCH;  // Trying to move positive but at max limit
+    if (position < 0 && isAtMin()) return AXIS_STATE_ERROR_LIMIT_SWITCH;  // Trying to move negative but at min limit
     running = true;
     to_limit = false;
     stepper.move(position);
@@ -117,13 +119,13 @@ class Axis {
 
     prev_min_state = isAtMin();
     prev_max_state = isAtMax();
+    return AXIS_STATE_RUNNING;
   }
-
-  void moveTo(long position) {
-    if (!enabled) return;
+int moveTo(long position) {
+    if (!enabled) return AXIS_STATE_COMPLETE;
     bool would_move_positive = (position > stepper.currentPosition());
-    if (would_move_positive && isAtMax()) return;   // Trying to move positive but at max limit
-    if (!would_move_positive && isAtMin()) return;  // Trying to move negative but at min limit
+    if (would_move_positive && isAtMax()) return AXIS_STATE_ERROR_LIMIT_SWITCH;   // Trying to move positive but at max limit
+    if (!would_move_positive && isAtMin()) return AXIS_STATE_ERROR_LIMIT_SWITCH;  // Trying to move negative but at min limit
     running = true;
     to_limit = false;
     stepper.moveTo(position);
@@ -131,6 +133,7 @@ class Axis {
 
     prev_min_state = isAtMin();
     prev_max_state = isAtMax();
+    return AXIS_STATE_RUNNING;
   }
 
   void stop() {

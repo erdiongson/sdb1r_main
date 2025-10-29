@@ -50,8 +50,8 @@ void RunController::resume() {
   Logger::log(F("MODE: Resumed"));
   PlcSerial::setBusy(true);
   paused = false;
-  startStage(stage);
   drawRunScreen({ profile, getRunStatus(), 0 });
+  startStage(stage);
 }
 
 // Stops the run and returns to home position.
@@ -71,6 +71,20 @@ void RunController::stop() {
   }
 
   startNextController(CONTROLLER_HOMING);
+}
+
+// Handles limit switch error by logging, displaying error dialog, and pausing.
+// @param result The axis movement result code to check.
+// @return True if a limit switch error occurred, false otherwise.
+bool RunController::handleLimitSwitchError(int result) {
+  if (result == AXIS_STATE_ERROR_LIMIT_SWITCH) {
+    Logger::log(F("MODE: Stepper error - limit switch triggered"));
+    MainScreenParams params = { profile, getRunStatus(), DIALOG_ERROR_LIMIT_SWITCH };
+    drawRunScreen(params);
+    pause();
+    return true;
+  }
+  return false;
 }
 
 // Starts a new stage of the run
@@ -117,20 +131,25 @@ void RunController::startStage(Stage new_stage) {
       this->stage = STAGE_WAIT_PRIME;
       break;
 
-    case STAGE_MOVE:
+    case STAGE_MOVE: {
       snprintf(g_log_buffer, sizeof(g_log_buffer), "STAGE: Moving to position X=%ld, Y=%ld", target_x, target_y);
       Logger::log(g_log_buffer);
       this->stage = STAGE_MOVE;
-      dispenserHead.x().moveTo(target_x);
-      dispenserHead.y().moveTo(target_y);
-      break;
 
-    case STAGE_LOWER_HEAD:
+      if (handleLimitSwitchError(dispenserHead.x().moveTo(target_x))) return;
+      if (handleLimitSwitchError(dispenserHead.y().moveTo(target_y))) return;
+      break;
+    }
+
+    case STAGE_LOWER_HEAD: {
       snprintf(g_log_buffer, sizeof(g_log_buffer), "STAGE: Lowering head to Z=%ld", (long)(STEPS_PER_UNIT_Z * profile.z_dip));
       Logger::log(g_log_buffer);
       this->stage = STAGE_LOWER_HEAD;
-      dispenserHead.z().moveTo(-STEPS_PER_UNIT_Z * profile.z_dip);
+      if (!Z_DISABLED && profile.z_dip != 0) {
+        if (handleLimitSwitchError(dispenserHead.z().moveTo(-STEPS_PER_UNIT_Z * profile.z_dip))) return;
+      }
       break;
+    }
 
     case STAGE_START_DISPENSE:
       Logger::log(F("STAGE: Starting dispensing"));
@@ -149,7 +168,9 @@ void RunController::startStage(Stage new_stage) {
     case STAGE_RAISE_HEAD:
       Logger::log(F("STAGE: Raising head"));
       this->stage = STAGE_RAISE_HEAD;
-      dispenserHead.z().moveToMax();
+      if (!Z_DISABLED && profile.z_dip != 0) {
+        if (handleLimitSwitchError(dispenserHead.z().moveToMax())) return;
+      }
       break;
 
     default:
@@ -317,7 +338,7 @@ void RunController::processStageLogic(DispenserProcessResult& dispenser_process_
       // Check if dispensing should end
       if (cycle >= profile.cycles) {
         Logger::log(F("Dispensing completed, raising head"));
-        dispenserHead.z().moveTo(0);
+        if (handleLimitSwitchError(dispenserHead.z().moveTo(0))) return;
         startStage(STAGE_RAISE_HEAD);
       } else {
         Logger::log(F("Dispensing not completed, starting next dispensing"));
