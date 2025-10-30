@@ -118,8 +118,8 @@ const long STEPS_PER_UNIT_Z = 90L;
 const int TRAY_X_MAX = 190;
 const int TRAY_Y_MAX = 250;
 #elif MODEL == MODEL_M
-const int TRAY_X_MAX = 400;
-const int TRAY_Y_MAX = 330;
+const int TRAY_X_MAX = 250;
+const int TRAY_Y_MAX = 250;
 #elif MODEL == MODEL_L
 const int TRAY_X_MAX = 400;
 const int TRAY_Y_MAX = 330;
