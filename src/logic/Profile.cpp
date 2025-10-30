@@ -94,18 +94,23 @@ void ProfileManager::readPassEEPROM(char* pass) {
   int i = 0;
   do {
     EEPROM.get(addr++, c);  // Read one character from EEPROM
-    pass[i++] = c;          // Store the character in pass and increment the index
-  } while (c != '\0');  // Repeat until null terminator is encountered
+    if (i < PASSWORD_MAX_LEN - 1) {  // Bounds check
+      pass[i++] = c;          // Store the character in pass and increment the index
+    }
+  } while (c != '\0' && i < PASSWORD_MAX_LEN - 1);  // Repeat until null terminator or max length
+  pass[i] = '\0';  // Ensure null termination
 }
 
 void ProfileManager::writePassEEPROM(char* pass) {
   int addr = PASSWORD_EEPROM_ADDR;
   int i = 0;
   char c;
+  // Ensure password is null-terminated and within bounds
+  pass[PASSWORD_MAX_LEN - 1] = '\0';
   do {
     c = pass[i++];          // Get the next character from the pass array and increment the index
     EEPROM.put(addr++, c);  // Write the character to EEPROM
-  } while (c != '\0');  // Repeat until null terminator is encountered
+  } while (c != '\0' && i < PASSWORD_MAX_LEN);  // Repeat until null terminator or max length
 }
 
 void ProfileManager::writeCurIDEEPROM(uint8_t curprofid) {
@@ -123,6 +128,8 @@ uint8_t ProfileManager::readCurIDEEPROM(void) {
 void ProfileManager::writeProfileEEPROM(int index) {
   int address = (index * RESERVED_PROFILE_SIZE) + sizeof(uint8_t);
 
+  // Ensure profile_name is null-terminated before writing
+  currentProfile.profile_name[PROFILE_NAME_MAX_LEN - 1] = '\0';
   EEPROM.put(address, currentProfile.profile_name);
   address += sizeof(currentProfile.profile_name);
   EEPROM.put(address, currentProfile.tube_no_x);
@@ -159,6 +166,8 @@ void ProfileManager::readProfileEEPROM(int index) {
   int address = (index * RESERVED_PROFILE_SIZE) + sizeof(uint8_t);
 
   EEPROM.get(address, currentProfile.profile_name);
+  // Ensure profile_name is null-terminated after reading
+  currentProfile.profile_name[PROFILE_NAME_MAX_LEN - 1] = '\0';
   address += sizeof(currentProfile.profile_name);
   EEPROM.get(address, currentProfile.tube_no_x);
   address += sizeof(currentProfile.tube_no_x);
@@ -198,6 +207,8 @@ void ProfileManager::readPreviewProfileEEPROM(int index) {
   int address = (index * RESERVED_PROFILE_SIZE) + sizeof(uint8_t);
 
   EEPROM.get(address, previewProfile.profile_name);
+  // Ensure profile_name is null-terminated after reading
+  previewProfile.profile_name[PROFILE_NAME_MAX_LEN - 1] = '\0';
   address += sizeof(previewProfile.profile_name);
   EEPROM.get(address, previewProfile.tube_no_x);
   address += sizeof(previewProfile.tube_no_x);
@@ -236,7 +247,11 @@ PasswordVerificationResult ProfileManager::verifyPassword(Gpu_Hal_Context_t* pho
   char input_password[PASSWORD_MAX_LEN] = "";
 
   readPassEEPROM(current_password);
-  if (strcmp(current_password, "") == 0) strcpy_P(current_password, INITIAL_PASSWORD);
+  if (strcmp(current_password, "") == 0) {
+    // Safe copy with bounds checking
+    strncpy_P(current_password, INITIAL_PASSWORD, PASSWORD_MAX_LEN - 1);
+    current_password[PASSWORD_MAX_LEN - 1] = '\0';
+  }
 
   KeyboardResult kb_result = getKeyboardValue(phost, input_password, "Enter Password", FALSE, PASSWORD_MAX_LEN, NULL);
 
