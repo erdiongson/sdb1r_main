@@ -54,14 +54,12 @@ void ReadyController::onInteraction(const Interaction& interaction) {
       break;
 
     case MSG_RAISE_Z:
-      snprintf(g_log_buffer, sizeof(g_log_buffer), "ReadyController::on_interaction: Raising Z by %d mm", interaction.plc_message_data);
-      Logger::log(g_log_buffer);
+      Logger::log(F("ReadyController::on_interaction: Raising Z by %d mm"), interaction.plc_message_data);
       dispenserHead.z().moveBy(interaction.plc_message_data * STEPS_PER_UNIT_Z);
       break;
 
     case MSG_LOWER_Z:
-      snprintf(g_log_buffer, sizeof(g_log_buffer), "ReadyController::on_interaction: Lowering Z by %d mm", interaction.plc_message_data);
-      Logger::log(g_log_buffer);
+      Logger::log(F("ReadyController::on_interaction: Lowering Z by %d mm"), interaction.plc_message_data);
       dispenserHead.z().moveBy(-interaction.plc_message_data * STEPS_PER_UNIT_Z);
       break;
 

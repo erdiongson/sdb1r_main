@@ -132,8 +132,7 @@ void RunController::startStage(Stage new_stage) {
       break;
 
     case STAGE_MOVE: {
-      snprintf(g_log_buffer, sizeof(g_log_buffer), "STAGE: Moving to position X=%ld, Y=%ld", target_x, target_y);
-      Logger::log(g_log_buffer);
+      Logger::log(F("STAGE: Moving to position X=%ld, Y=%ld"), target_x, target_y);
       this->stage = STAGE_MOVE;
 
       if (handleLimitSwitchError(dispenserHead.x().moveTo(target_x))) return;
@@ -142,8 +141,7 @@ void RunController::startStage(Stage new_stage) {
     }
 
     case STAGE_LOWER_HEAD: {
-      snprintf(g_log_buffer, sizeof(g_log_buffer), "STAGE: Lowering head to Z=%ld", (long)(STEPS_PER_UNIT_Z * profile.z_dip));
-      Logger::log(g_log_buffer);
+      Logger::log(F("STAGE: Lowering head to Z=%ld"), (long)(STEPS_PER_UNIT_Z * profile.z_dip));
       this->stage = STAGE_LOWER_HEAD;
       if (!Z_DISABLED && profile.z_dip != 0) {
         if (handleLimitSwitchError(dispenserHead.z().moveTo(-STEPS_PER_UNIT_Z * profile.z_dip))) return;
@@ -350,15 +348,11 @@ void RunController::processStageLogic(DispenserProcessResult& dispenser_process_
     case STAGE_RAISE_HEAD: {
       if (dispenser_process_result.steppers != AXIS_STATE_COMPLETE) break;
       TrayHandler::PositionResult result = trayHandler.goToNextValidPosition();
-      snprintf(g_log_buffer, sizeof(g_log_buffer), "Has next: %d", result.has_next);
-      Logger::log(g_log_buffer);
-      snprintf(g_log_buffer, sizeof(g_log_buffer), "Next position: %d, %d", result.position.x, result.position.y);
-      Logger::log(g_log_buffer);
+      Logger::log(F("Has next: %d"), result.has_next);
+      Logger::log(F("Next position: %d, %d"), result.position.x, result.position.y);
 
       if (result.has_next) {
         Logger::log(F("Moving to next position"));
-        snprintf(g_log_buffer, sizeof(g_log_buffer), "Next position: %d, %d", result.position.x, result.position.y);
-        Logger::log(g_log_buffer);
 
         target_x = (profile.tray_origin_x +
                     ((result.position.x - 1 + ((profile.staggered && result.position.y % 2 == 0) ? STAGGERED_OFFSET_FACTOR : 0)) *

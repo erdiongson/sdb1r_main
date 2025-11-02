@@ -57,6 +57,25 @@ class Logger {
     }
     Serial.println();
   }
+
+  // Logs a formatted message using an F string (PROGMEM) with variadic arguments.
+  // @param format The format string stored in PROGMEM (use F() macro).
+  // @param args Variadic arguments to format into the string.
+  template<typename... Args>
+  static void log(const __FlashStringHelper* format, Args... args) {
+    int written = snprintf_P(g_log_buffer, sizeof(g_log_buffer), (const char*)format, args...);
+    
+    // Check if output was truncated (written >= buffer size means truncation occurred)
+    if (written >= (int)sizeof(g_log_buffer)) {
+      Serial.print(g_log_buffer);
+      Serial.println(F(" [TRUNCATED]"));
+    } else if (written < 0) {
+      // Encoding error occurred
+      Serial.println(F("[LOG ERROR: Format encoding failed]"));
+    } else {
+      Serial.println(g_log_buffer);
+    }
+  }
 };
 
 #else
@@ -88,6 +107,12 @@ class Logger {
   // @param data Pointer to the byte array.
   // @param length Number of bytes to log.
   static void log(String prefix, const uint8_t* data, size_t length) {}
+
+  // Logs a formatted message using an F string (PROGMEM) with variadic arguments.
+  // @param format The format string stored in PROGMEM (use F() macro).
+  // @param args Variadic arguments to format into the string.
+  template<typename... Args>
+  static void log(const __FlashStringHelper* format, Args... args) {}
 };
 
 #endif

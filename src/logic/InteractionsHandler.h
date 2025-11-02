@@ -60,8 +60,7 @@ class InteractionsHandler {
     // Check for PLC messages before early exit
     PLCMessage plc_message = PlcSerial::process();
     if (plc_message.type != MSG_UNKNOWN) {
-      snprintf(g_log_buffer, sizeof(g_log_buffer), "PLC message received: %d", plc_message.type);
-      Logger::log(g_log_buffer);
+      Logger::log(F("PLC message received: %d"), plc_message.type);
       interaction.key_pressed = 0;
       interaction.plc_message_type = plc_message.type;
       interaction.plc_message_data = plc_message.data_value;

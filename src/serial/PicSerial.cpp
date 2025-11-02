@@ -21,9 +21,7 @@ void PicSerial::sendMessage(byte command, byte data) {
   Serial2.write(msg, 5);
 
   // Log sent bytes
-  snprintf(g_log_buffer, sizeof(g_log_buffer), "PIC TX: %02X %02X %02X %02X %02X",
-           msg[0], msg[1], msg[2], msg[3], msg[4]);
-  Logger::log(g_log_buffer);
+  Logger::log(F("PIC TX: %02X %02X %02X %02X %02X"), msg[0], msg[1], msg[2], msg[3], msg[4]);
 
   // Set timeout to 5 seconds from now.
   ack_timeout_at = millis() + DISPENSER_ACK_TIMEOUT_MS;
@@ -103,9 +101,7 @@ int PicSerial::process() {
   Serial2.readBytes(response, MSG_LENGTH);
 
   // Log received bytes
-  snprintf(g_log_buffer, sizeof(g_log_buffer), "PIC RX: %02X %02X %02X %02X %02X",
-           response[0], response[1], response[2], response[3], response[4]);
-  Logger::log(g_log_buffer);
+  Logger::log(F("PIC RX: %02X %02X %02X %02X %02X"), response[0], response[1], response[2], response[3], response[4]);
 
   // Validate the response format
   if (response[MSG_SOT] != START_BYTE || response[MSG_EOT] != END_BYTE) {

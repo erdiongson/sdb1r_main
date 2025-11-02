@@ -124,8 +124,7 @@ void AdvancedSettingsController::editSkipColumn(Gpu_Hal_Context_t* phost) {
     // Check if there was an error
     if (result.error_message[0] != '\0') {
       error_msg = result.error_message;
-      snprintf(g_log_buffer, sizeof(g_log_buffer), "Error Message: %s", result.error_message);
-      Logger::log(g_log_buffer);
+      Logger::log(F("Error Message: %s"), result.error_message);
       // Use the cleaned text (capitalized) even with error
       if (result.cleaned[0] != '\0') {
         strncpy(skip_input_buffer, result.cleaned, SKIP_STRING_LEN - 1);
@@ -135,8 +134,7 @@ void AdvancedSettingsController::editSkipColumn(Gpu_Hal_Context_t* phost) {
     }
 
     strncpy(skip_col, result.cleaned, SKIP_STRING_LEN - 1);
-    snprintf(g_log_buffer, sizeof(g_log_buffer), "New skip_col: %s", skip_col);
-    Logger::log(g_log_buffer);
+    Logger::log(F("New skip_col: %s"), skip_col);
     drawScreen();
     break;
   }
@@ -163,8 +161,7 @@ void AdvancedSettingsController::editSkipRow(Gpu_Hal_Context_t* phost) {
     // Check if there was an error
     if (result.error_message[0] != '\0') {
       error_msg = result.error_message;
-      snprintf(g_log_buffer, sizeof(g_log_buffer), "Error: %s", result.error_message);
-      Logger::log(g_log_buffer);
+      Logger::log(F("Error: %s"), result.error_message);
       // Use the cleaned text (capitalized) even with error
       if (result.cleaned[0] != '\0') {
         strncpy(skip_input_buffer, result.cleaned, SKIP_STRING_LEN - 1);
@@ -189,8 +186,7 @@ void AdvancedSettingsController::editSkipIndividual(Gpu_Hal_Context_t* phost) {
 
   const char* error_msg = NULL;
   while (true) {
-    snprintf(g_log_buffer, sizeof(g_log_buffer), "Length of skip_single_pos: %d", strlen(skip_input_buffer));
-    Logger::log(g_log_buffer);
+    Logger::log(F("Length of skip_single_pos: %d"), strlen(skip_input_buffer));
     KeyboardResult keyboard_result = getKeyboardValue(phost, skip_input_buffer, PROGMEM_STR(F("Enter positions to skip")), false, SKIP_STRING_INDIVIDUAL_LEN, error_msg);
 
     // Check if user pressed back
@@ -202,8 +198,7 @@ void AdvancedSettingsController::editSkipIndividual(Gpu_Hal_Context_t* phost) {
     // Check if there was an error
     if (result.error_message[0] != '\0') {
       error_msg = result.error_message;
-      snprintf(g_log_buffer, sizeof(g_log_buffer), "Error: %s", result.error_message);
-      Logger::log(g_log_buffer);
+      Logger::log(F("Error: %s"), result.error_message);
       // Use the cleaned text (capitalized) even with error
       if (result.cleaned[0] != '\0') {
         strncpy(skip_input_buffer, result.cleaned, SKIP_STRING_LEN - 1);
@@ -232,8 +227,7 @@ SkipVerificationResult AdvancedSettingsController::verifyParameters() {
   uint8_t skip_count = SkipUtils::convertFromStrings(skip_col, skip_row, skip_single_pos, temp_positions, MAX_SKIP_POSITIONS_TOTAL + 1);
 
   // Check if skip count exceeds maximum
-  snprintf(g_log_buffer, sizeof(g_log_buffer), "skip_count from buffers: %d, MAX_SKIP_POSITIONS_TOTAL: %d", skip_count, MAX_SKIP_POSITIONS_TOTAL);
-  Logger::log(g_log_buffer);
+  Logger::log(F("skip_count from buffers: %d, MAX_SKIP_POSITIONS_TOTAL: %d"), skip_count, MAX_SKIP_POSITIONS_TOTAL);
   if (skip_count > MAX_SKIP_POSITIONS_TOTAL) {
     result.is_valid = false;
     result.errors.skip_count_exceeded = true;
