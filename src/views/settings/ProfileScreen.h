@@ -73,10 +73,6 @@ void drawProfileScreen(Gpu_Hal_Context_t* phost, ProfileParams params) {
   Gpu_CoCmd_Text(phost, 82, 65, 21, 0, temp_buffer);
   Gpu_CoCmd_Text(phost, 8, 65, 21, 0, PROGMEM_STR(F("Profile ID:")));
 
-  // // Print profileName
-  // sprintf(buffer, "Profile Name: %s", curprof.profile_name);
-  // Gpu_CoCmd_Text(phost, 84, 56, 27, 0, buffer);
-
   // Print Tube_No_x
   snprintf_P(temp_buffer, sizeof(g_view_temp_buffer), PSTR("%d"), profile.tube_no_x);
   Gpu_CoCmd_Text(phost, 82, 80, 21, 0, temp_buffer);
