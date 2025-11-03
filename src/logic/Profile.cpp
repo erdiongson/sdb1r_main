@@ -297,11 +297,18 @@ void ProfileManager::setCurrentProfileNum(uint8_t profile_num) {
 
 // Gets skip data as char strings for UI display.
 // @param out_skip_col Output buffer for column skip string (must be at least SKIP_STRING_LEN).
+// @param out_skip_col_size Size of out_skip_col buffer.
 // @param out_skip_row Output buffer for row skip string (must be at least SKIP_STRING_LEN).
+// @param out_skip_row_size Size of out_skip_row buffer.
 // @param out_skip_single_pos Output buffer for individual position skip string (must be at least SKIP_STRING_LEN).
-void ProfileManager::getSkipStrings(char* out_skip_col, char* out_skip_row, char* out_skip_single_pos) {
+// @param out_skip_single_pos_size Size of out_skip_single_pos buffer.
+void ProfileManager::getSkipStrings(char* out_skip_col, int out_skip_col_size, 
+                                    char* out_skip_row, int out_skip_row_size, 
+                                    char* out_skip_single_pos, int out_skip_single_pos_size) {
   SkipUtils::convertToStrings(currentProfile.skip_positions, currentProfile.skip_count,
-                              out_skip_col, out_skip_row, out_skip_single_pos);
+                              out_skip_col, out_skip_col_size,
+                              out_skip_row, out_skip_row_size,
+                              out_skip_single_pos, out_skip_single_pos_size);
 }
 
 // Sets skip data from char strings (from UI).

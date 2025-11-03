@@ -76,39 +76,7 @@ void SettingsController::onInteraction(const Interaction& interaction) {
 
     case TAG_CONFIG_TUBES_X:
     {
-      float maxval = (int)((TRAY_X_MAX - current_profile->tray_origin_x) / current_profile->pitch_x) + 1;
-      if (maxval > TUBES_X_MAX) maxval = TUBES_X_MAX;
-
-      int old_tube_no_x = current_profile->tube_no_x;
       current_profile->tube_no_x = getKeypadValue(&host, current_profile->tube_no_x, TUBES_X_MIN, TUBES_X_MAX, FALSE);
-
-      // If rows decreased, clean skip strings to remove out-of-bounds positions
-      if (current_profile->tube_no_x < old_tube_no_x) {
-        TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
-
-        // Get current skip strings
-        char skip_col[SKIP_STRING_LEN], skip_row[SKIP_STRING_LEN], skip_single_pos[SKIP_STRING_LEN];
-        profile_manager.getSkipStrings(skip_col, skip_row, skip_single_pos);
-
-        // Clean skip rows
-        SkipUtils::CleanResult rowResult = SkipUtils::clean(skip_row, SkipUtils::ROW, dimensions);
-        if (rowResult.was_cleaned) {
-          strncpy(skip_row, rowResult.cleaned, SKIP_STRING_LEN - 1);
-          skip_row[SKIP_STRING_LEN - 1] = '\0';
-        }
-
-        // Clean skip individual positions
-        SkipUtils::CleanResult posResult =
-            SkipUtils::clean(skip_single_pos, SkipUtils::INDIVIDUAL, dimensions);
-        if (posResult.was_cleaned) {
-          strncpy(skip_single_pos, posResult.cleaned, SKIP_STRING_LEN - 1);
-          skip_single_pos[SKIP_STRING_LEN - 1] = '\0';
-        }
-
-        // Save back to profile
-        profile_manager.setSkipStrings(skip_col, skip_row, skip_single_pos);
-      }
-
       drawScreen();
     } break;
 

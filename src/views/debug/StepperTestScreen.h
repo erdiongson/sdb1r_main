@@ -12,6 +12,7 @@
 
 #include "../../gpu/App_Common.h"
 #include "../../Constants.h"
+#include "../../Buffers.h"
 #include "../common/Dialogs.h"
 #include "../common/ToggleButton.h"
 #include "../ViewCommon.h"
@@ -273,19 +274,21 @@ inline void drawStepperTestScreen(Gpu_Hal_Context_t* phost, const StepperTestPar
     // Check if message contains "Rate:" to split into two lines
     char* rate_pos = strstr(params.status_message, "Rate:");
     if (rate_pos != nullptr) {
-      // Create a copy for the first line (up to "Rate:")
-      char first_line[100];
+      // Create a copy for the first line (up to "Rate:") using global buffer
       int first_line_len = rate_pos - params.status_message;
-      strncpy(first_line, params.status_message, first_line_len);
-      first_line[first_line_len] = '\0';
+      if (first_line_len >= g_intermediate_buffer_size) {
+        first_line_len = g_intermediate_buffer_size - 1;
+      }
+      strncpy(g_intermediate_buffer, params.status_message, first_line_len);
+      g_intermediate_buffer[first_line_len] = '\0';
       
       // Trim trailing comma and space if present
-      if (first_line_len >= 2 && first_line[first_line_len - 2] == ',') {
-        first_line[first_line_len - 2] = '\0';
+      if (first_line_len >= 2 && g_intermediate_buffer[first_line_len - 2] == ',') {
+        g_intermediate_buffer[first_line_len - 2] = '\0';
       }
       
       // Display first line
-      Gpu_CoCmd_Text(phost, 10, DispHeight - 33, 20, 0, first_line);
+      Gpu_CoCmd_Text(phost, 10, DispHeight - 33, 20, 0, g_intermediate_buffer);
       
       // Display second line (Rate: ...)
       Gpu_CoCmd_Text(phost, 10, DispHeight - 18, 20, 0, rate_pos);

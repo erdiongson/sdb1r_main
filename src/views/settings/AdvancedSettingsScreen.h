@@ -22,7 +22,7 @@ struct AdvancedSettingsScreenParams {
   Profile& profile;
   const char* skip_col;
   const char* skip_row;
-  const char* skip_single_pos;
+  const char* skip_single;
   SkipErrors errors;
   uint8_t dialog_code;  // Dialog codes are < 50
 };
@@ -80,7 +80,7 @@ inline void drawAdvancedSettingsScreen(Gpu_Hal_Context_t* phost, AdvancedSetting
 
   // Text - Skip Single Positions
   App_WrCoCmd_Buffer(phost, params.errors.skip_cells ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
-  Gpu_CoCmd_Text(phost, 15, 132, 21, 0, params.skip_single_pos);
+  Gpu_CoCmd_Text(phost, 15, 132, 21, 0, params.skip_single);
 
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
