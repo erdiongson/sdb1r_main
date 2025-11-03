@@ -11,7 +11,7 @@ const int g_intermediate_token_buffer_size = 10;
 extern char g_intermediate_token_buffer[g_intermediate_token_buffer_size];
 
 // Shared buffer when needing to store intermediate data relating string manipulation and validation
-const int g_intermediate_buffer_size = 100;
+const int g_intermediate_buffer_size = SKIP_STRING_LEN + 1;
 extern char g_intermediate_buffer[g_intermediate_buffer_size];
 
 // Shared buffer when needing to store intermediate data relating to skip positions

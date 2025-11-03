@@ -114,9 +114,10 @@ void AdvancedSettingsController::editSkipBase(Gpu_Hal_Context_t* phost, char* so
 
   // Load current value into intermediate buffer
   snprintf(g_intermediate_buffer, g_intermediate_buffer_size, "%s", source);
+  g_error_buffer[0] = '\0';
 
   while (true) {
-    KeyboardResult kb_result = getKeyboardValue(phost, g_intermediate_buffer, prompt, false, SKIP_STRING_LEN, g_error_buffer);
+    KeyboardResult kb_result = getKeyboardValue(phost, g_intermediate_buffer, prompt, false, g_intermediate_buffer_size, g_error_buffer);
 
     // Check if user pressed back
     if (kb_result.action == ACTION_BACK) return;
@@ -166,7 +167,7 @@ SkipVerificationResult AdvancedSettingsController::verifyParameters() {
   // Convert skip strings to positions to get actual count
   // Allow +1 to be returned, to detect if the user is trying to enter more than MAX_SKIP_POSITIONS_TOTAL
 
-  uint8_t skip_count = SkipUtils::convertFromStrings(g_skip_col_buffer, g_skip_row_buffer, g_skip_single_buffer, g_intermediate_buffer, g_intermediate_buffer_size);
+  uint8_t skip_count = SkipUtils::convertFromStrings(g_skip_col_buffer, g_skip_row_buffer, g_skip_single_buffer, g_intermediate_skip_positions, MAX_SKIP_POSITIONS_TOTAL);
 
   // Check if skip count exceeds maximum
   Logger::log(F("skip_count from buffers: %d, MAX_SKIP_POSITIONS_TOTAL: %d"), skip_count, MAX_SKIP_POSITIONS_TOTAL);
@@ -180,7 +181,7 @@ SkipVerificationResult AdvancedSettingsController::verifyParameters() {
     TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
     
     for (uint8_t i = 0; i < skip_count && i < MAX_SKIP_POSITIONS_TOTAL; i++) {
-      const SkipPosition& skip_pos = g_intermediate_buffer[i];
+      const SkipPosition& skip_pos = g_intermediate_skip_positions[i];
       TrayHandler::Position pos(skip_pos.x, skip_pos.y);
       
       // Check if position is valid for current tray configuration using SkipUtils
