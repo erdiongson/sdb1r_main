@@ -148,6 +148,7 @@ const int TAG_DEBUG_RESET_PROFILES = 93;
 const int TAG_DEBUG_BACK = 94;
 const int TAG_DEBUG_DIALOG_TEST = 95;
 const int TAG_DEBUG_STEPPER_TEST = 96;
+const int TAG_DEBUG_USE_DEBUG_PROFILES = 97;
 
 // =============================================================================
 // UI TAG CONSTANTS - Stepper Test Control

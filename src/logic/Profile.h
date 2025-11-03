@@ -68,6 +68,9 @@ class ProfileManager {
   // Preloads EEPROM with default profile data.
   void preLoadEEPROM(void);
 
+  // Preloads EEPROM with debug skip position test data.
+  void preLoadDebugEEPROM(void);
+
   // Blanks the entire EEPROM.
   void blankEEPROM(void);
 

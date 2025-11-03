@@ -6,7 +6,7 @@ DebugController::DebugController(ControllerParams params) : BaseController(param
 
 void DebugController::onStart() {
   Logger::log(F("DebugController::on_start"));
-  drawDebugScreen(phost, { false, false, 0 });
+  drawDebugScreen(phost, { false, false, false, 0 });
 }
 
 void DebugController::onInteraction(const Interaction& interaction) {
@@ -28,11 +28,11 @@ void DebugController::onInteraction(const Interaction& interaction) {
       float dialog_num = getKeypadValue(phost, 0, 0, 20, false);
       int dialog_code = (int)dialog_num;
       // Redraw screen with the selected dialog
-      drawDebugScreen(phost, { false, false, dialog_code });
+      drawDebugScreen(phost, { false, false, false, dialog_code });
       // Only delay if dialog_code is not 0
       if (dialog_code != 0) {
         delay(4000);
-        drawDebugScreen(phost, { false, false, 0 });
+        drawDebugScreen(phost, { false, false, false, 0 });
       }
       break;
     }
@@ -45,14 +45,21 @@ void DebugController::onInteraction(const Interaction& interaction) {
     case TAG_DEBUG_BLANK_EEPROM: {
       Logger::log(F("Debug: Blank EEPROM button pressed"));
       profile_manager.blankEEPROM();
-      drawDebugScreen(phost, { true, false, 0 });
+      drawDebugScreen(phost, { true, false, false, 0 });
       break;
     }
 
     case TAG_DEBUG_RESET_PROFILES: {
       Logger::log(F("Debug: Reset Profiles button pressed"));
       profile_manager.preLoadEEPROM();
-      drawDebugScreen(phost, { false, true, 0 });
+      drawDebugScreen(phost, { false, true, false, 0 });
+      break;
+    }
+
+    case TAG_DEBUG_USE_DEBUG_PROFILES: {
+      Logger::log(F("Debug: Use Debug Profiles button pressed"));
+      profile_manager.preLoadDebugEEPROM();
+      drawDebugScreen(phost, { false, false, true, 0 });
       break;
     }
 

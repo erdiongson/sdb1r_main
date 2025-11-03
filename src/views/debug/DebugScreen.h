@@ -7,9 +7,10 @@
 
 // Parameters for Debug Screen display.
 struct DebugScreenParams {
-  bool blanked_eeprom;   // true = show (Done) on Blank EEPROM button
-  bool profiles_reset;   // true = show (Done) on Reset Profiles button
-  uint8_t dialog_code;   // Dialog codes are < 50
+  bool blanked_eeprom;         // true = show (Done) on Blank EEPROM button
+  bool profiles_reset;         // true = show (Done) on Reset Profiles button
+  bool debug_profiles_loaded;  // true = show (Done) on Use Debug Profiles button
+  uint8_t dialog_code;         // Dialog codes are < 50
 };
 
 // Draws the debug screen with test and utility buttons.
@@ -85,6 +86,16 @@ inline void drawDebugScreen(Gpu_Hal_Context_t* phost, DebugScreenParams params) 
     Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, PROGMEM_STR(F("Reset Profiles (Done)")));
   } else {
     Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, PROGMEM_STR(F("Reset Profiles")));
+  }
+  button_y += button_spacing;
+
+  // Use Debug Profiles button
+  App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_USE_DEBUG_PROFILES));
+  Gpu_CoCmd_FgColor(phost, 0xFF6600);
+  if (params.debug_profiles_loaded) {
+    Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, PROGMEM_STR(F("Use Debug Profiles (Done)")));
+  } else {
+    Gpu_CoCmd_Button(phost, 25, button_y, 270, button_height, 26, 0, PROGMEM_STR(F("Use Debug Profiles")));
   }
   button_y += button_spacing;
 
