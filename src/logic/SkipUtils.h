@@ -76,7 +76,12 @@ class SkipUtils {
                                 char* out_skip_col, int out_skip_col_size,
                                 char* out_skip_row, int out_skip_row_size,
                                 char* out_skip_single_pos, int out_skip_single_pos_size) {
-    if (!skip_positions || count == 0) return;
+    if (!skip_positions || count == 0) {
+      out_skip_col[0] = '\0';
+      out_skip_row[0] = '\0';
+      out_skip_single_pos[0] = '\0';
+      return;
+    };
     if (!out_skip_col || !out_skip_row || !out_skip_single_pos) return;
 
     out_skip_col[0] = '\0';
