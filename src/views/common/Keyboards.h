@@ -16,6 +16,11 @@ struct KeyboardResult {
   KeyboardResult(KeyboardAction act = ACTION_ENTER) : action(act) {}
 };
 
+// Adjusts scroll offset to keep the last line visible.
+// @param text_buffer The text buffer to calculate scroll for.
+// @param scroll_offset Reference to the scroll offset to adjust.
+void adjustScrollToBottom(const char* text_buffer, uint8_t& scroll_offset);
+
 // Displays the on-screen keyboard interface.
 // @param phost GPU context pointer.
 // @param keypressed Currently pressed key code.

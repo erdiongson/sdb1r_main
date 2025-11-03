@@ -7,6 +7,22 @@ inline int32_t minimum(int32_t a, int32_t b) {
   return a < b ? a : b;
 }
 
+// Adjusts scroll offset to keep the last line visible.
+// @param text_buffer The text buffer to calculate scroll for.
+// @param scroll_offset Reference to the scroll offset to adjust.
+void adjustScrollToBottom(const char* text_buffer, uint8_t& scroll_offset) {
+  uint8_t text_len = strlen(text_buffer);
+  uint8_t total_lines = (text_len + KEYBOARD_MAX_PER_LINE - 1) / KEYBOARD_MAX_PER_LINE;
+  if (total_lines == 0) total_lines = 1;
+  
+  if (total_lines > KEYBOARD_VISIBLE_LINES) {
+    uint8_t max_scroll = total_lines - KEYBOARD_VISIBLE_LINES;
+    if (scroll_offset < max_scroll) {
+      scroll_offset = max_scroll;
+    }
+  }
+}
+
 struct {
   uint8_t Key_Detect : 1;
   uint8_t Caps : 1;
@@ -220,6 +236,7 @@ KeyboardResult getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* c
   keypad_value_buffer[curpos] = 0;
   Flag.Numeric = OFF;  // Disable the numbers and spcial charaters
 
+  adjustScrollToBottom(keypad_value_buffer, scroll_offset);
   drawKeyboard(phost, 0, keypad_value_buffer, curtitle, numlock, caplock, errormsg, scroll_offset);
   InteractionsHandler::waitForTouchRelease();
 
@@ -248,13 +265,8 @@ KeyboardResult getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* c
           keypad_value_buffer[curpos] = 0;
           if (password) curtext[curpos] = 0;
           
-          // Auto-adjust scroll if we deleted enough to go back a line
-          uint8_t text_len = strlen(keypad_value_buffer);
-          uint8_t total_lines = (text_len + KEYBOARD_MAX_PER_LINE - 1) / KEYBOARD_MAX_PER_LINE;
-          if (total_lines == 0) total_lines = 1;
-          if (scroll_offset >= total_lines - KEYBOARD_VISIBLE_LINES + 1 && scroll_offset > 0) {
-            scroll_offset--;
-          }
+          // Auto-scroll to bottom to show the last line
+          adjustScrollToBottom(keypad_value_buffer, scroll_offset);
         }
         break;
 
@@ -293,7 +305,7 @@ KeyboardResult getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* c
         return KeyboardResult(ACTION_BACK);
 
       case SAVE_KEY:
-        strcpy(curtext, keypad_value_buffer);
+        strncpy(curtext, keypad_value_buffer, maxlen);
         return KeyboardResult(ACTION_ENTER);
 
       default:
@@ -305,15 +317,8 @@ KeyboardResult getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* c
           }
           keypad_value_buffer[++curpos] = 0;
           
-          // Auto-scroll down if text extends beyond visible area
-          uint8_t text_len = strlen(keypad_value_buffer);
-          uint8_t total_lines = (text_len + KEYBOARD_MAX_PER_LINE - 1) / KEYBOARD_MAX_PER_LINE;
-          if (total_lines > KEYBOARD_VISIBLE_LINES) {
-            uint8_t max_scroll = total_lines - KEYBOARD_VISIBLE_LINES;
-            if (scroll_offset < max_scroll) {
-              scroll_offset = max_scroll;
-            }
-          }
+          // Auto-scroll to bottom to show the last line
+          adjustScrollToBottom(keypad_value_buffer, scroll_offset);
           
           drawKeyboard(phost, keypressed, keypad_value_buffer, curtitle, numlock, caplock, NULL, scroll_offset);
         } else {
