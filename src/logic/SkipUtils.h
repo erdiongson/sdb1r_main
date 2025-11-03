@@ -32,7 +32,7 @@ class SkipUtils {
   // @return True if position is valid and within bounds, false otherwise.
   static bool isValidSkipPosition(const TrayHandler::Position& pos, const TrayHandler::Dimensions& dimensions, bool staggered = false) {
     // Invalid position marker
-    if (pos.x == -1 && pos.y == -1) return false;
+    if (pos.isInvalid()) return false;
 
     // Column skip: x should be within [1, dimensions.columns], y is 0
     if (pos.y == 0 && pos.x != 0) {
@@ -221,9 +221,9 @@ class SkipUtils {
   // @param out_positions Output array to store parsed positions (must be at least MAX_SKIP_POSITIONS_TOTAL in size).
   // @return The number of positions parsed.
   static int convert(Profile& profile, TrayHandler::Position out_positions[MAX_SKIP_POSITIONS_TOTAL]) {
-    // Initialize all positions to -1 to mark unused entries
+    // Initialize all positions to 255 to mark unused entries
     for (int i = 0; i < MAX_SKIP_POSITIONS_TOTAL; i++) {
-      out_positions[i] = TrayHandler::Position(-1, -1);
+      out_positions[i] = TrayHandler::Position(255, 255);
     }
 
     // Convert from SkipPosition array directly
@@ -239,10 +239,10 @@ class SkipUtils {
   // Converts a single skip element string to a Position.
   // @param element The element string (e.g., "C1", "R5", "C2R4").
   // @param type The type of skip string (ROW, COLUMN, or INDIVIDUAL).
-  // @return Position object. Returns Position(-1, -1) if invalid.
+  // @return Position object. Returns Position(255, 255) if invalid.
   static TrayHandler::Position convertElement(const char* element, SkipType type) {
     if (element == nullptr || element[0] == '\0') {
-      return TrayHandler::Position(-1, -1);
+      return TrayHandler::Position(255, 255);
     }
 
     if (type == COLUMN) {
@@ -286,7 +286,7 @@ class SkipUtils {
       }
     }
 
-    return TrayHandler::Position(-1, -1);
+    return TrayHandler::Position(255, 255);
   }
 
   struct FormatParams {
@@ -476,7 +476,7 @@ class SkipUtils {
       if (token_len == 0) continue;
       
       // Parse position based on type
-      TrayHandler::Position pos(-1, -1);
+      TrayHandler::Position pos(255, 255);
       
       if (params.type == COLUMN && params.buffer[token_start] == 'C') {
         int col = atoi(params.buffer + token_start + 1);

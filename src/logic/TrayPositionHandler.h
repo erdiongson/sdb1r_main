@@ -15,12 +15,13 @@ struct Dimensions {
 };
 
 struct Position {
-  int x;
-  int y;
+  uint8_t x;
+  uint8_t y;
 
-  Position(int x = -1, int y = -1) : x(x), y(y) {}
+  Position(uint8_t x = 255, uint8_t y = 255) : x(x), y(y) {}
 
   bool operator==(const Position& other) const { return x == other.x && y == other.y; }
+  bool isInvalid() const { return x == 255 || y == 255; }
 };
 
 }  // namespace TrayHandler
@@ -38,7 +39,7 @@ struct PositionResult {
   int direction;      // The direction to move in
 
   // Static factory method for "done" state
-  static PositionResult Done() { return PositionResult(Position(-1, -1), false, 0); }
+  static PositionResult Done() { return PositionResult(Position(255, 255), false, 0); }
 
   // Static factory method for valid position state
   static PositionResult Valid(const Position& pos, int dir) { return PositionResult(pos, true, dir); }
@@ -56,7 +57,7 @@ class TrayPositionHandler {
   bool staggered = false;
   bool flipped = false;
 
-  Position skip_positions[MAX_SKIP_POSITIONS_TOTAL] = { Position(-1, -1) };
+  Position skip_positions[MAX_SKIP_POSITIONS_TOTAL] = { Position(255, 255) };
 
   // Cached values calculated during reset
   int total_valid_tubes = 0;
@@ -150,7 +151,7 @@ class TrayPositionHandler {
   // @return True if position should be skipped, false otherwise.
   bool isInvalidPosition(const Position& pos) {
     for (int i = 0; i < MAX_SKIP_POSITIONS_TOTAL; i++) {
-      if (pos.x == -1 || pos.y == -1) {
+      if (pos.isInvalid()) {
         break;
       }
       if (pos.x == skip_positions[i].x && pos.y == skip_positions[i].y) {
@@ -185,7 +186,7 @@ class TrayPositionHandler {
     int vertical_skips = 0;
     int horizontal_skips = 0;
     for (int i = 0; i < MAX_SKIP_POSITIONS_TOTAL; i++) {
-      if (skips[i].x == -1 || skips[i].y == -1) {
+      if (skips[i].isInvalid()) {
         break;
       }
       if (skips[i].x == 0) horizontal_skips++;
@@ -202,8 +203,8 @@ class TrayPositionHandler {
   // @param flip Whether to flip the positions.
   void copyPositions(const Position positions[MAX_SKIP_POSITIONS_TOTAL], Position out_positions[MAX_SKIP_POSITIONS_TOTAL], bool flip) {
     for (int i = 0; i < MAX_SKIP_POSITIONS_TOTAL; i++) {
-      if (positions[i].x == -1 || positions[i].y == -1) {
-        out_positions[i] = Position(-1, -1);
+      if (positions[i].isInvalid()) {
+        out_positions[i] = Position(255, 255);
         break;
       }
       out_positions[i] = flip ? flipPosition(positions[i]) : positions[i];
@@ -290,7 +291,7 @@ class TrayPositionHandler {
       PositionResult result = goToNextValidPosition();
 
       // if there is no valid position
-      if (result.position.x == -1 && result.position.y == -1) {
+      if (isInvalidPosition(result.position)) {
         return result.position;
       }
     }

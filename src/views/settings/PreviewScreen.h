@@ -83,7 +83,7 @@ void drawPreviewScreen(Gpu_Hal_Context_t* phost, const TrayHandler::Position ski
   auto is_skip_position = [&](int x, int y) -> bool {
     TrayHandler::Position pos(x, y);
     for (int i = 0; i < MAX_SKIP_POSITIONS_TOTAL; i++) {
-      if (skip_positions[i].x == -1 || skip_positions[i].y == -1) {
+      if (skip_positions[i].x == 255 || skip_positions[i].y == 255) {
         break;
       }
       // Exact position match

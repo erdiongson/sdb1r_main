@@ -97,7 +97,7 @@ void PreviewController::startSimulation() {
   simulation_handler.loadProfile(*current_profile);
   TrayHandler::Position first_position = simulation_handler.reset();
 
-  if (first_position.x == -1 || first_position.y == -1) {
+  if (first_position.isInvalid()) {
     Logger::log(F("No valid positions found, ending simulation"));
     endSimulation();
     return;
