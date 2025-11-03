@@ -12,7 +12,7 @@ struct SkipVerificationResult {
 class AdvancedSettingsController : public BaseController {
  private:
   Profile* current_profile;
-  void editSkipBase(Gpu_Hal_Context_t* phost, char* source_buffer, const char* prompt_text, SkipUtils::SkipType skip_type, size_t max_length);
+  void editSkipBase(Gpu_Hal_Context_t* phost, char* source_buffer, const char* prompt_text, SkipUtils::SkipType skip_type);
   void editSkipColumn(Gpu_Hal_Context_t* phost);
   void editSkipRow(Gpu_Hal_Context_t* phost);
   void editSkipIndividual(Gpu_Hal_Context_t* phost);

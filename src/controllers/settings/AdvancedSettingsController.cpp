@@ -108,8 +108,7 @@ int AdvancedSettingsController::getModeType() const {
 // @param source Buffer to read from and write cleaned result to.
 // @param prompt PROGMEM string for keyboard prompt.
 // @param skip_type Type of skip (COLUMN, ROW, or INDIVIDUAL).
-// @param max_length Maximum length for keyboard input.
-void AdvancedSettingsController::editSkipBase(Gpu_Hal_Context_t* phost, char* source, const char* prompt, SkipUtils::SkipType skip_type, size_t max_length) {
+void AdvancedSettingsController::editSkipBase(Gpu_Hal_Context_t* phost, char* source, const char* prompt, SkipUtils::SkipType skip_type) {
   // Create dimensions from profile
   TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
 
@@ -146,15 +145,15 @@ void AdvancedSettingsController::editSkipBase(Gpu_Hal_Context_t* phost, char* so
 }
 
 void AdvancedSettingsController::editSkipColumn(Gpu_Hal_Context_t* phost) {
-  editSkipBase(phost, g_skip_col_buffer, PROGMEM_STR(F("Enter columns to skip")), SkipUtils::COLUMN, SKIP_STRING_LEN);
+  editSkipBase(phost, g_skip_col_buffer, PROGMEM_STR(F("Enter columns to skip")), SkipUtils::COLUMN);
 }
 
 void AdvancedSettingsController::editSkipRow(Gpu_Hal_Context_t* phost) {
-  editSkipBase(phost, g_skip_row_buffer, PROGMEM_STR(F("Enter rows to skip")), SkipUtils::ROW, SKIP_STRING_LEN);
+  editSkipBase(phost, g_skip_row_buffer, PROGMEM_STR(F("Enter rows to skip")), SkipUtils::ROW);
 }
 
 void AdvancedSettingsController::editSkipIndividual(Gpu_Hal_Context_t* phost) {
-  editSkipBase(phost, g_skip_single_buffer, PROGMEM_STR(F("Enter positions to skip")), SkipUtils::INDIVIDUAL, SKIP_STRING_INDIVIDUAL_LEN);
+  editSkipBase(phost, g_skip_single_buffer, PROGMEM_STR(F("Enter positions to skip")), SkipUtils::INDIVIDUAL);
 }
 
 // Verifies skip positions and returns validation result with error flags.
