@@ -51,7 +51,9 @@ inline void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams pa
   Gpu_CoCmd_Text(phost, 179, 78, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, PROGMEM_STR(F("Column")));
   Gpu_CoCmd_Text(phost, 121, 78, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, PROGMEM_STR(F("Row")));
   Gpu_CoCmd_Text(phost, 255, 78, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, PROGMEM_STR(F("Cycles:")));
-  Gpu_CoCmd_Text(phost, 255, 115, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, PROGMEM_STR(F("Z Dip:")));
+  if (!Z_DISABLED) {
+    Gpu_CoCmd_Text(phost, 255, 115, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, PROGMEM_STR(F("Z Dip:")));
+  }
   Gpu_CoCmd_Text(phost, 51, 96, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, PROGMEM_STR(F("No. of Tube:")));
   Gpu_CoCmd_Text(phost, 51, 123, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, PROGMEM_STR(F("Pitch(mm):")));
   Gpu_CoCmd_Text(phost, 46, 179, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, PROGMEM_STR(F("Vibration:")));
@@ -178,9 +180,11 @@ inline void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams pa
   Gpu_CoCmd_Text(phost, 255, 95, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, temp_buffer);
 
   // Text - Z Dip
-  App_WrCoCmd_Buffer(phost, params.errors.z_dip ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
-  dtostrf(profile.z_dip, 3, 1, temp_buffer);
-  Gpu_CoCmd_Text(phost, 255, 133, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, temp_buffer);
+  if (!Z_DISABLED) {
+    App_WrCoCmd_Buffer(phost, params.errors.z_dip ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
+    dtostrf(profile.z_dip, 3, 1, temp_buffer);
+    Gpu_CoCmd_Text(phost, 255, 133, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, temp_buffer);
+  }
 
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
