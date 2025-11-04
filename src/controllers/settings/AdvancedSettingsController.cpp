@@ -137,6 +137,7 @@ void AdvancedSettingsController::editSkipBase(Gpu_Hal_Context_t* phost, char* so
     }
 
     strncpy(source, g_intermediate_buffer, SKIP_STRING_LEN - 1);
+    source[SKIP_STRING_LEN - 1] = '\0';  // Ensure null-termination
     drawScreen();
     break;
   }
