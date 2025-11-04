@@ -33,7 +33,8 @@ struct AdvancedSettingsScreenParams {
 // @param src Source string to truncate.
 inline void truncate(char* dest, const char* src) {
   if (strlen(src) <= 30) {
-    strcpy(dest, src);
+    strncpy(dest, src, 34);
+    dest[33] = '\0';  // Ensure null termination
   } else {
     strncpy(dest, src, 30);
     dest[30] = '\0';

@@ -195,24 +195,29 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
           // Format into controller's persistent buffer
           snprintf_P(status_message_buffer, sizeof(status_message_buffer), PSTR("FW:%d"), fw_data.firmware_version);
         } else {
-          strcpy_P(status_message_buffer, PSTR("COMPLETED"));
+          strncpy_P(status_message_buffer, PSTR("COMPLETED"), sizeof(status_message_buffer) - 1);
+          status_message_buffer[sizeof(status_message_buffer) - 1] = '\0';
         }
         break;
       }
       case DISPENSER_STATE_ERROR_ACK_ERROR:
-        strcpy_P(status_message_buffer, PSTR("ACK TIMEOUT"));
+        strncpy_P(status_message_buffer, PSTR("ACK TIMEOUT"), sizeof(status_message_buffer) - 1);
+        status_message_buffer[sizeof(status_message_buffer) - 1] = '\0';
         is_error = true;
         break;
       case DISPENSER_STATE_ERROR_IR_SENSOR_FAILURE:
-        strcpy_P(status_message_buffer, PSTR("IR SENSOR FAILURE"));
+        strncpy_P(status_message_buffer, PSTR("IR SENSOR FAILURE"), sizeof(status_message_buffer) - 1);
+        status_message_buffer[sizeof(status_message_buffer) - 1] = '\0';
         is_error = true;
         break;
       case DISPENSER_STATE_ERROR_MARKER_NOT_DETECTED:
-        strcpy_P(status_message_buffer, PSTR("MARKER NOT DETECTED"));
+        strncpy_P(status_message_buffer, PSTR("MARKER NOT DETECTED"), sizeof(status_message_buffer) - 1);
+        status_message_buffer[sizeof(status_message_buffer) - 1] = '\0';
         is_error = true;
         break;
       case DISPENSER_STATE_ERROR_CYCLES_TIMEOUT:
-        strcpy_P(status_message_buffer, PSTR("CYCLE TIMEOUT"));
+        strncpy_P(status_message_buffer, PSTR("CYCLE TIMEOUT"), sizeof(status_message_buffer) - 1);
+        status_message_buffer[sizeof(status_message_buffer) - 1] = '\0';
         is_error = true;
         break;
       default:
@@ -228,13 +233,15 @@ void DispenseTestController::onInteraction(const Interaction& interaction) {
       if (repeat_state.current_count < repeat_state.total_count) {
         // Increment and send next dispense command
         repeat_state.current_count++;
-        strcpy_P(status_message_buffer, PSTR("SENT DISPENSE"));
+        strncpy_P(status_message_buffer, PSTR("SENT DISPENSE"), sizeof(status_message_buffer) - 1);
+        status_message_buffer[sizeof(status_message_buffer) - 1] = '\0';
         updateScreen(status_message_buffer);
         dispenserHead.sendDispense();
         state = WAITING_FOR_RESPONSE;
       } else {
         // Last dispense completed - reset and show completion
-        strcpy_P(status_message_buffer, PSTR("ALL DONE"));
+        strncpy_P(status_message_buffer, PSTR("ALL DONE"), sizeof(status_message_buffer) - 1);
+        status_message_buffer[sizeof(status_message_buffer) - 1] = '\0';
         updateScreen(status_message_buffer);
       }
     } else {

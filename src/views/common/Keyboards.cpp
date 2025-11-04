@@ -230,7 +230,7 @@ KeyboardResult getKeyboardValue(Gpu_Hal_Context_t* phost, char* curtext, char* c
   bool numlock = false;
   bool caplock = false;
 
-  strcpy(keypad_value_buffer, curtext);
+  strncpy(keypad_value_buffer, curtext, maxlen);
 
   curpos = strlen(keypad_value_buffer);  // starting pos
   keypad_value_buffer[curpos] = 0;

@@ -35,7 +35,7 @@ class Logger {
   // @param y The uint8_t value to log.
   static void log(String x, uint8_t y) {
     char temp_buffer[4];  // Max: "255"
-    sprintf(temp_buffer, "%d", y);
+    snprintf(temp_buffer, 4, "%d", y);
     Serial.print(x);
     Serial.println(temp_buffer);
   }
@@ -129,7 +129,7 @@ class MemoryMonitor {
     int free_memory = (int)&v - (__brkval == 0 ? (int)&__heap_start : (int)__brkval);
 
     char temp_buffer[80];  // Max: "Free memory: -32768 bytes | Stack: 0xFFFF | Heap: 0xFFFF | Uptime: 4294967295s"
-    sprintf(temp_buffer, "Free memory: %d bytes | Stack: 0x%X | Heap: 0x%X | Uptime: %lus", free_memory, (int)&v,
+    snprintf(temp_buffer, sizeof(temp_buffer), "Free memory: %d bytes | Stack: 0x%X | Heap: 0x%X | Uptime: %lus", free_memory, (int)&v,
             __brkval == 0 ? (int)&__heap_start : (int)__brkval, millis() / 1000);
     Logger::log(String(temp_buffer));
   }

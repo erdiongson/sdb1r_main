@@ -244,8 +244,9 @@ void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
     case DIALOG_ERROR_SKIP_COUNT_EXCEEDED:
       params.title = DIALOG_TITLE_SKIP_COUNT;
       // Format the subtitle with the actual MAX_SKIP_POSITIONS_TOTAL value
-      strcpy_P(g_log_buffer, DIALOG_SUBTITLE_SKIP_COUNT);
-      sprintf(subtitle_buffer, g_log_buffer, MAX_SKIP_POSITIONS_TOTAL);
+      strncpy_P(g_intermediate_buffer, DIALOG_SUBTITLE_SKIP_COUNT, sizeof(g_intermediate_buffer) - 1);
+      g_intermediate_buffer[sizeof(g_intermediate_buffer) - 1] = '\0';
+      snprintf(subtitle_buffer, sizeof(subtitle_buffer), g_intermediate_buffer, MAX_SKIP_POSITIONS_TOTAL);
       params.subtitle = subtitle_buffer;
       params.left_btn = DIALOG_BTN_CONTINUE;
       params.right_btn = nullptr;
@@ -274,22 +275,26 @@ void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
 
   // Copy PROGMEM strings to RAM buffers for GPU rendering
   if (params.title != nullptr) {
-    strcpy_P(title_buffer, params.title);
+    strncpy_P(title_buffer, params.title, sizeof(title_buffer) - 1);
+    title_buffer[sizeof(title_buffer) - 1] = '\0';
     params.title = title_buffer;
   }
   
   if (params.subtitle != nullptr && params.subtitle != subtitle_buffer) {
-    strcpy_P(subtitle_buffer, params.subtitle);
+    strncpy_P(subtitle_buffer, params.subtitle, sizeof(subtitle_buffer) - 1);
+    subtitle_buffer[sizeof(subtitle_buffer) - 1] = '\0';
     params.subtitle = subtitle_buffer;
   }
   
   if (params.left_btn != nullptr) {
-    strcpy_P(left_btn_buffer, params.left_btn);
+    strncpy_P(left_btn_buffer, params.left_btn, sizeof(left_btn_buffer) - 1);
+    left_btn_buffer[sizeof(left_btn_buffer) - 1] = '\0';
     params.left_btn = left_btn_buffer;
   }
   
   if (params.right_btn != nullptr) {
-    strcpy_P(right_btn_buffer, params.right_btn);
+    strncpy_P(right_btn_buffer, params.right_btn, sizeof(right_btn_buffer) - 1);
+    right_btn_buffer[sizeof(right_btn_buffer) - 1] = '\0';
     params.right_btn = right_btn_buffer;
   }
 

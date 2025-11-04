@@ -55,21 +55,20 @@ void SettingsController::onInteraction(const Interaction& interaction) {
 
     case TAG_CONFIG_PROFILE_NAME: {
       Logger::log(F("Button Pressed: PROFILE"));
-      char buf[PROFILE_NAME_MAX_LEN];
-      strcpy(buf, current_profile->profile_name);
-      KeyboardResult kb_result = getKeyboardValue(phost, buf, PROGMEM_STR(F("Enter Profile Name")), false, PROFILE_NAME_MAX_LEN, NULL);
+      strncpy(g_intermediate_buffer, current_profile->profile_name, PROFILE_NAME_MAX_LEN);
+      KeyboardResult kb_result = getKeyboardValue(phost, g_intermediate_buffer, PROGMEM_STR(F("Enter Profile Name")), false, PROFILE_NAME_MAX_LEN, NULL);
 
       if (kb_result.action == ACTION_BACK) {
         drawScreen();
         break;
       }
 
-      if (strcmp_P(buf, DEBUG_MODE_KEYWORD) == 0) {
+      if (strcmp_P(g_intermediate_buffer, DEBUG_MODE_KEYWORD) == 0) {
         startNextController(CONTROLLER_DEBUG);
         return;
       }
 
-      strcpy(current_profile->profile_name, buf);
+      strncpy(current_profile->profile_name, g_intermediate_buffer, PROFILE_NAME_MAX_LEN);
       drawScreen();
       break;
     }
