@@ -8,6 +8,7 @@
 #include "../common/Dialogs.h"
 #include "../../Constants.h"
 #include "../ViewCommon.h"
+#include "../../Buffers.h"
 
 // Parameters for whether to highlight skip fields in red
 struct SkipErrors {
@@ -26,6 +27,19 @@ struct AdvancedSettingsScreenParams {
   SkipErrors errors;
   uint8_t dialog_code;  // Dialog codes are < 50
 };
+
+// Truncates a string to max 30 characters, adding "..." if truncated.
+// @param dest Destination buffer (must be at least 34 bytes).
+// @param src Source string to truncate.
+inline void truncate(char* dest, const char* src) {
+  if (strlen(src) <= 30) {
+    strcpy(dest, src);
+  } else {
+    strncpy(dest, src, 30);
+    dest[30] = '\0';
+    strcat(dest, "...");
+  }
+}
 
 inline void drawAdvancedSettingsScreen(Gpu_Hal_Context_t* phost, AdvancedSettingsScreenParams params) {
   Profile& profile = params.profile;
@@ -72,15 +86,18 @@ inline void drawAdvancedSettingsScreen(Gpu_Hal_Context_t* phost, AdvancedSetting
 
   // Text - Skip Columns
   App_WrCoCmd_Buffer(phost, params.errors.skip_cols ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
-  Gpu_CoCmd_Text(phost, 15, 36, 21, 0, params.skip_col);
+  truncate(g_log_buffer, params.skip_col);
+  Gpu_CoCmd_Text(phost, 15, 36, 21, 0, g_log_buffer);
 
   // Text - Skip Rows
   App_WrCoCmd_Buffer(phost, params.errors.skip_rows ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
-  Gpu_CoCmd_Text(phost, 15, 84, 21, 0, params.skip_row);
+  truncate(g_log_buffer, params.skip_row);
+  Gpu_CoCmd_Text(phost, 15, 84, 21, 0, g_log_buffer);
 
   // Text - Skip Single Positions
   App_WrCoCmd_Buffer(phost, params.errors.skip_cells ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));
-  Gpu_CoCmd_Text(phost, 15, 132, 21, 0, params.skip_single);
+  truncate(g_log_buffer, params.skip_single);
+  Gpu_CoCmd_Text(phost, 15, 132, 21, 0, g_log_buffer);
 
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
   App_WrCoCmd_Buffer(phost, TAG_MASK(1));
