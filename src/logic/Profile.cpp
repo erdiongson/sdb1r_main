@@ -55,6 +55,7 @@ void ProfileManager::preLoadDebugEEPROM(void) {
   // Profile 0: All skip rows except the last one (rows 1 to 32)
   readProfileEEPROM(0);
   snprintf(currentProfile.profile_name, sizeof(currentProfile.profile_name), "Debug Row Skip");
+  currentProfile.password_enabled = 0;
   currentProfile.skip_count = MAX_SKIP_POSITIONS_ROWS - 1;  // 32 rows
   for (int j = 0; j < currentProfile.skip_count; j++) {
     currentProfile.skip_positions[j] = SkipPosition(0, j + 1);  // R1, R2, ..., R32
@@ -67,6 +68,7 @@ void ProfileManager::preLoadDebugEEPROM(void) {
   // Profile 1: All skip columns except the last one (columns 1 to 41)
   readProfileEEPROM(1);
   snprintf(currentProfile.profile_name, sizeof(currentProfile.profile_name), "Debug Col Skip");
+  currentProfile.password_enabled = 0;
   currentProfile.skip_count = MAX_SKIP_POSITIONS_COLUMNS - 1;  // 41 columns
   for (int j = 0; j < currentProfile.skip_count; j++) {
     currentProfile.skip_positions[j] = SkipPosition(j + 1, 0);  // C1, C2, ..., C41
@@ -79,6 +81,7 @@ void ProfileManager::preLoadDebugEEPROM(void) {
   // Profile 2: Maximum number - 1 of individual cells (29 individual positions)
   readProfileEEPROM(2);
   snprintf(currentProfile.profile_name, sizeof(currentProfile.profile_name), "Debug Indiv Skip");
+  currentProfile.password_enabled = 0;
   currentProfile.skip_count = MAX_SKIP_POSITIONS_INDIVIDUAL - 1;  // 29 individual positions
   for (int j = 0; j < currentProfile.skip_count; j++) {
     // Create individual positions: C1R1, C2R1, C3R1, ..., C29R1
@@ -92,6 +95,7 @@ void ProfileManager::preLoadDebugEEPROM(void) {
   // Profile 3: 29 skip rows, 40 skip columns, and 30 individual cells
   readProfileEEPROM(3);
   snprintf(currentProfile.profile_name, sizeof(currentProfile.profile_name), "Debug Mixed Skip");
+  currentProfile.password_enabled = 0;
   int pos_index = 0;
   // Add 29 skip rows (R1 to R29)
   for (int j = 0; j < 29 && pos_index < MAX_SKIP_POSITIONS_TOTAL; j++) {
