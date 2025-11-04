@@ -121,8 +121,8 @@ const int TRAY_Y_MAX = 250;
 const int TRAY_X_MAX = 250;
 const int TRAY_Y_MAX = 250;
 #elif MODEL == MODEL_L
-const int TRAY_X_MAX = 400;
-const int TRAY_Y_MAX = 330;
+const int TRAY_X_MAX = 320;
+const int TRAY_Y_MAX = 320;
 #endif
 
 // =============================================================================
@@ -136,8 +136,8 @@ const int TUBES_Y_MAX = 8;
 const int TUBES_X_MAX = 42;
 const int TUBES_Y_MAX = 33;
 #elif MODEL == MODEL_L
-const int TUBES_X_MAX = 33;
-const int TUBES_Y_MAX = 33;
+const int TUBES_X_MAX = 30;
+const int TUBES_Y_MAX = 30;
 #endif
 
 const int TUBES_X_MIN = 1;
