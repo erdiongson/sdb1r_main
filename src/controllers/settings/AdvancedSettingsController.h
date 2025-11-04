@@ -5,7 +5,6 @@
 
 // Result of skip parameter verification
 struct SkipVerificationResult {
-  bool is_valid;
   SkipErrors errors;
 };
 
