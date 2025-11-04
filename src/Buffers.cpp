@@ -2,7 +2,7 @@
 #include "Buffers.h"
 
 // Global buffer definitions - only one copy in memory
-char g_log_buffer[50];
+char g_log_buffer[100];
 char g_intermediate_token_buffer[g_intermediate_token_buffer_size];
 char g_intermediate_buffer[g_intermediate_buffer_size];
 SkipPosition g_intermediate_skip_positions[MAX_SKIP_POSITIONS_TOTAL];

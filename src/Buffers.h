@@ -4,7 +4,7 @@
 
 // Shared buffer for logging to avoid String concatenations and heap allocations
 // Size is set to accommodate the longest log message in the codebase
-extern char g_log_buffer[50];
+extern char g_log_buffer[100];
 
 // Shared buffer when needing to store intermediate data relating to token generation (e.g. C2, C1R8)
 const int g_intermediate_token_buffer_size = 10;
