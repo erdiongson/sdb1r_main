@@ -12,7 +12,7 @@ void StepperTestController::onStart() {
   loadAxisParameters();
 
   // Initialize status message and tracking state
-  status_message[0] = '\0';
+  g_error_buffer[0] = '\0';
   is_tracking_movement = false;
   step_count = 0;
 
@@ -184,9 +184,9 @@ void StepperTestController::onInteraction(const Interaction& interaction) {
             float steps_per_sec = (step_count * 1000.0f) / elapsed_ms;
             long rate_int = (long)steps_per_sec;
             long rate_dec = (long)((steps_per_sec - rate_int) * 10);
-            sprintf(status_message, "Steps: %lu, Time: %lums, Rate: %ld.%ld steps/s", step_count, elapsed_ms, rate_int, rate_dec);
+            snprintf(g_error_buffer, sizeof(g_error_buffer), "Steps: %lu, Time: %lums, Rate: %ld.%ld steps/s", step_count, elapsed_ms, rate_int, rate_dec);
           } else {
-            sprintf(status_message, "Steps: %lu, Time: %lums", step_count, elapsed_ms);
+            snprintf(g_error_buffer, sizeof(g_error_buffer), "Steps: %lu, Time: %lums", step_count, elapsed_ms);
           }
           updateScreen();
         } else {
@@ -217,9 +217,9 @@ void StepperTestController::onInteraction(const Interaction& interaction) {
             float steps_per_sec = (step_count * 1000.0f) / elapsed_ms;
             long rate_int = (long)steps_per_sec;
             long rate_dec = (long)((steps_per_sec - rate_int) * 10);
-            sprintf(status_message, "Steps: %lu, Time: %lums, Rate: %ld.%ld steps/s", step_count, elapsed_ms, rate_int, rate_dec);
+            snprintf(g_error_buffer, sizeof(g_error_buffer), "Steps: %lu, Time: %lums, Rate: %ld.%ld steps/s", step_count, elapsed_ms, rate_int, rate_dec);
           } else {
-            sprintf(status_message, "Steps: %lu, Time: %lums", step_count, elapsed_ms);
+            snprintf(g_error_buffer, sizeof(g_error_buffer), "Steps: %lu, Time: %lums", step_count, elapsed_ms);
           }
           updateScreen();
         } else {
@@ -251,7 +251,7 @@ void StepperTestController::onInteraction(const Interaction& interaction) {
       dispenserHead.y().stopRunning();
       dispenserHead.z().stopRunning();
       is_tracking_movement = false;
-      strcpy(status_message, PROGMEM_STR(F("All axes stopped")));
+      strncpy(g_error_buffer, PROGMEM_STR(F("All axes stopped")), sizeof(g_error_buffer));
       updateScreen();
       break;
 
@@ -275,9 +275,9 @@ ControllerStepResult StepperTestController::onStep() {
         float steps_per_sec = (step_count * 1000.0f) / elapsed_ms;
         long rate_int = (long)steps_per_sec;
         long rate_dec = (long)((steps_per_sec - rate_int) * 10);
-        snprintf_P(status_message, sizeof(status_message), PSTR("Steps: %lu, Time: %lums, Rate: %ld.%ld steps/s"), step_count, elapsed_ms, rate_int, rate_dec);
+        snprintf_P(g_error_buffer, sizeof(g_error_buffer), PSTR("Steps: %lu, Time: %lums, Rate: %ld.%ld steps/s"), step_count, elapsed_ms, rate_int, rate_dec);
       } else {
-        snprintf_P(status_message, sizeof(status_message), PSTR("Steps: %lu, Time: %lums"), step_count, elapsed_ms);
+        snprintf_P(g_error_buffer, sizeof(g_error_buffer), PSTR("Steps: %lu, Time: %lums"), step_count, elapsed_ms);
       }
       is_tracking_movement = false;
       updateScreen();
@@ -294,7 +294,7 @@ void StepperTestController::updateScreen() {
   params.max_acceleration = current_max_acceleration;
   params.move_amount_cm = move_amount_cm;
   params.blocking = blocking;
-  params.status_message = status_message;
+  params.status_message = g_error_buffer;
 
   drawStepperTestScreen(phost, params);
 }
