@@ -173,24 +173,16 @@ void SettingsController::incrementVibrationTime() {
 // Verifies all profile parameters and returns validation result with error flags.
 // @return VerificationResult containing validity status and specific error flags.
  VerificationResult SettingsController::verifyParameters() {
-  Logger::log(F("VP: Start"));
-  // delay(20);
-  
   VerificationResult result;
   result.is_valid = true;
   result.errors = InputErrors();  // Initialize all to false
   result.dialog_code = 0;
-
-  Logger::log(F("VP: Init done"));
-  // delay(20);
 
   // Internal flags to track error types
   bool has_parameter_error = false;
   bool has_dimension_error = false;
   bool has_skip_error = false;
 
-  Logger::log(F("VP: Check tubes_x"));
-  // delay(20);
   // Check parameter range violations
   if (current_profile->tube_no_x < TUBES_X_MIN || current_profile->tube_no_x > TUBES_X_MAX) {
     result.is_valid = false;
@@ -198,64 +190,48 @@ void SettingsController::incrementVibrationTime() {
     result.errors.tubes_x = true;
   }
 
-  Logger::log(F("VP: Check tubes_y"));
-  // delay(20);
   if (current_profile->tube_no_y < TUBES_Y_MIN || current_profile->tube_no_y > TUBES_Y_MAX) {
     result.is_valid = false;
     has_parameter_error = true;
     result.errors.tubes_y = true;
   }
 
-  Logger::log(F("VP: Check pitch_x"));
-  // delay(20);
   if (current_profile->pitch_x < PITCH_X_MIN || current_profile->pitch_x > PITCH_X_MAX) {
     result.is_valid = false;
     has_parameter_error = true;
     result.errors.pitch_x = true;
   }
 
-  Logger::log(F("VP: Check pitch_y"));
-  // delay(20);
   if (current_profile->pitch_y < PITCH_Y_MIN || current_profile->pitch_y > PITCH_Y_MAX) {
     result.is_valid = false;
     has_parameter_error = true;
     result.errors.pitch_y = true;
   }
 
-  Logger::log(F("VP: Check origin_x"));
-  // delay(20);
   if (current_profile->tray_origin_x < ORIGIN_X_MIN || current_profile->tray_origin_x > ORIGIN_X_MAX) {
     result.is_valid = false;
     has_parameter_error = true;
     result.errors.origin_x = true;
   }
 
-  Logger::log(F("VP: Check origin_y"));
-  // delay(20);
   if (current_profile->tray_origin_y < ORIGIN_Y_MIN || current_profile->tray_origin_y > ORIGIN_Y_MAX) {
     result.is_valid = false;
     has_parameter_error = true;
     result.errors.origin_y = true;
   }
 
-  Logger::log(F("VP: Check cycles"));
-  // delay(20);
   if (current_profile->cycles < CYCLES_MIN || current_profile->cycles > CYCLES_MAX) {
     result.is_valid = false;
     has_parameter_error = true;
     result.errors.cycles = true;
   }
 
-  Logger::log(F("VP: Check z_dip"));
-  // delay(20);
   if (current_profile->z_dip < Z_DIP_MIN || current_profile->z_dip > Z_DIP_MAX) {
     result.is_valid = false;
     has_parameter_error = true;
     result.errors.z_dip = true;
   }
 
-  Logger::log(F("VP: Check X boundary"));
-  // delay(20);
   // Check dimension boundary violations
   // Validate X-axis: check if tubes exceed tray boundary
   if (current_profile->tray_origin_x + (current_profile->pitch_x * current_profile->tube_no_x) > TRAY_X_MAX) {
@@ -266,8 +242,6 @@ void SettingsController::incrementVibrationTime() {
     result.errors.origin_x = true;
   }
 
-  Logger::log(F("VP: Check Y boundary"));
-  // delay(20);
   // Validate Y-axis: check if tubes exceed tray boundary
   if (current_profile->tray_origin_y + (current_profile->pitch_y * current_profile->tube_no_y) > TRAY_Y_MAX) {
     result.is_valid = false;
@@ -277,16 +251,10 @@ void SettingsController::incrementVibrationTime() {
     result.errors.origin_y = true;
   }
 
-  Logger::log(F("VP: Check skip positions"));
-  // delay(20);
   // Check skip position validity
   if (current_profile->skip_count > 0) {
-    Logger::log(F("VP: Create dimensions"));
-    // delay(20);
     TrayHandler::Dimensions dimensions(current_profile->tube_no_x, current_profile->tube_no_y);
     
-    Logger::log(F("VP: Loop skip positions"));
-    // delay(20);
     for (uint8_t i = 0; i < current_profile->skip_count && i < MAX_SKIP_POSITIONS_TOTAL; i++) {
       const SkipPosition& skip_pos = current_profile->skip_positions[i];
       TrayHandler::Position pos(skip_pos.x, skip_pos.y);
@@ -298,12 +266,8 @@ void SettingsController::incrementVibrationTime() {
         break;  // Found at least one invalid skip position
       }
     }
-    Logger::log(F("VP: Skip loop done"));
-    // delay(20);
   }
 
-  Logger::log(F("VP: Determine dialog"));
-  // delay(20);
   // Determine dialog code based on priority: parameter > dimension > skip
   if (!result.is_valid) {
     if (has_parameter_error) {
@@ -315,8 +279,6 @@ void SettingsController::incrementVibrationTime() {
     }
   }
 
-  Logger::log(F("VP: Done"));
-  // delay(20);
   return result;
 }
 
