@@ -150,10 +150,10 @@ class TrayPositionHandler {
   // @param pos Position to check.
   // @return True if position should be skipped, false otherwise.
   bool isInvalidPosition(const Position& pos) {
+    if (pos.isInvalid()) {
+      return true;
+    }
     for (int i = 0; i < MAX_SKIP_POSITIONS_TOTAL; i++) {
-      if (pos.isInvalid()) {
-        break;
-      }
       if (pos.x == skip_positions[i].x && pos.y == skip_positions[i].y) {
         return true;
       }
