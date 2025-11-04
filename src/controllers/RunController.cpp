@@ -288,7 +288,13 @@ void RunController::processStageLogic(DispenserProcessResult& dispenser_process_
       dispenserHead.y().reset();
       dispenserHead.z().reset();
       cycle = 0;
-      startStage(STAGE_START_PRIME);
+      if (PRIME_DISPENSE_NUM > 0) {
+        startStage(STAGE_START_PRIME);
+      } else {
+        Logger::log(F("Skipping prime and moving to first position"));
+        setFirstTarget();
+        startStage(STAGE_MOVE);
+      }
       break;
 
     case STAGE_WAIT_PRIME: {
@@ -298,13 +304,7 @@ void RunController::processStageLogic(DispenserProcessResult& dispenser_process_
       // Check if priming should end
       if (cycle >= PRIME_DISPENSE_NUM) {
         Logger::log(F("Prime completed, moving to first position"));
-        // Calculate the first position and move to it
-        TrayHandler::Position first_position = trayHandler.reset();
-        target_x =
-            (profile.tray_origin_x +
-             ((first_position.x - 1 + ((profile.staggered && first_position.y % 2 == 0) ? STAGGERED_OFFSET_FACTOR : 0)) * profile.pitch_x)) *
-            -STEPS_PER_UNIT_X;
-        target_y = (profile.tray_origin_y + ((first_position.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
+        setFirstTarget();
         startStage(STAGE_MOVE);
       } else {
         Logger::log(F("Prime not completed, starting next prime"));
@@ -377,6 +377,16 @@ void RunController::processStageLogic(DispenserProcessResult& dispenser_process_
     default:
       break;
   }
+}
+
+// Sets target_x and target_y to the first position in the tray.
+void RunController::setFirstTarget() {
+  TrayHandler::Position first_position = trayHandler.reset();
+  target_x =
+      (profile.tray_origin_x +
+       ((first_position.x - 1 + ((profile.staggered && first_position.y % 2 == 0) ? STAGGERED_OFFSET_FACTOR : 0)) * profile.pitch_x)) *
+      -STEPS_PER_UNIT_X;
+  target_y = (profile.tray_origin_y + ((first_position.y - 1) * profile.pitch_y)) * STEPS_PER_UNIT_Y;
 }
 
 RunStatus RunController::getRunStatus() {

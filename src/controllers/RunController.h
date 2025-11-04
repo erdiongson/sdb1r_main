@@ -42,6 +42,9 @@ class RunController : public BaseController {
   // @return True if a limit switch error occurred, false otherwise.
   bool handleLimitSwitchError(int result);
   
+  // Sets target_x and target_y to the first position in the tray.
+  void setFirstTarget();
+  
   // Prepares the current run status for display.
   // @return RunStatus struct with current position and progress information.
   RunStatus getRunStatus();
