@@ -138,7 +138,7 @@ class SkipUtils {
     // Parse skip_col string (format: "C1,C9,...")
     if (skip_col && skip_col[0] != '\0') {
       int i = 0;
-      while (skip_col[i] != '\0' && pos_index < max_positions) {
+      while (skip_col[i] != '\0') {
         if (skip_col[i] == ',') {
           i++;
           continue;
@@ -147,7 +147,8 @@ class SkipUtils {
         if (skip_col[i] == 'C') {
           int col = atoi(skip_col + i + 1);
           if (col > 0 && col <= 255) {
-            out_positions[pos_index++] = SkipPosition(col, 0);
+            pos_index++;
+            if (pos_index < max_positions) { out_positions[pos_index] = SkipPosition(col, 0); }
           }
         }
         
@@ -159,7 +160,7 @@ class SkipUtils {
     // Parse skip_row string (format: "R1,R9,...")
     if (skip_row && skip_row[0] != '\0') {
       int i = 0;
-      while (skip_row[i] != '\0' && pos_index < max_positions) {
+      while (skip_row[i] != '\0') {
         if (skip_row[i] == ',') {
           i++;
           continue;
@@ -168,7 +169,8 @@ class SkipUtils {
         if (skip_row[i] == 'R') {
           int row = atoi(skip_row + i + 1);
           if (row > 0 && row <= 255) {
-            out_positions[pos_index++] = SkipPosition(0, row);
+            pos_index++;
+            if (pos_index < max_positions) { out_positions[pos_index] = SkipPosition(0, row); }
           }
         }
         
@@ -180,7 +182,7 @@ class SkipUtils {
     // Parse skip_single_pos string (format: "C2R4,C3R4,...")
     if (skip_single_pos && skip_single_pos[0] != '\0') {
       int i = 0;
-      while (skip_single_pos[i] != '\0' && pos_index < max_positions) {
+      while (skip_single_pos[i] != '\0') {
         if (skip_single_pos[i] == ',') {
           i++;
           continue;
@@ -206,7 +208,8 @@ class SkipUtils {
             int row = atoi(skip_single_pos + r_pos + 1);
             
             if (col > 0 && col <= 255 && row > 0 && row <= 255) {
-              out_positions[pos_index++] = SkipPosition(col, row);
+              pos_index++;
+              if (pos_index < max_positions) { out_positions[pos_index] = SkipPosition(col, row); }
             }
           }
         }
