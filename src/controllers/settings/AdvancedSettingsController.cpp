@@ -111,10 +111,10 @@ void AdvancedSettingsController::editSkipBase(Gpu_Hal_Context_t* phost, char* so
 
   // Load current value into intermediate buffer
   snprintf(g_intermediate_buffer, g_intermediate_buffer_size, "%s", source);
-  g_error_buffer[0] = '\0';
+  g_message_buffer[0] = '\0';
 
   while (true) {
-    KeyboardResult kb_result = getKeyboardValue(phost, g_intermediate_buffer, prompt, false, g_intermediate_buffer_size, g_error_buffer);
+    KeyboardResult kb_result = getKeyboardValue(phost, g_intermediate_buffer, prompt, false, g_intermediate_buffer_size, g_message_buffer);
 
     // Check if user pressed back
     if (kb_result.action == ACTION_BACK) return;
@@ -123,16 +123,16 @@ void AdvancedSettingsController::editSkipBase(Gpu_Hal_Context_t* phost, char* so
     SkipUtils::CleanResult result = SkipUtils::clean({
       g_intermediate_buffer,
       g_intermediate_buffer_size,
-      g_error_buffer,
-      g_error_buffer_size,
+      g_message_buffer,
+      g_message_buffer_size,
       skip_type,
       dimensions,
       current_profile->staggered
     });
 
     // Check if there was an error
-    if (g_error_buffer[0] != '\0') {
-      Logger::log(F("Error: %s"), g_error_buffer);
+    if (g_message_buffer[0] != '\0') {
+      Logger::log(F("Error: %s"), g_message_buffer);
       continue;
     }
 
