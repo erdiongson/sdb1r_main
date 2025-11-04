@@ -147,8 +147,8 @@ class SkipUtils {
         if (skip_col[i] == 'C') {
           int col = atoi(skip_col + i + 1);
           if (col > 0 && col <= 255) {
-            pos_index++;
             if (pos_index < max_positions) { out_positions[pos_index] = SkipPosition(col, 0); }
+            pos_index++;
           }
         }
         
@@ -169,8 +169,8 @@ class SkipUtils {
         if (skip_row[i] == 'R') {
           int row = atoi(skip_row + i + 1);
           if (row > 0 && row <= 255) {
-            pos_index++;
             if (pos_index < max_positions) { out_positions[pos_index] = SkipPosition(0, row); }
+            pos_index++;
           }
         }
         
@@ -208,8 +208,8 @@ class SkipUtils {
             int row = atoi(skip_single_pos + r_pos + 1);
             
             if (col > 0 && col <= 255 && row > 0 && row <= 255) {
-              pos_index++;
               if (pos_index < max_positions) { out_positions[pos_index] = SkipPosition(col, row); }
+              pos_index++;
             }
           }
         }
@@ -529,7 +529,7 @@ class SkipUtils {
       if (total_count < MAX_SKIP_POSITIONS_TOTAL) {
         g_intermediate_skip_positions[total_count++] = skip_pos;
       }
-     
+
       // Check if we have exceeded the maximum skip positions for the type
       if (total_count > max_skip_positions) {
         const char* type_name = (params.type == ROW) ? "row" : (params.type == COLUMN) ? "column" : "individual";
