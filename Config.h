@@ -7,7 +7,7 @@
 // FIRMWARE VERSION & MODEL CONFIGURATION
 // =============================================================================
 #define FWVER_STR "4.0"
-#define MODEL MODEL_M // MODEL_S, MODEL_M, or MODEL_L
+#define MODEL MODEL_L // MODEL_S, MODEL_M, or MODEL_L
 
 // Extract model letter for display
 #if MODEL == MODEL_S
@@ -22,15 +22,35 @@ const char FWVER[] PROGMEM = FWVER_STR;
 const char FWVERM[] PROGMEM = FWVER_STR MODEL_NAME;
 
 // =============================================================================
+// DEBUG SETTINGS
+// =============================================================================
+
+#define DEBUG_NO_LOG 0  // 1 to disable logging
+const int DEBUG_ONLY_SCREEN = 0; // 1 to bypass comms with the dispenser / steppers 
+const int DEBUG_MEMORY_MONITOR = 0; // 1 to enable memory monitoring
+
+const char DEBUG_MODE_KEYWORD[] PROGMEM = "d";
+
+// =============================================================================
 // FEATURE FLAGS
 // =============================================================================
-const bool Z_DISABLED = false;
+// Disables Z axis options and functionality
+const bool Z_DISABLED = true;
+
+// Defines the number of "dispenses" performed during priming.
+// Set 0 to disable priming
+const int PRIME_DISPENSE_NUM = 0;
 
 // =============================================================================
 // SECURITY SETTINGS
 // =============================================================================
 const char SUPER_PASSWORD[] PROGMEM = "superXQ";
 const char INITIAL_PASSWORD[] PROGMEM = "init1234";
+
+// =============================================================================
+// TIMEOUT SETTINGS
+// =============================================================================
+const uint8_t HOMING_TIMEOUT = 20; // in seconds
 
 // =============================================================================
 // UI TIMING SETTINGS
@@ -43,8 +63,6 @@ const unsigned long KEYBOARD_ERROR_DISPLAY_MS = 1000;
 // =============================================================================
 // DISPENSER SETTINGS
 // =============================================================================
-// Defines the number of "dispenses" performed during priming.
-const int PRIME_DISPENSE_NUM = 2;
 
 // Serial communication timeouts (in milliseconds)
 const unsigned long DISPENSER_ACK_TIMEOUT_MS = 5000;
@@ -162,12 +180,3 @@ const int PITCH_Y_MAX = 999;
 const int CYCLES_DEFAULT = 2;
 const int CYCLES_MIN = 1;
 const int CYCLES_MAX = 99;
-
-// =============================================================================
-// DEBUG SETTINGS
-// =============================================================================
-#define DEBUG_NO_LOG 0  // 1 to disable logging
-const int DEBUG_ONLY_SCREEN = 0; // 1 to bypass comms with the dispenser / steppers 
-const int DEBUG_MEMORY_MONITOR = 0; // 1 to enable memory monitoring
-
-const char DEBUG_MODE_KEYWORD[] PROGMEM = "debug";

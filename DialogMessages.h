@@ -18,13 +18,22 @@ const char DIALOG_SUBTITLE_MARKER[] PROGMEM = "Could not detect the dispenser he
 const char DIALOG_TITLE_LIMIT_SWITCH[] PROGMEM = "Limit Switch Error";
 const char DIALOG_SUBTITLE_LIMIT_SWITCH[] PROGMEM = "Possible movement boundary collision. Please check the head position and resume. (E13)";
 
-const char DIALOG_SUBTITLE_LIMIT_SWITCH_HOMING[] PROGMEM = "Possible movement boundary collision. Please check the head position.";
+const char DIALOG_SUBTITLE_LIMIT_SWITCH_HOMING[] PROGMEM = "Possible movement boundary collision. Please check the head position. (E14)";
 
 const char DIALOG_TITLE_DISPENSER_ERROR[] PROGMEM = "Dispenser Error";
 const char DIALOG_SUBTITLE_DISPENSER_ERROR[] PROGMEM = "Could not detect the dispenser head. Please restart the device. (E11)";
 
 const char DIALOG_TITLE_TIMEOUT[] PROGMEM = "Dispenser Timeout Error";
 const char DIALOG_SUBTITLE_TIMEOUT[] PROGMEM = "Did not receive response from the dispenser head. Please restart the device. (E12)";
+
+const char DIALOG_TITLE_UNLATCH_ERROR[] PROGMEM = "Unlatching Error";
+const char DIALOG_SUBTITLE_UNLATCH_ERROR[] PROGMEM = "Could not unlatch the dispenser head. Please check the movement system and restart the device. (E15)";
+
+const char DIALOG_TITLE_HOMING_TIMEOUT[] PROGMEM = "Homing Timeout Error";
+const char DIALOG_SUBTITLE_HOMING_TIMEOUT[] PROGMEM = "Could not home the dispenser head. Please check the movement system and restart the device. (E16)";
+
+const char DIALOG_TITLE_ZEROING_TIMEOUT[] PROGMEM = "Zeroing Timeout Error";
+const char DIALOG_SUBTITLE_ZEROING_TIMEOUT[] PROGMEM = "Could not reach zero position. Please check the movement system and resume. (E17)";
 
 const char DIALOG_TITLE_PROFILE_SAVED[] PROGMEM = "Profile Saved";
 const char DIALOG_SUBTITLE_PROFILE_SAVED[] PROGMEM = "Profile has been saved successfully.";

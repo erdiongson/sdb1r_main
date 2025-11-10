@@ -1,11 +1,15 @@
 #include "DebugController.h"
 #include "../../views/debug/DebugScreen.h"
+#include "../../views/debug/ConfigScreen.h"
 #include "../../views/common/Keyboards.h"
 
-DebugController::DebugController(ControllerParams params) : BaseController(params) {}
+DebugController::DebugController(ControllerParams params) : BaseController(params) {
+  show_config_screen = false;
+}
 
 void DebugController::onStart() {
   Logger::log(F("DebugController::on_start"));
+  show_config_screen = false;
   drawDebugScreen(phost, { false, false, false, 0 });
 }
 
@@ -62,6 +66,18 @@ void DebugController::onInteraction(const Interaction& interaction) {
       drawDebugScreen(phost, { false, false, true, 0 });
       break;
     }
+
+    case TAG_DEBUG_SHOW_CONFIG:
+      Logger::log(F("Debug: Show Config button pressed"));
+      show_config_screen = true;
+      drawConfigScreen(phost);
+      break;
+
+    case TAG_CONFIG_BACK:
+      Logger::log(F("Config: Back button pressed"));
+      show_config_screen = false;
+      drawDebugScreen(phost, { false, false, false, 0 });
+      break;
 
     case TAG_DEBUG_BACK:
       Logger::log(F("Debug: Back button pressed"));

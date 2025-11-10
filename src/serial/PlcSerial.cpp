@@ -1,4 +1,5 @@
 #include "PlcSerial.h"
+#include "../../Config.h"
 
 // Initialize static member
 bool PlcSerial::isBusy = false;
@@ -48,9 +49,6 @@ PLCMessage PlcSerial::process() {
     uint8_t busyResponse[5] = { PLC_BUSY_BYTE, PLC_BUSY_BYTE, PLC_BUSY_BYTE, PLC_BUSY_BYTE, PLC_BUSY_BYTE };
     Serial3.write(busyResponse, 5);
     return { MSG_UNKNOWN, 0 };
-  } else {
-    // Send acknowledgement (mirror the received message back to PLC)
-    Serial3.write(response, PLC_MESSAGE_LENGTH);
   }
 
   // Store data value
@@ -60,19 +58,30 @@ PLCMessage PlcSerial::process() {
   switch (response[1]) {
     case PLC_CMD_START:
       result.type = MSG_START;
+      Serial3.write(response, PLC_MESSAGE_LENGTH); // Send ACK
       break;
     case PLC_CMD_STOP:
       result.type = MSG_STOP;
+      Serial3.write(response, PLC_MESSAGE_LENGTH); // Send ACK
       break;
     case PLC_CMD_PAUSE:
       result.type = MSG_PAUSE;
+      Serial3.write(response, PLC_MESSAGE_LENGTH); // Send ACK
       break;
-    case PLC_CMD_RAISE_Z:
-      result.type = MSG_RAISE_Z;
+    case PLC_CMD_RAISE_Z: {
+      if (!Z_DISABLED) {
+        result.type = MSG_RAISE_Z;
+        Serial3.write(response, PLC_MESSAGE_LENGTH); // Send ACK
+      }
       break;
-    case PLC_CMD_LOWER_Z:
-      result.type = MSG_LOWER_Z;
+    }
+    case PLC_CMD_LOWER_Z: {
+      if (!Z_DISABLED) {
+        result.type = MSG_LOWER_Z;
+        Serial3.write(response, PLC_MESSAGE_LENGTH); // Send ACK
+      }
       break;
+    }
     default:
       // Unknown command - send NAK response
       result.type = MSG_UNKNOWN;

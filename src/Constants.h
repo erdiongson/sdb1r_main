@@ -149,6 +149,8 @@ const int TAG_DEBUG_BACK = 94;
 const int TAG_DEBUG_DIALOG_TEST = 95;
 const int TAG_DEBUG_STEPPER_TEST = 96;
 const int TAG_DEBUG_USE_DEBUG_PROFILES = 97;
+const int TAG_DEBUG_SHOW_CONFIG = 98;
+const int TAG_CONFIG_BACK = 99;
 
 // =============================================================================
 // UI TAG CONSTANTS - Stepper Test Control
@@ -266,8 +268,8 @@ const int PASSWORD_MAX_LEN = 30;
 
 const int SKIP_STRING_LEN = 200;
 
-const int MAX_SKIP_POSITIONS_ROWS = 33;
-const int MAX_SKIP_POSITIONS_COLUMNS = 42;
+const int MAX_SKIP_POSITIONS_ROWS = 30;
+const int MAX_SKIP_POSITIONS_COLUMNS = 30;
 const int MAX_SKIP_POSITIONS_INDIVIDUAL = 30;
 const int MAX_SKIP_POSITIONS_TOTAL = 100;
 
@@ -314,6 +316,9 @@ const int DIALOG_ERROR_PARAMETER = 14;
 const int DIALOG_ERROR_SKIP_VALUES = 15;
 const int DIALOG_ERROR_SKIP_COUNT_EXCEEDED = 16;
 const int DIALOG_ERROR_NO_VALID_POSITIONS = 17;
+const int DIALOG_ERROR_UNLATCH_ERROR = 18;
+const int DIALOG_ERROR_HOMING_TIMEOUT = 19;
+const int DIALOG_ERROR_ZEROING_TIMEOUT = 20;
 
 // =============================================================================
 // MODEL IDENTIFIERS AND MACROS

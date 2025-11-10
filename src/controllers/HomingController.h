@@ -5,6 +5,7 @@
 class HomingController : public BaseController {
  private:
   bool running = true;
+  unsigned long timeout_at = 0;
 
  public:
   HomingController(ControllerParams params);

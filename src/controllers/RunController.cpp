@@ -115,6 +115,7 @@ void RunController::startStage(Stage new_stage) {
       dispenserHead.x().moveToMax();
       dispenserHead.y().moveToMin();
       dispenserHead.z().moveToMax();
+      timeout_at = millis() + HOMING_TIMEOUT * 1000;
       break;
 
     case STAGE_START_PRIME:
@@ -282,13 +283,26 @@ void RunController::processStageLogic(DispenserProcessResult& dispenser_process_
       break;
 
     case STAGE_ZERO:
+      // Check if zeroing timed out
+      if (timeout_at <= millis()) {
+        Logger::log(F("Zeroing timed out 👎"));
+        MainScreenParams timeout_params = { profile, getRunStatus(), DIALOG_ERROR_ZEROING_TIMEOUT };
+        drawRunScreen(timeout_params);
+        pause();
+        timeout_at = 0;
+        break;
+      }
+
+      // Once all steppers are done, consider homing complete
       if (dispenser_process_result.steppers != AXIS_STATE_COMPLETE) break;
-      Logger::log(F("Zero position reached, starting prime"));
+      Logger::log(F("Zero position reached"));
+      timeout_at = 0;
       dispenserHead.x().reset();
       dispenserHead.y().reset();
       dispenserHead.z().reset();
       cycle = 0;
       if (PRIME_DISPENSE_NUM > 0) {
+        Logger::log(F("Prime Dispense Number is %d, starting prime.."), PRIME_DISPENSE_NUM);
         startStage(STAGE_START_PRIME);
       } else {
         Logger::log(F("Skipping prime and moving to first position"));

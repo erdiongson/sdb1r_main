@@ -2,6 +2,7 @@
 #include "../views/LogoScreen.h"
 #include "../views/MainScreen.h"
 #include "../views/ViewCommon.h"
+#include "../../Config.h"
 
 StartupController::StartupController(ControllerParams params) : BaseController(params), dispenserHead(params.head) {}
 
@@ -84,19 +85,43 @@ void StartupController::onInteraction(const Interaction& interaction) {
   }
 
   if (stage == STAGE_CLEAR && result.steppers == AXIS_STATE_COMPLETE) {
+    // If any axis is not at the expected position, consider it failed to clear
+    if (dispenserHead.x().isAtMin() || dispenserHead.y().isAtMin() || dispenserHead.z().isAtMax()) {
+      Logger::log(F("Axis failed to clear 👎"));
+      logo_params.dialog_code = DIALOG_ERROR_UNLATCH_ERROR;
+      drawLogoScreen(phost, logo_params);
+      running = false;
+      return ControllerStepResult(false);
+    }
+
     Logger::log(F("Axis cleared 👍"));
     logo_params.status_message = PROGMEM_STR_CONCAT(F("%s - %s"), FWVERM, F("Homing.."));
     drawLogoScreen(phost, logo_params);
     dispenserHead.x().moveToMin();
     dispenserHead.y().moveToMin();
     dispenserHead.z().moveToMax();
+    timeout_at = millis() + HOMING_TIMEOUT * 1000;
     stage = STAGE_HOME;
     return ControllerStepResult(true);
   }
 
-  if (stage == STAGE_HOME && result.steppers == AXIS_STATE_COMPLETE) {
-    Logger::log(F("Homing completed 👍"));
-    startNextController(CONTROLLER_READY);
+  if (stage == STAGE_HOME) {
+
+    // Check if homing timed out
+    if (timeout_at <= millis()) {
+      Logger::log(F("Homing timed out 👎"));
+      logo_params.dialog_code = DIALOG_ERROR_HOMING_TIMEOUT;
+      drawLogoScreen(phost, logo_params);
+      running = false;
+      timeout_at = 0;
+      return ControllerStepResult(false);
+    }
+
+    // Once all steppers are done, consider homing complete
+    if (result.steppers == AXIS_STATE_COMPLETE) {
+      Logger::log(F("Homing completed 👍"));
+      startNextController(CONTROLLER_READY);
+    }
   }
 
   return ControllerStepResult(result.steppers == AXIS_STATE_RUNNING);

@@ -14,6 +14,7 @@ class StartupController : public BaseController {
   bool running = true;
   DispenserHead& dispenserHead;
   LogoScreenParams logo_params = {0, ""};
+  unsigned long timeout_at = 0;
 
  public:
   StartupController(ControllerParams params);

@@ -15,7 +15,7 @@
         <mxCell id="XCumuguAdt03vSou6qLP-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;dashed=1;" parent="1" source="XCumuguAdt03vSou6qLP-7" target="XCumuguAdt03vSou6qLP-23" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="XCumuguAdt03vSou6qLP-4" value="Dispenser&lt;div&gt;(E01/E02/E11/E12)&lt;br&gt;&lt;b&gt;Unlatching (E15)&lt;/b&gt;&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#FF3333;" parent="XCumuguAdt03vSou6qLP-3" connectable="0" vertex="1">
+        <mxCell id="XCumuguAdt03vSou6qLP-4" value="Dispenser&lt;div&gt;(E01/E02/E11/E12)&lt;br&gt;Unlatching (E15)&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#FF3333;" parent="XCumuguAdt03vSou6qLP-3" connectable="0" vertex="1">
           <mxGeometry x="0.5489" y="3" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
@@ -25,7 +25,7 @@
             <mxPoint x="570" y="160.304347826087" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="XCumuguAdt03vSou6qLP-6" value="&lt;span style=&quot;color: rgb(255, 51, 51);&quot;&gt;Limit Sw. (E13)&lt;br&gt;&lt;b&gt;Homing (E16)&lt;/b&gt;&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="XCumuguAdt03vSou6qLP-5" connectable="0" vertex="1">
+        <mxCell id="XCumuguAdt03vSou6qLP-6" value="&lt;span style=&quot;color: rgb(255, 51, 51);&quot;&gt;Limit Sw. (E13)&lt;br&gt;Homing (E16)&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="XCumuguAdt03vSou6qLP-5" connectable="0" vertex="1">
           <mxGeometry x="-0.2839" y="1" relative="1" as="geometry">
             <mxPoint x="16" y="1" as="offset" />
           </mxGeometry>
@@ -89,7 +89,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="XCumuguAdt03vSou6qLP-20" value="&lt;span style=&quot;color: rgb(255, 51, 51);&quot;&gt;Limit Sw. (E13)&lt;br&gt;&lt;b&gt;Zeroing (E17)&lt;/b&gt;&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="XCumuguAdt03vSou6qLP-18" connectable="0" vertex="1">
+        <mxCell id="XCumuguAdt03vSou6qLP-20" value="&lt;span style=&quot;color: rgb(255, 51, 51);&quot;&gt;Limit Sw. (E13)&lt;br&gt;Zeroing (E17)&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="XCumuguAdt03vSou6qLP-18" connectable="0" vertex="1">
           <mxGeometry x="-0.1697" relative="1" as="geometry">
             <mxPoint x="5" y="7" as="offset" />
           </mxGeometry>
@@ -159,7 +159,7 @@
         <mxCell id="XCumuguAdt03vSou6qLP-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="XCumuguAdt03vSou6qLP-34" target="XCumuguAdt03vSou6qLP-45" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="XCumuguAdt03vSou6qLP-33" value="Limit Sw. (E13)&lt;br&gt;&lt;b&gt;Homing (E16)&lt;/b&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#FF3333;" parent="XCumuguAdt03vSou6qLP-32" connectable="0" vertex="1">
+        <mxCell id="XCumuguAdt03vSou6qLP-33" value="Limit Sw. (E13)&lt;br&gt;Homing (E16)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#FF3333;" parent="XCumuguAdt03vSou6qLP-32" connectable="0" vertex="1">
           <mxGeometry x="-0.2928" relative="1" as="geometry">
             <mxPoint x="17" y="-15" as="offset" />
           </mxGeometry>

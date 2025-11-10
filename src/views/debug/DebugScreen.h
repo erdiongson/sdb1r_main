@@ -104,6 +104,11 @@ inline void drawDebugScreen(Gpu_Hal_Context_t* phost, DebugScreenParams params) 
   Gpu_CoCmd_FgColor(phost, 0xAA0000);
   Gpu_CoCmd_Button(phost, 10, 210, 50, 22, 20, 0, PROGMEM_STR(F("Back")));
 
+  // Show Current Config button at bottom right
+  App_WrCoCmd_Buffer(phost, TAG(TAG_DEBUG_SHOW_CONFIG));
+  Gpu_CoCmd_FgColor(phost, 0x808080);
+  Gpu_CoCmd_Button(phost, 190, 210, 120, 22, 20, 0, PROGMEM_STR(F("Show Current Config")));
+
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // Draw dialog if dialog_code is set

@@ -78,7 +78,10 @@ void setup() {
   Logger::log("CtrlSz:", String(ControllerManager::getMaxControllerSize()) + " bytes");
 
   // Disable Z axis if required
-  if (Z_DISABLED) dispenser_head.z().setDisabled(true);
+  if (Z_DISABLED) {
+    dispenser_head.z().setDisabled(true);
+    Logger::log(F("Z axis disabled"));
+  }
 
   Logger::log(F("Starting first controller.."));
   startNextController(CONTROLLER_STARTUP);

@@ -1,6 +1,7 @@
 #include "HomingController.h"
 #include "../views/MainScreen.h"
 #include "../serial/PlcSerial.h"
+#include "../../Config.h"
 
 HomingController::HomingController(ControllerParams params) : BaseController(params) {}
 
@@ -14,6 +15,7 @@ void HomingController::onStart() {
   dispenserHead.x().moveToMin();
   dispenserHead.y().moveToMin();
   dispenserHead.z().moveToMax();
+  timeout_at = millis() + HOMING_TIMEOUT * 1000;
 
     Profile& profile = profile_manager.getCurrentProfile();
     drawHomingScreen({ profile, { 0, 0, 0, 0 }, 0 });
@@ -27,6 +29,7 @@ void HomingController::onInteraction(const Interaction& interaction) {
     dispenserHead.x().moveToMin();
     dispenserHead.y().moveToMin();
     dispenserHead.z().moveToMax();
+    timeout_at = millis() + HOMING_TIMEOUT * 1000;
 
     // Redraw the screen
     Profile& profile = profile_manager.getCurrentProfile();
@@ -48,8 +51,20 @@ ControllerStepResult HomingController::onStep() {
     return ControllerStepResult(false);
   }
 
+  // Check if homing timed out
+  if (timeout_at <= millis()) {
+    Logger::log(F("Homing timed out "));
+    Profile& profile = profile_manager.getCurrentProfile();
+    drawHomingScreen({ profile, { 0, 0, 0, 0 }, DIALOG_ERROR_HOMING_TIMEOUT });
+    running = false;
+    timeout_at = 0;
+    return ControllerStepResult(false);
+  }
+
+  // Once all steppers are done, consider homing complete
   if (result.steppers == AXIS_STATE_COMPLETE) {
     Logger::log(F("Homing completed "));
+    timeout_at = 0;
     // Clear busy state
     PlcSerial::setBusy(false);
     startNextController(CONTROLLER_READY);

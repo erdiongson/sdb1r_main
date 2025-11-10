@@ -57,10 +57,10 @@ inline void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams pa
   Gpu_CoCmd_Text(phost, 51, 96, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, PROGMEM_STR(F("No. of Tube:")));
   Gpu_CoCmd_Text(phost, 51, 123, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, PROGMEM_STR(F("Pitch(mm):")));
   Gpu_CoCmd_Text(phost, 46, 179, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, PROGMEM_STR(F("Vibration:")));
-  Gpu_CoCmd_Text(phost, 179, 168, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, PROGMEM_STR(F("Duration:")));
-  Gpu_CoCmd_Text(phost, 116, 168, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, PROGMEM_STR(F("Level:")));
+  Gpu_CoCmd_Text(phost, 179, 165, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, PROGMEM_STR(F("Duration:")));
+  Gpu_CoCmd_Text(phost, 116, 165, 20, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, PROGMEM_STR(F("Level:")));
   Gpu_CoCmd_Text(phost, 51, 149, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, PROGMEM_STR(F("Origin(mm):")));
-  Gpu_CoCmd_Text(phost, 267, 163, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, PROGMEM_STR(F("Password:")));
+  Gpu_CoCmd_Text(phost, 267, 155, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, PROGMEM_STR(F("Password:")));
   //	  App_WrCoCmd_Buffer(phost, TAG_MASK(1));
 
   App_WrCoCmd_Buffer(phost, COLOR_RGB(255, 255, 255));
@@ -138,7 +138,7 @@ inline void drawSettingsScreen(Gpu_Hal_Context_t* phost, SettingsScreenParams pa
   Gpu_CoCmd_Text(phost, 150, 53, 21, OPT_CENTER | OPT_RIGHTX | OPT_FORMAT, (const char*)profile.profile_name);
 
   // Password Enable/Disable
-  Toggle_Button(phost, profile.password_enabled, TAG_PASSWORD_ENABLED, 242, 180, "On", "Off");
+  Toggle_Button(phost, profile.password_enabled, TAG_PASSWORD_ENABLED, 242, 172, "On", "Off");
 
   // Text - Tube Number Row
   App_WrCoCmd_Buffer(phost, params.errors.tubes_x ? COLOR_RGB(255, 0, 0) : COLOR_RGB(0, 0, 0));

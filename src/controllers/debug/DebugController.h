@@ -11,4 +11,7 @@ class DebugController : public BaseController {
   ControllerStepResult onStep() override;
 
   int getModeType() const override;
+
+ private:
+  bool show_config_screen;
 };

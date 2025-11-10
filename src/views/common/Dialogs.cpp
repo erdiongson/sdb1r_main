@@ -263,6 +263,33 @@ void drawDialog(Gpu_Hal_Context_t* phost, int dialog_code) {
       params.right_tag = 0;
       break;
 
+    case DIALOG_ERROR_UNLATCH_ERROR:
+      params.title = DIALOG_TITLE_UNLATCH_ERROR;
+      params.subtitle = DIALOG_SUBTITLE_UNLATCH_ERROR;
+      params.left_btn = nullptr;
+      params.right_btn = nullptr;
+      params.left_tag = 0;
+      params.right_tag = 0;
+      break;
+
+    case DIALOG_ERROR_HOMING_TIMEOUT:
+      params.title = DIALOG_TITLE_HOMING_TIMEOUT;
+      params.subtitle = DIALOG_SUBTITLE_HOMING_TIMEOUT;
+      params.left_btn = DIALOG_BTN_CONTINUE;
+      params.right_btn = nullptr;
+      params.left_tag = TAG_CONTINUE;
+      params.right_tag = 0;
+      break;
+
+    case DIALOG_ERROR_ZEROING_TIMEOUT:
+      params.title = DIALOG_TITLE_ZEROING_TIMEOUT;
+      params.subtitle = DIALOG_SUBTITLE_ZEROING_TIMEOUT;
+      params.left_btn = DIALOG_BTN_RESUME;
+      params.right_btn = nullptr;
+      params.left_tag = TAG_START;
+      params.right_tag = 0;
+      break;
+
     default:
       params.title = DIALOG_TITLE_UNKNOWN;
       params.subtitle = DIALOG_SUBTITLE_UNKNOWN;

@@ -29,6 +29,7 @@ class RunController : public BaseController {
   int32_t target_x = 0;
   int32_t target_y = 0;
   int cycle = 0;
+  unsigned long timeout_at = 0;
 
   void processStageLogic(DispenserProcessResult& dispenser_process_result);
   void startStage(Stage new_stage);
