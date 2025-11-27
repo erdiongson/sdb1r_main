@@ -103,11 +103,16 @@ void RunController::startStage(Stage new_stage) {
       dispenserHead.setVibrationLevel(profile.vibration_level);
       break;
 
-    case STAGE_SET_VIB_DURATION:
-      Logger::log(F("STAGE: Setting vibration duration to "), (uint8_t)profile.vibration_duration);
+    case STAGE_SET_VIB_DURATION: {
+      uint8_t vibration_duration = profile.vibration_level > 0 ? (uint8_t)profile.vibration_duration : VIBRATION_DURATION_MIN;
+      Logger::log(F("STAGE: Setting vibration duration to "), vibration_duration);
+      if (profile.vibration_level <= 0) {
+        Logger::log(F("STAGE: Vibration duration set to minimum"));
+      }
       this->stage = STAGE_SET_VIB_DURATION;
-      dispenserHead.setVibrationTime(profile.vibration_duration);
+      dispenserHead.setVibrationTime(vibration_duration);
       break;
+    }
 
     case STAGE_ZERO:
       Logger::log(F("STAGE: Moving to zero position"));
