@@ -51,7 +51,7 @@ const char INITIAL_PASSWORD[] PROGMEM = "init1234";
 // =============================================================================
 // TIMEOUT SETTINGS
 // =============================================================================
-const uint8_t HOMING_TIMEOUT = 20; // in seconds
+const unsigned long HOMING_TIMEOUT = 20; // in seconds
 
 // =============================================================================
 // UI TIMING SETTINGS
