@@ -248,9 +248,12 @@ int moveTo(long position) {
   void stopRunning() {
     if (!enabled) return;
     running = false;
-    // Force immediate stop by setting target to current position
-    long current_pos = stepper.currentPosition();
-    stepper.setCurrentPosition(current_pos);  // Resets both current and target to same value
+
+    // Signal stepper to stop, decelerating until speed = 0
+    stepper.stop();
+
+    // Set current position as target
+    stepper.setCurrentPosition(stepper.currentPosition());
   }
 
   AccelStepper& getStepper() { return stepper; }
