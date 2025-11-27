@@ -36,6 +36,7 @@ const char DEBUG_MODE_KEYWORD[] PROGMEM = "d";
 // =============================================================================
 // Disables Z axis options and functionality
 const bool Z_DISABLED = true;
+const bool Z_UNLATCH_SKIP = false; // Skips unlatching the Z axis during homing / zeroing
 
 // Defines the number of "dispenses" performed during priming.
 // Set 0 to disable priming
