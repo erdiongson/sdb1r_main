@@ -27,17 +27,17 @@ ProfileManager profile_manager;
 AxisParams axis_x(MOTOR_X_CLK, MOTOR_X_CW, LIMIT_S_X_MIN, LIMIT_S_X_MAX, 
                   &LIMIT_S_X_MIN_PORT, LIMIT_S_X_MIN_BIT, 
                   &LIMIT_S_X_MAX_PORT, LIMIT_S_X_MAX_BIT,
-                  MOTOR_X_SPEED, MOTOR_X_ACCELERATION);
+                  MOTOR_X_SPEED, MOTOR_X_ACCELERATION, STEPS_PER_UNIT_X);
 
 AxisParams axis_y(MOTOR_Y_CLK, MOTOR_Y_CW, LIMIT_S_Y_MIN, LIMIT_S_Y_MAX, 
                   &LIMIT_S_Y_MIN_PORT, LIMIT_S_Y_MIN_BIT, 
                   &LIMIT_S_Y_MAX_PORT, LIMIT_S_Y_MAX_BIT,
-                  MOTOR_Y_SPEED, MOTOR_Y_ACCELERATION);
+                  MOTOR_Y_SPEED, MOTOR_Y_ACCELERATION, STEPS_PER_UNIT_Y);
 
 AxisParams axis_z(MOTOR_Z_CLK, MOTOR_Z_CW, LIMIT_S_Z_MIN, LIMIT_S_Z_MAX, 
                   &LIMIT_S_Z_MIN_PORT, LIMIT_S_Z_MIN_BIT, 
                   &LIMIT_S_Z_MAX_PORT, LIMIT_S_Z_MAX_BIT,
-                  MOTOR_Z_SPEED, MOTOR_Z_ACCELERATION);
+                  MOTOR_Z_SPEED, MOTOR_Z_ACCELERATION, STEPS_PER_UNIT_Z);
 
 DispenserHeadParams params = { axis_x, axis_y, axis_z };
 DispenserHead dispenser_head(params);

@@ -34,13 +34,28 @@ const char DEBUG_MODE_KEYWORD[] PROGMEM = "d";
 // =============================================================================
 // FEATURE FLAGS
 // =============================================================================
+
 // Disables Z axis options and functionality
 const bool Z_DISABLED = true;
-const bool Z_UNLATCH_SKIP = false; // Skips unlatching the Z axis during homing / zeroing
+
+// Skips unlatching the Z axis during homing / zeroing
+const bool Z_UNLATCH_SKIP = false;
 
 // Defines the number of "dispenses" performed during priming.
 // Set 0 to disable priming
 const int PRIME_DISPENSE_NUM = 0;
+
+// ============================================================================
+// Safety & Limit Switch Configuration
+// ============================================================================
+
+// When the limit switch is detected, the system will ignore the detection if
+// the dispenser head is less than this distance away from the target.
+// Typically used when the dispenser head is operating near an origin of 0
+// in either axis, since returning to the 0 position might trigger the limit
+// switch due to mechanical inconsistencies.
+const int LIMIT_SWITCH_THRESHOLD_MM = 1;
+
 
 // =============================================================================
 // SECURITY SETTINGS

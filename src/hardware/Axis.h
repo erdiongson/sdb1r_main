@@ -4,6 +4,7 @@
 #include <AccelStepper.h>
 #include "../Constants.h"
 #include "../Utils.h"
+#include "../../Config.h"
 
 // Struct for complete axis configuration parameters.
 struct AxisParams {
@@ -17,11 +18,12 @@ struct AxisParams {
   uint8_t max_bit;              // Bit position in port (0-7)
   float max_speed;
   float acceleration;
+  long steps_per_unit;
 
   AxisParams(int step_pin, int dir_pin, int min_pin, int max_pin, 
              volatile uint8_t* min_port, uint8_t min_bit,
              volatile uint8_t* max_port, uint8_t max_bit,
-             float max_speed = 1000.0, float acceleration = 500.0)
+             float max_speed, float acceleration, long steps_per_unit)
       : step_pin(step_pin),
         dir_pin(dir_pin),
         min_pin(min_pin),
@@ -31,7 +33,8 @@ struct AxisParams {
         max_port(max_port),
         max_bit(max_bit),
         max_speed(max_speed),
-        acceleration(acceleration) {}
+        acceleration(acceleration),
+        steps_per_unit(steps_per_unit) {}
 };
 
 class Axis {
@@ -53,6 +56,7 @@ class Axis {
   int max_counter = 0;          // Debounce counter for max limit switch
   float max_speed;              // Maximum speed for the axis
   float max_acceleration;       // Maximum acceleration for the axis
+  long steps_per_unit;
 
  public:
   // Constructor for Axis class using AxisParams struct.
@@ -68,7 +72,9 @@ class Axis {
         moving_positive(false),
         enabled(true),
         max_speed(params.max_speed),
-        max_acceleration(params.acceleration) {
+        max_acceleration(params.acceleration),
+        steps_per_unit(params.steps_per_unit) {
+          
     // Configure limit switch pins as inputs with pull-up resistors
     pinMode(min_limit_pin, INPUT_PULLUP);
     pinMode(max_limit_pin, INPUT_PULLUP);
@@ -78,7 +84,10 @@ class Axis {
     stepper.setAcceleration(max_acceleration);
   }
 
-  void reset() { stepper.setCurrentPosition(0); }
+  void reset() {
+    Logger::log(F("Setting current position to 0")); 
+    stepper.setCurrentPosition(0);
+  }
 
   void setDisabled(bool disabled) { enabled = !disabled; }
 
@@ -110,8 +119,15 @@ class Axis {
 
 int moveBy(long position) {
     if (!enabled) return AXIS_STATE_COMPLETE;
-    if (position > 0 && isAtMax()) return AXIS_STATE_ERROR_LIMIT_SWITCH;  // Trying to move positive but at max limit
-    if (position < 0 && isAtMin()) return AXIS_STATE_ERROR_LIMIT_SWITCH;  // Trying to move negative but at min limit
+    if (position == 0) return AXIS_STATE_COMPLETE;
+    if (position > 0 && isAtMax()) {
+      Logger::log(F("Trying to move positive but at max limit (moveBy)"));
+      return AXIS_STATE_ERROR_LIMIT_SWITCH;  // Trying to move positive but at max limit
+    }
+    if (position < 0 && isAtMin()) {
+      Logger::log(F("Trying to move negative but at min limit (moveBy)"));
+      return AXIS_STATE_ERROR_LIMIT_SWITCH;  // Trying to move negative but at min limit
+    }
     running = true;
     to_limit = false;
     stepper.move(position);
@@ -121,11 +137,27 @@ int moveBy(long position) {
     prev_max_state = isAtMax();
     return AXIS_STATE_RUNNING;
   }
+
 int moveTo(long position) {
     if (!enabled) return AXIS_STATE_COMPLETE;
-    bool would_move_positive = (position > stepper.currentPosition());
-    if (would_move_positive && isAtMax()) return AXIS_STATE_ERROR_LIMIT_SWITCH;   // Trying to move positive but at max limit
-    if (!would_move_positive && isAtMin()) return AXIS_STATE_ERROR_LIMIT_SWITCH;  // Trying to move negative but at min limit
+
+    long current_position = stepper.currentPosition();
+    Logger::log(F("Current position: %ld, Target position: %ld"), current_position, position);
+
+    if (position == current_position) {
+      Logger::log(F("Already at target position"));
+      return AXIS_STATE_COMPLETE;
+    }
+
+    bool would_move_positive = (position > current_position);
+    if (would_move_positive && isAtMax()) {
+      Logger::log(F("Trying to move positive but at max limit (moveTo)"));
+      return AXIS_STATE_ERROR_LIMIT_SWITCH;   // Trying to move positive but at max limit
+    }
+    if (!would_move_positive && isAtMin()) {
+      Logger::log(F("Trying to move negative but at min limit (moveTo)"));
+      return AXIS_STATE_ERROR_LIMIT_SWITCH;  // Trying to move negative but at min limit
+    }
     running = true;
     to_limit = false;
     stepper.moveTo(position);
@@ -213,25 +245,51 @@ int moveTo(long position) {
 
     // Check limit switches and prevent movement in that direction if triggered
     if (didHitMin()) {
-      stopRunning();
-      if (to_limit && !moving_positive) {
-        // Expected, should stop
-        return AXIS_STATE_COMPLETE;
-      } else {
-        // Not expected, error
+      // Not even the correct direction
+      if (moving_positive) {
+        stopRunning();
+        Logger::log(F("Min limit switch triggered unexpectedly (new position: %ld)"), stepper.currentPosition());
         return AXIS_STATE_ERROR_LIMIT_SWITCH;
       }
+
+      // Typically used for homing / zeroing, indicating the axis has reached the limit switch
+      if (to_limit) {
+        stopRunning();
+        Logger::log(F("Min limit switch triggered as expected (new position: %ld)"), stepper.currentPosition());
+        return AXIS_STATE_COMPLETE;
+      }
+     
+      // Edge case: If limit switch is hit but it is close to the target position, continue
+      if (stepper.distanceToGo() < (steps_per_unit * LIMIT_SWITCH_THRESHOLD_MM)) {
+        return AXIS_STATE_RUNNING;
+      }
+
+      // No other legitimate reason to hit the limit switch
+      return AXIS_STATE_ERROR_LIMIT_SWITCH;
     }
+
     if (didHitMax()) {
-      stopRunning();
-      if (to_limit && moving_positive) {
-        // Expected, should stop
-        return AXIS_STATE_COMPLETE;
-      } else {
-        // Not expected, error
-        Logger::log(F("Max limit switch triggered unexpectedly"));
+      // Not even the correct direction
+      if (!moving_positive) {
+        stopRunning();
+        Logger::log(F("Max limit switch triggered unexpectedly (new position: %ld)"), stepper.currentPosition());
         return AXIS_STATE_ERROR_LIMIT_SWITCH;
       }
+
+      // Typically used for homing / zeroing, indicating the axis has reached the limit switch
+      if (to_limit) {
+        stopRunning();
+        Logger::log(F("Max limit switch triggered as expected (new position: %ld)"), stepper.currentPosition());
+        return AXIS_STATE_COMPLETE;
+      }
+     
+      // Edge case: If limit switch is hit but it is close to the target position, continue
+      if (stepper.distanceToGo() < (steps_per_unit * LIMIT_SWITCH_THRESHOLD_MM)) {
+        return AXIS_STATE_RUNNING;
+      }
+
+      // No other legitimate reason to hit the limit switch
+      return AXIS_STATE_ERROR_LIMIT_SWITCH;
     }
 
     bool is_running = stepper.run();
