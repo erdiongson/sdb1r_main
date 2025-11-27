@@ -143,6 +143,7 @@ void RunController::startStage(Stage new_stage) {
 
       if (handleLimitSwitchError(dispenserHead.x().moveTo(target_x))) return;
       if (handleLimitSwitchError(dispenserHead.y().moveTo(target_y))) return;
+      Logger::log(F("STAGE: Move set."));
       break;
     }
 
