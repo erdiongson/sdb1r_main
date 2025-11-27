@@ -236,9 +236,10 @@ int moveTo(long position) {
 
     bool is_running = stepper.run();
 
+    // Speed is 0, and distance to target is 0
     if (!is_running) {
-      // Expected, should stop
-      stopRunning();
+      running = false;
+
       return AXIS_STATE_COMPLETE;
     }
 
