@@ -7,7 +7,7 @@
 // FIRMWARE VERSION & MODEL CONFIGURATION
 // =============================================================================
 #define FWVER_STR "4.0"
-#define MODEL MODEL_L // MODEL_S, MODEL_M, or MODEL_L
+#define MODEL MODEL_M // MODEL_S, MODEL_M, or MODEL_L
 
 // Extract model letter for display
 #if MODEL == MODEL_S
@@ -154,7 +154,7 @@ const int TRAY_X_MAX = 190;
 const int TRAY_Y_MAX = 250;
 #elif MODEL == MODEL_M
 const int TRAY_X_MAX = 250;
-const int TRAY_Y_MAX = 250;
+const int TRAY_Y_MAX = 290;
 #elif MODEL == MODEL_L
 const int TRAY_X_MAX = 320;
 const int TRAY_Y_MAX = 320;
