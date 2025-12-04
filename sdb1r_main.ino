@@ -20,6 +20,7 @@
 #include "src/hardware/Axis.h"
 #include "src/hardware/DispenserHead.h"
 #include "src/logic/ControllerManager.h"
+#include "src/utils/ScreenshotHandler.h"
 
 Gpu_Hal_Context_t host, *phost;
 ProfileManager profile_manager;
@@ -65,7 +66,9 @@ void setup() {
   App_Common_Init(&host);  //* Init HW Hal */
   // App_Calibrate_Screen(&host); ///*Screen Calibration*//
 
-  Serial.begin(9600);   // Serial printing
+  Serial.begin(DEBUG_ENABLE_SCREEN_CAPTURE ? 115200 : 9600);   // Serial printing
+  // Use decreased baudrate when not transferring image data to save processing power
+
   Serial2.begin(19200);  // UART for Arduino-PIC18 communications
   Serial3.begin(19200);  // UART for PLC communication
 
@@ -95,6 +98,15 @@ void loop() {
   // Call the mode's onStep() function
   // Responsible for stepper runs, and dispenser serial processing
   ControllerStepResult result = controller_manager.onStep();
+
+  if (DEBUG_ENABLE_SCREEN_CAPTURE) {
+    // Check for screenshot request
+    if (!result.stepper_moved){
+      if (ScreenshotHandler::checkForCommand()) {
+        ScreenshotHandler::captureAndSend(phost);
+      }
+    }
+  }
 
   // Check for interactions only periodically
   // Includes touch screen presses, and PLC commands

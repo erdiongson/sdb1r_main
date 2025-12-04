@@ -28,6 +28,7 @@ const char FWVERM[] PROGMEM = FWVER_STR MODEL_NAME;
 #define DEBUG_NO_LOG 0  // 1 to disable logging
 const int DEBUG_ONLY_SCREEN = 0; // 1 to bypass comms with the dispenser / steppers 
 const int DEBUG_MEMORY_MONITOR = 0; // 1 to enable memory monitoring
+const int DEBUG_ENABLE_SCREEN_CAPTURE = 0; // 1 to enable screen capture
 
 const char DEBUG_MODE_KEYWORD[] PROGMEM = "d";
 
