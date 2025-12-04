@@ -7,7 +7,13 @@
 
 class RunController : public BaseController {
  private:
-  bool paused = false;
+  enum PauseState {
+    NOT_PAUSED,
+    PAUSING,
+    PAUSED
+  };
+
+  PauseState pause_state = NOT_PAUSED;
 
   enum Stage {
     STAGE_IDLE,
@@ -33,6 +39,7 @@ class RunController : public BaseController {
 
   void processStageLogic(DispenserProcessResult& dispenser_process_result);
   void startStage(Stage new_stage);
+  void requestPause();
   void pause();
   void resume();
   void stop();

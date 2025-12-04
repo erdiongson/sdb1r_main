@@ -13,6 +13,7 @@ struct ButtonsEnabled {
   bool show_resume;    // If true, START button shows "RESUME" instead of "START"
   bool show_homing;    // If true, STOP button shows "HOMING"
   bool show_stopping;  // If true, STOP button shows "STOPPING"
+  bool show_pausing;   // If true, PAUSE button shows "PAUSING"
 };
 
 // Run status information.
@@ -72,7 +73,10 @@ inline void drawMenuButtons(const ButtonsEnabled& buttons) {
     App_WrCoCmd_Buffer(phost, TAG_MASK(0));
   }
   Gpu_CoCmd_FgColor(phost, 0xADAF3C);
-  Gpu_CoCmd_Button(phost, 207, 112, 90, 36, 28, 0, PROGMEM_STR(F("PAUSE")));
+  if (buttons.show_pausing)
+    Gpu_CoCmd_Button(phost, 207, 112, 90, 36, 28, 0, PROGMEM_STR(F("PAUSING")));
+  else
+    Gpu_CoCmd_Button(phost, 207, 112, 90, 36, 28, 0, PROGMEM_STR(F("PAUSE")));
   App_WrCoCmd_Buffer(phost, TAG_MASK(0));
 
   // Draw STOP button
@@ -155,34 +159,41 @@ inline void drawBaseMainScreen(Gpu_Hal_Context_t* phost, const ButtonsEnabled& b
 // Draws the ready screen (main menu).
 // @param params Parameters containing profile and status information.
 inline void drawReadyScreen(const MainScreenParams& params) {
-  ButtonsEnabled buttons = { true, true, false, false, false, false, false };
+  ButtonsEnabled buttons = { true, true, false, false, false, false, false, false };
   drawBaseMainScreen(phost, buttons, params);
 }
 
 // Draws the run screen.
 // @param params Parameters containing profile and status information.
 inline void drawRunScreen(const MainScreenParams& params) {
-  ButtonsEnabled buttons = { false, false, true, true, false, false, false };
+  ButtonsEnabled buttons = { false, false, true, true, false, false, false, false };
   drawBaseMainScreen(phost, buttons, params);
 }
 
 // Draws the pause screen.
 // @param params Parameters containing profile and status information.
 inline void drawPauseScreen(const MainScreenParams& params) {
-  ButtonsEnabled buttons = { false, true, false, true, true, false, false };
+  ButtonsEnabled buttons = { false, true, false, true, true, false, false, false };
+  drawBaseMainScreen(phost, buttons, params);
+}
+
+// Draws the pausing screen with all buttons disabled.
+// @param params Parameters containing profile and status information.
+inline void drawPausingScreen(const MainScreenParams& params) {
+  ButtonsEnabled buttons = { false, false, false, false, false, false, false, true };
   drawBaseMainScreen(phost, buttons, params);
 }
 
 // Draws the homing screen.
 // @param params Parameters containing profile and status information.
 inline void drawHomingScreen(const MainScreenParams& params) {
-  ButtonsEnabled buttons = { false, false, false, false, false, true, false };
+  ButtonsEnabled buttons = { false, false, false, false, false, true, false, false };
   drawBaseMainScreen(phost, buttons, params);
 }
 
 // Draws the stopping screen.
 // @param params Parameters containing profile and status information.
 inline void drawStoppingScreen(const MainScreenParams& params) {
-  ButtonsEnabled buttons = { false, false, false, false, false, false, true };
+  ButtonsEnabled buttons = { false, false, false, false, false, false, true, false };
   drawBaseMainScreen(phost, buttons, params);
 }

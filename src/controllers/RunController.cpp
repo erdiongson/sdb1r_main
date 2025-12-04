@@ -34,22 +34,40 @@ void RunController::onStart() {
 }
 
 // Pauses the run by stopping all axis movements immediately.
-void RunController::pause() {
-  Logger::log(F("MODE: Paused"));
-  paused = true;
+void RunController::requestPause() {
+  if (pause_state == PAUSING || pause_state == PAUSED) {
+    Logger::log(F("MODE: Paused Requested (already paused)"));
+    return;
+  }
+
+  Logger::log(F("MODE: Paused Requested"));
+  pause_state = PAUSING;
   dispenserHead.x().stopRunning();
   dispenserHead.y().stopRunning();
   dispenserHead.z().stopRunning();
+  drawPausingScreen({ profile, getRunStatus(), 0 });
+}
 
-  // Clear busy state
-  PlcSerial::setBusy(false);
+
+// Pauses the run by stopping all axis movements immediately.
+void RunController::pause() {
+  if (pause_state == PAUSED) {
+    Logger::log(F("MODE: Paused (already paused)"));
+    return;
+  }
+
+  Logger::log(F("MODE: Paused"));
+  pause_state = PAUSED;
+  dispenserHead.x().stopRunning();
+  dispenserHead.y().stopRunning();
+  dispenserHead.z().stopRunning();
 }
 
 // Resumes the run from a paused state.
 void RunController::resume() {
   Logger::log(F("MODE: Resumed"));
   PlcSerial::setBusy(true);
-  paused = false;
+  pause_state = NOT_PAUSED;
   drawRunScreen({ profile, getRunStatus(), 0 });
   startStage(stage);
 }
@@ -58,7 +76,7 @@ void RunController::resume() {
 void RunController::stop() {
   Logger::log(F("MODE: Stopped"));
   drawStoppingScreen({ profile, { 0, 0, 0, 0 }, 0 });
-  paused = false;
+  pause_state = NOT_PAUSED;
 
   // Stop all stepper movements
   dispenserHead.x().stopRunning();
@@ -184,9 +202,10 @@ void RunController::startStage(Stage new_stage) {
 }
 
 ControllerStepResult RunController::onStep() {
-  if (paused) return ControllerStepResult(false);
+  if (pause_state == PAUSED) return ControllerStepResult(false);
 
   DispenserProcessResult dispenser_process_result = dispenserHead.process();
+
   if (dispenser_process_result.steppers == AXIS_STATE_RUNNING) {
     return ControllerStepResult(true);
   }
@@ -235,6 +254,26 @@ ControllerStepResult RunController::onStep() {
     return ControllerStepResult(false);
   }
 
+  if (pause_state == PAUSING) {
+    // If dispenser is idle (not waiting on any response), resolve to the paused state
+    // This should only run a step after the stage has been processed to keep atomicity
+    // (i.e. if this was paused during a WAIT_DISPENSE, it should be in RAISE_HEAD or START_DISPENSE before pausing)
+
+    // Note: If the dispense triggers an ACK or CYCLES_TIMEOUT, it will be handled, and pause during the error handling
+
+    if (dispenser_process_result.dispenser == DISPENSER_STATE_IDLING) {
+      Logger::log(F("MODE: Paused"));
+
+      pause_state = PAUSED;
+      drawPauseScreen({ profile, getRunStatus(), 0 });
+
+      // Clear busy state
+      PlcSerial::setBusy(false);
+    }
+
+    return;
+  }
+
   // Perform logic after all axis are idle (all movement is completed)
   processStageLogic(dispenser_process_result);
 
@@ -248,7 +287,7 @@ int RunController::getModeType() const {
 // Starts the run sequence
 void RunController::start() {
   Logger::log(F("MODE: Starting run"));
-  paused = false;
+  pause_state = NOT_PAUSED;
   cycle = 0;
   drawRunScreen({ profile, { 0, 0, 0, 0 }, 0 });
   startStage(STAGE_SET_VIB_LEVEL);
@@ -262,8 +301,7 @@ void RunController::onInteraction(const Interaction& interaction) {
   }
 
   if (interaction.plc_message_type == MSG_PAUSE || interaction.key_pressed == TAG_PAUSE) {
-    pause();
-    drawPauseScreen({ profile, getRunStatus(), 0 });
+    requestPause();
     return;
   }
 
