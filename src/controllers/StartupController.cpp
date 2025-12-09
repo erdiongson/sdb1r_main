@@ -15,12 +15,10 @@ void StartupController::onStart() {
 
   logo_params = {0, PROGMEM_STR_CONCAT(F("%s - %s"), FWVERM, F("Starting.."))};
   drawLogoScreen(phost, logo_params);
-  delay(500);
-
-  // Check if dispenser is online and responding
-  dispenserHead.sendHandshake();
-  logo_params.status_message = PROGMEM_STR_CONCAT(F("%s - %s"), FWVERM, F("Pending Response.."));
-  drawLogoScreen(phost, logo_params);
+  
+  // Start the init stage timer
+  stage = STAGE_INIT;
+  stage_start_time = millis();
 }
 
 void StartupController::onInteraction(const Interaction& interaction) {
@@ -46,6 +44,19 @@ void StartupController::onInteraction(const Interaction& interaction) {
  ControllerStepResult StartupController::onStep() {
   // Early return if not running (error state)
   if (!running) return ControllerStepResult(false);
+
+  // Handle STAGE_INIT - wait 500ms before proceeding to handshake
+  if (stage == STAGE_INIT) {
+    if (millis() - stage_start_time >= 500) {
+      // 500ms has elapsed, move to handshake stage
+      stage = STAGE_HANDSHAKE;
+      dispenserHead.sendHandshake();
+      logo_params.status_message = PROGMEM_STR_CONCAT(F("%s - %s"), FWVERM, F("Pending Response.."));
+      drawLogoScreen(phost, logo_params);
+    }
+    // Still in init stage, keep processing
+    return ControllerStepResult(true);
+  }
 
   DispenserProcessResult result = dispenserHead.process();
 
