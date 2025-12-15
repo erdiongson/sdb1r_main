@@ -161,9 +161,20 @@ class DispenserHead {
   // Get the current dispensing state
   int getState() const { return dispensing_state; }
 
+  // Check if axes have cleared their limit positions.
+  // @return True if any axis is still at a limit position that needs clearing.
+  bool checkCleared() {
+    bool x_at_limit = (HOME_POSITION == HOME_RIGHT) ? x_axis.isAtMin() : x_axis.isAtMax();
+    return x_at_limit || y_axis.isAtMin() || (z_axis.isAtMax() && !Z_UNLATCH_SKIP);
+  }
+
   // Clear axes if at limit positions by moving them away.
   void clearLimits() {
-    if (x_axis.isAtMin()) x_axis.moveBy(STEPS_PER_UNIT_X * 5);
+    if (HOME_POSITION == HOME_RIGHT) {
+      if (x_axis.isAtMin()) x_axis.moveBy(STEPS_PER_UNIT_X * 5);
+    } else {
+      if (x_axis.isAtMax()) x_axis.moveBy(-STEPS_PER_UNIT_X * 5);
+    }
     if (y_axis.isAtMin()) y_axis.moveBy(STEPS_PER_UNIT_Y * 5);
     if (z_axis.isAtMax() && !Z_UNLATCH_SKIP) z_axis.moveBy(-STEPS_PER_UNIT_Z * 5);
   }
@@ -172,6 +183,16 @@ class DispenserHead {
   void resetDispenser() {
     dispensing_state = DISPENSER_STATE_IDLING;
     PicSerial::reset();
+  }
+
+  void moveToHome() {
+    if (HOME_POSITION == HOME_RIGHT) {
+      x().moveToMin();
+    } else {
+      x().moveToMax();
+    }
+    y().moveToMin();
+    z().moveToMax();
   }
 
  private:

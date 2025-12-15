@@ -46,6 +46,10 @@ const bool Z_UNLATCH_SKIP = false;
 // Set 0 to disable priming
 const int PRIME_DISPENSE_NUM = 0;
 
+// Defines if the homing should be on the right of left side of the device
+enum HomePosition { HOME_RIGHT, HOME_LEFT };
+const HomePosition HOME_POSITION = HOME_RIGHT;
+
 // ============================================================================
 // Safety & Limit Switch Configuration
 // ============================================================================

@@ -12,9 +12,7 @@ void HomingController::onStart() {
   PlcSerial::setBusy(true);
 
   // Start the homing process
-  dispenserHead.x().moveToMin();
-  dispenserHead.y().moveToMin();
-  dispenserHead.z().moveToMax();
+  dispenserHead.moveToHome();
   timeout_at = millis() + HOMING_TIMEOUT * 1000;
 
     Profile& profile = profile_manager.getCurrentProfile();
@@ -26,9 +24,7 @@ void HomingController::onInteraction(const Interaction& interaction) {
   if (interaction.key_pressed == TAG_CONTINUE) {
     running = true;
     // Restart the homing process
-    dispenserHead.x().moveToMin();
-    dispenserHead.y().moveToMin();
-    dispenserHead.z().moveToMax();
+    dispenserHead.moveToHome();
     timeout_at = millis() + HOMING_TIMEOUT * 1000;
 
     // Redraw the screen
